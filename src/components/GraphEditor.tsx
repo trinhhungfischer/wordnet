@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   ReactFlow,
   MiniMap,
@@ -227,21 +227,18 @@ export default function GraphEditor() {
     });
   };
 
-  const loadLevel = async (levelName: string) => {
-    setSelectedLevelName(levelName);
-    if (!levelName) return;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-    try {
-      const res = await fetch(`/levels/${levelName}.json`);
-      const data = await res.json();
-      setRawLevelData(data);
-      
-      const newNodes: Node[] = [];
-      const newEdges: Edge[] = [];
-      
-      if (data.categories) {
-        saveHistory();
-        const catNodesMap: Record<string, Node> = {};
+  const loadDataIntoGraph = (data: any, levelName: string) => {
+    setSelectedLevelName(levelName);
+    setRawLevelData(data);
+    
+    const newNodes: Node[] = [];
+    const newEdges: Edge[] = [];
+    
+    if (data.categories) {
+      saveHistory();
+      const catNodesMap: Record<string, Node> = {};
         
         // Pass 1: Create all Category nodes
         data.categories.forEach((cat: any) => {
@@ -378,9 +375,36 @@ export default function GraphEditor() {
       setNodes(newNodes);
       setEdges(newEdges);
       setSelectedNodeId(null);
-    } catch (e) {
-      console.error(e);
+  };
+
+  const loadLevel = async (levelName: string) => {
+    if (!levelName) return;
+    try {
+      const res = await fetch(`/levels/${levelName}.json`);
+      const data = await res.json();
+      loadDataIntoGraph(data, levelName);
+    } catch (err) {
+      console.error("Failed to load level:", err);
+      alert("Error loading level JSON.");
     }
+  };
+
+  const handleLoadJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const text = ev.target?.result as string;
+        const data = JSON.parse(text);
+        const levelName = file.name.replace(/\.[^/.]+$/, "");
+        loadDataIntoGraph(data, levelName);
+      } catch (err) {
+        alert("Invalid JSON file");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   };
 
   const handleExportJson = async () => {
@@ -951,7 +975,7 @@ export default function GraphEditor() {
       const wordNodes = childNodes.filter(n => !n.data.isCategory && !n.data.isChunk);
       
       const subcats = subcatNodes.map(n => getTreeSig(n.id));
-      return { numWords: wordNodes.length, subcats };
+      return { nodeId, numWords: wordNodes.length, wordNodeIds: wordNodes.map(n => n.id), subcats };
     };
 
     const getDictSig = (catName: string): any => {
@@ -998,8 +1022,6 @@ export default function GraphEditor() {
     for (const root of rootNodes) {
       const sig = getTreeSig(root.id);
       const allOldNodes = [root, ...getAllDescendants(root.id)];
-      const oldWordNodes = allOldNodes.filter(n => !n.data.isCategory && !n.data.isChunk);
-      const oldIndices = oldWordNodes.map(n => n.data.globalIndex).filter(idx => idx !== undefined).sort((a:any,b:any)=>a-b);
       
       const matches = globalDict.filter((cat: any) => {
         if (usedCategories.has(cat.name)) return false;
@@ -1011,38 +1033,60 @@ export default function GraphEditor() {
         continue;
       }
 
-      // If popular words provided, prioritize matches containing them
-      let chosenCat = matches[Math.floor(Math.random() * matches.length)];
+      // Shuffle matches to prevent alphabetical bias on ties
+      matches.sort(() => Math.random() - 0.5);
+
+      if (minPopularity > 0) {
+        matches.sort((a: any, b: any) => {
+          const aCount = a.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
+          const bCount = b.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
+          return bCount - aCount;
+        });
+      }
+
+      let chosenCat = matches[0];
+
       if (popularWords) {
         const terms = popularWords.split(/[\n,]+/).map(t => t.trim().toLowerCase()).filter(Boolean);
         if (terms.length > 0) {
-          const sortedMatches = [...matches].sort((a, b) => {
+          matches.sort((a: any, b: any) => {
             const aMatch = terms.some(t => a.name.toLowerCase().includes(t) || a.words.some((w:any) => w.word.toLowerCase().includes(t))) ? 1 : 0;
             const bMatch = terms.some(t => b.name.toLowerCase().includes(t) || b.words.some((w:any) => w.word.toLowerCase().includes(t))) ? 1 : 0;
             return bMatch - aMatch;
           });
-          chosenCat = sortedMatches[0];
+          chosenCat = matches[0];
         }
       }
       
       usedCategories.add(chosenCat.name);
 
-      // Now we build the new tree structure based on chosenCat
       const newImportedNodes: Node[] = [];
       const newImportedEdges: Edge[] = [];
       const createdCats = new Set<string>();
 
-      const importBranch = (catName: string, parentId: string | null, depth: number, currentReqSig: any, oldCatNodePos: any) => {
+      const importBranch = (catName: string, parentId: string | null, depth: number, currentReqSig: any) => {
         const entry = globalDict.find((e: any) => e.name.toLowerCase() === catName.toLowerCase());
         if (!entry) return;
 
+        const oldCatNode = nodes.find(n => n.id === currentReqSig.nodeId);
         const nodeId = uuidv4();
+        
         if (!createdCats.has(catName.toLowerCase())) {
+          let newIcon = entry.icon;
+          if (oldCatNode) {
+            const oldHasIcon = !!oldCatNode.data.icon;
+            if (!oldHasIcon) {
+              newIcon = null;
+            } else if (!newIcon) {
+              newIcon = entry.name.toLowerCase();
+            }
+          }
+
           newImportedNodes.push({
             id: nodeId,
             type: 'custom',
-            position: oldCatNodePos || { x: 0, y: 0 },
-            data: { label: entry.name, isCategory: true, icon: entry.icon }
+            position: oldCatNode?.position || { x: 0, y: 0 },
+            data: { label: entry.name, isCategory: true, icon: newIcon }
           });
           createdCats.add(catName.toLowerCase());
         }
@@ -1059,6 +1103,7 @@ export default function GraphEditor() {
 
         let chosenSubcategories: string[] = [];
         let availSubs = [...entry.subcategories];
+        availSubs.sort(() => Math.random() - 0.5);
         
         if (popularWords) {
           const terms = popularWords.split(/[\n,]+/).map(t => t.trim().toLowerCase()).filter(Boolean);
@@ -1075,14 +1120,27 @@ export default function GraphEditor() {
             const chosenSub = availSubs[matchIdx];
             availSubs.splice(matchIdx, 1);
             chosenSubcategories.push(chosenSub);
-            // We just pass {x:0, y:0} since we'll auto-layout anyway, or try to match positions if possible. 
-            importBranch(chosenSub, nodeId, depth + 1, rSub, null);
+            importBranch(chosenSub, nodeId, depth + 1, rSub);
           }
         });
 
         let wordsToImport = entry.words.filter((w: any) => 
           !chosenSubcategories.some((sub: string) => sub.toLowerCase() === w.word.toLowerCase())
         );
+
+        wordsToImport.sort(() => Math.random() - 0.5);
+
+        if (minPopularity > 0) {
+          wordsToImport.sort((a: any, b: any) => {
+            const aPop = a.popularity || 0;
+            const bPop = b.popularity || 0;
+            const aMet = aPop >= minPopularity ? 1 : 0;
+            const bMet = bPop >= minPopularity ? 1 : 0;
+            if (aMet !== bMet) return bMet - aMet;
+            if (aMet && bMet) return 0;
+            return bPop - aPop;
+          });
+        }
 
         if (popularWords) {
           const terms = popularWords.split(/[\n,]+/).map(t => t.trim().toLowerCase()).filter(Boolean);
@@ -1094,13 +1152,25 @@ export default function GraphEditor() {
         }
         wordsToImport = wordsToImport.slice(0, currentReqSig.numWords);
 
-        wordsToImport.forEach((w: any) => {
+        wordsToImport.forEach((w: any, index: number) => {
+          const oldWordNode = nodes.find(n => n.id === currentReqSig.wordNodeIds[index]);
           const wordId = uuidv4();
+          
+          let newIcon = w.icon;
+          if (oldWordNode) {
+            const oldHasIcon = !!oldWordNode.data.icon;
+            if (!oldHasIcon) {
+              newIcon = null;
+            } else if (!newIcon) {
+              newIcon = w.word.toLowerCase();
+            }
+          }
+
           newImportedNodes.push({
             id: wordId,
             type: 'custom',
-            position: { x: 0, y: 0 },
-            data: { label: w.word.toLowerCase(), isCategory: false, icon: w.icon }
+            position: oldWordNode?.position || { x: 0, y: 0 },
+            data: { label: w.word.toLowerCase(), isCategory: false, icon: newIcon, globalIndex: oldWordNode?.data.globalIndex }
           });
           newImportedEdges.push({
             id: `e-${nodeId}-${wordId}`,
@@ -1109,67 +1179,53 @@ export default function GraphEditor() {
             animated: true,
             style: { stroke: 'var(--accent)' }
           });
-        });
-      };
 
-      importBranch(chosenCat.name, null, 0, sig, root.position);
-
-      const newWordNodes = newImportedNodes.filter(n => !n.data.isCategory);
-      if (oldIndices.length > 0 && newWordNodes.length === oldIndices.length && clonedRawData && Array.isArray(clonedRawData.allWordEntries)) {
-        oldIndices.forEach((idx, i) => {
-          const newWordNode = newWordNodes[i];
-          const oldWordNode = oldWordNodes[i];
-          newWordNode.data.globalIndex = idx;
-          newWordNode.position = oldWordNode.position; // copy position
-          
-          const arrayIndex = clonedRawData!.allWordEntries.findIndex((e:any) => e.idx === idx);
-          if (arrayIndex !== -1) {
-            const childLabel = String(newWordNode.data.label);
-            const oldHasIcon = !!oldWordNode.data.icon;
-            if (!oldHasIcon) {
-              newWordNode.data.icon = null;
-            } else if (!newWordNode.data.icon) {
-              newWordNode.data.icon = childLabel.toLowerCase();
+          // Sync rawLevelData
+          if (oldWordNode && clonedRawData && Array.isArray(clonedRawData.allWordEntries)) {
+            const arrayIndex = clonedRawData.allWordEntries.findIndex((e:any) => e.idx === oldWordNode.data.globalIndex);
+            if (arrayIndex !== -1) {
+              clonedRawData.allWordEntries[arrayIndex] = {
+                ...clonedRawData.allWordEntries[arrayIndex],
+                fullWord: w.word.charAt(0).toUpperCase() + w.word.slice(1),
+                chunks: [],
+                icon: newIcon,
+                IsCracked: 0,
+                crackBreakNum: 0,
+                IsLinked: 0,
+                linkedChunkWords: []
+              };
             }
-
-            clonedRawData!.allWordEntries[arrayIndex] = {
-              ...clonedRawData!.allWordEntries[arrayIndex],
-              fullWord: childLabel.charAt(0).toUpperCase() + childLabel.slice(1),
-              chunks: [],
-              icon: newWordNode.data.icon,
-              IsCracked: 0,
-              crackBreakNum: 0,
-              IsLinked: 0,
-              linkedChunkWords: []
-            };
           }
-        });
-        
-        // Auto cut words if enabled
-        if (autoCutWords) {
-          oldWordNodes.forEach((oldNode, i) => {
-            const hasChunks = clonedEdges.some(e => e.source === oldNode.id && clonedNodes.find(n => n.id === e.target)?.data.isChunk);
+
+          // Chunk preservation (regardless of autoCutWords)
+          if (oldWordNode) {
+            const hasChunks = edges.some(e => e.source === oldWordNode.id && nodes.find(n => n.id === e.target)?.data.isChunk);
             if (hasChunks) {
-              // Instead of calling createChunksForWord which uses functional updates, we just mutate the cloned arrays directly.
-              const wordStr = String(newWordNodes[i].data.label).toLowerCase();
+              const wordStr = w.word.toLowerCase();
               const chunkLen = Math.floor(wordStr.length / 2) || 1;
               const c1 = wordStr.substring(0, chunkLen);
               const c2 = wordStr.substring(chunkLen);
               const c1Id = uuidv4();
               const c2Id = uuidv4();
-              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: newWordNodes[i].position.x - 40, y: newWordNodes[i].position.y + 60 }, data: { label: c1, isCategory: false, isChunk: true }});
-              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: newWordNodes[i].position.x + 40, y: newWordNodes[i].position.y + 60 }, data: { label: c2, isCategory: false, isChunk: true }});
-              newImportedEdges.push({ id: `e-${newWordNodes[i].id}-${c1Id}`, source: newWordNodes[i].id, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
-              newImportedEdges.push({ id: `e-${newWordNodes[i].id}-${c2Id}`, source: newWordNodes[i].id, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
+              const baseX = oldWordNode.position.x;
+              const baseY = oldWordNode.position.y;
+              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true }});
+              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true }});
+              newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
+              newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
               
-              const arrayIndex = clonedRawData!.allWordEntries.findIndex((e:any) => e.idx === newWordNodes[i].data.globalIndex);
-              if (arrayIndex !== -1) {
-                clonedRawData!.allWordEntries[arrayIndex].chunks = [c1, c2];
+              if (clonedRawData && Array.isArray(clonedRawData.allWordEntries)) {
+                const arrayIndex = clonedRawData.allWordEntries.findIndex((e:any) => e.idx === oldWordNode.data.globalIndex);
+                if (arrayIndex !== -1) {
+                  clonedRawData.allWordEntries[arrayIndex].chunks = [c1, c2];
+                }
               }
             }
-          });
-        }
-      }
+          }
+        });
+      };
+
+      importBranch(chosenCat.name, null, 0, sig);
 
       // Remove old tree nodes & edges
       const allOldIds = new Set(allOldNodes.map(n => n.id));
@@ -1378,6 +1434,24 @@ export default function GraphEditor() {
           >
             <Save size={14} /> Save JSON
           </button>
+          
+          <input 
+            type="file" 
+            accept=".json"
+            ref={fileInputRef}
+            onChange={handleLoadJson}
+            style={{ display: 'none' }}
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              padding: '8px 12px', borderRadius: '8px', border: 'none',
+              background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500
+            }}
+          >
+            <RefreshCw size={14} /> Load JSON
+          </button>
         </div>
       </div>
 
@@ -1578,9 +1652,9 @@ export default function GraphEditor() {
       <MagicChangeModal
         isOpen={isMagicChangeOpen}
         onClose={() => setIsMagicChangeOpen(false)}
-        onExecute={(popularWords) => {
+        onExecute={(popularWords, minPopularity) => {
           setIsMagicChangeOpen(false);
-          handleMagicChange(popularWords);
+          handleMagicChange(popularWords, minPopularity);
         }}
       />
 
