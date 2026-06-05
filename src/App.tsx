@@ -1,9 +1,12 @@
 import GraphEditor from './components/GraphEditor';
+import { ReactFlowProvider } from '@xyflow/react';
 
 function App() {
   return (
     <div className="App">
-      <GraphEditor />
+      <ReactFlowProvider>
+        <GraphEditor />
+      </ReactFlowProvider>
     </div>
   );
 }

@@ -5,18 +5,19 @@ interface DictEntry {
   name: string;
   parents: string[];
   subcategories: string[];
-  words: string[];
+  words: { word: string; icon: string | null }[];
 }
 
 interface DictionaryBrowserProps {
   isOpen: boolean;
   onClose: () => void;
-  onImport: (categoryName: string, dictionary: DictEntry[]) => void;
+  onImport: (categoryName: string, dictionary: DictEntry[], singleNodeOnly?: boolean) => void;
 }
 
 export default function DictionaryBrowser({ isOpen, onClose, onImport }: DictionaryBrowserProps) {
   const [dictionary, setDictionary] = useState<DictEntry[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [exactMatch, setExactMatch] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const loadDict = () => {
@@ -48,16 +49,35 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
     setExpandedCategories(next);
   };
 
-  const handleImport = (name: string) => {
-    onImport(name, dictionary);
+  const handleImport = (name: string, singleNodeOnly: boolean = false) => {
+    onImport(name, dictionary, singleNodeOnly);
     onClose();
   };
 
-  const filteredDict = dictionary.filter(entry => 
-    entry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    entry.words.some(w => w.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    entry.subcategories.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredDict = dictionary.filter(entry => {
+    if (!searchQuery) return true;
+    
+    const checkMatch = (queryPart: string, exact: boolean) => {
+      const q = queryPart.trim().toLowerCase();
+      if (!q) return true;
+      if (exact) {
+        return entry.name.toLowerCase() === q ||
+          entry.words.some((w: any) => w.word.toLowerCase() === q) ||
+          entry.subcategories.some((s: string) => s.toLowerCase() === q);
+      }
+      return entry.name.toLowerCase().includes(q) ||
+        entry.words.some((w: any) => w.word.toLowerCase().includes(q)) ||
+        entry.subcategories.some((s: string) => s.toLowerCase().includes(q));
+    };
+
+    if (searchQuery.includes('&')) {
+      const parts = searchQuery.split('&');
+      // All parts separated by '&' must match within this category
+      return parts.every(part => checkMatch(part, exactMatch));
+    } else {
+      return checkMatch(searchQuery, exactMatch);
+    }
+  });
 
   return (
     <div style={{
@@ -86,21 +106,27 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
 
         {/* Search */}
         <div style={{ padding: '20px', borderBottom: '1px solid var(--panel-border)' }}>
-          <div style={{ position: 'relative' }}>
-            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
-            <input 
-              type="text" 
-              placeholder="Search for categories or words..." 
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%', padding: '12px 12px 12px 40px', borderRadius: '8px',
-                background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)',
-                color: 'white', fontSize: '15px', outline: 'none'
-              }}
-            />
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
+              <input 
+                type="text" 
+                placeholder="Search for categories or words..." 
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{
+                  width: '100%', padding: '12px 12px 12px 40px', borderRadius: '8px',
+                  background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)',
+                  color: 'white', fontSize: '15px', outline: 'none'
+                }}
+              />
+            </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', color: '#aaa', userSelect: 'none', background: 'rgba(255,255,255,0.05)', padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+              <input type="checkbox" checked={exactMatch} onChange={(e) => setExactMatch(e.target.checked)} style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
+              Exact Match
+            </label>
           </div>
-          <div style={{ marginTop: '8px', fontSize: '13px', color: '#888' }}>
+          <div style={{ marginTop: '12px', fontSize: '13px', color: '#888' }}>
             Loaded {dictionary.length} unique categories from 1000 levels.
           </div>
         </div>
@@ -131,16 +157,28 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
                     </span>
                   </div>
                   
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleImport(entry.name); }}
-                    style={{
-                      background: 'var(--accent)', color: 'white', border: 'none',
-                      padding: '6px 12px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
-                      display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer'
-                    }}
-                  >
-                    <PlusCircle size={14} /> Import to Graph
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleImport(entry.name, true); }}
+                      style={{
+                        background: 'transparent', color: 'var(--accent)', border: '1px solid var(--accent)',
+                        padding: '6px 12px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
+                        display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer'
+                      }}
+                    >
+                      <PlusCircle size={14} /> Import Node
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleImport(entry.name, false); }}
+                      style={{
+                        background: 'var(--accent)', color: 'white', border: 'none',
+                        padding: '6px 12px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
+                        display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer'
+                      }}
+                    >
+                      <PlusCircle size={14} /> Import Branch
+                    </button>
+                  </div>
                 </div>
                 
                 {isExpanded && (
@@ -150,7 +188,11 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
                       {entry.subcategories.length === 0 ? <span style={{ color: '#666' }}>None</span> : 
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                           {entry.subcategories.map(s => (
-                            <span key={s} style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px', fontSize: '13px' }}>
+                            <span 
+                              key={s} 
+                              onClick={(e) => { e.stopPropagation(); setSearchQuery(s); }}
+                              style={{ background: 'rgba(56, 189, 248, 0.1)', color: '#38bdf8', padding: '4px 8px', borderRadius: '4px', fontSize: '13px', cursor: 'pointer' }}
+                            >
                               {s}
                             </span>
                           ))}
@@ -162,8 +204,13 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
                       {entry.words.length === 0 ? <span style={{ color: '#666' }}>None</span> : 
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                           {entry.words.map(w => (
-                            <span key={w} style={{ background: 'rgba(255,255,255,0.05)', color: '#ddd', padding: '4px 8px', borderRadius: '4px', fontSize: '13px' }}>
-                              {w}
+                            <span 
+                              key={w.word} 
+                              onClick={(e) => { e.stopPropagation(); setSearchQuery(w.word); }}
+                              style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.05)', color: '#ddd', padding: '4px 8px', borderRadius: '4px', fontSize: '13px', cursor: 'pointer' }}
+                            >
+                              {w.icon && <img src={`/word_icon/${w.icon.endsWith('.png') ? w.icon : w.icon + '.png'}`} alt={w.word} style={{ width: '16px', height: '16px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
+                              {w.word}
                             </span>
                           ))}
                         </div>

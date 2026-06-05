@@ -1,27 +1,86 @@
 import React, { useState, useEffect } from 'react';
-import type { Node } from '@xyflow/react';
-import { Plus, X, Trash2, BookOpen, Layers, Globe } from 'lucide-react';
+import type { Node, Edge } from '@xyflow/react';
+import { Plus, X, Trash2, BookOpen, Layers, Globe, Search as SearchIcon } from 'lucide-react';
 import { fetchSpecificTypes, fetchRelatedWords, fetchWikipediaSuggestions, type WordSuggestion } from '../lib/api';
+
+interface Signature {
+  numWords: number;
+  subcats: Signature[];
+}
+
+const getSelectionSignature = (rootId: string, selNodes: Node[], allEdges: Edge[]): Signature => {
+  const childrenEdges = allEdges.filter(e => e.source === rootId && selNodes.some(n => n.id === e.target));
+  const childNodes = childrenEdges.map(e => selNodes.find(n => n.id === e.target)!);
+  
+  const words = childNodes.filter(n => !n.data.isCategory && !n.data.isChunk);
+  const subcats = childNodes.filter(n => n.data.isCategory);
+  
+  return {
+    numWords: words.length,
+    subcats: subcats.map(c => getSelectionSignature(c.id, selNodes, allEdges))
+  };
+};
+
+const getDictSignature = (catName: string, dict: any[]): Signature | null => {
+  const entry = dict.find(e => e.name.toLowerCase() === catName.toLowerCase());
+  if (!entry) return null;
+  return {
+    numWords: entry.words.length,
+    subcats: entry.subcategories.map((sub: string) => getDictSignature(sub, dict)).filter(Boolean) as Signature[]
+  };
+};
+
+const sortSignature = (sig: Signature): Signature => {
+  return {
+    numWords: sig.numWords,
+    subcats: sig.subcats.map(sortSignature).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
+  };
+};
+
+const isStructureFulfilled = (req: Signature | null, avail: Signature | null): boolean => {
+  if (!req || !avail) return false;
+  if (avail.numWords < req.numWords) return false;
+  
+  if (req.subcats.length > avail.subcats.length) return false;
+  
+  let availSubs = [...avail.subcats];
+  for (const reqSub of req.subcats) {
+    const matchIdx = availSubs.findIndex(aSub => isStructureFulfilled(reqSub, aSub));
+    if (matchIdx === -1) return false;
+    availSubs.splice(matchIdx, 1);
+  }
+  return true;
+};
 
 interface SidebarProps {
   selectedNode: Node | null;
+  selectedNodes?: Node[];
+  edges?: Edge[];
+  nodes?: Node[];
   contextChildLabel?: string;
   onClose: () => void;
-  onAddChild: (parent: Node, childLabel: string) => void;
+  onAddChild: (parent: Node, childLabel: string, isChunk?: boolean) => void;
   onDeleteNode: () => void;
   onRenameNode: (nodeId: string, newLabel: string) => void;
-  onImportDictionary: (categoryName: string, dictionary: any[], targetParentId?: string) => void;
+  onToggleNodeIcon?: (nodeId: string, currentIcon: string | null) => void;
+  onUpdateNodeIndex?: (nodeId: string, newIndex: number | undefined) => void;
+  onImportDictionary: (categoryName: string, dictionary: any[], targetParentId?: string, options?: any) => void;
 }
 
 type TabType = 'dict' | 'specific' | 'related' | 'wiki';
 
-export default function Sidebar({ selectedNode, contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onImportDictionary }: SidebarProps) {
+export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary }: SidebarProps) {
   const [manualWord, setManualWord] = useState('');
   const [suggestions, setSuggestions] = useState<WordSuggestion[]>([]);
-  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('dict');
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
+  const [matchedCategories, setMatchedCategories] = useState<any[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [matchSearchQuery, setMatchSearchQuery] = useState('');
+  const [matchSortOrder, setMatchSortOrder] = useState<'asc'|'desc'>('asc');
+  const [replaceOldTree, setReplaceOldTree] = useState(false);
   
   const [dictionary, setDictionary] = useState<any[]>([]);
 
@@ -39,6 +98,59 @@ export default function Sidebar({ selectedNode, contextChildLabel, onClose, onAd
       loadSuggestions(activeTab);
     }
   }, [selectedNode, activeTab, contextChildLabel]);
+
+  const isMultiSelection = selectedNodes.length > 1;
+  const selectionId = selectedNodes.map(n => n.id).sort().join(',');
+
+  useEffect(() => {
+    setMatchedCategories([]);
+    setHasSearched(false);
+    setMatchSearchQuery('');
+  }, [selectionId]);
+
+  const handleSearchSimilar = () => {
+    if (isMultiSelection && dictionary.length > 0) {
+      const rootNodes = selectedNodes.filter(n => 
+        !edges.some(e => e.target === n.id && selectedNodes.some(sn => sn.id === e.source))
+      );
+      
+      if (rootNodes.length >= 1) {
+        const rootId = rootNodes[0].id;
+        const selSig = getSelectionSignature(rootId, selectedNodes, edges);
+        
+        const matches = dictionary.filter(dictEntry => {
+          const dictSig = getDictSignature(dictEntry.name, dictionary);
+          return isStructureFulfilled(selSig, dictSig);
+        });
+        setMatchedCategories(matches);
+        setHasSearched(true);
+      }
+    }
+  };
+
+  const isAlreadyInGraph = (catName: string) => {
+    return (nodes || []).some(n => 
+      n.data.isCategory && String(n.data.label).toLowerCase() === catName.toLowerCase()
+    );
+  };
+
+  const filteredMatches = matchedCategories
+    .filter(cat => {
+      const terms = matchSearchQuery.split('&').map(t => t.trim().toLowerCase()).filter(Boolean);
+      if (terms.length === 0) return true;
+      
+      const catName = cat.name.toLowerCase();
+      const catWords = (cat.words || []).map((w: any) => (typeof w === 'string' ? w : (w.word || '')).toLowerCase());
+      
+      // Every term must be found either in the category name or in its words
+      return terms.every(term => 
+        catName.includes(term) || catWords.some((w: string) => w.includes(term))
+      );
+    })
+    .sort((a, b) => {
+      if (matchSortOrder === 'asc') return a.name.localeCompare(b.name);
+      return b.name.localeCompare(a.name);
+    });
 
   const loadSuggestions = async (tab: TabType) => {
     if (!selectedNode || tab === 'dict') return;
@@ -70,12 +182,121 @@ export default function Sidebar({ selectedNode, contextChildLabel, onClose, onAd
            searchStr === name + 'es';
   }) : null;
 
+  if (!selectedNode && selectedNodes.length === 0) return null;
+
+  if (isMultiSelection) {
+    return (
+      <div className="glass-panel" style={{
+        position: 'absolute', right: '20px', top: '20px', width: '360px',
+        maxHeight: 'calc(100vh - 40px)', overflowY: 'auto', borderRadius: '16px',
+        display: 'flex', flexDirection: 'column', zIndex: 10,
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+      }}>
+        <div style={{ padding: '20px', borderBottom: '1px solid var(--panel-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '4px' }}>MULTI-SELECTION</div>
+            <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--accent)' }}>
+              {selectedNodes.length} Nodes Selected
+            </h2>
+          </div>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}>
+            <X size={20} />
+          </button>
+        </div>
+        
+        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ background: 'rgba(99,102,241,0.1)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(99,102,241,0.3)' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#a5b4fc' }}>Structure Matcher</h4>
+            <div style={{ fontSize: '12px', color: '#ddd', marginBottom: '16px' }}>
+              Find categories in the dictionary with the exact same structure (excluding chunks).
+            </div>
+            
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+              <input 
+                type="text"
+                placeholder="Text filter (e.g. apple & fruit)..."
+                value={matchSearchQuery}
+                onChange={e => setMatchSearchQuery(e.target.value)}
+                style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '13px' }}
+              />
+              <button 
+                onClick={() => setMatchSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                title="Sort Alphabetically"
+                style={{ padding: '8px 12px', borderRadius: '6px', background: 'var(--panel-border)', border: 'none', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}
+              >
+                {matchSortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+              </button>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+              <input 
+                type="checkbox" 
+                id="replaceToggle" 
+                checked={replaceOldTree} 
+                onChange={(e) => setReplaceOldTree(e.target.checked)} 
+                style={{ cursor: 'pointer' }}
+              />
+              <label htmlFor="replaceToggle" style={{ fontSize: '13px', color: 'var(--text-main)', cursor: 'pointer', flex: 1 }}>
+                Replace old tree (Delete & inherit indices)
+              </label>
+            </div>
+
+            <button onClick={handleSearchSimilar} disabled={loading} style={{
+              width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--accent)', 
+              color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+            }}>
+              <SearchIcon size={16} /> Search Dictionary
+            </button>
+          </div>
+
+          {hasSearched && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                Showing {Math.min(filteredMatches.length, 10)} of {filteredMatches.length} matching trees
+                (total {matchedCategories.length} structures found)
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {filteredMatches.slice(0, 10).map(cat => {
+                  const exists = isAlreadyInGraph(cat.name);
+                  return (
+                    <div key={cat.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: exists ? 'rgba(239,68,68,0.1)' : 'rgba(0,0,0,0.2)', padding: '10px 12px', borderRadius: '8px', border: exists ? '1px solid rgba(239,68,68,0.4)' : '1px solid var(--panel-border)' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 500, fontSize: '14px', textTransform: 'capitalize', color: exists ? '#f87171' : 'white' }}>{cat.name}</span>
+                        {exists && <span style={{ fontSize: '11px', color: '#f87171', marginTop: '2px' }}>Already in graph</span>}
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const rootId = selectedNodes.filter(n => !edges.some(e => e.target === n.id && selectedNodes.some(sn => sn.id === e.source)))[0]?.id;
+                          const selSig = rootId ? getSelectionSignature(rootId, selectedNodes, edges) : undefined;
+                          onImportDictionary(cat.name, dictionary, undefined, {
+                            requiredSig: selSig,
+                            searchQuery: matchSearchQuery,
+                            replaceNodes: replaceOldTree ? selectedNodes : [],
+                            keepOldTreeAnchor: !replaceOldTree ? selectedNodes : []
+                          });
+                        }}
+                        style={{ background: exists ? 'rgba(239,68,68,0.2)' : 'var(--accent)', color: exists ? '#f87171' : 'white', border: exists ? '1px solid rgba(239,68,68,0.4)' : 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
+                      >
+                        Insert
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (!selectedNode) return null;
 
-  const handleManualAdd = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleManualAdd = (isChunk: boolean) => {
     if (manualWord.trim()) {
-      onAddChild(selectedNode, manualWord.trim().toLowerCase());
+      onAddChild(selectedNode, manualWord.trim().toLowerCase(), isChunk);
       setManualWord('');
     }
   };
@@ -124,6 +345,16 @@ export default function Sidebar({ selectedNode, contextChildLabel, onClose, onAd
                   border: '1px solid var(--accent)', color: 'white', width: '100%', outline: 'none'
                 }}
               />
+              <button 
+                type="submit"
+                style={{
+                  background: 'var(--accent)', color: 'white', border: 'none', padding: '8px 16px',
+                  borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Save
+              </button>
             </form>
           ) : (
             <h2 
@@ -160,33 +391,134 @@ export default function Sidebar({ selectedNode, contextChildLabel, onClose, onAd
         </div>
 
         {/* Manual Add */}
-        <form onSubmit={handleManualAdd} style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <input 
             type="text" 
             value={manualWord}
             onChange={(e) => setManualWord(e.target.value)}
-            placeholder="Type custom child word..."
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleManualAdd(false);
+              }
+            }}
+            placeholder={selectedNode.data.isChunk ? "Cannot add children to chunk..." : "Type node or chunk name..."}
+            disabled={selectedNode.data.isChunk as boolean}
             style={{
-              flex: 1, padding: '10px 12px', borderRadius: '8px',
+              width: '100%', padding: '10px 12px', borderRadius: '8px', boxSizing: 'border-box',
               background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)',
               color: 'var(--text-main)', outline: 'none'
             }}
           />
-          <button type="submit" style={{
-            padding: '10px', borderRadius: '8px',
-            background: 'var(--panel-border)', border: 'none', color: 'var(--text-main)', cursor: 'pointer'
-          }}>
-            <Plus size={18} />
-          </button>
-        </form>
+          {!selectedNode.data.isChunk && (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={() => handleManualAdd(false)} style={{
+                flex: 1, padding: '8px', borderRadius: '8px', fontSize: '13px',
+                background: 'var(--panel-border)', border: 'none', color: 'var(--text-main)', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px'
+              }}>
+                <Plus size={16} /> Node
+              </button>
+              
+              {!selectedNode.data.isCategory && (
+                <button onClick={() => handleManualAdd(true)} style={{
+                  flex: 1, padding: '8px', borderRadius: '8px', fontSize: '13px',
+                  background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.4)', color: '#a5b4fc', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px'
+                }}>
+                  <Plus size={16} /> Chunk
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginTop: '10px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>Order (Index)</span>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+            <input 
+              type="number"
+              value={(selectedNode.data.globalIndex as number) || ''}
+              onChange={(e) => {
+                if (onUpdateNodeIndex) {
+                  const val = e.target.value === '' ? undefined : parseInt(e.target.value, 10);
+                  onUpdateNodeIndex(selectedNode.id, val);
+                }
+              }}
+              placeholder="Auto"
+              style={{ flex: 1, padding: '6px', background: 'var(--bg-main)', border: '1px solid var(--panel-border)', borderRadius: '4px', color: 'var(--text-main)' }}
+            />
+          </div>
+        </div>
+
+        {(() => {
+          if (selectedNode.data.isChunk || !onToggleNodeIcon) return null;
+          
+          const label = String(selectedNode.data.label).toLowerCase();
+          let dictHasIcon = false;
+          
+          // Check if it has an icon defined as a Category (just in case global_dictionary adds it later)
+          const catEntry = dictionary.find((c:any) => c.name.toLowerCase() === label);
+          if (catEntry && catEntry.icon) dictHasIcon = true;
+          
+          // Also check if it has an icon defined as a Word in any category (e.g. "Pig" is both a Category and a Word)
+          if (!dictHasIcon) {
+            for (const cat of dictionary) {
+              const wordEntry = cat.words?.find((w: any) => w.word.toLowerCase() === label);
+              if (wordEntry && wordEntry.icon) {
+                dictHasIcon = true;
+                break;
+              }
+            }
+          }
+
+          return (
+            <div style={{ background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>Icon Configuration</span>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ 
+                  width: '48px', height: '48px', background: 'var(--panel-bg)', borderRadius: '8px', 
+                  border: '1px solid var(--panel-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                }}>
+                  {selectedNode.data.icon && dictHasIcon ? (
+                    <img src={`/word_icon/${selectedNode.data.icon}.png`} alt="icon" style={{ maxWidth: '32px', maxHeight: '32px' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  ) : (
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center' }}>No Icon</span>
+                  )}
+                </div>
+                
+                {dictHasIcon ? (
+                  <button
+                    onClick={() => onToggleNodeIcon(selectedNode.id, selectedNode.data.icon as string | null)}
+                    style={{
+                      background: selectedNode.data.icon ? 'rgba(239,68,68,0.1)' : 'rgba(56, 189, 248, 0.1)',
+                      color: selectedNode.data.icon ? '#f87171' : 'var(--accent)',
+                      border: `1px solid ${selectedNode.data.icon ? 'rgba(239,68,68,0.2)' : 'rgba(56, 189, 248, 0.2)'}`,
+                      padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer'
+                    }}
+                  >
+                    {selectedNode.data.icon ? 'Remove Icon' : 'Set Default Icon'}
+                  </button>
+                ) : (
+                  <span style={{ fontSize: '12px', color: '#f87171' }}>Not found in dictionary</span>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Suggestion Tabs */}
-        <div style={{ display: 'flex', gap: '4px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>
-          <TabButton active={activeTab === 'dict'} onClick={() => setActiveTab('dict')} icon={<BookOpen size={14}/>} text="Dict" />
-          <TabButton active={activeTab === 'specific'} onClick={() => setActiveTab('specific')} icon={<Layers size={14}/>} text="Specific" />
-          <TabButton active={activeTab === 'related'} onClick={() => setActiveTab('related')} icon={<BookOpen size={14}/>} text="Related" />
-          <TabButton active={activeTab === 'wiki'} onClick={() => setActiveTab('wiki')} icon={<Globe size={14}/>} text="Wiki" />
-        </div>
+        {!selectedNode.data.isChunk && (
+          <div style={{ display: 'flex', gap: '4px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>
+            <TabButton active={activeTab === 'dict'} onClick={() => setActiveTab('dict')} icon={<BookOpen size={14}/>} text="Dict" />
+            <TabButton active={activeTab === 'specific'} onClick={() => setActiveTab('specific')} icon={<Layers size={14}/>} text="Specific" />
+            <TabButton active={activeTab === 'related'} onClick={() => setActiveTab('related')} icon={<BookOpen size={14}/>} text="Related" />
+            <TabButton active={activeTab === 'wiki'} onClick={() => setActiveTab('wiki')} icon={<Globe size={14}/>} text="Wiki" />
+          </div>
+        )}
         
         {/* Context Hint */}
         {activeTab === 'related' && contextChildLabel && (
@@ -241,10 +573,10 @@ export default function Sidebar({ selectedNode, contextChildLabel, onClose, onAd
                 <div>
                   <h4 style={{ margin: '0 0 8px 0', fontSize: '12px', color: 'var(--text-muted)' }}>WORDS</h4>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                    {dictEntry.words.map((w: string, i: number) => (
+                    {dictEntry.words.map((wObj: any, i: number) => (
                       <button 
                         key={i}
-                        onClick={() => onAddChild(selectedNode, w.toLowerCase())}
+                        onClick={() => onAddChild(selectedNode, wObj.word.toLowerCase())}
                         style={{
                           padding: '4px 10px', borderRadius: '12px',
                           background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)',
@@ -252,7 +584,12 @@ export default function Sidebar({ selectedNode, contextChildLabel, onClose, onAd
                           display: 'flex', alignItems: 'center', gap: '4px'
                         }}
                       >
-                        <Plus size={10} /> {w}
+                        {wObj.icon ? (
+                          <img src={`/word_icon/${wObj.icon.endsWith('.png') ? wObj.icon : wObj.icon + '.png'}`} alt={wObj.word} style={{ width: '12px', height: '12px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                        ) : (
+                          <Plus size={10} />
+                        )}
+                        {wObj.word}
                       </button>
                     ))}
                   </div>
