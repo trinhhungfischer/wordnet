@@ -79,6 +79,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [matchSearchQuery, setMatchSearchQuery] = useState('');
+  const [matchExact, setMatchExact] = useState(false);
   const [matchSortOrder, setMatchSortOrder] = useState<'asc'|'desc'>('asc');
   const [replaceOldTree, setReplaceOldTree] = useState(false);
   
@@ -144,7 +145,9 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
       
       // Every term must be found either in the category name or in its words
       return terms.every(term => 
-        catName.includes(term) || catWords.some((w: string) => w.includes(term))
+        matchExact
+          ? catName === term || catWords.some((w: string) => w === term)
+          : catName.includes(term) || catWords.some((w: string) => w.includes(term))
       );
     })
     .sort((a, b) => {
@@ -211,7 +214,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
               Find categories in the dictionary with the exact same structure (excluding chunks).
             </div>
             
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
               <input 
                 type="text"
                 placeholder="Text filter (e.g. apple & fruit)..."
@@ -227,6 +230,10 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                 {matchSortOrder === 'asc' ? 'A-Z' : 'Z-A'}
               </button>
             </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ccc', cursor: 'pointer', marginBottom: '12px' }}>
+              <input type="checkbox" checked={matchExact} onChange={e => setMatchExact(e.target.checked)} style={{ cursor: 'pointer' }} />
+              Exact Match
+            </label>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
               <input 
@@ -273,6 +280,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                           onImportDictionary(cat.name, dictionary, undefined, {
                             requiredSig: selSig,
                             searchQuery: matchSearchQuery,
+                            exactMatch: matchExact,
                             replaceNodes: replaceOldTree ? selectedNodes : [],
                             keepOldTreeAnchor: !replaceOldTree ? selectedNodes : []
                           });
