@@ -613,10 +613,11 @@ export default function GraphEditor() {
     
     saveHistory();
     const newNodeId = uuidv4();
+    const pos = { x: Math.random() * 400 + 100, y: Math.random() * 200 + 100 };
     const newNode: Node = {
       id: newNodeId,
       type: 'custom',
-      position: { x: Math.random() * 400 + 100, y: Math.random() * 200 + 100 },
+      position: pos,
       data: { label: word.toLowerCase(), isRoot: true, isCategory: true }
     };
     
@@ -624,7 +625,7 @@ export default function GraphEditor() {
     
     setTimeout(() => {
       setSelectedNodeId(newNodeId);
-      handleFocusNode(newNodeId);
+      setCenter(pos.x + 60, pos.y + 30, { zoom: 1.2, duration: 800 });
     }, 50);
   };
 
@@ -1514,16 +1515,6 @@ export default function GraphEditor() {
             <Settings size={14} /> Config
           </button>
           <button 
-            onClick={handleAddRoot}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--panel-border)',
-              background: 'transparent', color: 'var(--text-main)', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500
-            }}
-          >
-            <Plus size={14} /> New Root
-          </button>
-          <button 
             onClick={handleExportJson}
             disabled={!rawLevelData}
             style={{
@@ -1754,6 +1745,35 @@ export default function GraphEditor() {
           maskColor="rgba(0,0,0,0.7)"
           style={{ background: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }} 
         />
+        
+        {/* Floating Action Button for New Node */}
+        <button
+          onClick={handleAddRoot}
+          title="Add New Root Node"
+          style={{
+            position: 'absolute',
+            bottom: '180px',
+            right: '20px',
+            width: '56px',
+            height: '56px',
+            borderRadius: '50%',
+            background: 'var(--accent)',
+            color: 'white',
+            border: 'none',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            zIndex: 10,
+            transition: 'transform 0.2s',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        >
+          <Plus size={28} />
+        </button>
+
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} color="var(--panel-border)" />
       </ReactFlow>
 
