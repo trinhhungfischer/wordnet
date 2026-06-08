@@ -66,6 +66,7 @@ export default function GraphEditor() {
     if (node) {
       setCenter(node.position.x + 60, node.position.y + 30, { zoom: 1.2, duration: 800 });
       setSelectedNodeId(nodeId);
+      setIsSettingsOpen(false);
     }
   };
   
@@ -594,6 +595,7 @@ export default function GraphEditor() {
 
   const onNodeClick = (_: React.MouseEvent, node: Node) => {
     setSelectedNodeId(node.id);
+    setIsSettingsOpen(false);
   };
 
   const handlePaneClick = () => {
@@ -1486,7 +1488,11 @@ export default function GraphEditor() {
 
         <div style={{ display: 'flex', gap: '8px' }}>
           <button 
-            onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+            onClick={() => {
+              const nextState = !isSettingsOpen;
+              setIsSettingsOpen(nextState);
+              if (nextState) setSelectedNodeId(null);
+            }}
             disabled={!rawLevelData}
             style={{
               padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--panel-border)',
