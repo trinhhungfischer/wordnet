@@ -66,9 +66,15 @@ export default function GraphEditor() {
     if (node) {
       setCenter(node.position.x + 60, node.position.y + 30, { zoom: 1.2, duration: 800 });
       setSelectedNodeId(nodeId);
-      setIsSettingsOpen(false);
     }
   };
+
+  // Mutual exclusion: if any node is selected, close settings
+  useEffect(() => {
+    if (selectedNodeId !== null || nodes.some(n => n.selected)) {
+      setIsSettingsOpen(false);
+    }
+  }, [selectedNodeId, nodes]);
   
   const [, setHistory] = useState<{ past: { nodes: Node[], edges: Edge[] }[], future: { nodes: Node[], edges: Edge[] }[] }>({ past: [], future: [] });
 
@@ -595,7 +601,6 @@ export default function GraphEditor() {
 
   const onNodeClick = (_: React.MouseEvent, node: Node) => {
     setSelectedNodeId(node.id);
-    setIsSettingsOpen(false);
   };
 
   const handlePaneClick = () => {
@@ -1736,11 +1741,6 @@ export default function GraphEditor() {
             stroke: e.selected ? '#818cf8' : (e.data?.isSynonym ? '#fca5a5' : '#4b5563')
           }
         }))}
-        onSelectionChange={({ nodes }) => {
-          if (nodes.length > 0 && isSettingsOpen) {
-            setIsSettingsOpen(false);
-          }
-        }}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
         onConnect={onConnect}
