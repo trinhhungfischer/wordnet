@@ -480,8 +480,26 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
       <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
         
         {/* Actions */}
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-          {selectedNode.data.isCategory && (
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <div 
+            style={{
+              flex: 1, padding: '6px 12px', borderRadius: '8px',
+              background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)',
+              display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'
+            }}
+            onClick={() => setAutoCutWords(!autoCutWords)}
+            title="Automatically cut words into chunks when importing"
+          >
+            <input 
+              type="checkbox" 
+              checked={autoCutWords}
+              readOnly
+              style={{ cursor: 'pointer', margin: 0 }}
+            />
+            <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 500 }}>Auto-cut</span>
+          </div>
+
+          {Boolean(selectedNode.data.isCategory) && (
             <>
               <button
                 onClick={() => {

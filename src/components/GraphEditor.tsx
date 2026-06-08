@@ -26,8 +26,7 @@ import Sidebar from './Sidebar';
 import LevelSettings from './LevelSettings';
 import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
-import { exportGraphToCsv } from '../lib/exportCsv';
-import { Save, BookOpen, Settings, Download, Plus, RefreshCw, Puzzle, Sparkles } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link } from 'lucide-react';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -57,7 +56,7 @@ export default function GraphEditor() {
   const [isMagicChangeOpen, setIsMagicChangeOpen] = useState(false);
   const [isDictOpen, setIsDictOpen] = useState(false);
   
-  const [copiedTreeConfig, setCopiedTreeConfig] = useState<CopiedTreeConfig | null>(null);
+  const [copiedTreeConfig, setCopiedTreeConfig] = useState<any | null>(null);
   
   const { setCenter, fitView } = useReactFlow();
 
@@ -707,7 +706,7 @@ export default function GraphEditor() {
     }));
   };
 
-  const handlePasteTreeConfig = useCallback((categoryId: string, config: CopiedTreeConfig) => {
+  const handlePasteTreeConfig = useCallback((categoryId: string, config: any) => {
     saveHistory();
     setNodes(nds => {
       const newNds = [...nds];
@@ -1635,7 +1634,7 @@ export default function GraphEditor() {
                         {String(node.data.label)}
                       </span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {isChained && <Link size={14} color="#818cf8" title="Chained Word" />}
+                        {isChained && <Link size={14} color="#818cf8" />}
                         {node.data.globalIndex !== undefined ? (
                           <span style={{ fontSize: '11px', fontWeight: 'bold', opacity: 0.7 }}>#{node.data.globalIndex}</span>
                         ) : (

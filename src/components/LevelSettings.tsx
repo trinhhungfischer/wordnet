@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { X, Save, Link } from 'lucide-react';
+import { X, Link } from 'lucide-react';
 
 interface LevelSettingsProps {
   isOpen: boolean;
