@@ -1341,12 +1341,20 @@ export default function GraphEditor() {
   const selectedNode = nodes.find(n => n.id === selectedNodeId) || null;
 
   const wordListNodes = useMemo(() => {
+    const getIsChained = (n: Node) => rawLevelData?.useBubbleSeparator === 1 && rawLevelData?.bubbleSeparatorData?.linkedWords?.includes(String(n.data.label));
+
     return nodes.filter((n: any) => !n.data.isCategory && !n.data.isChunk).sort((a: any, b: any) => {
+      const chainedA = getIsChained(a);
+      const chainedB = getIsChained(b);
+      
+      if (chainedA && !chainedB) return -1;
+      if (!chainedA && chainedB) return 1;
+
       const idxA = a.data.globalIndex ?? Infinity;
       const idxB = b.data.globalIndex ?? Infinity;
       return idxA - idxB;
     });
-  }, [nodes]);
+  }, [nodes, rawLevelData]);
 
   const [dragOverNodeId, setDragOverNodeId] = useState<string | null>(null);
   
@@ -1595,6 +1603,7 @@ export default function GraphEditor() {
               {wordListNodes.map((node: any) => {
                 const chunkEdges = edges.filter(e => e.source === node.id);
                 const chunks = chunkEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isChunk).map(n => String(n?.data.label));
+                const isChained = rawLevelData?.useBubbleSeparator === 1 && rawLevelData?.bubbleSeparatorData?.linkedWords?.includes(String(node.data.label));
                 
                 return (
                   <div 
@@ -1625,11 +1634,14 @@ export default function GraphEditor() {
                         )}
                         {String(node.data.label)}
                       </span>
-                      {node.data.globalIndex !== undefined ? (
-                        <span style={{ fontSize: '11px', fontWeight: 'bold', opacity: 0.7 }}>#{node.data.globalIndex}</span>
-                      ) : (
-                        <span style={{ fontSize: '11px', fontStyle: 'italic', opacity: 0.5 }}>New</span>
-                      )}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {isChained && <Link size={14} color="#818cf8" title="Chained Word" />}
+                        {node.data.globalIndex !== undefined ? (
+                          <span style={{ fontSize: '11px', fontWeight: 'bold', opacity: 0.7 }}>#{node.data.globalIndex}</span>
+                        ) : (
+                          <span style={{ fontSize: '11px', fontStyle: 'italic', opacity: 0.5 }}>New</span>
+                        )}
+                      </div>
                     </div>
                     {chunks.length > 0 && (
                       <div style={{ display: 'flex', gap: '4px', marginTop: '6px', flexWrap: 'wrap' }}>
