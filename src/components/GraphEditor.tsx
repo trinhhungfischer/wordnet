@@ -417,6 +417,20 @@ export default function GraphEditor() {
     
     const newData = JSON.parse(JSON.stringify(rawLevelData));
     
+    // Scrub legacy garbage keys
+    const garbageKeys = [
+      'hasSeperator',
+      'hasCrypticBubbles', 'minMaxCrypticBubbles',
+      'hasBurstBubbles', 'minMaxBurstBubbles',
+      'hasBackwardBubbles', 'minMaxBackwardBubbles',
+      'hasFrozenBubbles', 'minMaxFrozenBubbles',
+      'hasKeyLockBubbles', 'minMaxKeyLockBubbles',
+      'hasScrewLockBubbles', 'minMaxScrewLockBubbles',
+      'hasCrackBubbles', 'minMaxCrackBubbles',
+      'hasLinkedBubbles', 'minMaxLinkedBubbles'
+    ];
+    garbageKeys.forEach(k => delete newData[k]);
+    
     const newCategories: any[] = [];
     
     // Identify category nodes: Either explicitly tagged, or any node that has outgoing edges (children)
