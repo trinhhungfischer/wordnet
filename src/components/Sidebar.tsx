@@ -68,11 +68,13 @@ interface SidebarProps {
   copiedTreeConfig?: any;
   setCopiedTreeConfig?: (config: any) => void;
   onPasteTreeConfig?: (categoryId: string, config: any) => void;
+  autoCutWords: boolean;
+  setAutoCutWords: (val: boolean) => void;
 }
 
 type TabType = 'dict' | 'specific' | 'related' | 'wiki';
 
-export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig }: SidebarProps) {
+export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig, autoCutWords, setAutoCutWords }: SidebarProps) {
   const [manualWord, setManualWord] = useState('');
   const [suggestions, setSuggestions] = useState<WordSuggestion[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('dict');

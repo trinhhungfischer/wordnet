@@ -45,7 +45,7 @@ export default function GraphEditor() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   
   const [leftPanelTab, setLeftPanelTab] = useState<'words'|'chunks'|'settings'>('words');
-  const [autoCutWords, setAutoCutWords] = useState<boolean>(true);
+  const [autoCutWords, setAutoCutWords] = useState<boolean>(false);
   const [globalDict, setGlobalDict] = useState<any[]>([]);
   const [misleadingWords, setMisleadingWords] = useState<string[]>([]);
   
@@ -612,14 +612,20 @@ export default function GraphEditor() {
     if (!word) return;
     
     saveHistory();
+    const newNodeId = uuidv4();
     const newNode: Node = {
-      id: uuidv4(),
+      id: newNodeId,
       type: 'custom',
       position: { x: Math.random() * 400 + 100, y: Math.random() * 200 + 100 },
       data: { label: word.toLowerCase(), isRoot: true, isCategory: true }
     };
     
-    setNodes((nds) => nds.concat(newNode));
+    setNodes((nds) => nds.map(n => ({...n, selected: false})).concat({...newNode, selected: true}));
+    
+    setTimeout(() => {
+      setSelectedNodeId(newNodeId);
+      handleFocusNode(newNodeId);
+    }, 50);
   };
 
   const handleAddChild = (parentNode: Node, childLabel: string, isChunk: boolean = false) => {
@@ -1033,13 +1039,17 @@ export default function GraphEditor() {
       }
     }
 
-    setNodes(nds => [...nds.filter(n => !nodeIdsToRemove.has(n.id)), ...importedNodes]);
+    setNodes(nds => [...nds.filter(n => !nodeIdsToRemove.has(n.id)).map(n => ({...n, selected: false})), ...importedNodes.map(n => ({...n, selected: true}))]);
     setEdges(eds => [...eds.filter(e => !nodeIdsToRemove.has(e.source) && !nodeIdsToRemove.has(e.target)), ...importedEdges]);
     if (updatedRawLevelData !== rawLevelData) setRawLevelData(updatedRawLevelData);
     saveHistory();
 
     setTimeout(() => {
       fitView({ nodes: importedNodes, duration: 800, padding: 0.2 });
+      if (importedNodes.length > 0) {
+        const rootNode = targetParentId ? importedNodes[0] : importedNodes.find(n => n.data.isRoot) || importedNodes[0];
+        setSelectedNodeId(rootNode.id);
+      }
     }, 50);
   };
 
@@ -1434,15 +1444,6 @@ export default function GraphEditor() {
               <option key={lvl} value={lvl}>{lvl}</option>
             ))}
           </select>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--text-main)', cursor: 'pointer', marginRight: '10px' }}>
-            <input 
-              type="checkbox" 
-              checked={autoCutWords} 
-              onChange={e => setAutoCutWords(e.target.checked)} 
-              style={{ cursor: 'pointer' }}
-            />
-            Auto-cut Words
-          </label>
           <button 
             onClick={() => {
               if (confirm('Create a new empty level? Unsaved progress will be lost.')) {
@@ -1521,16 +1522,6 @@ export default function GraphEditor() {
             }}
           >
             <Plus size={14} /> New Root
-          </button>
-          <button 
-            onClick={() => exportGraphToCsv(nodes, edges)}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: 'none',
-              background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500
-            }}
-          >
-            <Download size={14} /> CSV
           </button>
           <button 
             onClick={handleExportJson}
@@ -1810,6 +1801,8 @@ export default function GraphEditor() {
         copiedTreeConfig={copiedTreeConfig}
         setCopiedTreeConfig={setCopiedTreeConfig}
         onPasteTreeConfig={handlePasteTreeConfig}
+        autoCutWords={autoCutWords}
+        setAutoCutWords={setAutoCutWords}
       />
     </div>
   );
