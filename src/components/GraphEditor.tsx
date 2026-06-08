@@ -1627,8 +1627,16 @@ export default function GraphEditor() {
                     style={{
                       display: 'flex', flexDirection: 'column',
                       padding: '8px 12px', borderRadius: '8px', cursor: 'pointer',
-                      background: dragOverNodeId === node.id ? 'rgba(56, 189, 248, 0.1)' : (selectedNodeId === node.id ? 'var(--accent)' : 'rgba(255,255,255,0.05)'),
-                      border: dragOverNodeId === node.id ? '2px dashed var(--accent)' : (selectedNodeId === node.id ? '1px solid var(--accent)' : '1px solid var(--panel-border)'),
+                      background: dragOverNodeId === node.id 
+                          ? 'rgba(56, 189, 248, 0.1)' 
+                          : (selectedNodeId === node.id 
+                            ? 'var(--accent)' 
+                            : (isChained ? 'rgba(129, 140, 248, 0.15)' : 'rgba(255,255,255,0.05)')),
+                      border: dragOverNodeId === node.id 
+                          ? '2px dashed var(--accent)' 
+                          : (selectedNodeId === node.id 
+                            ? '1px solid var(--accent)' 
+                            : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : '1px solid var(--panel-border)')),
                       transform: dragOverNodeId === node.id ? 'scale(1.02)' : 'none',
                       transition: 'all 0.2s', color: selectedNodeId === node.id ? 'white' : 'var(--text-main)'
                     }}
