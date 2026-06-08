@@ -1340,13 +1340,10 @@ export default function GraphEditor() {
   const selectedNode = nodes.find(n => n.id === selectedNodeId) || null;
 
   const wordListNodes = useMemo(() => {
+    const linkedWords = rawLevelData?.bubbleSeparatorData?.linkedWords || [];
     const getIsChained = (n: Node) => {
-      const chunkEdges = edges.filter(e => e.source === n.id);
-      const hasChunks = chunkEdges.some(e => {
-        const target = nodes.find(nd => nd.id === e.target);
-        return target && target.data.isChunk;
-      });
-      return hasChunks;
+      const label = String(n.data.label).toLowerCase();
+      return linkedWords.some((w: string) => w.toLowerCase() === label);
     };
 
     return nodes.filter((n: any) => !n.data.isCategory && !n.data.isChunk).sort((a: any, b: any) => {
@@ -1609,7 +1606,8 @@ export default function GraphEditor() {
               {wordListNodes.map((node: any) => {
                 const chunkEdges = edges.filter(e => e.source === node.id);
                 const chunks = chunkEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isChunk).map(n => String(n?.data.label));
-                const isChained = chunks.length > 0;
+                const linkedWordsList = rawLevelData?.bubbleSeparatorData?.linkedWords || [];
+                const isChained = linkedWordsList.some((w: string) => w.toLowerCase() === String(node.data.label).toLowerCase());
                 
                 return (
                   <div 
