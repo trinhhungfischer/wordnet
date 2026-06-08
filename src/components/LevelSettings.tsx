@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Save } from 'lucide-react';
+import { X, Save, Link } from 'lucide-react';
 
 interface LevelSettingsProps {
   isOpen: boolean;
@@ -30,27 +30,28 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
 
   return (
     <div className="glass-panel" style={{
-      position: 'absolute', top: '100px', right: '20px', bottom: '20px', width: '320px',
-      overflowY: 'auto', borderRadius: '12px', padding: '16px', zIndex: 10,
-      boxShadow: '0 4px 20px rgba(0,0,0,0.3)', backdropFilter: 'blur(10px)', border: '1px solid var(--panel-border)'
+      position: 'absolute', top: '20px', right: '20px', bottom: '20px', width: '360px',
+      overflowY: 'auto', borderRadius: '16px', padding: '20px', zIndex: 10,
+      display: 'flex', flexDirection: 'column',
+      boxShadow: '0 4px 24px rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', border: '1px solid var(--panel-border)'
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <h2 style={{ margin: 0, fontSize: '16px', color: 'var(--accent)' }}>
-          Level Config
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 600, color: 'var(--accent)' }}>
+          Level Settings
         </h2>
         <button 
           onClick={onClose}
           style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
         >
-          <X size={16} />
+          <X size={20} />
         </button>
       </div>
 
 
       {/* General Settings */}
-      <div style={{ marginBottom: '24px' }}>
-        <h3 style={{ fontSize: '14px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>General</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '12px' }}>
+      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>General</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           <LabelInput label="Move Limit" value={levelData.moveLimit} onChange={(val: string) => handleChange('moveLimit', parseInt(val))} type="number" />
           <LabelInput label="Max Bubbles" value={levelData.maxBubblesInScene} onChange={(val: string) => handleChange('maxBubblesInScene', parseInt(val))} type="number" />
           <LabelInput label="Tutorial ID" value={levelData.tutorialId} onChange={(val: string) => handleChange('tutorialId', parseInt(val))} type="number" />
@@ -60,10 +61,13 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
 
 
 
-      <div style={{ marginBottom: '24px' }}>
-        <h3 style={{ fontSize: '14px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>Bubble Separator (Chain)</h3>
+      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Link size={16} color="#818cf8" />
+          Mechanic: Chain
+        </h3>
         <div style={{ marginTop: '12px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', marginBottom: '12px', cursor: 'pointer' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', marginBottom: '16px', cursor: 'pointer', color: 'white' }}>
             <input 
               type="checkbox" 
               checked={levelData.useBubbleSeparator === 1}
@@ -156,17 +160,19 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
 
 function LabelInput({ label, value, onChange, type = "text" }: any) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-      <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{label}</label>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <label style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)' }}>{label}</label>
       <input 
         type={type} 
         value={value} 
         onChange={e => onChange(e.target.value)}
         style={{
-          padding: '8px', borderRadius: '6px',
+          padding: '10px 12px', borderRadius: '8px', fontSize: '14px',
           background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)',
-          color: 'white', outline: 'none'
+          color: 'white', outline: 'none', transition: 'border-color 0.2s'
         }}
+        onFocus={(e) => e.target.style.borderColor = 'var(--accent)'}
+        onBlur={(e) => e.target.style.borderColor = 'var(--panel-border)'}
       />
     </div>
   );
