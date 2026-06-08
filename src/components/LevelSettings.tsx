@@ -11,73 +11,132 @@ interface LevelSettingsProps {
 
 
 export default function LevelSettings({ isOpen, onClose, levelData, onSave }: LevelSettingsProps) {
-  const [formData, setFormData] = useState<any>(null);
-
-  useEffect(() => {
-    if (levelData) {
-      // deep clone to avoid mutating original state directly before save
-      setFormData(JSON.parse(JSON.stringify(levelData)));
-    }
-  }, [levelData]);
-
-  if (!isOpen || !formData) return null;
+  if (!isOpen || !levelData) return null;
 
   const handleChange = (key: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [key]: value }));
+    onSave({ ...levelData, [key]: value });
   };
 
-
-
-  const handleSave = () => {
-    onSave(formData);
-    onClose();
+  const handleDeepChange = (parentKey: string, key: string, value: any) => {
+    onSave({
+      ...levelData,
+      [parentKey]: {
+        ...(levelData[parentKey] || {}),
+        [key]: value
+      }
+    });
   };
 
   return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0,0,0,0.5)', zIndex: 100,
-      display: 'flex', alignItems: 'center', justifyContent: 'center'
+    <div className="glass-panel" style={{
+      position: 'absolute', top: '100px', right: '20px', bottom: '20px', width: '320px',
+      overflowY: 'auto', borderRadius: '12px', padding: '16px', zIndex: 10,
+      boxShadow: '0 4px 20px rgba(0,0,0,0.3)', backdropFilter: 'blur(10px)', border: '1px solid var(--panel-border)'
     }}>
-      <div className="glass-panel" style={{
-        width: '500px', maxHeight: '80vh', overflowY: 'auto',
-        borderRadius: '16px', padding: '24px', position: 'relative'
-      }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h2 style={{ margin: 0, fontSize: '16px', color: 'var(--accent)' }}>
+          Level Config
+        </h2>
+        <button 
+          onClick={onClose}
+          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+        >
+          <X size={16} />
+        </button>
+      </div>
         <button 
           onClick={onClose}
           style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
         >
           <X size={20} />
-        </button>
         
         <h2 style={{ marginTop: 0, color: 'var(--accent)', marginBottom: '24px' }}>
           Level Configuration
         </h2>
 
-        {/* General Settings */}
-        <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '16px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>General</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '12px' }}>
-            <LabelInput label="Move Limit" value={formData.moveLimit} onChange={(v: string) => handleChange('moveLimit', parseInt(v) || 0)} type="number" />
-            <LabelInput label="Difficulty (0-2)" value={formData.levelDifficulty} onChange={(v: string) => handleChange('levelDifficulty', parseInt(v) || 0)} type="number" />
-            <LabelInput label="Max Bubbles" value={formData.maxBubblesInScene} onChange={(v: string) => handleChange('maxBubblesInScene', parseInt(v) || 0)} type="number" />
-            <LabelInput label="Random Seed" value={formData.randomSeed} onChange={(v: string) => handleChange('randomSeed', parseInt(v) || 0)} type="number" />
-          </div>
+      {/* General Settings */}
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '14px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>General</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '12px' }}>
+          <LabelInput label="Move Limit" value={levelData.moveLimit} onChange={(val: string) => handleChange('moveLimit', parseInt(val))} type="number" />
+          <LabelInput label="Max Bubbles" value={levelData.maxBubblesInScene} onChange={(val: string) => handleChange('maxBubblesInScene', parseInt(val))} type="number" />
+          <LabelInput label="Tutorial ID" value={levelData.tutorialId} onChange={(val: string) => handleChange('tutorialId', parseInt(val))} type="number" />
+          <LabelInput label="Max Word Len" value={levelData.maxWordLength} onChange={(val: string) => handleChange('maxWordLength', parseInt(val))} type="number" />
         </div>
+      </div>
 
 
 
-        <button 
-          onClick={handleSave}
-          style={{
-            width: '100%', padding: '12px', borderRadius: '8px', border: 'none',
-            background: 'var(--accent)', color: 'white', fontWeight: 'bold', fontSize: '16px',
-            cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'
-          }}
-        >
-          <Save size={18} /> Apply Changes
-        </button>
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '14px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>Bubble Separator (Chain)</h3>
+        <div style={{ marginTop: '12px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', marginBottom: '12px', cursor: 'pointer' }}>
+            <input 
+              type="checkbox" 
+              checked={levelData.useBubbleSeparator === 1}
+              onChange={(e) => handleChange('useBubbleSeparator', e.target.checked ? 1 : 0)}
+            />
+            Enable Chain
+          </label>
 
+          {levelData.useBubbleSeparator === 1 && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Break Threshold:</span>
+                <input 
+                  type="number" 
+                  value={levelData.bubbleSeparatorData?.breakThreshold || 3}
+                  onChange={(e) => handleDeepChange('bubbleSeparatorData', 'breakThreshold', parseInt(e.target.value) || 3)}
+                  style={{ width: '50px', padding: '4px 8px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none' }}
+                />
+              </div>
+              
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                Linked Words (Drag & Drop from left panel):
+              </div>
+              <div 
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                  if (wordLabel) {
+                    const currentLinkedWords = levelData.bubbleSeparatorData?.linkedWords || [];
+                    if (!currentLinkedWords.includes(wordLabel)) {
+                      handleDeepChange('bubbleSeparatorData', 'linkedWords', [...currentLinkedWords, wordLabel]);
+                    }
+                  }
+                }}
+                style={{ 
+                  minHeight: '80px', padding: '8px', border: '1px dashed rgba(99,102,241,0.5)', 
+                  borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexWrap: 'wrap', gap: '6px', alignContent: 'flex-start'
+                }}
+              >
+                {(!levelData.bubbleSeparatorData?.linkedWords || levelData.bubbleSeparatorData.linkedWords.length === 0) ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                    Drop words here
+                  </span>
+                ) : (
+                  levelData.bubbleSeparatorData.linkedWords.map((word: string, i: number) => (
+                    <span key={i} style={{ 
+                      fontSize: '11px', background: 'rgba(99,102,241,0.2)', color: 'white', 
+                      padding: '2px 6px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px', height: 'fit-content'
+                    }}>
+                      {word}
+                      <button 
+                        onClick={() => {
+                          handleDeepChange('bubbleSeparatorData', 'linkedWords', levelData.bubbleSeparatorData.linkedWords.filter((w: string) => w !== word));
+                        }}
+                        style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: 0, fontSize: '12px', lineHeight: 1 }}
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

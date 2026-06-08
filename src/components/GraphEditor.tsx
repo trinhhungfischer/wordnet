@@ -1334,6 +1334,10 @@ export default function GraphEditor() {
   
   const handleDragStart = (e: React.DragEvent, nodeId: string) => {
     e.dataTransfer.setData('text/plain', nodeId);
+    const draggedNode = nodes.find(n => n.id === nodeId);
+    if (draggedNode) {
+      e.dataTransfer.setData('application/reactflow-node', String(draggedNode.data.label));
+    }
     e.dataTransfer.effectAllowed = 'move';
   };
 
@@ -1482,11 +1486,13 @@ export default function GraphEditor() {
 
         <div style={{ display: 'flex', gap: '8px' }}>
           <button 
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => setIsSettingsOpen(!isSettingsOpen)}
             disabled={!rawLevelData}
             style={{
               padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--panel-border)',
-              background: 'transparent', color: 'var(--text-main)', cursor: rawLevelData ? 'pointer' : 'not-allowed',
+              background: isSettingsOpen ? 'var(--accent)' : 'transparent', 
+              color: isSettingsOpen ? 'white' : 'var(--text-main)', 
+              cursor: rawLevelData ? 'pointer' : 'not-allowed',
               display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500, opacity: rawLevelData ? 1 : 0.5
             }}
           >
@@ -1572,16 +1578,6 @@ export default function GraphEditor() {
           >
             Chunk Index
           </button>
-          <button 
-            onClick={() => setLeftPanelTab('settings')}
-            style={{ 
-              flex: 1, padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-              background: leftPanelTab === 'settings' ? 'var(--accent)' : 'transparent',
-              color: leftPanelTab === 'settings' ? 'white' : 'var(--text-muted)'
-            }}
-          >
-            Settings
-          </button>
         </div>
 
         {leftPanelTab === 'words' && (
@@ -1608,7 +1604,10 @@ export default function GraphEditor() {
                   <div 
                     key={node.id}
                     draggable
-                    onDragStart={(e) => handleDragStart(e, node.id)}
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData('application/reactflow-node', node.data.label);
+                      handleDragStart(e, node.id);
+                    }}
                     onDragOver={handleDragOver}
                     onDragEnter={(e) => handleDragEnter(e, node.id)}
                     onDragLeave={(e) => handleDragLeave(e, node.id)}
@@ -1707,105 +1706,6 @@ export default function GraphEditor() {
               ) : (
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Add chunks to see analysis.</span>
               )}
-            </div>
-          </div>
-        )}
-
-        {leftPanelTab === 'settings' && rawLevelData && (
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-            <div style={{ marginBottom: '12px' }}>
-              <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Settings size={14} /> Level Settings
-              </h4>
-              <div style={{ 
-                marginTop: '16px', padding: '12px', background: 'rgba(255,255,255,0.03)', 
-                borderRadius: '8px', border: '1px solid var(--panel-border)' 
-              }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Settings size={14} /> Bubble Separator (Chain)
-                </h4>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', marginBottom: '12px', cursor: 'pointer' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={rawLevelData.useBubbleSeparator === 1}
-                    onChange={(e) => setRawLevelData({ ...rawLevelData, useBubbleSeparator: e.target.checked ? 1 : 0 })}
-                  />
-                  Enable Chain
-                </label>
-
-                {rawLevelData.useBubbleSeparator === 1 && (
-                  <>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Break Threshold:</span>
-                      <input 
-                        type="number" 
-                        value={rawLevelData.bubbleSeparatorData?.breakThreshold || 3}
-                        onChange={(e) => setRawLevelData({ 
-                          ...rawLevelData, 
-                          bubbleSeparatorData: { ...(rawLevelData.bubbleSeparatorData || {}), breakThreshold: parseInt(e.target.value) || 3 } 
-                        })}
-                        style={{ width: '50px', padding: '4px 8px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none' }}
-                      />
-                    </div>
-                    
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                      Linked Words:
-                    </div>
-                    <div 
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-                        if (wordLabel) {
-                          const currentLinkedWords = rawLevelData.bubbleSeparatorData?.linkedWords || [];
-                          if (!currentLinkedWords.includes(wordLabel)) {
-                            setRawLevelData({
-                              ...rawLevelData,
-                              bubbleSeparatorData: {
-                                ...(rawLevelData.bubbleSeparatorData || {}),
-                                linkedWords: [...currentLinkedWords, wordLabel]
-                              }
-                            });
-                          }
-                        }
-                      }}
-                      style={{ 
-                        minHeight: '60px', padding: '8px', border: '1px dashed rgba(99,102,241,0.5)', 
-                        borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexWrap: 'wrap', gap: '6px'
-                      }}
-                    >
-                      {(!rawLevelData.bubbleSeparatorData?.linkedWords || rawLevelData.bubbleSeparatorData.linkedWords.length === 0) ? (
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-                          Drag & drop words here
-                        </span>
-                      ) : (
-                        rawLevelData.bubbleSeparatorData.linkedWords.map((word: string, i: number) => (
-                          <span key={i} style={{ 
-                            fontSize: '11px', background: 'rgba(99,102,241,0.2)', color: 'white', 
-                            padding: '2px 6px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' 
-                          }}>
-                            {word}
-                            <button 
-                              onClick={() => {
-                                setRawLevelData({
-                                  ...rawLevelData,
-                                  bubbleSeparatorData: {
-                                    ...rawLevelData.bubbleSeparatorData,
-                                    linkedWords: rawLevelData.bubbleSeparatorData.linkedWords.filter((w: string) => w !== word)
-                                  }
-                                });
-                              }}
-                              style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: 0, fontSize: '12px', lineHeight: 1 }}
-                            >
-                              &times;
-                            </button>
-                          </span>
-                        ))
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
             </div>
           </div>
         )}
