@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Node, Edge } from '@xyflow/react';
-import { Plus, X, Trash2, BookOpen, Layers, Globe, Search as SearchIcon } from 'lucide-react';
+import { Plus, X, Trash2, BookOpen, Layers, Globe, Search as SearchIcon, Copy, ClipboardPaste } from 'lucide-react';
 import { fetchSpecificTypes, fetchRelatedWords, fetchWikipediaSuggestions, type WordSuggestion } from '../lib/api';
 
 interface Signature {
@@ -65,11 +65,14 @@ interface SidebarProps {
   onToggleNodeIcon?: (nodeId: string, currentIcon: string | null) => void;
   onUpdateNodeIndex?: (nodeId: string, newIndex: number | undefined) => void;
   onImportDictionary: (categoryName: string, dictionary: any[], targetParentId?: string, options?: any) => void;
+  copiedTreeConfig?: any;
+  setCopiedTreeConfig?: (config: any) => void;
+  onPasteTreeConfig?: (categoryId: string, config: any) => void;
 }
 
 type TabType = 'dict' | 'specific' | 'related' | 'wiki';
 
-export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary }: SidebarProps) {
+export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig }: SidebarProps) {
   const [manualWord, setManualWord] = useState('');
   const [suggestions, setSuggestions] = useState<WordSuggestion[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('dict');
@@ -81,10 +84,11 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
   const [matchSearchQuery, setMatchSearchQuery] = useState('');
   const [matchExact, setMatchExact] = useState(false);
   const [matchCategoryOnly, setMatchCategoryOnly] = useState(false);
-  const [matchSniperMode, setMatchSniperMode] = useState(true);
+  const [matchSniperMode, setMatchSniperMode] = useState(false);
   const [matchSortOrder, setMatchSortOrder] = useState<'asc'|'desc'>('desc');
   const [matchSortMode, setMatchSortMode] = useState<'alpha'|'popularity'>('popularity');
   const [replaceOldTree, setReplaceOldTree] = useState(false);
+  const [matchPage, setMatchPage] = useState(1);
   
   const [dictionary, setDictionary] = useState<any[]>([]);
 
@@ -225,12 +229,20 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
 
   if (isMultiSelection) {
     return (
-      <div className="glass-panel" style={{
-        position: 'absolute', right: '20px', top: '20px', width: '360px',
-        maxHeight: 'calc(100vh - 40px)', overflowY: 'auto', borderRadius: '16px',
-        display: 'flex', flexDirection: 'column', zIndex: 10,
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-      }}>
+      <div className="glass-panel" 
+        onScroll={(e) => {
+          const target = e.currentTarget;
+          if (target.scrollHeight - target.scrollTop - target.clientHeight < 50) {
+            setMatchPage(prev => prev + 1);
+          }
+        }}
+        style={{
+          position: 'absolute', right: '20px', top: '20px', width: '360px',
+          maxHeight: 'calc(100vh - 40px)', overflowY: 'auto', borderRadius: '16px',
+          display: 'flex', flexDirection: 'column', zIndex: 10,
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+        }}
+      >
         <div style={{ padding: '20px', borderBottom: '1px solid var(--panel-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '4px' }}>MULTI-SELECTION</div>
@@ -255,7 +267,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                 type="text"
                 placeholder="Text filter (e.g. apple & fruit)..."
                 value={matchSearchQuery}
-                onChange={e => setMatchSearchQuery(e.target.value)}
+                onChange={e => { setMatchSearchQuery(e.target.value); setMatchPage(1); }}
                 style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '13px', minWidth: 0 }}
               />
               <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--panel-border)', flexShrink: 0 }}>
@@ -263,6 +275,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                   onClick={() => {
                     if (matchSortMode === 'popularity') setMatchSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
                     else { setMatchSortMode('popularity'); setMatchSortOrder('desc'); }
+                    setMatchPage(1);
                   }}
                   title="Sort by Popularity"
                   style={{ padding: '8px', background: matchSortMode === 'popularity' ? 'var(--panel-border)' : 'transparent', border: 'none', color: matchSortMode === 'popularity' ? 'white' : 'var(--text-muted)', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
@@ -273,6 +286,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                   onClick={() => {
                     if (matchSortMode === 'alpha') setMatchSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
                     else { setMatchSortMode('alpha'); setMatchSortOrder('asc'); }
+                    setMatchPage(1);
                   }}
                   title="Sort Alphabetically"
                   style={{ padding: '8px', background: matchSortMode === 'alpha' ? 'var(--panel-border)' : 'transparent', border: 'none', color: matchSortMode === 'alpha' ? 'white' : 'var(--text-muted)', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
@@ -283,11 +297,11 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ccc', cursor: 'pointer' }}>
-                <input type="checkbox" checked={matchExact} onChange={e => setMatchExact(e.target.checked)} style={{ cursor: 'pointer' }} />
+                <input type="checkbox" checked={matchExact} onChange={e => { setMatchExact(e.target.checked); setMatchPage(1); }} style={{ cursor: 'pointer' }} />
                 Exact Match
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ccc', cursor: 'pointer' }}>
-                <input type="checkbox" checked={matchCategoryOnly} onChange={e => setMatchCategoryOnly(e.target.checked)} style={{ cursor: 'pointer' }} />
+                <input type="checkbox" checked={matchCategoryOnly} onChange={e => { setMatchCategoryOnly(e.target.checked); setMatchPage(1); }} style={{ cursor: 'pointer' }} />
                 Category Only
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ccc', cursor: 'pointer' }}>
@@ -325,13 +339,13 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                   ? (filteredMatches.find(c => !checkConflict(c.name).conflict) 
                       ? "🎯 Sniper Mode: Best valid tree selected" 
                       : "No valid non-conflicting trees found for this query.")
-                  : `Showing ${Math.min(filteredMatches.length, 10)} of ${filteredMatches.length} matching trees`}
+                  : `Showing ${Math.min(filteredMatches.length, matchPage * 20)} of ${filteredMatches.length} matching trees`}
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {(matchSearchQuery.trim() && matchSniperMode
                   ? (filteredMatches.find(c => !checkConflict(c.name).conflict) ? [filteredMatches.find(c => !checkConflict(c.name).conflict)!] : []) 
-                  : filteredMatches.slice(0, 10)
+                  : filteredMatches.slice(0, matchPage * 20)
                 ).map(cat => {
                   const { conflict, reason } = checkConflict(cat.name);
                   return (
@@ -465,6 +479,56 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
         
         {/* Actions */}
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+          {selectedNode.data.isCategory && (
+            <>
+              <button
+                onClick={() => {
+                  const childNodes = edges.filter(e => e.source === selectedNode.id).map(e => nodes.find(n => n.id === e.target)).filter(n => n && !n.data.isCategory && !n.data.isChunk);
+                  const config = {
+                    categoryIcon: selectedNode.data.icon || null,
+                    wordsConfig: childNodes.map(n => ({
+                      label: String(n!.data.label),
+                      globalIndex: n!.data.globalIndex,
+                      icon: n!.data.icon || null
+                    }))
+                  };
+                  setCopiedTreeConfig?.(config);
+                }}
+                style={{
+                  padding: '12px', borderRadius: '8px',
+                  background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--panel-border)',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                title="Copy Tree Config"
+              >
+                <Copy size={18} />
+              </button>
+
+              <button
+                onClick={() => {
+                  if (copiedTreeConfig && onPasteTreeConfig) {
+                    onPasteTreeConfig(selectedNode.id, copiedTreeConfig);
+                  }
+                }}
+                disabled={!copiedTreeConfig}
+                style={{
+                  padding: '12px', borderRadius: '8px',
+                  background: copiedTreeConfig ? 'var(--accent)' : 'rgba(255,255,255,0.05)', 
+                  color: copiedTreeConfig ? 'white' : '#888', 
+                  border: copiedTreeConfig ? 'none' : '1px solid var(--panel-border)',
+                  cursor: copiedTreeConfig ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => { if (copiedTreeConfig) e.currentTarget.style.filter = 'brightness(1.1)'; }}
+                onMouseLeave={e => { if (copiedTreeConfig) e.currentTarget.style.filter = 'brightness(1)'; }}
+                title={copiedTreeConfig ? `Paste Tree Config (${copiedTreeConfig.wordsConfig.length} words)` : "Paste Tree Config"}
+              >
+                <ClipboardPaste size={18} />
+              </button>
+            </>
+          )}
+
           <button 
             onClick={onDeleteNode}
             style={{
@@ -564,6 +628,9 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
             <div style={{ background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>Icon Configuration</span>
+                {!dictHasIcon && !selectedNode.data.icon && (
+                  <span style={{ fontSize: '11px', color: '#f87171', fontStyle: 'italic' }}>Not in dict</span>
+                )}
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -571,28 +638,24 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                   width: '48px', height: '48px', background: 'var(--panel-bg)', borderRadius: '8px', 
                   border: '1px solid var(--panel-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' 
                 }}>
-                  {selectedNode.data.icon && dictHasIcon ? (
-                    <img src={`/word_icon/${selectedNode.data.icon}.png`} alt="icon" style={{ maxWidth: '32px', maxHeight: '32px' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  {selectedNode.data.icon ? (
+                    <img src={`/word_icon/${selectedNode.data.icon}.png`} alt="icon" title={`Missing File: ${selectedNode.data.icon}.png`} style={{ maxWidth: '32px', maxHeight: '32px' }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline><line x1="3" y1="3" x2="21" y2="21"></line></svg>'; }} />
                   ) : (
                     <span style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center' }}>No Icon</span>
                   )}
                 </div>
                 
-                {dictHasIcon ? (
-                  <button
-                    onClick={() => onToggleNodeIcon(selectedNode.id, selectedNode.data.icon as string | null)}
-                    style={{
-                      background: selectedNode.data.icon ? 'rgba(239,68,68,0.1)' : 'rgba(56, 189, 248, 0.1)',
-                      color: selectedNode.data.icon ? '#f87171' : 'var(--accent)',
-                      border: `1px solid ${selectedNode.data.icon ? 'rgba(239,68,68,0.2)' : 'rgba(56, 189, 248, 0.2)'}`,
-                      padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer'
-                    }}
-                  >
-                    {selectedNode.data.icon ? 'Remove Icon' : 'Set Default Icon'}
-                  </button>
-                ) : (
-                  <span style={{ fontSize: '12px', color: '#f87171' }}>Not found in dictionary</span>
-                )}
+                <button
+                  onClick={() => onToggleNodeIcon(selectedNode.id, selectedNode.data.icon as string | null)}
+                  style={{
+                    background: selectedNode.data.icon ? 'rgba(239,68,68,0.1)' : 'rgba(56, 189, 248, 0.1)',
+                    color: selectedNode.data.icon ? '#f87171' : 'var(--accent)',
+                    border: `1px solid ${selectedNode.data.icon ? 'rgba(239,68,68,0.2)' : 'rgba(56, 189, 248, 0.2)'}`,
+                    padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer'
+                  }}
+                >
+                  {selectedNode.data.icon ? 'Remove Icon' : 'Add Icon'}
+                </button>
               </div>
             </div>
           );
@@ -673,7 +736,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                         }}
                       >
                         {wObj.icon ? (
-                          <img src={`/word_icon/${wObj.icon.endsWith('.png') ? wObj.icon : wObj.icon + '.png'}`} alt={wObj.word} style={{ width: '12px', height: '12px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                          <img src={`/word_icon/${wObj.icon.endsWith('.png') ? wObj.icon : wObj.icon + '.png'}`} alt={wObj.word} title={`Missing File: ${wObj.icon}`} style={{ width: '12px', height: '12px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline><line x1="3" y1="3" x2="21" y2="21"></line></svg>'; }} />
                         ) : (
                           <Plus size={10} />
                         )}

@@ -22,7 +22,14 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
   const [searchCategoryOnly, setSearchCategoryOnly] = useState(false);
   const [sortMode, setSortMode] = useState<'popularity' | 'alpha'>('popularity');
   const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
+  const [minPop, setMinPop] = useState<string>('');
+  const [maxPop, setMaxPop] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, exactMatch, searchCategoryOnly, sortMode, sortDir, minPop, maxPop]);
 
   const loadDict = () => {
     fetch(`/global_dictionary.json?t=${Date.now()}`)
@@ -59,6 +66,13 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
   };
 
   const filteredDict = dictionary.filter(entry => {
+    if (minPop !== '' && !isNaN(Number(minPop))) {
+      if ((entry.popularity || 0) < Number(minPop)) return false;
+    }
+    if (maxPop !== '' && !isNaN(Number(maxPop))) {
+      if ((entry.popularity || 0) > Number(maxPop)) return false;
+    }
+
     if (!searchQuery) return true;
     
     const checkMatch = (queryPart: string, exact: boolean) => {
@@ -145,6 +159,13 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
                 Category Only
               </label>
 
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <span style={{ fontSize: '13px', color: '#aaa' }}>⭐ Popular:</span>
+                <input type="number" placeholder="Min" value={minPop} onChange={e => setMinPop(e.target.value)} style={{ width: '50px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', fontSize: '13px', borderRadius: '4px', padding: '4px', outline: 'none' }} />
+                <span style={{ fontSize: '13px', color: '#aaa' }}>-</span>
+                <input type="number" placeholder="Max" value={maxPop} onChange={e => setMaxPop(e.target.value)} style={{ width: '50px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', fontSize: '13px', borderRadius: '4px', padding: '4px', outline: 'none' }} />
+              </div>
+
               <div style={{ flex: 1 }}></div>
 
               <div style={{ display: 'flex', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', padding: '4px', border: '1px solid var(--panel-border)' }}>
@@ -188,8 +209,16 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
         </div>
 
         {/* List */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {filteredDict.slice(0, 100).map(entry => {
+        <div 
+          style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+          onScroll={(e) => {
+            const target = e.currentTarget;
+            if (target.scrollHeight - target.scrollTop <= target.clientHeight + 300) {
+              setPage(p => p + 1);
+            }
+          }}
+        >
+          {filteredDict.slice(0, page * 100).map(entry => {
             const isExpanded = expandedCategories.has(entry.name);
             return (
               <div key={entry.name} style={{
@@ -293,9 +322,14 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
               </div>
             );
           })}
-          {filteredDict.length > 100 && (
+          {filteredDict.length > page * 100 && (
             <div style={{ textAlign: 'center', color: '#888', padding: '10px' }}>
-              Showing 100 of {filteredDict.length} results. Keep typing to refine...
+              Showing {page * 100} of {filteredDict.length} results. Scroll for more...
+            </div>
+          )}
+          {filteredDict.length <= page * 100 && filteredDict.length > 0 && (
+            <div style={{ textAlign: 'center', color: '#888', padding: '10px' }}>
+              End of results ({filteredDict.length})
             </div>
           )}
           {filteredDict.length === 0 && (

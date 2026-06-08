@@ -57,6 +57,8 @@ export default function GraphEditor() {
   const [isMagicChangeOpen, setIsMagicChangeOpen] = useState(false);
   const [isDictOpen, setIsDictOpen] = useState(false);
   
+  const [copiedTreeConfig, setCopiedTreeConfig] = useState<CopiedTreeConfig | null>(null);
+  
   const { setCenter, fitView } = useReactFlow();
 
   const handleFocusNode = (nodeId: string) => {
@@ -676,6 +678,39 @@ export default function GraphEditor() {
       return n;
     }));
   };
+
+  const handlePasteTreeConfig = useCallback((categoryId: string, config: CopiedTreeConfig) => {
+    saveHistory();
+    setNodes(nds => {
+      const newNds = [...nds];
+      const catIdx = newNds.findIndex(n => n.id === categoryId);
+      if (catIdx !== -1) {
+        newNds[catIdx] = { ...newNds[catIdx], data: { ...newNds[catIdx].data, icon: config.categoryIcon } };
+      }
+      
+      const childEdges = edges.filter(e => e.source === categoryId);
+      const childIds = childEdges.map(e => e.target);
+      
+      let wordConfigIdx = 0;
+      for (const cid of childIds) {
+        if (wordConfigIdx >= config.wordsConfig.length) break;
+        const cNodeIdx = newNds.findIndex(n => n.id === cid && !n.data.isCategory && !n.data.isChunk);
+        if (cNodeIdx !== -1) {
+          const wConf = config.wordsConfig[wordConfigIdx];
+          newNds[cNodeIdx] = {
+            ...newNds[cNodeIdx],
+            data: {
+              ...newNds[cNodeIdx].data,
+              globalIndex: wConf.globalIndex,
+              icon: wConf.icon
+            }
+          };
+          wordConfigIdx++;
+        }
+      }
+      return newNds;
+    });
+  }, [edges, saveHistory, setNodes]);
 
   const handleImportDictionary = (categoryName: string, dictionary: any[], targetParentId?: string, options?: any) => {
     saveHistory();
@@ -1566,7 +1601,9 @@ export default function GraphEditor() {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontSize: '13px', fontWeight: 500, textTransform: 'capitalize', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        {node.data.icon && <img src={`/word_icon/${node.data.icon}.png`} alt="" style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
+                        {node.data.icon && (
+                          <img src={`/word_icon/${node.data.icon}.png`} alt="" title={`Missing File: ${node.data.icon}.png`} style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
+                        )}
                         {String(node.data.label)}
                       </span>
                       {node.data.globalIndex !== undefined ? (
@@ -1723,6 +1760,9 @@ export default function GraphEditor() {
         onToggleNodeIcon={handleToggleNodeIcon}
         onUpdateNodeIndex={handleUpdateNodeIndex}
         onImportDictionary={handleImportDictionary}
+        copiedTreeConfig={copiedTreeConfig}
+        setCopiedTreeConfig={setCopiedTreeConfig}
+        onPasteTreeConfig={handlePasteTreeConfig}
       />
     </div>
   );
