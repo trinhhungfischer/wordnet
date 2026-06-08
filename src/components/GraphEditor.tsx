@@ -1491,7 +1491,10 @@ export default function GraphEditor() {
             onClick={() => {
               const nextState = !isSettingsOpen;
               setIsSettingsOpen(nextState);
-              if (nextState) setSelectedNodeId(null);
+              if (nextState) {
+                setSelectedNodeId(null);
+                setNodes(nds => nds.map(n => ({...n, selected: false})));
+              }
             }}
             disabled={!rawLevelData}
             style={{
@@ -1730,9 +1733,14 @@ export default function GraphEditor() {
           animated: !!e.selected,
           style: {
             ...e.style,
-            strokeDasharray: e.selected ? '5,5' : (e.style?.strokeDasharray === '5,5' ? '5,5' : 'none')
+            stroke: e.selected ? '#818cf8' : (e.data?.isSynonym ? '#fca5a5' : '#4b5563')
           }
         }))}
+        onSelectionChange={({ nodes }) => {
+          if (nodes.length > 0 && isSettingsOpen) {
+            setIsSettingsOpen(false);
+          }
+        }}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
         onConnect={onConnect}
