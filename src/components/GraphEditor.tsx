@@ -1340,7 +1340,14 @@ export default function GraphEditor() {
   const selectedNode = nodes.find(n => n.id === selectedNodeId) || null;
 
   const wordListNodes = useMemo(() => {
-    const getIsChained = (n: Node) => rawLevelData?.useBubbleSeparator === 1 && rawLevelData?.bubbleSeparatorData?.linkedWords?.includes(String(n.data.label));
+    const getIsChained = (n: Node) => {
+      const chunkEdges = edges.filter(e => e.source === n.id);
+      const hasChunks = chunkEdges.some(e => {
+        const target = nodes.find(nd => nd.id === e.target);
+        return target && target.data.isChunk;
+      });
+      return hasChunks;
+    };
 
     return nodes.filter((n: any) => !n.data.isCategory && !n.data.isChunk).sort((a: any, b: any) => {
       const chainedA = getIsChained(a);
@@ -1353,7 +1360,7 @@ export default function GraphEditor() {
       const idxB = b.data.globalIndex ?? Infinity;
       return idxA - idxB;
     });
-  }, [nodes, rawLevelData]);
+  }, [nodes, edges]);
 
   const [dragOverNodeId, setDragOverNodeId] = useState<string | null>(null);
   
@@ -1602,7 +1609,7 @@ export default function GraphEditor() {
               {wordListNodes.map((node: any) => {
                 const chunkEdges = edges.filter(e => e.source === node.id);
                 const chunks = chunkEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isChunk).map(n => String(n?.data.label));
-                const isChained = rawLevelData?.useBubbleSeparator === 1 && rawLevelData?.bubbleSeparatorData?.linkedWords?.includes(String(node.data.label));
+                const isChained = chunks.length > 0;
                 
                 return (
                   <div 
