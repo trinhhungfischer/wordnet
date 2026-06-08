@@ -129,10 +129,37 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
     }
   };
 
-  const isAlreadyInGraph = (catName: string) => {
-    return (nodes || []).some(n => 
-      n.data.isCategory && String(n.data.label).toLowerCase() === catName.toLowerCase()
-    );
+  const checkConflict = (catName: string) => {
+    const existingCats = (nodes || [])
+      .filter(n => n.data.isCategory && !selectedNodes.some(sn => sn.id === n.id))
+      .map(n => String(n.data.label).toLowerCase());
+      
+    const c1 = catName.toLowerCase();
+
+    for (const c2 of existingCats) {
+      if (c1 === c2) return { conflict: true, reason: 'Already in graph' };
+      
+      // Substring check
+      if (c1.includes(c2) || c2.includes(c1)) {
+        return { conflict: true, reason: `Too similar to "${c2}"` };
+      }
+      
+      // Word overlap check (Jaccard-like)
+      const dictCat1 = dictionary.find(d => d.name.toLowerCase() === c1);
+      const dictCat2 = dictionary.find(d => d.name.toLowerCase() === c2);
+      if (dictCat1 && dictCat2) {
+         const words1 = new Set(dictCat1.words.map((w: any) => w.word.toLowerCase()));
+         const words2 = new Set(dictCat2.words.map((w: any) => w.word.toLowerCase()));
+         let overlap = 0;
+         for(const w of words1) if(words2.has(w)) overlap++;
+         
+         const minLen = Math.min(words1.size, words2.size);
+         if (minLen > 0 && overlap / minLen >= 0.3) { // 30% overlap
+            return { conflict: true, reason: `Shares ${overlap} words with "${c2}"` };
+         }
+      }
+    }
+    return { conflict: false };
   };
 
   const filteredMatches = matchedCategories
@@ -260,20 +287,27 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
           {hasSearched && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                Showing {Math.min(filteredMatches.length, 10)} of {filteredMatches.length} matching trees
-                (total {matchedCategories.length} structures found)
+                {matchSearchQuery.trim() 
+                  ? (filteredMatches.find(c => !checkConflict(c.name).conflict) 
+                      ? "🎯 Sniper Mode: Best valid tree selected" 
+                      : "No valid non-conflicting trees found for this query.")
+                  : `Showing ${Math.min(filteredMatches.length, 10)} of ${filteredMatches.length} matching trees`}
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {filteredMatches.slice(0, 10).map(cat => {
-                  const exists = isAlreadyInGraph(cat.name);
+                {(matchSearchQuery.trim() 
+                  ? (filteredMatches.find(c => !checkConflict(c.name).conflict) ? [filteredMatches.find(c => !checkConflict(c.name).conflict)!] : []) 
+                  : filteredMatches.slice(0, 10)
+                ).map(cat => {
+                  const { conflict, reason } = checkConflict(cat.name);
                   return (
-                    <div key={cat.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: exists ? 'rgba(239,68,68,0.1)' : 'rgba(0,0,0,0.2)', padding: '10px 12px', borderRadius: '8px', border: exists ? '1px solid rgba(239,68,68,0.4)' : '1px solid var(--panel-border)' }}>
+                    <div key={cat.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: conflict ? 'rgba(239,68,68,0.1)' : 'rgba(0,0,0,0.2)', padding: '10px 12px', borderRadius: '8px', border: conflict ? '1px solid rgba(239,68,68,0.4)' : '1px solid var(--panel-border)', opacity: conflict ? 0.6 : 1 }}>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontWeight: 500, fontSize: '14px', textTransform: 'capitalize', color: exists ? '#f87171' : 'white' }}>{cat.name}</span>
-                        {exists && <span style={{ fontSize: '11px', color: '#f87171', marginTop: '2px' }}>Already in graph</span>}
+                        <span style={{ fontWeight: 500, fontSize: '14px', textTransform: 'capitalize', color: conflict ? '#f87171' : 'white' }}>{cat.name}</span>
+                        {conflict && <span style={{ fontSize: '11px', color: '#f87171', marginTop: '2px' }}>{reason}</span>}
                       </div>
                       <button 
+                        disabled={conflict}
                         onClick={() => {
                           const rootId = selectedNodes.filter(n => !edges.some(e => e.target === n.id && selectedNodes.some(sn => sn.id === e.source)))[0]?.id;
                           const selSig = rootId ? getSelectionSignature(rootId, selectedNodes, edges) : undefined;
@@ -285,7 +319,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                             keepOldTreeAnchor: !replaceOldTree ? selectedNodes : []
                           });
                         }}
-                        style={{ background: exists ? 'rgba(239,68,68,0.2)' : 'var(--accent)', color: exists ? '#f87171' : 'white', border: exists ? '1px solid rgba(239,68,68,0.4)' : 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
+                        style={{ background: conflict ? 'rgba(239,68,68,0.2)' : 'var(--accent)', color: conflict ? '#f87171' : 'white', border: conflict ? '1px solid rgba(239,68,68,0.4)' : 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
                       >
                         Insert
                       </button>
@@ -581,7 +615,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                 <div>
                   <h4 style={{ margin: '0 0 8px 0', fontSize: '12px', color: 'var(--text-muted)' }}>WORDS</h4>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                    {dictEntry.words.map((wObj: any, i: number) => (
+                    {[...dictEntry.words].sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0)).map((wObj: any, i: number) => (
                       <button 
                         key={i}
                         onClick={() => onAddChild(selectedNode, wObj.word.toLowerCase())}
@@ -597,7 +631,10 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                         ) : (
                           <Plus size={10} />
                         )}
-                        {wObj.word}
+                        <span>{wObj.word}</span>
+                        {wObj.popularity !== undefined && (
+                          <span style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '4px' }}>{wObj.popularity}</span>
+                        )}
                       </button>
                     ))}
                   </div>

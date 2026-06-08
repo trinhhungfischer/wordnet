@@ -57,7 +57,7 @@ export default function GraphEditor() {
   const [isMagicChangeOpen, setIsMagicChangeOpen] = useState(false);
   const [isDictOpen, setIsDictOpen] = useState(false);
   
-  const { setCenter } = useReactFlow();
+  const { setCenter, fitView } = useReactFlow();
 
   const handleFocusNode = (nodeId: string) => {
     const node = nodes.find(n => n.id === nodeId);
@@ -608,10 +608,13 @@ export default function GraphEditor() {
     const newEdgesToAppend: Edge[] = [];
     
     if (!childNode) {
+      const existingChildren = edges.filter(e => e.source === parentNode.id).length;
+      const siblingIndex = existingChildren + newNodesToAppend.length;
+      const xOffset = siblingIndex === 0 ? 0 : (siblingIndex % 2 === 0 ? 1 : -1) * Math.ceil(siblingIndex / 2) * 150;
       childNode = {
         id: uuidv4(),
         type: 'custom',
-        position: { x: parentNode.position.x + (Math.random() * 200 - 100), y: parentNode.position.y + 100 },
+        position: { x: parentNode.position.x + xOffset, y: parentNode.position.y + 120 },
         data: { label: childLabel, isCategory: false, isChunk }
       };
       newNodesToAppend.push(childNode);
@@ -795,6 +798,22 @@ export default function GraphEditor() {
               const bMatch = terms.some((t: string) => exactMatch ? b.word.toLowerCase() === t : b.word.toLowerCase().includes(t)) ? 1 : 0;
               return bMatch - aMatch;
             });
+          } else if (wordsToImport.length > currentReqSig.numWords) {
+            // Smart Cohesive Sub-clustering: Try to pick words that belong to the same specific type
+            const clusterMap = new Map<string, any[]>();
+            for (const w of wordsToImport) {
+              const otherCats = dictionary.filter((c: any) => c.name !== entry.name && c.words.some((cw: any) => cw.word === w.word));
+              for (const c of otherCats) {
+                if (!clusterMap.has(c.name)) clusterMap.set(c.name, []);
+                clusterMap.get(c.name)!.push(w);
+              }
+            }
+            
+            const validClusters = Array.from(clusterMap.values()).filter(arr => arr.length >= currentReqSig.numWords);
+            if (validClusters.length > 0) {
+              // Pick a random valid cluster for magical variety
+              wordsToImport = validClusters[Math.floor(Math.random() * validClusters.length)];
+            }
           }
           wordsToImport = wordsToImport.slice(0, currentReqSig.numWords);
         }
@@ -960,6 +979,10 @@ export default function GraphEditor() {
     setEdges(eds => [...eds.filter(e => !nodeIdsToRemove.has(e.source) && !nodeIdsToRemove.has(e.target)), ...importedEdges]);
     if (updatedRawLevelData !== rawLevelData) setRawLevelData(updatedRawLevelData);
     saveHistory();
+
+    setTimeout(() => {
+      fitView({ nodes: importedNodes, duration: 800, padding: 0.2 });
+    }, 50);
   };
 
   const handleMagicChange = (popularWords: string, minPopularity: number = 0) => {
@@ -1256,6 +1279,8 @@ export default function GraphEditor() {
     });
   }, [nodes]);
 
+  const [dragOverNodeId, setDragOverNodeId] = useState<string | null>(null);
+  
   const handleDragStart = (e: React.DragEvent, nodeId: string) => {
     e.dataTransfer.setData('text/plain', nodeId);
     e.dataTransfer.effectAllowed = 'move';
@@ -1266,8 +1291,21 @@ export default function GraphEditor() {
     e.dataTransfer.dropEffect = 'move';
   };
 
+  const handleDragEnter = (e: React.DragEvent, nodeId: string) => {
+    e.preventDefault();
+    setDragOverNodeId(nodeId);
+  };
+
+  const handleDragLeave = (e: React.DragEvent, nodeId: string) => {
+    e.preventDefault();
+    if (dragOverNodeId === nodeId) {
+      setDragOverNodeId(null);
+    }
+  };
+
   const handleDrop = (e: React.DragEvent, targetNodeId: string) => {
     e.preventDefault();
+    setDragOverNodeId(null);
     const draggedNodeId = e.dataTransfer.getData('text/plain');
     if (draggedNodeId === targetNodeId) return;
     
@@ -1511,13 +1549,16 @@ export default function GraphEditor() {
                     draggable
                     onDragStart={(e) => handleDragStart(e, node.id)}
                     onDragOver={handleDragOver}
+                    onDragEnter={(e) => handleDragEnter(e, node.id)}
+                    onDragLeave={(e) => handleDragLeave(e, node.id)}
                     onDrop={(e) => handleDrop(e, node.id)}
                     onClick={() => handleFocusNode(node.id)}
                     style={{
                       display: 'flex', flexDirection: 'column',
                       padding: '8px 12px', borderRadius: '8px', cursor: 'pointer',
-                      background: selectedNodeId === node.id ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
-                      border: selectedNodeId === node.id ? '1px solid var(--accent)' : '1px solid var(--panel-border)',
+                      background: dragOverNodeId === node.id ? 'rgba(56, 189, 248, 0.1)' : (selectedNodeId === node.id ? 'var(--accent)' : 'rgba(255,255,255,0.05)'),
+                      border: dragOverNodeId === node.id ? '2px dashed var(--accent)' : (selectedNodeId === node.id ? '1px solid var(--accent)' : '1px solid var(--panel-border)'),
+                      transform: dragOverNodeId === node.id ? 'scale(1.02)' : 'none',
                       transition: 'all 0.2s', color: selectedNodeId === node.id ? 'white' : 'var(--text-main)'
                     }}
                   >

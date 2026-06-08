@@ -20,6 +20,7 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
   const [searchQuery, setSearchQuery] = useState('');
   const [exactMatch, setExactMatch] = useState(false);
   const [sortMode, setSortMode] = useState<'popularity' | 'alpha'>('popularity');
+  const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const loadDict = () => {
@@ -80,11 +81,14 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
       return checkMatch(searchQuery, exactMatch);
     }
   }).sort((a, b) => {
+    let cmp = 0;
     if (sortMode === 'popularity') {
-      return (b.popularity || 0) - (a.popularity || 0);
+      cmp = (b.popularity || 0) - (a.popularity || 0); // desc by default
     } else {
-      return a.name.localeCompare(b.name);
+      cmp = a.name.localeCompare(b.name); // asc by default
     }
+    return sortDir === 'asc' && sortMode === 'popularity' ? -cmp : 
+           sortDir === 'desc' && sortMode === 'alpha' ? -cmp : cmp;
   });
 
   return (
@@ -133,17 +137,39 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
               <input type="checkbox" checked={exactMatch} onChange={(e) => setExactMatch(e.target.checked)} style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
               Exact Match
             </label>
-            <select 
-              value={sortMode}
-              onChange={(e) => setSortMode(e.target.value as any)}
+            <div style={{ display: 'flex', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', padding: '4px', border: '1px solid var(--panel-border)' }}>
+              <button 
+                onClick={() => setSortMode('popularity')}
+                style={{
+                  padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+                  background: sortMode === 'popularity' ? 'var(--accent)' : 'transparent',
+                  color: sortMode === 'popularity' ? 'white' : '#888',
+                  display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
+                }}
+              >
+                ⭐ Popular
+              </button>
+              <button 
+                onClick={() => setSortMode('alpha')}
+                style={{
+                  padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+                  background: sortMode === 'alpha' ? 'var(--accent)' : 'transparent',
+                  color: sortMode === 'alpha' ? 'white' : '#888',
+                  display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
+                }}
+              >
+                🅰️ A-Z
+              </button>
+            </div>
+            <button
+              onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
               style={{
-                background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid var(--panel-border)',
-                padding: '10px 12px', borderRadius: '8px', fontSize: '14px', outline: 'none', cursor: 'pointer'
+                padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--panel-border)', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+                background: 'rgba(255,255,255,0.05)', color: 'white', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
               }}
             >
-              <option value="popularity" style={{ background: '#222', color: '#fff' }}>Sort by Popularity (⭐)</option>
-              <option value="alpha" style={{ background: '#222', color: '#fff' }}>Sort A-Z</option>
-            </select>
+              {sortDir === 'desc' ? '⬇️ Desc' : '⬆️ Asc'}
+            </button>
           </div>
           <div style={{ marginTop: '12px', fontSize: '13px', color: '#888' }}>
             Loaded {dictionary.length} unique categories.
@@ -224,11 +250,14 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
                       {entry.words.length === 0 ? <span style={{ color: '#666' }}>None</span> : 
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                           {[...entry.words].sort((a, b) => {
+                            let cmp = 0;
                             if (sortMode === 'popularity') {
-                              return (b.popularity || 0) - (a.popularity || 0);
+                              cmp = (b.popularity || 0) - (a.popularity || 0);
                             } else {
-                              return a.word.localeCompare(b.word);
+                              cmp = a.word.localeCompare(b.word);
                             }
+                            return sortDir === 'asc' && sortMode === 'popularity' ? -cmp : 
+                                   sortDir === 'desc' && sortMode === 'alpha' ? -cmp : cmp;
                           }).map(w => (
                             <span 
                               key={w.word} 
