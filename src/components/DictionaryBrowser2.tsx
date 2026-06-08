@@ -5,7 +5,8 @@ interface DictEntry {
   name: string;
   parents: string[];
   subcategories: string[];
-  words: { word: string; icon: string | null }[];
+  words: { word: string; icon: string | null; popularity?: number }[];
+  popularity?: number;
 }
 
 interface DictionaryBrowserProps {
@@ -18,10 +19,11 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
   const [dictionary, setDictionary] = useState<DictEntry[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [exactMatch, setExactMatch] = useState(false);
+  const [sortMode, setSortMode] = useState<'popularity' | 'alpha'>('popularity');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const loadDict = () => {
-    fetch('/global_dictionary.json')
+    fetch(`/global_dictionary.json?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => setDictionary(data))
       .catch(err => console.error("Failed to load dictionary", err));
@@ -77,6 +79,12 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
     } else {
       return checkMatch(searchQuery, exactMatch);
     }
+  }).sort((a, b) => {
+    if (sortMode === 'popularity') {
+      return (b.popularity || 0) - (a.popularity || 0);
+    } else {
+      return a.name.localeCompare(b.name);
+    }
   });
 
   return (
@@ -125,9 +133,20 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
               <input type="checkbox" checked={exactMatch} onChange={(e) => setExactMatch(e.target.checked)} style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
               Exact Match
             </label>
+            <select 
+              value={sortMode}
+              onChange={(e) => setSortMode(e.target.value as any)}
+              style={{
+                background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid var(--panel-border)',
+                padding: '10px 12px', borderRadius: '8px', fontSize: '14px', outline: 'none', cursor: 'pointer'
+              }}
+            >
+              <option value="popularity" style={{ background: '#222', color: '#fff' }}>Sort by Popularity (⭐)</option>
+              <option value="alpha" style={{ background: '#222', color: '#fff' }}>Sort A-Z</option>
+            </select>
           </div>
           <div style={{ marginTop: '12px', fontSize: '13px', color: '#888' }}>
-            Loaded {dictionary.length} unique categories from 1000 levels.
+            Loaded {dictionary.length} unique categories.
           </div>
         </div>
 
@@ -151,6 +170,7 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
                     {isExpanded ? <ChevronDown size={18} color="#888" /> : <ChevronRight size={18} color="#888" />}
                     <span style={{ fontWeight: 600, fontSize: '16px', color: 'var(--accent)' }}>
                       {entry.name}
+                      {entry.popularity !== undefined && <span style={{fontSize: '12px', color: '#f59e0b', marginLeft: '8px', fontWeight: 500}}>⭐ {entry.popularity < 1 ? entry.popularity.toFixed(2) : Math.round(entry.popularity)}</span>}
                     </span>
                     <span style={{ fontSize: '12px', color: '#888', background: 'rgba(0,0,0,0.3)', padding: '2px 8px', borderRadius: '12px' }}>
                       {entry.subcategories.length} sub, {entry.words.length} words
@@ -203,14 +223,26 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
                       <h4 style={{ margin: '0 0 10px 0', color: '#aaa', fontSize: '14px' }}>Words</h4>
                       {entry.words.length === 0 ? <span style={{ color: '#666' }}>None</span> : 
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                          {entry.words.map(w => (
+                          {[...entry.words].sort((a, b) => {
+                            if (sortMode === 'popularity') {
+                              return (b.popularity || 0) - (a.popularity || 0);
+                            } else {
+                              return a.word.localeCompare(b.word);
+                            }
+                          }).map(w => (
                             <span 
                               key={w.word} 
                               onClick={(e) => { e.stopPropagation(); setSearchQuery(w.word); }}
+                              title={w.popularity !== undefined ? `Popularity: ${w.popularity}` : undefined}
                               style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.05)', color: '#ddd', padding: '4px 8px', borderRadius: '4px', fontSize: '13px', cursor: 'pointer' }}
                             >
                               {w.icon && <img src={`/word_icon/${w.icon.endsWith('.png') ? w.icon : w.icon + '.png'}`} alt={w.word} style={{ width: '16px', height: '16px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
                               {w.word}
+                              {w.popularity !== undefined && (
+                                <span style={{ color: '#888', fontSize: '11px', marginLeft: '2px' }}>
+                                  ({w.popularity < 1 ? w.popularity.toFixed(1) : Math.round(w.popularity)})
+                                </span>
+                              )}
                             </span>
                           ))}
                         </div>

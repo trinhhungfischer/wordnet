@@ -114,7 +114,7 @@ export default function GraphEditor() {
       .then(data => setLevels(data))
       .catch(console.error);
 
-    fetch('/global_dictionary.json')
+    fetch(`/global_dictionary.json?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => setGlobalDict(data))
       .catch(console.error);

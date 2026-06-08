@@ -86,7 +86,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
   const [dictionary, setDictionary] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('/global_dictionary.json')
+    fetch(`/global_dictionary.json?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => setDictionary(data))
       .catch(console.error);
