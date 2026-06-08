@@ -6,11 +6,12 @@ interface LevelSettingsProps {
   onClose: () => void;
   levelData: any;
   onSave: (newData: any) => void;
+  onFocusWord?: (word: string) => void;
 }
 
 
 
-export default function LevelSettings({ isOpen, onClose, levelData, onSave }: LevelSettingsProps) {
+export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFocusWord }: LevelSettingsProps) {
   if (!isOpen || !levelData) return null;
 
   const handleChange = (key: string, value: any) => {
@@ -44,15 +45,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave }: Le
           <X size={16} />
         </button>
       </div>
-        <button 
-          onClick={onClose}
-          style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-        >
-          <X size={20} />
-        
-        <h2 style={{ marginTop: 0, color: 'var(--accent)', marginBottom: '24px' }}>
-          Level Configuration
-        </h2>
+
 
       {/* General Settings */}
       <div style={{ marginBottom: '24px' }}>
@@ -117,20 +110,37 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave }: Le
                   </span>
                 ) : (
                   levelData.bubbleSeparatorData.linkedWords.map((word: string, i: number) => (
-                    <span key={i} style={{ 
-                      fontSize: '11px', background: 'rgba(99,102,241,0.2)', color: 'white', 
-                      padding: '2px 6px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px', height: 'fit-content'
-                    }}>
-                      {word}
-                      <button 
+                    <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                      <span 
                         onClick={() => {
+                          if (onFocusWord) onFocusWord(word);
+                        }}
+                        style={{ 
+                          fontSize: '13px', fontWeight: 600, background: 'rgba(99,102,241,0.25)', color: 'white', 
+                          padding: '4px 10px', borderRadius: '6px 0 0 6px', display: 'flex', alignItems: 'center', gap: '4px',
+                          cursor: 'pointer', transition: 'all 0.2s', border: '1px solid rgba(99,102,241,0.3)', borderRight: 'none'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(99,102,241,0.4)'}
+                        onMouseOut={(e) => e.currentTarget.style.background = 'rgba(99,102,241,0.25)'}
+                      >
+                        {word}
+                      </span>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
                           handleDeepChange('bubbleSeparatorData', 'linkedWords', levelData.bubbleSeparatorData.linkedWords.filter((w: string) => w !== word));
                         }}
-                        style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: 0, fontSize: '12px', lineHeight: 1 }}
+                        style={{ 
+                          background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.3)', 
+                          color: '#fca5a5', cursor: 'pointer', padding: '4px 8px', fontSize: '14px', lineHeight: 1,
+                          borderRadius: '0 6px 6px 0', transition: 'all 0.2s'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.4)'}
+                        onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
                       >
                         &times;
                       </button>
-                    </span>
+                    </div>
                   ))
                 )}
               </div>

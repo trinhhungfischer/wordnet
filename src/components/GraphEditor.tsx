@@ -1718,7 +1718,13 @@ export default function GraphEditor() {
       </div>
 
       <ReactFlow
-        nodes={nodes}
+        nodes={nodes.map(n => ({
+          ...n,
+          data: {
+            ...n.data,
+            isChained: rawLevelData?.useBubbleSeparator === 1 && rawLevelData?.bubbleSeparatorData?.linkedWords?.includes(String(n.data.label))
+          }
+        }))}
         edges={edges.map(e => ({
           ...e,
           animated: !!e.selected,
@@ -1763,6 +1769,10 @@ export default function GraphEditor() {
         onClose={() => setIsSettingsOpen(false)} 
         levelData={rawLevelData} 
         onSave={setRawLevelData}
+        onFocusWord={(word) => {
+          const node = nodes.find(n => n.data.label === word);
+          if (node) handleFocusNode(node.id);
+        }}
       />
 
       <MagicChangeModal
