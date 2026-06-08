@@ -160,7 +160,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
 
 function LabelInput({ label, value, onChange, type = "text" }: any) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: 0 }}>
       <label style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)' }}>{label}</label>
       <input 
         type={type} 
@@ -169,7 +169,8 @@ function LabelInput({ label, value, onChange, type = "text" }: any) {
         style={{
           padding: '10px 12px', borderRadius: '8px', fontSize: '14px',
           background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)',
-          color: 'white', outline: 'none', transition: 'border-color 0.2s'
+          color: 'white', outline: 'none', transition: 'border-color 0.2s',
+          width: '100%', boxSizing: 'border-box'
         }}
         onFocus={(e) => e.target.style.borderColor = 'var(--accent)'}
         onBlur={(e) => e.target.style.borderColor = 'var(--panel-border)'}
