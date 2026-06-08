@@ -80,7 +80,10 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
   const [loading, setLoading] = useState(false);
   const [matchSearchQuery, setMatchSearchQuery] = useState('');
   const [matchExact, setMatchExact] = useState(false);
-  const [matchSortOrder, setMatchSortOrder] = useState<'asc'|'desc'>('asc');
+  const [matchCategoryOnly, setMatchCategoryOnly] = useState(false);
+  const [matchSniperMode, setMatchSniperMode] = useState(true);
+  const [matchSortOrder, setMatchSortOrder] = useState<'asc'|'desc'>('desc');
+  const [matchSortMode, setMatchSortMode] = useState<'alpha'|'popularity'>('popularity');
   const [replaceOldTree, setReplaceOldTree] = useState(false);
   
   const [dictionary, setDictionary] = useState<any[]>([]);
@@ -173,13 +176,19 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
       // Every term must be found either in the category name or in its words
       return terms.every(term => 
         matchExact
-          ? catName === term || catWords.some((w: string) => w === term)
-          : catName.includes(term) || catWords.some((w: string) => w.includes(term))
+          ? catName === term || (!matchCategoryOnly && catWords.some((w: string) => w === term))
+          : catName.includes(term) || (!matchCategoryOnly && catWords.some((w: string) => w.includes(term)))
       );
     })
     .sort((a, b) => {
-      if (matchSortOrder === 'asc') return a.name.localeCompare(b.name);
-      return b.name.localeCompare(a.name);
+      if (matchSortMode === 'popularity') {
+        const popA = a.popularity || 0;
+        const popB = b.popularity || 0;
+        return matchSortOrder === 'desc' ? popB - popA : popA - popB;
+      } else {
+        if (matchSortOrder === 'asc') return a.name.localeCompare(b.name);
+        return b.name.localeCompare(a.name);
+      }
     });
 
   const loadSuggestions = async (tab: TabType) => {
@@ -247,20 +256,45 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                 placeholder="Text filter (e.g. apple & fruit)..."
                 value={matchSearchQuery}
                 onChange={e => setMatchSearchQuery(e.target.value)}
-                style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '13px' }}
+                style={{ flex: 1, padding: '8px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '13px', minWidth: 0 }}
               />
-              <button 
-                onClick={() => setMatchSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                title="Sort Alphabetically"
-                style={{ padding: '8px 12px', borderRadius: '6px', background: 'var(--panel-border)', border: 'none', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}
-              >
-                {matchSortOrder === 'asc' ? 'A-Z' : 'Z-A'}
-              </button>
+              <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--panel-border)', flexShrink: 0 }}>
+                <button 
+                  onClick={() => {
+                    if (matchSortMode === 'popularity') setMatchSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
+                    else { setMatchSortMode('popularity'); setMatchSortOrder('desc'); }
+                  }}
+                  title="Sort by Popularity"
+                  style={{ padding: '8px', background: matchSortMode === 'popularity' ? 'var(--panel-border)' : 'transparent', border: 'none', color: matchSortMode === 'popularity' ? 'white' : 'var(--text-muted)', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
+                >
+                  Pop {matchSortMode === 'popularity' && (matchSortOrder === 'desc' ? '↓' : '↑')}
+                </button>
+                <button 
+                  onClick={() => {
+                    if (matchSortMode === 'alpha') setMatchSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+                    else { setMatchSortMode('alpha'); setMatchSortOrder('asc'); }
+                  }}
+                  title="Sort Alphabetically"
+                  style={{ padding: '8px', background: matchSortMode === 'alpha' ? 'var(--panel-border)' : 'transparent', border: 'none', color: matchSortMode === 'alpha' ? 'white' : 'var(--text-muted)', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
+                >
+                  A-Z {matchSortMode === 'alpha' && (matchSortOrder === 'asc' ? '↓' : '↑')}
+                </button>
+              </div>
             </div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ccc', cursor: 'pointer', marginBottom: '12px' }}>
-              <input type="checkbox" checked={matchExact} onChange={e => setMatchExact(e.target.checked)} style={{ cursor: 'pointer' }} />
-              Exact Match
-            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ccc', cursor: 'pointer' }}>
+                <input type="checkbox" checked={matchExact} onChange={e => setMatchExact(e.target.checked)} style={{ cursor: 'pointer' }} />
+                Exact Match
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ccc', cursor: 'pointer' }}>
+                <input type="checkbox" checked={matchCategoryOnly} onChange={e => setMatchCategoryOnly(e.target.checked)} style={{ cursor: 'pointer' }} />
+                Category Only
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ccc', cursor: 'pointer' }}>
+                <input type="checkbox" checked={matchSniperMode} onChange={e => setMatchSniperMode(e.target.checked)} style={{ cursor: 'pointer' }} />
+                Sniper Mode (Top 1)
+              </label>
+            </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
               <input 
@@ -287,7 +321,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
           {hasSearched && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                {matchSearchQuery.trim() 
+                {matchSearchQuery.trim() && matchSniperMode
                   ? (filteredMatches.find(c => !checkConflict(c.name).conflict) 
                       ? "🎯 Sniper Mode: Best valid tree selected" 
                       : "No valid non-conflicting trees found for this query.")
@@ -295,16 +329,28 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {(matchSearchQuery.trim() 
+                {(matchSearchQuery.trim() && matchSniperMode
                   ? (filteredMatches.find(c => !checkConflict(c.name).conflict) ? [filteredMatches.find(c => !checkConflict(c.name).conflict)!] : []) 
                   : filteredMatches.slice(0, 10)
                 ).map(cat => {
                   const { conflict, reason } = checkConflict(cat.name);
                   return (
                     <div key={cat.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: conflict ? 'rgba(239,68,68,0.1)' : 'rgba(0,0,0,0.2)', padding: '10px 12px', borderRadius: '8px', border: conflict ? '1px solid rgba(239,68,68,0.4)' : '1px solid var(--panel-border)', opacity: conflict ? 0.6 : 1 }}>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontWeight: 500, fontSize: '14px', textTransform: 'capitalize', color: conflict ? '#f87171' : 'white' }}>{cat.name}</span>
-                        {conflict && <span style={{ fontSize: '11px', color: '#f87171', marginTop: '2px' }}>{reason}</span>}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1, minWidth: 0, paddingRight: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 500, fontSize: '14px', textTransform: 'capitalize', color: conflict ? '#f87171' : 'white', wordBreak: 'break-word' }}>{cat.name}</span>
+                          {cat.popularity !== undefined && (
+                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                              {cat.popularity}
+                            </span>
+                          )}
+                        </div>
+                        {conflict && <span style={{ fontSize: '11px', color: '#f87171' }}>{reason}</span>}
+                        {cat.words && cat.words.length > 0 && (
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {[...cat.words].sort((a:any, b:any) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 6).map((w:any) => w.word).join(', ')}...
+                          </div>
+                        )}
                       </div>
                       <button 
                         disabled={conflict}

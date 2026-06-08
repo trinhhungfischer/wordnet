@@ -638,11 +638,13 @@ export default function GraphEditor() {
 
   const handleDeleteSelected = () => {
     saveHistory();
-    const selectedIds = nodes.filter(n => n.selected || n.id === selectedNodeId).map(n => n.id);
-    if (selectedIds.length === 0) return;
+    const selectedNodeIds = nodes.filter(n => n.selected || n.id === selectedNodeId).map(n => n.id);
+    const selectedEdgeIds = edges.filter(e => e.selected).map(e => e.id);
     
-    setNodes((nds) => nds.filter((n) => !selectedIds.includes(n.id)));
-    setEdges((eds) => eds.filter((e) => !selectedIds.includes(e.source) && !selectedIds.includes(e.target)));
+    if (selectedNodeIds.length === 0 && selectedEdgeIds.length === 0) return;
+    
+    setNodes((nds) => nds.filter((n) => !selectedNodeIds.includes(n.id)));
+    setEdges((eds) => eds.filter((e) => !selectedNodeIds.includes(e.source) && !selectedNodeIds.includes(e.target) && !selectedEdgeIds.includes(e.id)));
     setSelectedNodeId(null);
   };
 
@@ -1651,7 +1653,14 @@ export default function GraphEditor() {
 
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={edges.map(e => ({
+          ...e,
+          animated: !!e.selected,
+          style: {
+            ...e.style,
+            strokeDasharray: e.selected ? '5,5' : (e.style?.strokeDasharray === '5,5' ? '5,5' : 'none')
+          }
+        }))}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
         onConnect={onConnect}
@@ -1659,7 +1668,7 @@ export default function GraphEditor() {
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         colorMode="dark"
-        defaultEdgeOptions={{ animated: true, style: { stroke: 'var(--accent)' } }}
+        defaultEdgeOptions={{ style: { stroke: 'var(--accent)' } }}
         fitView
         panOnDrag={[1, 2]} // Middle and Right click
         selectionOnDrag={true}

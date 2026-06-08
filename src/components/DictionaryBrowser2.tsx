@@ -19,6 +19,7 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
   const [dictionary, setDictionary] = useState<DictEntry[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [exactMatch, setExactMatch] = useState(false);
+  const [searchCategoryOnly, setSearchCategoryOnly] = useState(false);
   const [sortMode, setSortMode] = useState<'popularity' | 'alpha'>('popularity');
   const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
@@ -65,12 +66,12 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
       if (!q) return true;
       if (exact) {
         return entry.name.toLowerCase() === q ||
-          entry.words.some((w: any) => w.word.toLowerCase() === q) ||
-          entry.subcategories.some((s: string) => s.toLowerCase() === q);
+          (!searchCategoryOnly && entry.words.some((w: any) => w.word.toLowerCase() === q)) ||
+          (!searchCategoryOnly && entry.subcategories.some((s: string) => s.toLowerCase() === q));
       }
       return entry.name.toLowerCase().includes(q) ||
-        entry.words.some((w: any) => w.word.toLowerCase().includes(q)) ||
-        entry.subcategories.some((s: string) => s.toLowerCase().includes(q));
+        (!searchCategoryOnly && entry.words.some((w: any) => w.word.toLowerCase().includes(q))) ||
+        (!searchCategoryOnly && entry.subcategories.some((s: string) => s.toLowerCase().includes(q)));
     };
 
     if (searchQuery.includes('&')) {
@@ -118,8 +119,8 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
 
         {/* Search */}
         <div style={{ padding: '20px', borderBottom: '1px solid var(--panel-border)' }}>
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <div style={{ position: 'relative', flex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
               <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
               <input 
                 type="text" 
@@ -133,43 +134,53 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
                 }}
               />
             </div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', color: '#aaa', userSelect: 'none', background: 'rgba(255,255,255,0.05)', padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-              <input type="checkbox" checked={exactMatch} onChange={(e) => setExactMatch(e.target.checked)} style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
-              Exact Match
-            </label>
-            <div style={{ display: 'flex', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', padding: '4px', border: '1px solid var(--panel-border)' }}>
-              <button 
-                onClick={() => setSortMode('popularity')}
+            
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', color: '#aaa', userSelect: 'none', background: 'rgba(255,255,255,0.05)', padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <input type="checkbox" checked={exactMatch} onChange={(e) => setExactMatch(e.target.checked)} style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
+                Exact Match
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', color: '#aaa', userSelect: 'none', background: 'rgba(255,255,255,0.05)', padding: '10px 16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <input type="checkbox" checked={searchCategoryOnly} onChange={(e) => setSearchCategoryOnly(e.target.checked)} style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
+                Category Only
+              </label>
+
+              <div style={{ flex: 1 }}></div>
+
+              <div style={{ display: 'flex', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', padding: '4px', border: '1px solid var(--panel-border)' }}>
+                <button 
+                  onClick={() => setSortMode('popularity')}
+                  style={{
+                    padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+                    background: sortMode === 'popularity' ? 'var(--accent)' : 'transparent',
+                    color: sortMode === 'popularity' ? 'white' : '#888',
+                    display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
+                  }}
+                >
+                  ⭐ Popular
+                </button>
+                <button 
+                  onClick={() => setSortMode('alpha')}
+                  style={{
+                    padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+                    background: sortMode === 'alpha' ? 'var(--accent)' : 'transparent',
+                    color: sortMode === 'alpha' ? 'white' : '#888',
+                    display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
+                  }}
+                >
+                  🅰️ A-Z
+                </button>
+              </div>
+              <button
+                onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
                 style={{
-                  padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-                  background: sortMode === 'popularity' ? 'var(--accent)' : 'transparent',
-                  color: sortMode === 'popularity' ? 'white' : '#888',
-                  display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
+                  padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--panel-border)', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+                  background: 'rgba(255,255,255,0.05)', color: 'white', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
                 }}
               >
-                ⭐ Popular
-              </button>
-              <button 
-                onClick={() => setSortMode('alpha')}
-                style={{
-                  padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-                  background: sortMode === 'alpha' ? 'var(--accent)' : 'transparent',
-                  color: sortMode === 'alpha' ? 'white' : '#888',
-                  display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
-                }}
-              >
-                🅰️ A-Z
+                {sortDir === 'desc' ? '⬇️ Desc' : '⬆️ Asc'}
               </button>
             </div>
-            <button
-              onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
-              style={{
-                padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--panel-border)', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-                background: 'rgba(255,255,255,0.05)', color: 'white', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s'
-              }}
-            >
-              {sortDir === 'desc' ? '⬇️ Desc' : '⬆️ Asc'}
-            </button>
           </div>
           <div style={{ marginTop: '12px', fontSize: '13px', color: '#888' }}>
             Loaded {dictionary.length} unique categories.
