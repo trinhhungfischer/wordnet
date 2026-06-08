@@ -1,4 +1,4 @@
-import { X, Link } from 'lucide-react';
+import { X, Link, Calculator } from 'lucide-react';
 
 interface LevelSettingsProps {
   isOpen: boolean;
@@ -6,11 +6,12 @@ interface LevelSettingsProps {
   levelData: any;
   onSave: (newData: any) => void;
   onFocusWord?: (word: string) => void;
+  onCalculateSolution?: () => void;
 }
 
 
 
-export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFocusWord }: LevelSettingsProps) {
+export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFocusWord, onCalculateSolution }: LevelSettingsProps) {
   if (!isOpen || !levelData) return null;
 
   const handleChange = (key: string, value: any) => {
@@ -38,12 +39,27 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
         <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 600, color: 'var(--accent)' }}>
           Level Settings
         </h2>
-        <button 
-          onClick={onClose}
-          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
-        >
-          <X size={20} />
-        </button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {onCalculateSolution && (
+            <button 
+              onClick={onCalculateSolution}
+              title="Calculate minimum moves and check difficulty"
+              style={{ 
+                background: 'var(--accent)', color: 'white', border: 'none', borderRadius: '6px', 
+                padding: '6px 10px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', 
+                display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' 
+              }}
+            >
+              <Calculator size={14} /> Calculate
+            </button>
+          )}
+          <button 
+            onClick={onClose}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+          >
+            <X size={20} />
+          </button>
+        </div>
       </div>
 
 

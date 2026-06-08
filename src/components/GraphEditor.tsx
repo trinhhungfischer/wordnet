@@ -26,6 +26,7 @@ import Sidebar from './Sidebar';
 import LevelSettings from './LevelSettings';
 import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
+import SolutionModal from './SolutionModal';
 import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link } from 'lucide-react';
 
 const nodeTypes = {
@@ -55,6 +56,7 @@ export default function GraphEditor() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMagicChangeOpen, setIsMagicChangeOpen] = useState(false);
   const [isDictOpen, setIsDictOpen] = useState(false);
+  const [isSolutionModalOpen, setIsSolutionModalOpen] = useState(false);
   
   const [copiedTreeConfig, setCopiedTreeConfig] = useState<any | null>(null);
   
@@ -1804,6 +1806,7 @@ export default function GraphEditor() {
         onClose={() => setIsSettingsOpen(false)} 
         levelData={rawLevelData} 
         onSave={setRawLevelData}
+        onCalculateSolution={() => setIsSolutionModalOpen(true)}
         onFocusWord={(word) => {
           const node = nodes.find(n => n.data.label === word);
           if (node) handleFocusNode(node.id);
@@ -1817,6 +1820,14 @@ export default function GraphEditor() {
           setIsMagicChangeOpen(false);
           handleMagicChange(popularWords, minPopularity);
         }}
+      />
+
+      <SolutionModal
+        isOpen={isSolutionModalOpen}
+        onClose={() => setIsSolutionModalOpen(false)}
+        nodes={nodes}
+        edges={edges}
+        levelData={rawLevelData}
       />
 
       <Sidebar 
