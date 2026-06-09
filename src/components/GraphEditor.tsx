@@ -290,7 +290,7 @@ export default function GraphEditor() {
     setMisleadingWords(misleading.sort());
   }, [nodes, globalDict]);
 
-  const createChunksForWord = (wordId: string, word: string, targetNodes: Node[], targetEdges: Edge[], parentX: number, parentY: number) => {
+  const createChunksForWord = (wordId: string, word: string, targetNodes: Node[], targetEdges: Edge[], parentX: number, parentY: number, parentGlobalIndex?: number) => {
     const cleanWord = String(word).trim().toLowerCase();
     if (cleanWord.length <= 1) return [];
     const half = Math.ceil(cleanWord.length / 2);
@@ -300,7 +300,7 @@ export default function GraphEditor() {
     const c1Id = uuidv4();
     const c1Node: Node = {
       id: c1Id, type: 'custom', position: { x: parentX - 60, y: parentY + 80 },
-      data: { label: chunk1, isChunk: true, isCategory: false }
+      data: { label: chunk1, isChunk: true, isCategory: false, globalIndex: parentGlobalIndex }
     };
     targetNodes.push(c1Node);
     targetEdges.push({
@@ -311,7 +311,7 @@ export default function GraphEditor() {
     const c2Id = uuidv4();
     const c2Node: Node = {
       id: c2Id, type: 'custom', position: { x: parentX + 60, y: parentY + 80 },
-      data: { label: chunk2, isChunk: true, isCategory: false }
+      data: { label: chunk2, isChunk: true, isCategory: false, globalIndex: parentGlobalIndex !== undefined ? parentGlobalIndex + 0.5 : undefined }
     };
     targetNodes.push(c2Node);
     targetEdges.push({
@@ -841,10 +841,23 @@ export default function GraphEditor() {
     });
 
     if (!isChunk && autoCutWords) {
-      createChunksForWord(childNode.id, childLabel, newNodesToAppend, newEdgesToAppend, childNode.position.x, childNode.position.y);
+      createChunksForWord(childNode.id, childLabel, newNodesToAppend, newEdgesToAppend, childNode.position.x, childNode.position.y, childNode.data.globalIndex as number | undefined);
+      childNode.data.globalIndex = undefined;
     }
     
-    if (newNodesToAppend.length > 0) setNodes((nds) => [...nds, ...newNodesToAppend]);
+    setNodes((nds) => {
+      let updatedNodes = [...nds];
+      if (isChunk) {
+        const parentIndex = updatedNodes.findIndex(n => n.id === parentNode.id);
+        if (parentIndex !== -1) {
+          updatedNodes[parentIndex] = {
+            ...updatedNodes[parentIndex],
+            data: { ...updatedNodes[parentIndex].data, globalIndex: undefined }
+          };
+        }
+      }
+      return [...updatedNodes, ...newNodesToAppend];
+    });
     if (newEdgesToAppend.length > 0) setEdges((eds) => [...eds, ...newEdgesToAppend]);
   };
 
@@ -1203,10 +1216,10 @@ export default function GraphEditor() {
           if (oldChunkNodes.length > 0) {
             oldIds.push(...oldChunkNodes.map(c => c.id));
           }
-          const newChunks = createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+          const newChunks = createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y, newWordNodes[i].data.globalIndex as number | undefined);
           // newChunks are the node objects returned by createChunksForWord
           if (newChunks && newChunks.length > 0) {
-            newChunks.forEach(c => c.data.globalIndex = newWordNodes[i].data.globalIndex);
+            newWordNodes[i].data.globalIndex = undefined;
             newIds = newChunks.map(c => c.id);
           }
         }
@@ -1216,7 +1229,8 @@ export default function GraphEditor() {
       // If newWordNodes has more items than oldWordNodes, and autoCutWords is true
       for (let i = oldWordNodes.length; i < newWordNodes.length; i++) {
         if (autoCutWords) {
-          createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+          createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y, newWordNodes[i].data.globalIndex as number | undefined);
+          newWordNodes[i].data.globalIndex = undefined;
         }
       }
     } else if (keepOldTreeAnchor.length > 0) {
@@ -1250,9 +1264,9 @@ export default function GraphEditor() {
           if (oldChunkNodes.length > 0) {
             oldIds.push(...oldChunkNodes.map(c => c.id));
           }
-          const newChunks = createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+          const newChunks = createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y, newWordNodes[i].data.globalIndex as number | undefined);
           if (newChunks && newChunks.length > 0) {
-            newChunks.forEach(c => c.data.globalIndex = newWordNodes[i].data.globalIndex);
+            newWordNodes[i].data.globalIndex = undefined;
             newIds = newChunks.map(c => c.id);
           }
         }
@@ -1261,14 +1275,16 @@ export default function GraphEditor() {
       
       for (let i = oldWordNodes.length; i < newWordNodes.length; i++) {
         if (autoCutWords) {
-          createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+          createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y, newWordNodes[i].data.globalIndex as number | undefined);
+          newWordNodes[i].data.globalIndex = undefined;
         }
       }
     } else {
       // Fresh import, cut all if autoCutWords is enabled
       if (autoCutWords) {
         newWordNodes.forEach(wNode => {
-          createChunksForWord(wNode.id, String(wNode.data.label), importedNodes, importedEdges, wNode.position.x, wNode.position.y);
+          createChunksForWord(wNode.id, String(wNode.data.label), importedNodes, importedEdges, wNode.position.x, wNode.position.y, wNode.data.globalIndex as number | undefined);
+          wNode.data.globalIndex = undefined;
         });
       }
     }
@@ -1548,7 +1564,7 @@ export default function GraphEditor() {
               const baseY = oldWordNode.position.y;
               const chunkInheritedIndex = oldChunkNodes[0]?.data?.globalIndex ?? inheritedGlobalIndex;
               newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: chunkInheritedIndex }});
-              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: chunkInheritedIndex !== undefined ? chunkInheritedIndex + 0.5 : undefined }});
+              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: chunkInheritedIndex !== undefined && chunkInheritedIndex !== null ? (chunkInheritedIndex as number) + 0.5 : undefined }});
               newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
               newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
               
@@ -1580,7 +1596,7 @@ export default function GraphEditor() {
             const baseX = oldWordNode?.position.x || 0;
             const baseY = oldWordNode?.position.y || 0;
             newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
-            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex !== undefined ? inheritedGlobalIndex + 0.5 : undefined }});
+            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex !== undefined && inheritedGlobalIndex !== null ? (inheritedGlobalIndex as number) + 0.5 : undefined }});
             newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
             newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
             newIds = [c1Id, c2Id];
