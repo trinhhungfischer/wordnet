@@ -1818,8 +1818,8 @@ export default function GraphEditor() {
             onClick={() => setLeftPanelTab('dropQueue')}
             style={{ 
               flex: 1, padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600,
-              background: leftPanelTab === 'dropQueue' || leftPanelTab === 'words' || leftPanelTab === 'dropOrder' ? 'var(--accent)' : 'transparent',
-              color: leftPanelTab === 'dropQueue' || leftPanelTab === 'words' || leftPanelTab === 'dropOrder' ? 'white' : 'var(--text-muted)'
+              background: leftPanelTab === 'dropQueue' || leftPanelTab === 'words' ? 'var(--accent)' : 'transparent',
+              color: leftPanelTab === 'dropQueue' || leftPanelTab === 'words' ? 'white' : 'var(--text-muted)'
             }}
           >
             Drop Queue
@@ -2004,9 +2004,9 @@ export default function GraphEditor() {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span style={{ fontSize: '11px', opacity: 0.6, width: '20px' }}>{actualIdx + 1}.</span>
-                          {!isChunk && node.data.icon && (
-                            <img src={`/word_icon/${node.data.icon}.png`} alt="" title={`Missing File: ${node.data.icon}.png`} style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
-                          )}
+                          {(!isChunk && node.data.icon) ? (
+                            <img src={`/word_icon/${String(node.data.icon)}.png`} alt="" title={`Missing File: ${String(node.data.icon)}.png`} style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
+                          ) : null}
                           <strong style={{ textTransform: isChunk ? 'none' : 'capitalize' }}>{String(node.data.label)}</strong>
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
