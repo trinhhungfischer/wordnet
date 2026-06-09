@@ -150,10 +150,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
   // (Variables moved up)
 
-  const isWordLocked = (w: string) => {
+  const isWordIceOrCrackLocked = (w: string) => {
     w = w.toLowerCase();
     if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) return true;
-    if (linkedWords.has(w) && !chainBroken && levelData?.useBubbleSeparator === 1) return true;
     
     const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
     if (frozenRule && completedCategoriesCount < frozenRule.mergesNeeded) return true;
@@ -236,19 +235,36 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           // Check if all required words are on the board
           const allWordsOnBoard = wordIds.every(wid => board.includes(wid));
           if (allWordsOnBoard) {
-            // Check if all required words are unlocked
+            // Check if all required words are unlocked from Ice/Crack
             const allWordsUnlocked = wordIds.every(wid => {
               const label = String(nodes.find(n => n.id === wid)?.data.label);
-              return !isWordLocked(label);
+              return !isWordIceOrCrackLocked(label);
             });
 
             if (allWordsUnlocked) {
-              // We do NOT remove words from the board yet!
-              // Instead, we merge them step by step.
-              const catLabel = String(nodes.find(n => n.id === catId)?.data.label);
-              const words = wordIds.map(wid => String(nodes.find(n => n.id === wid)?.data.label));
+              // Check Chain logic: words can only merge if ALL of them are chained, or NONE of them are chained.
+              const isChainActive = levelData?.useBubbleSeparator === 1 && !chainBroken;
+              let canMergeChain = true;
+
+              if (isChainActive) {
+                const chainedCount = wordIds.filter(wid => {
+                  const label = String(nodes.find(n => n.id === wid)?.data.label).toLowerCase();
+                  return linkedWords.has(label);
+                }).length;
+
+                // Mixed chain status prevents merge
+                if (chainedCount > 0 && chainedCount < wordIds.length) {
+                  canMergeChain = false;
+                }
+              }
+
+              if (canMergeChain) {
+                // We do NOT remove words from the board yet!
+                // Instead, we merge them step by step.
+                const catLabel = String(nodes.find(n => n.id === catId)?.data.label);
+                const words = wordIds.map(wid => String(nodes.find(n => n.id === wid)?.data.label));
               
-              if (words.length > 1) {
+                if (words.length > 1) {
                 let currentBubbleStr = words[0];
                 let currentBubbleId = wordIds[0];
 
@@ -310,6 +326,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                   chainBroken = true;
                 }
               }
+              } // closes if (canMergeChain)
             }
           }
         }
