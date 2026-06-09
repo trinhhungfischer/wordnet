@@ -1540,7 +1540,6 @@ export default function GraphEditor() {
               }
             }
           }
-          }
 
           // If autoCutWords is enabled and the old word did NOT have chunks, we generate them now
           if (autoCutWords && (!oldWordNode || !nodes.some(n => n.data.isChunk && edges.some(e => e.source === oldWordNode.id && e.target === n.id)))) {
