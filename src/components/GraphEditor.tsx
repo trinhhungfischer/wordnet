@@ -1714,49 +1714,82 @@ export default function GraphEditor() {
       return;
     }
     
-    const isCompletable = (queue: string[]) => {
-      // Linked words (bubble separators) must spawn right at the beginning of the level.
-      // If any linked word appears AFTER a non-linked word, the level might break or not act as intended.
-      let seenNonLinked = false;
-      for (const id of queue) {
-        const node = nodes.find(n => n.id === id);
-        if (!node) continue;
-        const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
-        
-        if (!isChained) {
-          seenNonLinked = true;
-        } else if (seenNonLinked) {
-          // Found a linked word appearing after a non-linked word
-          return false;
-        }
-      }
-      return true;
-    };
-
     setSpawnQueueIds(prev => {
-      let newQueue = [...prev];
-      let attempts = 0;
-      const maxAttempts = 50;
+      const newQueue = [...prev];
+      const sliceToShuffle = newQueue.slice(rawStart - 1, rawEnd);
       
-      while (attempts < maxAttempts) {
-        newQueue = [...prev];
-        const sliceToShuffle = newQueue.slice(rawStart - 1, rawEnd);
-        // shuffle
-        for (let i = sliceToShuffle.length - 1; i > 0; i--) {
+      const maxBubbles = rawLevelData?.maxBubblesInScene || 20;
+      
+      const linkedItems: string[] = [];
+      const normalItems: string[] = [];
+      
+      sliceToShuffle.forEach(id => {
+        const node = nodes.find(n => n.id === id);
+        if (node && isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes)) {
+          linkedItems.push(id);
+        } else {
+          normalItems.push(id);
+        }
+      });
+      
+      // Determine allowed local indices for linked items so absolute index < maxBubbles
+      // absolute index = rawStart - 1 + local_index
+      const maxLocalIndexForLinked = Math.max(0, maxBubbles - (rawStart - 1));
+      
+      const availableLocalIndices = Array.from({ length: sliceToShuffle.length }, (_, i) => i);
+      const preferredLocalIndices = availableLocalIndices.filter(i => i < maxLocalIndexForLinked);
+      
+      const shuffleArray = (arr: any[]) => {
+        const res = [...arr];
+        for (let i = res.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
-          [sliceToShuffle[i], sliceToShuffle[j]] = [sliceToShuffle[j], sliceToShuffle[i]];
+          [res[i], res[j]] = [res[j], res[i]];
         }
-        newQueue.splice(rawStart - 1, sliceToShuffle.length, ...sliceToShuffle);
-        
-        if (isCompletable(newQueue)) {
-          alert(`Shuffled successfully from index ${rawStart} to ${rawEnd}!`);
-          return newQueue;
+        return res;
+      };
+      
+      const shuffledPreferred = shuffleArray(preferredLocalIndices);
+      const chosenLinkedIndices: number[] = [];
+      
+      // Assign preferred indices to linked items as much as possible
+      for (let i = 0; i < linkedItems.length; i++) {
+        if (shuffledPreferred.length > 0) {
+          const chosen = shuffledPreferred.pop()!;
+          chosenLinkedIndices.push(chosen);
+          const idx = availableLocalIndices.indexOf(chosen);
+          if (idx !== -1) availableLocalIndices.splice(idx, 1);
+        } else {
+          break;
         }
-        attempts++;
       }
       
-      alert(`Could not find a completable shuffle arrangement after ${maxAttempts} attempts. Try again.`);
-      return prev;
+      // Assign any leftover linked items to remaining available indices
+      const remainingLinkedCount = linkedItems.length - chosenLinkedIndices.length;
+      if (remainingLinkedCount > 0) {
+        const shuffledRemaining = shuffleArray(availableLocalIndices);
+        for (let i = 0; i < remainingLinkedCount; i++) {
+          const chosen = shuffledRemaining.pop()!;
+          chosenLinkedIndices.push(chosen);
+          const idx = availableLocalIndices.indexOf(chosen);
+          if (idx !== -1) availableLocalIndices.splice(idx, 1);
+        }
+      }
+      
+      const shuffledLinkedItems = shuffleArray(linkedItems);
+      const shuffledNormalItems = shuffleArray(normalItems);
+      
+      const newSlice: string[] = new Array(sliceToShuffle.length);
+      for (let i = 0; i < chosenLinkedIndices.length; i++) {
+        newSlice[chosenLinkedIndices[i]] = shuffledLinkedItems[i];
+      }
+      for (let i = 0; i < availableLocalIndices.length; i++) {
+        newSlice[availableLocalIndices[i]] = shuffledNormalItems[i];
+      }
+      
+      newQueue.splice(rawStart - 1, newSlice.length, ...newSlice);
+      
+      alert(`Shuffled successfully from index ${rawStart} to ${rawEnd}!`);
+      return newQueue;
     });
   };
 
