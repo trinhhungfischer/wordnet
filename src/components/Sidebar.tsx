@@ -64,8 +64,6 @@ interface SidebarProps {
   onRenameNode: (nodeId: string, newLabel: string) => void;
   onToggleNodeIcon?: (nodeId: string, currentIcon: string | null) => void;
   onUpdateNodeIndex?: (nodeId: string, newIndex: number | undefined) => void;
-  onUpdateDropOrder?: (nodeId: string, newIndex: number | undefined) => void;
-  spawnQueueIds?: string[];
   onImportDictionary: (categoryName: string, dictionary: any[], targetParentId?: string, options?: any) => void;
   copiedTreeConfig?: any;
   setCopiedTreeConfig?: (config: any) => void;
@@ -76,7 +74,7 @@ interface SidebarProps {
 
 type TabType = 'dict' | 'specific' | 'related' | 'wiki';
 
-export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onUpdateDropOrder, spawnQueueIds = [], onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig, autoCutWords, setAutoCutWords }: SidebarProps) {
+export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig, autoCutWords, setAutoCutWords }: SidebarProps) {
   const [manualWord, setManualWord] = useState('');
   const [suggestions, setSuggestions] = useState<WordSuggestion[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('dict');
@@ -610,41 +608,21 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
           )}
         </div>
 
-        <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-          <div style={{ flex: 1 }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }} title="This index is only used when exporting JSON.">Index (JSON ID)</span>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
-              <input 
-                type="number"
-                value={selectedNode.data.globalIndex !== undefined ? (selectedNode.data.globalIndex as number) : ''}
-                onChange={(e) => {
-                  if (onUpdateNodeIndex) {
-                    const val = e.target.value === '' ? undefined : parseInt(e.target.value, 10);
-                    onUpdateNodeIndex(selectedNode.id, val);
-                  }
-                }}
-                placeholder="None"
-                style={{ flex: 1, width: '100%', padding: '6px', background: 'var(--bg-main)', border: '1px solid var(--panel-border)', borderRadius: '4px', color: 'var(--text-main)' }}
-              />
-            </div>
-          </div>
-          
-          <div style={{ flex: 1 }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }} title="The position of this word in the Drop Queue.">Drop Order</span>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
-              <input 
-                type="number"
-                value={spawnQueueIds.indexOf(selectedNode.id) !== -1 ? spawnQueueIds.indexOf(selectedNode.id) + 1 : ''}
-                onChange={(e) => {
-                  if (onUpdateDropOrder) {
-                    const val = e.target.value === '' ? undefined : parseInt(e.target.value, 10);
-                    onUpdateDropOrder(selectedNode.id, val);
-                  }
-                }}
-                placeholder="Unqueued"
-                style={{ flex: 1, width: '100%', padding: '6px', background: 'var(--bg-main)', border: '1px solid var(--panel-border)', borderRadius: '4px', color: 'var(--text-main)' }}
-              />
-            </div>
+        <div style={{ marginTop: '10px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }} title="This index determines the order in Drop Queue and JSON.">Index (JSON ID)</span>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+            <input 
+              type="number"
+              value={selectedNode.data.globalIndex !== undefined ? (selectedNode.data.globalIndex as number) : ''}
+              onChange={(e) => {
+                if (onUpdateNodeIndex) {
+                  const val = e.target.value === '' ? undefined : parseInt(e.target.value, 10);
+                  onUpdateNodeIndex(selectedNode.id, val);
+                }
+              }}
+              placeholder="None"
+              style={{ flex: 1, padding: '6px', background: 'var(--bg-main)', border: '1px solid var(--panel-border)', borderRadius: '4px', color: 'var(--text-main)' }}
+            />
           </div>
         </div>
 

@@ -90,7 +90,36 @@ export default function GraphEditor() {
   const [copiedTreeConfig, setCopiedTreeConfig] = useState<any | null>(null);
   const [wordIndexSearchQuery, setWordIndexSearchQuery] = useState('');
   const [sortLinksFirst, setSortLinksFirst] = useState(false);
-  const [spawnQueueIds, setSpawnQueueIds] = useState<string[]>([]);
+  const spawnQueueIds = useMemo(() => {
+    return nodes.filter(n => typeof n.data.globalIndex === 'number')
+                .sort((a, b) => (a.data.globalIndex as number) - (b.data.globalIndex as number))
+                .map(n => n.id);
+  }, [nodes]);
+
+  const setSpawnQueueIds = useCallback((updater: string[] | ((prev: string[]) => string[])) => {
+    setNodes(nds => {
+      const currentQueue = nds.filter(n => typeof n.data.globalIndex === 'number')
+                              .sort((a, b) => (a.data.globalIndex as number) - (b.data.globalIndex as number))
+                              .map(n => n.id);
+      
+      const newQueue = typeof updater === 'function' ? updater(currentQueue) : updater;
+      
+      return nds.map(n => {
+        const idx = newQueue.indexOf(n.id);
+        if (idx !== -1) {
+          if (n.data.globalIndex !== idx + 1) {
+            return { ...n, data: { ...n.data, globalIndex: idx + 1 } };
+          }
+          return n;
+        } else {
+          if (typeof n.data.globalIndex === 'number') {
+             return { ...n, data: { ...n.data, globalIndex: undefined } };
+          }
+          return n;
+        }
+      });
+    });
+  }, [setNodes]);
   const [shuffleStartIndex, setShuffleStartIndex] = useState<string>('');
   const [shuffleEndIndex, setShuffleEndIndex] = useState<string>('');
   
@@ -385,11 +414,18 @@ export default function GraphEditor() {
                 w.chunks.forEach((chunkItem: any) => {
                   const chunkStr = typeof chunkItem === 'string' ? chunkItem : Object.keys(chunkItem)[0];
                   if (!chunkStr) return;
+                  
+                  let chunkIndex = undefined;
+                  if (data.allWordEntries && Array.isArray(data.allWordEntries)) {
+                    const arrIdx = data.allWordEntries.findIndex((e: any) => e.fullWord.toLowerCase() === chunkStr.toLowerCase() && e.parentWord && String(e.parentWord).toLowerCase() === wordLower);
+                    if (arrIdx !== -1) chunkIndex = arrIdx + 1;
+                  }
+                  
                   const chunkNode: Node = {
                     id: uuidv4(),
                     type: 'custom',
                     position: { x: 0, y: 0 },
-                    data: { label: chunkStr.toLowerCase(), isCategory: false, isChunk: true }
+                    data: { label: chunkStr.toLowerCase(), isCategory: false, isChunk: true, globalIndex: chunkIndex }
                   };
                   newNodes.push(chunkNode);
                   newEdges.push({
@@ -402,13 +438,13 @@ export default function GraphEditor() {
                 });
               } else if (data.allWordEntries && Array.isArray(data.allWordEntries)) {
                 // Support new flattened format
-                data.allWordEntries.forEach((entry: any) => {
+                data.allWordEntries.forEach((entry: any, arrIdx: number) => {
                   if (entry.parentWord && String(entry.parentWord).toLowerCase() === wordLower) {
                     const chunkNode: Node = {
                       id: uuidv4(),
                       type: 'custom',
                       position: { x: 0, y: 0 },
-                      data: { label: String(entry.fullWord).toLowerCase(), isCategory: false, isChunk: true }
+                      data: { label: String(entry.fullWord).toLowerCase(), isCategory: false, isChunk: true, globalIndex: arrIdx + 1 }
                     };
                     newNodes.push(chunkNode);
                     newEdges.push({
@@ -473,51 +509,41 @@ export default function GraphEditor() {
         });
       }
 
-      // Initialize spawnQueueIds exactly from the flattened allWordEntries (with backward compatibility for old JSON format)
-      const loadedSpawnQueueIds: string[] = [];
+      // ---------------------------------------------------------
+      // PASS 4: Restore linked words and cracked states
+      // ---------------------------------------------------------
       if (data.allWordEntries && Array.isArray(data.allWordEntries)) {
         data.allWordEntries.forEach((entry: any) => {
-          const isFlattenedChunk = entry.parentWord ? true : false;
-          if (isFlattenedChunk) {
-            const chunkNode = newNodes.find(n => 
-              n.data.isChunk && 
-              String(n.data.label).toLowerCase() === String(entry.fullWord).toLowerCase() &&
-              newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.parentWord).toLowerCase()) &&
-              !loadedSpawnQueueIds.includes(n.id)
+          if (entry.parentWord) {
+            // It's a chunk
+            const chunkStr = String(entry.fullWord).toLowerCase();
+            newNodes.find(n => 
+              n.data.isChunk &&
+              String(n.data.label).toLowerCase() === chunkStr &&
+              newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.parentWord).toLowerCase())
             );
-            if (chunkNode) loadedSpawnQueueIds.push(chunkNode.id);
           } else {
             // Uncut word (new format) OR Old format entry (cut or uncut)
             if (entry.chunks && entry.chunks.length > 0) {
-              // OLD FORMAT CUT WORD: Replace word with its chunks in the spawn queue
-              // We simulate the order by placing the chunks exactly where the parent word was.
+              // Old format with chunks
               entry.chunks.forEach((chunkItem: any) => {
                 const chunkStr = typeof chunkItem === 'string' ? chunkItem : Object.keys(chunkItem)[0];
-                if (!chunkStr) return;
-                const chunkNode = newNodes.find(n => 
-                  n.data.isChunk && 
+                newNodes.find(n => 
+                  n.data.isChunk &&
                   String(n.data.label).toLowerCase() === String(chunkStr).toLowerCase() &&
-                  newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.fullWord).toLowerCase()) &&
-                  !loadedSpawnQueueIds.includes(n.id)
+                  newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.fullWord).toLowerCase())
                 );
-                if (chunkNode) {
-                  loadedSpawnQueueIds.push(chunkNode.id);
-                }
               });
             } else {
-              // UNCUT WORD (works for both old and new format)
-              const wordNode = newNodes.find(n => 
+              // Uncut word
+              newNodes.find(n => 
                 !n.data.isCategory && !n.data.isChunk &&
-                String(n.data.label).toLowerCase() === String(entry.fullWord).toLowerCase() &&
-                !loadedSpawnQueueIds.includes(n.id)
+                String(n.data.label).toLowerCase() === String(entry.fullWord).toLowerCase()
               );
-              if (wordNode) loadedSpawnQueueIds.push(wordNode.id);
             }
           }
         });
       }
-
-      setSpawnQueueIds(loadedSpawnQueueIds);
       
       setNodes(newNodes);
       setEdges(newEdges);
@@ -867,30 +893,7 @@ export default function GraphEditor() {
     }));
   }, [saveHistory]);
 
-  const handleUpdateDropOrder = useCallback((nodeId: string, newPos: number | undefined) => {
-    saveHistory();
-    setSpawnQueueIds(prev => {
-      const arr = [...prev];
-      const currentIndex = arr.indexOf(nodeId);
-      
-      if (newPos === undefined || newPos < 1) {
-        if (currentIndex !== -1) arr.splice(currentIndex, 1);
-        return arr;
-      }
-      
-      let targetIndex = newPos - 1;
-      
-      if (currentIndex !== -1) {
-        arr.splice(currentIndex, 1);
-        if (targetIndex > arr.length) targetIndex = arr.length;
-        arr.splice(targetIndex, 0, nodeId);
-      } else {
-        if (targetIndex > arr.length) targetIndex = arr.length;
-        arr.splice(targetIndex, 0, nodeId);
-      }
-      return arr;
-    });
-  }, [saveHistory]);;
+
 
   const handlePasteTreeConfig = useCallback((categoryId: string, config: any) => {
     saveHistory();
@@ -2380,8 +2383,6 @@ export default function GraphEditor() {
         onRenameNode={handleRenameNode}
         onToggleNodeIcon={handleToggleNodeIcon}
         onUpdateNodeIndex={handleUpdateNodeIndex}
-        onUpdateDropOrder={handleUpdateDropOrder}
-        spawnQueueIds={spawnQueueIds}
         onImportDictionary={handleImportDictionary}
         copiedTreeConfig={copiedTreeConfig}
         setCopiedTreeConfig={setCopiedTreeConfig}
