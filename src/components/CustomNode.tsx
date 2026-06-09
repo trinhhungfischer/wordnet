@@ -49,23 +49,26 @@ const CustomNode = ({ data, selected }: any) => {
         </div>
       )}
 
-      {data.globalIndex !== undefined && (
+      {data.dropIndex !== undefined && (
         <div style={{
           position: 'absolute',
           top: '50%',
-          right: '-28px',
+          left: 'calc(100% - 6px)',
           transform: 'translateY(-50%)',
-          background: 'rgba(255,255,255,0.1)',
-          color: 'var(--text-muted)',
+          background: 'rgba(56, 189, 248, 0.15)',
+          color: '#7dd3fc',
           fontSize: '11px',
           padding: '2px 6px',
-          borderRadius: '6px',
-          border: '1px solid var(--panel-border)',
+          borderRadius: '0 6px 6px 0',
+          border: '1px solid rgba(56, 189, 248, 0.3)',
+          borderLeft: 'none',
           fontWeight: 'bold',
           backdropFilter: 'blur(4px)',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+          zIndex: -1
         }}>
-          #{data.globalIndex}
+          #{data.dropIndex}
         </div>
       )}
 

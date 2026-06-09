@@ -27,7 +27,8 @@ import LevelSettings from './LevelSettings';
 import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link } from 'lucide-react';
+import UserManualModal from './UserManualModal';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle } from 'lucide-react';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -38,13 +39,41 @@ const initialNodes: Node[] = [
 ];
 const initialEdges: Edge[] = [];
 
+const isNodeChained = (node: Node, linkedWordsList: string[], edges: Edge[], nodes: Node[]) => {
+  if (!linkedWordsList || linkedWordsList.length === 0) return false;
+  const label = String(node.data.label).toLowerCase();
+  
+  if (linkedWordsList.some((w: string) => w.toLowerCase() === label)) return true;
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode && linkedWordsList.some((w: string) => w.toLowerCase() === String(parentNode.data.label).toLowerCase())) {
+        return true;
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    if (chunkLabels.some(cLabel => linkedWordsList.some((w: string) => w.toLowerCase() === cLabel))) {
+      return true;
+    }
+  }
+  return false;
+};
+
 export default function GraphEditor() {
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
   
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [selectedEdgeIds, setSelectedEdgeIds] = useState<string[]>([]);
   
-  const [leftPanelTab, setLeftPanelTab] = useState<'words'|'chunks'|'settings'>('words');
+  const [leftPanelTab, setLeftPanelTab] = useState<'words'|'chunks'|'dropOrder'|'settings'>('words');
   const [autoCutWords, setAutoCutWords] = useState<boolean>(false);
   const [globalDict, setGlobalDict] = useState<any[]>([]);
   const [misleadingWords, setMisleadingWords] = useState<string[]>([]);
@@ -57,8 +86,12 @@ export default function GraphEditor() {
   const [isMagicChangeOpen, setIsMagicChangeOpen] = useState(false);
   const [isDictOpen, setIsDictOpen] = useState(false);
   const [isSolutionModalOpen, setIsSolutionModalOpen] = useState(false);
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   
   const [copiedTreeConfig, setCopiedTreeConfig] = useState<any | null>(null);
+  const [wordIndexSearchQuery, setWordIndexSearchQuery] = useState('');
+  const [sortLinksFirst, setSortLinksFirst] = useState(false);
+  const [spawnQueueIds, setSpawnQueueIds] = useState<string[]>([]);
   
   const { setCenter, fitView } = useReactFlow();
 
@@ -146,6 +179,8 @@ export default function GraphEditor() {
     }
   }, []);
 
+
+
   // Save to autosave whenever critical state changes
   useEffect(() => {
     if (!selectedLevelName && nodes.length === 0) return;
@@ -154,12 +189,34 @@ export default function GraphEditor() {
         selectedLevelName,
         nodes,
         edges,
-        rawLevelData
+        rawLevelData,
+        spawnQueueIds
       };
       localStorage.setItem('wordnet_autosave', JSON.stringify(saveData));
     }, 1000);
     return () => clearTimeout(timeout);
-  }, [nodes, edges, rawLevelData, selectedLevelName]);
+  }, [nodes, edges, globalDict, levels, selectedLevelName, rawLevelData, spawnQueueIds]);
+
+  // Sync spawnQueueIds with nodes/edges
+  useEffect(() => {
+    const currentDropNodeIds = nodes
+      .filter(n => n.data.isChunk || (!n.data.isCategory && !n.data.isChunk && !edges.some(e => e.source === n.id)))
+      .map(n => n.id);
+
+    setSpawnQueueIds(prev => {
+      const next = prev.filter(id => currentDropNodeIds.includes(id));
+      currentDropNodeIds.forEach(id => {
+        if (!next.includes(id)) {
+          next.push(id);
+        }
+      });
+      // Only update if changed to avoid loop
+      if (next.length !== prev.length || next.some((id, i) => id !== prev[i])) {
+        return next;
+      }
+      return prev;
+    });
+  }, [nodes, edges]);
 
   useEffect(() => {
     if (globalDict.length === 0 || nodes.length === 0) return;
@@ -211,30 +268,34 @@ export default function GraphEditor() {
 
   const createChunksForWord = (wordId: string, word: string, targetNodes: Node[], targetEdges: Edge[], parentX: number, parentY: number) => {
     const cleanWord = String(word).trim().toLowerCase();
-    if (cleanWord.length <= 1) return;
+    if (cleanWord.length <= 1) return [];
     const half = Math.ceil(cleanWord.length / 2);
     const chunk1 = cleanWord.slice(0, half);
     const chunk2 = cleanWord.slice(half);
     
     const c1Id = uuidv4();
-    targetNodes.push({
+    const c1Node: Node = {
       id: c1Id, type: 'custom', position: { x: parentX - 60, y: parentY + 80 },
       data: { label: chunk1, isChunk: true, isCategory: false }
-    });
+    };
+    targetNodes.push(c1Node);
     targetEdges.push({
       id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true,
       style: { stroke: 'rgba(99,102,241,0.5)', strokeDasharray: '5,5' }
     });
     
     const c2Id = uuidv4();
-    targetNodes.push({
+    const c2Node: Node = {
       id: c2Id, type: 'custom', position: { x: parentX + 60, y: parentY + 80 },
       data: { label: chunk2, isChunk: true, isCategory: false }
-    });
+    };
+    targetNodes.push(c2Node);
     targetEdges.push({
       id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true,
       style: { stroke: 'rgba(99,102,241,0.5)', strokeDasharray: '5,5' }
     });
+
+    return [c1Node, c2Node];
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -312,8 +373,11 @@ export default function GraphEditor() {
                 style: { stroke: 'var(--accent)' }
               });
 
-              if (w.chunks && Array.isArray(w.chunks)) {
-                w.chunks.forEach((chunkStr: string) => {
+              // Support old JSON format
+              if (w.chunks && Array.isArray(w.chunks) && w.chunks.length > 0) {
+                w.chunks.forEach((chunkItem: any) => {
+                  const chunkStr = typeof chunkItem === 'string' ? chunkItem : Object.keys(chunkItem)[0];
+                  if (!chunkStr) return;
                   const chunkNode: Node = {
                     id: uuidv4(),
                     type: 'custom',
@@ -328,6 +392,26 @@ export default function GraphEditor() {
                     animated: true,
                     style: { stroke: 'rgba(99,102,241,0.5)', strokeDasharray: '5,5' }
                   });
+                });
+              } else if (data.allWordEntries && Array.isArray(data.allWordEntries)) {
+                // Support new flattened format
+                data.allWordEntries.forEach((entry: any) => {
+                  if (entry.parentWord && String(entry.parentWord).toLowerCase() === wordLower) {
+                    const chunkNode: Node = {
+                      id: uuidv4(),
+                      type: 'custom',
+                      position: { x: 0, y: 0 },
+                      data: { label: String(entry.fullWord).toLowerCase(), isCategory: false, isChunk: true }
+                    };
+                    newNodes.push(chunkNode);
+                    newEdges.push({
+                      id: `e-${wordNode.id}-${chunkNode.id}-${uuidv4()}`,
+                      source: wordNode.id,
+                      target: chunkNode.id,
+                      animated: true,
+                      style: { stroke: 'rgba(99,102,241,0.5)', strokeDasharray: '5,5' }
+                    });
+                  }
                 });
               }
             });
@@ -381,6 +465,49 @@ export default function GraphEditor() {
           currentGlobalX += treeWidth + 100; // Padding between disjoint trees
         });
       }
+
+      // Initialize spawnQueueIds exactly from the flattened allWordEntries (with backward compatibility for old JSON format)
+      const loadedSpawnQueueIds: string[] = [];
+      if (data.allWordEntries && Array.isArray(data.allWordEntries)) {
+        data.allWordEntries.forEach((entry: any) => {
+          const isFlattenedChunk = entry.parentWord ? true : false;
+          if (isFlattenedChunk) {
+            const chunkNode = newNodes.find(n => 
+              n.data.isChunk && 
+              String(n.data.label).toLowerCase() === String(entry.fullWord).toLowerCase() &&
+              newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.parentWord).toLowerCase())
+            );
+            if (chunkNode) loadedSpawnQueueIds.push(chunkNode.id);
+          } else {
+            // Uncut word (new format) OR Old format entry (cut or uncut)
+            if (entry.chunks && entry.chunks.length > 0) {
+              // OLD FORMAT CUT WORD: Replace word with its chunks in the spawn queue
+              // We simulate the order by placing the chunks exactly where the parent word was.
+              entry.chunks.forEach((chunkItem: any) => {
+                const chunkStr = typeof chunkItem === 'string' ? chunkItem : Object.keys(chunkItem)[0];
+                if (!chunkStr) return;
+                const chunkNode = newNodes.find(n => 
+                  n.data.isChunk && 
+                  String(n.data.label).toLowerCase() === String(chunkStr).toLowerCase() &&
+                  newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.fullWord).toLowerCase())
+                );
+                if (chunkNode && !loadedSpawnQueueIds.includes(chunkNode.id)) {
+                  loadedSpawnQueueIds.push(chunkNode.id);
+                }
+              });
+            } else {
+              // UNCUT WORD (works for both old and new format)
+              const wordNode = newNodes.find(n => 
+                !n.data.isCategory && !n.data.isChunk &&
+                String(n.data.label).toLowerCase() === String(entry.fullWord).toLowerCase()
+              );
+              if (wordNode) loadedSpawnQueueIds.push(wordNode.id);
+            }
+          }
+        });
+      }
+
+      setSpawnQueueIds(loadedSpawnQueueIds);
       
       setNodes(newNodes);
       setEdges(newEdges);
@@ -471,13 +598,8 @@ export default function GraphEditor() {
         const childLabel = String(childNode.data.label);
         const existingWord = existingCat?.words?.find((w: any) => w.fullWord.toLowerCase() === childLabel.toLowerCase());
         
-        const chunkEdges = edges.filter(e => e.source === childNode.id);
-        const chunkNodes = chunkEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isChunk) as Node[];
-        const chunks = chunkNodes.map(n => String(n.data.label));
-        
         const wordObj = existingWord ? { ...existingWord } : {
           fullWord: childLabel.charAt(0).toUpperCase() + childLabel.slice(1),
-          chunks: [],
           icon: null,
           IsCracked: 0,
           crackBreakNum: 0,
@@ -485,7 +607,7 @@ export default function GraphEditor() {
           linkedChunkWords: []
         };
         
-        wordObj.chunks = chunks;
+        delete wordObj.chunks; // Remove redundant chunks field from categories
         wordObj.icon = childNode.data.icon || null;
         return wordObj;
       });
@@ -498,43 +620,63 @@ export default function GraphEditor() {
       };
       newCategories.push(catObj);
     });
-    
     newData.categories = newCategories;
 
-    const allWordNodes = nodes.filter(n => !n.data.isCategory && !n.data.isChunk);
+    // Create a map of existing entries from rawLevelData for preserving properties
+    const existingEntriesMap = new Map<string, any>();
+    if (rawLevelData?.allWordEntries) {
+      rawLevelData.allWordEntries.forEach((e: any) => {
+        const key = e.parentWord ? `${e.parentWord.toLowerCase()}_${e.fullWord.toLowerCase()}` : `_${e.fullWord.toLowerCase()}`;
+        existingEntriesMap.set(key, e);
+      });
+    }
+
     const newAllWordEntries: any[] = [];
     
-    allWordNodes.forEach(childNode => {
-      const idx = childNode.data.globalIndex as number | undefined;
-      if (idx !== undefined) {
-         const arrayIndex = idx - 1;
-         const childLabel = String(childNode.data.label);
-         
-         const chunkEdges = edges.filter(e => e.source === childNode.id);
-         const chunkNodes = chunkEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isChunk);
-         const chunks = chunkNodes.map((n: any) => String(n.data.label));
-
-         const existingEntry = rawLevelData?.allWordEntries?.[arrayIndex];
-
-         const wordObj = existingEntry ? { ...existingEntry } : {
-           fullWord: childLabel.charAt(0).toUpperCase() + childLabel.slice(1),
-           chunks: [],
-           icon: childNode.data.icon || null,
-           IsCracked: 0,
-           crackBreakNum: 0,
-           IsLinked: 0,
-           linkedChunkWords: []
-         };
-         
-         wordObj.fullWord = childLabel.charAt(0).toUpperCase() + childLabel.slice(1);
-         wordObj.chunks = chunks;
-         wordObj.icon = childNode.data.icon || null;
-         
-         newAllWordEntries[arrayIndex] = wordObj;
+    spawnQueueIds.forEach((id) => {
+      const node = nodes.find(n => n.id === id);
+      if (!node) return;
+      
+      const isChunk = Boolean(node.data.isChunk);
+      const childLabel = String(node.data.label);
+      let parentLabel = "";
+      let parentNode = null;
+      
+      if (isChunk) {
+        const parentEdge = edges.find(e => e.target === id);
+        if (parentEdge) {
+          parentNode = nodes.find(n => n.id === parentEdge.source);
+          if (parentNode) parentLabel = String(parentNode.data.label);
+        }
+      } else {
+        parentNode = node;
       }
+      
+      const key = parentLabel ? `${parentLabel.toLowerCase()}_${childLabel.toLowerCase()}` : `_${childLabel.toLowerCase()}`;
+      const existingEntry = existingEntriesMap.get(key);
+
+      const wordObj = existingEntry ? { ...existingEntry } : {
+        fullWord: childLabel.charAt(0).toUpperCase() + childLabel.slice(1),
+        parentWord: parentLabel ? parentLabel.charAt(0).toUpperCase() + parentLabel.slice(1) : null,
+        icon: parentNode?.data.icon || null,
+        IsCracked: 0,
+        crackBreakNum: 0,
+        IsLinked: 0,
+        linkedChunkWords: []
+      };
+      
+      wordObj.fullWord = childLabel.charAt(0).toUpperCase() + childLabel.slice(1);
+      wordObj.parentWord = parentLabel ? parentLabel.charAt(0).toUpperCase() + parentLabel.slice(1) : null;
+      delete wordObj.chunks; // Remove redundant chunks field
+      if (!isChunk) {
+        wordObj.icon = node.data.icon || null;
+      }
+      
+      newAllWordEntries.push(wordObj);
     });
 
-    newData.allWordEntries = newAllWordEntries.filter(Boolean);
+    newData.allWordEntries = newAllWordEntries;
+    delete newData.spawnQueue;
 
     const jsonStr = JSON.stringify(newData, null, 2);
     const fileName = selectedLevelName ? `${selectedLevelName}.json` : "level_config.json";
@@ -955,40 +1097,49 @@ export default function GraphEditor() {
 
     const newWordNodes = importedNodes.filter(n => !n.data.isCategory && !n.data.isChunk);
 
+    const queueUpdates: { oldIds: string[], newIds: string[] }[] = [];
+
     if (replaceNodes.length > 0) {
       const oldWordNodes = replaceNodes.filter(n => !n.data.isCategory && !n.data.isChunk);
       const oldIndices = oldWordNodes.map(n => n.data.globalIndex).filter(idx => idx !== undefined).sort((a:any,b:any)=>a-b);
       
-      if (oldIndices.length > 0 && newWordNodes.length === oldIndices.length && rawLevelData && Array.isArray(rawLevelData.allWordEntries)) {
-        const newEntries = [...rawLevelData.allWordEntries];
-        oldIndices.forEach((idx, i) => {
-          const newWordNode = newWordNodes[i];
-          const oldWordNode = oldWordNodes[i];
-          newWordNode.data.globalIndex = idx;
-          
-          const arrayIndex = newEntries.findIndex(e => e.idx === idx);
-          if (arrayIndex !== -1) {
-            const childLabel = String(newWordNode.data.label);
-            const oldHasIcon = !!oldWordNode.data.icon;
-            if (!oldHasIcon) {
-              newWordNode.data.icon = null;
-            } else if (!newWordNode.data.icon) {
-              newWordNode.data.icon = childLabel.toLowerCase();
-            }
+      if (oldIndices.length > 0 && newWordNodes.length === oldIndices.length) {
+        if (rawLevelData && Array.isArray(rawLevelData.allWordEntries)) {
+          const newEntries = [...rawLevelData.allWordEntries];
+          oldIndices.forEach((idx, i) => {
+            const newWordNode = newWordNodes[i];
+            const oldWordNode = oldWordNodes[i];
+            newWordNode.data.globalIndex = idx;
+            
+            const arrayIndex = newEntries.findIndex(e => e.idx === idx);
+            if (arrayIndex !== -1) {
+              const childLabel = String(newWordNode.data.label);
+              const oldHasIcon = !!oldWordNode.data.icon;
+              if (!oldHasIcon) {
+                newWordNode.data.icon = null;
+              } else if (!newWordNode.data.icon) {
+                newWordNode.data.icon = childLabel.toLowerCase();
+              }
 
-            newEntries[arrayIndex] = {
-              ...newEntries[arrayIndex], // preserve other properties if any
-              fullWord: childLabel.charAt(0).toUpperCase() + childLabel.slice(1),
-              chunks: [],
-              icon: newWordNode.data.icon,
-              IsCracked: 0,
-              crackBreakNum: 0,
-              IsLinked: 0,
-              linkedChunkWords: []
-            };
-          }
-        });
-        updatedRawLevelData = { ...rawLevelData, allWordEntries: newEntries };
+              newEntries[arrayIndex] = {
+                ...newEntries[arrayIndex], // preserve other properties if any
+                fullWord: childLabel.charAt(0).toUpperCase() + childLabel.slice(1),
+                chunks: [],
+                icon: newWordNode.data.icon,
+                IsCracked: 0,
+                crackBreakNum: 0,
+                IsLinked: 0,
+                linkedChunkWords: []
+              };
+            }
+          });
+          updatedRawLevelData = { ...rawLevelData, allWordEntries: newEntries };
+        } else {
+          // Even if no rawLevelData, apply indices
+          oldIndices.forEach((idx, i) => {
+            newWordNodes[i].data.globalIndex = idx;
+          });
+        }
       }
 
       // Also remove chunks attached to the replaced nodes
@@ -996,12 +1147,22 @@ export default function GraphEditor() {
       const chunkNodesToRemove = chunkEdgesToRemove.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isChunk);
       chunkNodesToRemove.forEach(n => { if (n) nodeIdsToRemove.add(n.id); });
 
-      if (autoCutWords && oldIndices.length > 0 && newWordNodes.length === oldIndices.length) {
+      if (oldIndices.length > 0 && newWordNodes.length === oldIndices.length) {
         oldWordNodes.forEach((oldNode, i) => {
-          const hasChunks = edges.some(e => e.source === oldNode.id && nodes.find(n => n.id === e.target)?.data.isChunk);
-          if (hasChunks) {
-            createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+          let newIds = [newWordNodes[i].id];
+          let oldIds = [oldNode.id];
+          
+          const oldChunkNodes = nodes.filter(n => n.data.isChunk && edges.some(e => e.source === oldNode.id && e.target === n.id));
+          if (oldChunkNodes.length > 0) {
+            oldIds.push(...oldChunkNodes.map(c => c.id));
+            const newChunks = createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+            // newChunks are the node objects returned by createChunksForWord
+            if (newChunks && newChunks.length > 0) {
+              newChunks.forEach(c => c.data.globalIndex = newWordNodes[i].data.globalIndex);
+              newIds = newChunks.map(c => c.id);
+            }
           }
+          queueUpdates.push({ oldIds, newIds });
         });
       }
     } else if (keepOldTreeAnchor.length > 0) {
@@ -1044,6 +1205,22 @@ export default function GraphEditor() {
     setNodes(nds => [...nds.filter(n => !nodeIdsToRemove.has(n.id)).map(n => ({...n, selected: false})), ...importedNodes.map(n => ({...n, selected: true}))]);
     setEdges(eds => [...eds.filter(e => !nodeIdsToRemove.has(e.source) && !nodeIdsToRemove.has(e.target)), ...importedEdges]);
     if (updatedRawLevelData !== rawLevelData) setRawLevelData(updatedRawLevelData);
+    
+    if (queueUpdates.length > 0) {
+      setSpawnQueueIds(prev => {
+        let newQueue = [...prev];
+        queueUpdates.forEach(update => {
+          const indices = update.oldIds.map(id => newQueue.indexOf(id)).filter(idx => idx !== -1);
+          if (indices.length > 0) {
+            const minIndex = Math.min(...indices);
+            newQueue = newQueue.filter(id => !update.oldIds.includes(id));
+            newQueue.splice(minIndex, 0, ...update.newIds);
+          }
+        });
+        return newQueue;
+      });
+    }
+    
     saveHistory();
 
     setTimeout(() => {
@@ -1259,11 +1436,13 @@ export default function GraphEditor() {
             }
           }
 
+          const inheritedGlobalIndex = oldWordNode?.data.globalIndex;
+
           newImportedNodes.push({
             id: wordId,
             type: 'custom',
             position: oldWordNode?.position || { x: 0, y: 0 },
-            data: { label: w.word.toLowerCase(), isCategory: false, icon: newIcon, globalIndex: oldWordNode?.data.globalIndex }
+            data: { label: w.word.toLowerCase(), isCategory: false, icon: newIcon, globalIndex: inheritedGlobalIndex }
           });
           newImportedEdges.push({
             id: `e-${nodeId}-${wordId}`,
@@ -1275,7 +1454,7 @@ export default function GraphEditor() {
 
           // Sync rawLevelData
           if (oldWordNode && clonedRawData && Array.isArray(clonedRawData.allWordEntries)) {
-            const arrayIndex = clonedRawData.allWordEntries.findIndex((e:any) => e.idx === oldWordNode.data.globalIndex);
+            const arrayIndex = clonedRawData.allWordEntries.findIndex((e:any) => e.idx === inheritedGlobalIndex);
             if (arrayIndex !== -1) {
               clonedRawData.allWordEntries[arrayIndex] = {
                 ...clonedRawData.allWordEntries[arrayIndex],
@@ -1290,10 +1469,15 @@ export default function GraphEditor() {
             }
           }
 
+          let newIds = [wordId];
+          let oldIds = oldWordNode ? [oldWordNode.id] : [];
+
           // Chunk preservation (regardless of autoCutWords)
           if (oldWordNode) {
-            const hasChunks = edges.some(e => e.source === oldWordNode.id && nodes.find(n => n.id === e.target)?.data.isChunk);
-            if (hasChunks) {
+            const oldChunkNodes = nodes.filter(n => n.data.isChunk && edges.some(e => e.source === oldWordNode.id && e.target === n.id));
+            if (oldChunkNodes.length > 0) {
+              oldIds.push(...oldChunkNodes.map(c => c.id));
+              
               const wordStr = w.word.toLowerCase();
               const chunkLen = Math.floor(wordStr.length / 2) || 1;
               const c1 = wordStr.substring(0, chunkLen);
@@ -1302,18 +1486,23 @@ export default function GraphEditor() {
               const c2Id = uuidv4();
               const baseX = oldWordNode.position.x;
               const baseY = oldWordNode.position.y;
-              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true }});
-              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true }});
+              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
+              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
               newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
               newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
               
+              newIds = [c1Id, c2Id];
+
               if (clonedRawData && Array.isArray(clonedRawData.allWordEntries)) {
-                const arrayIndex = clonedRawData.allWordEntries.findIndex((e:any) => e.idx === oldWordNode.data.globalIndex);
+                const arrayIndex = clonedRawData.allWordEntries.findIndex((e:any) => e.idx === inheritedGlobalIndex);
                 if (arrayIndex !== -1) {
                   clonedRawData.allWordEntries[arrayIndex].chunks = [c1, c2];
                 }
               }
             }
+          }
+          if (oldIds.length > 0) {
+            queueUpdates.push({ oldIds, newIds });
           }
         });
       };
@@ -1332,6 +1521,26 @@ export default function GraphEditor() {
       // Add new tree
       clonedNodes.push(...newImportedNodes);
       clonedEdges.push(...newImportedEdges);
+      
+      // Update spawnQueueIds to replace old word IDs with new word/chunk IDs
+      setSpawnQueueIds(prev => {
+        let newQueue = [...prev];
+        
+        // Use queueUpdates gathered during importBranch
+        queueUpdates.forEach(update => {
+          // Find the earliest index of oldIds in the queue
+          const indices = update.oldIds.map(id => newQueue.indexOf(id)).filter(idx => idx !== -1);
+          if (indices.length > 0) {
+            const minIndex = Math.min(...indices);
+            // Remove all oldIds
+            newQueue = newQueue.filter(id => !update.oldIds.includes(id));
+            // Insert newIds at that position
+            newQueue.splice(minIndex, 0, ...update.newIds);
+          }
+        });
+        
+        return newQueue;
+      });
     }
 
     setNodes(clonedNodes);
@@ -1345,7 +1554,15 @@ export default function GraphEditor() {
     const linkedWords = rawLevelData?.bubbleSeparatorData?.linkedWords || [];
     const getIsChained = (n: Node) => {
       const label = String(n.data.label).toLowerCase();
-      return linkedWords.some((w: string) => w.toLowerCase() === label);
+      if (linkedWords.some((w: string) => w.toLowerCase() === label)) return true;
+      
+      const childEdges = edges.filter(e => e.source === n.id);
+      const chunkLabels = childEdges
+         .map(e => nodes.find(child => child.id === e.target))
+         .filter(child => child && child.data.isChunk)
+         .map(child => String(child!.data.label).toLowerCase());
+      
+      return chunkLabels.some(cLabel => linkedWords.some((w: string) => w.toLowerCase() === cLabel));
     };
 
     return nodes.filter((n: any) => !n.data.isCategory && !n.data.isChunk).sort((a: any, b: any) => {
@@ -1418,14 +1635,10 @@ export default function GraphEditor() {
   };
 
   const handleAutoRenumber = () => {
-    const indexUpdates: Record<string, number> = {};
-    wordListNodes.forEach((node: any, idx) => {
-      indexUpdates[node.id] = idx + 1;
-    });
-    
     setNodes(nds => nds.map(n => {
-      if (indexUpdates[n.id] !== undefined) {
-        return { ...n, data: { ...n.data, globalIndex: indexUpdates[n.id] } };
+      const dropPos = spawnQueueIds.indexOf(n.id);
+      if (dropPos !== -1) {
+        return { ...n, data: { ...n.data, globalIndex: dropPos + 1 } };
       }
       return n;
     }));
@@ -1483,6 +1696,16 @@ export default function GraphEditor() {
         </div>
         
         <div style={{ display: 'flex', gap: '8px' }}>
+          <button 
+            onClick={() => setIsManualModalOpen(true)}
+            style={{
+              padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--accent)',
+              background: 'rgba(56, 189, 248, 0.1)', color: 'var(--accent)', cursor: 'pointer',
+              fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px'
+            }}
+          >
+            <HelpCircle size={14} /> Hướng dẫn
+          </button>
           <button 
             onClick={() => setIsDictOpen(true)}
             style={{
@@ -1561,121 +1784,211 @@ export default function GraphEditor() {
 
       {/* Word List Panel on the Left */}
       <div style={{ 
-        position: 'absolute', top: '100px', left: '20px', bottom: '20px', width: '220px', 
+        position: 'absolute', top: '100px', left: '20px', bottom: '20px', width: '280px', 
         background: 'var(--panel-bg)', borderRadius: '12px', border: '1px solid var(--panel-border)', 
         zIndex: 10, display: 'flex', flexDirection: 'column', padding: '16px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.3)', backdropFilter: 'blur(10px)'
       }}>
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>
+        <div style={{ display: 'flex', gap: '4px', marginBottom: '12px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px', flexWrap: 'wrap' }}>
           <button 
-            onClick={() => setLeftPanelTab('words')}
+            onClick={() => setLeftPanelTab('dropQueue')}
             style={{ 
-              flex: 1, padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-              background: leftPanelTab === 'words' ? 'var(--accent)' : 'transparent',
-              color: leftPanelTab === 'words' ? 'white' : 'var(--text-muted)'
+              flex: 1, padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600,
+              background: leftPanelTab === 'dropQueue' || leftPanelTab === 'words' || leftPanelTab === 'dropOrder' ? 'var(--accent)' : 'transparent',
+              color: leftPanelTab === 'dropQueue' || leftPanelTab === 'words' || leftPanelTab === 'dropOrder' ? 'white' : 'var(--text-muted)'
             }}
           >
-            Word Index
+            Drop Queue
           </button>
           <button 
             onClick={() => setLeftPanelTab('chunks')}
             style={{ 
-              flex: 1, padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+              flex: 1, padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600,
               background: leftPanelTab === 'chunks' ? 'var(--accent)' : 'transparent',
               color: leftPanelTab === 'chunks' ? 'white' : 'var(--text-muted)'
             }}
           >
-            Chunk Index
+            Chunks
           </button>
         </div>
 
-        {leftPanelTab === 'words' && (
-          <>
+        {leftPanelTab === 'dropQueue' && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{wordListNodes.length} Words</span>
-              <button 
-                onClick={handleAutoRenumber}
-                title="Auto Renumber"
-                style={{ 
-                  background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
-                  color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px'
-                }}
-              >
-                <RefreshCw size={12} /> Renumber
-              </button>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{spawnQueueIds.length} Drops in Queue</span>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button
+                  onClick={() => setSortLinksFirst(!sortLinksFirst)}
+                  style={{
+                    background: sortLinksFirst ? 'var(--accent)' : 'transparent', color: sortLinksFirst ? 'white' : 'var(--text-main)', border: '1px solid var(--accent)',
+                    padding: '4px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600
+                  }}
+                >
+                  {sortLinksFirst ? 'Default Order' : 'Sort Links'}
+                </button>
+                <button
+                  onClick={handleAutoRenumber}
+                  title="Assign Order (Index) based on the current list order"
+                  style={{
+                    background: 'var(--accent)', color: 'white', border: 'none',
+                    padding: '4px 8px', borderRadius: '6px', cursor: 'pointer',
+                    fontSize: '11px', fontWeight: 600
+                  }}
+                >
+                  Renumber
+                </button>
+              </div>
             </div>
+            
+            <div style={{ position: 'relative', marginBottom: '12px' }}>
+              <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <input 
+                type="text" 
+                placeholder="Search items..." 
+                value={wordIndexSearchQuery}
+                onChange={(e) => setWordIndexSearchQuery(e.target.value)}
+                style={{ 
+                  width: '100%', padding: '6px 10px 6px 30px', borderRadius: '6px', fontSize: '13px',
+                  background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none'
+                }}
+              />
+              {wordIndexSearchQuery && (
+                <button 
+                  onClick={() => setWordIndexSearchQuery('')}
+                  style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px', lineHeight: 1.4 }}>
+              Drag to reorder exact drop sequence. The JSON output will flatten all items based on this list.
+            </div>
+
             <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '4px' }}>
-              {wordListNodes.map((node: any) => {
-                const chunkEdges = edges.filter(e => e.source === node.id);
-                const chunks = chunkEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isChunk).map(n => String(n?.data.label));
-                const linkedWordsList = rawLevelData?.bubbleSeparatorData?.linkedWords || [];
-                const isChained = linkedWordsList.some((w: string) => w.toLowerCase() === String(node.data.label).toLowerCase());
-                
-                return (
-                  <div 
-                    key={node.id}
-                    draggable
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData('application/reactflow-node', node.data.label);
-                      handleDragStart(e, node.id);
-                    }}
-                    onDragOver={handleDragOver}
-                    onDragEnter={(e) => handleDragEnter(e, node.id)}
-                    onDragLeave={(e) => handleDragLeave(e, node.id)}
-                    onDrop={(e) => handleDrop(e, node.id)}
-                    onClick={() => handleFocusNode(node.id)}
-                    style={{
-                      display: 'flex', flexDirection: 'column',
-                      padding: '8px 12px', borderRadius: '8px', cursor: 'pointer',
-                      background: dragOverNodeId === node.id 
-                          ? 'rgba(56, 189, 248, 0.1)' 
-                          : (selectedNodeId === node.id 
-                            ? 'var(--accent)' 
-                            : (isChained ? 'rgba(129, 140, 248, 0.15)' : 'rgba(255,255,255,0.05)')),
-                      border: dragOverNodeId === node.id 
-                          ? '2px dashed var(--accent)' 
-                          : (selectedNodeId === node.id 
-                            ? '1px solid var(--accent)' 
-                            : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : '1px solid var(--panel-border)')),
-                      transform: dragOverNodeId === node.id ? 'scale(1.02)' : 'none',
-                      transition: 'all 0.2s', color: selectedNodeId === node.id ? 'white' : 'var(--text-main)'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 500, textTransform: 'capitalize', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        {node.data.icon && (
-                          <img src={`/word_icon/${node.data.icon}.png`} alt="" title={`Missing File: ${node.data.icon}.png`} style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
-                        )}
-                        {String(node.data.label)}
-                      </span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {isChained && <Link size={14} color="#818cf8" />}
-                        {node.data.globalIndex !== undefined ? (
-                          <span style={{ fontSize: '11px', fontWeight: 'bold', opacity: 0.7 }}>#{node.data.globalIndex}</span>
-                        ) : (
-                          <span style={{ fontSize: '11px', fontStyle: 'italic', opacity: 0.5 }}>New</span>
-                        )}
-                      </div>
-                    </div>
-                    {chunks.length > 0 && (
-                      <div style={{ display: 'flex', gap: '4px', marginTop: '6px', flexWrap: 'wrap' }}>
-                        {chunks.map((c, i) => (
-                          <span key={i} style={{ fontSize: '10px', background: selectedNodeId === node.id ? 'rgba(255,255,255,0.2)' : 'rgba(99,102,241,0.2)', color: selectedNodeId === node.id ? 'white' : '#818cf8', padding: '2px 6px', borderRadius: '4px' }}>
-                            {c}
+              {(sortLinksFirst 
+                ? [...spawnQueueIds].sort((a, b) => {
+                    const nodeA = nodes.find(n => n.id === a);
+                    const nodeB = nodes.find(n => n.id === b);
+                    if (!nodeA || !nodeB) return 0;
+                    const chainedA = isNodeChained(nodeA, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+                    const chainedB = isNodeChained(nodeB, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+                    if (chainedA && !chainedB) return -1;
+                    if (!chainedA && chainedB) return 1;
+                    return 0;
+                  })
+                : spawnQueueIds)
+                .filter((nodeId: string) => {
+                  if (!wordIndexSearchQuery) return true;
+                  const node = nodes.find(n => n.id === nodeId);
+                  return node && String(node.data.label).toLowerCase().includes(wordIndexSearchQuery.toLowerCase());
+                })
+                .map((nodeId: string, displayIdx: number) => {
+                  const node = nodes.find(n => n.id === nodeId);
+                  if (!node) return null;
+                  
+                  const isChunk = Boolean(node.data.isChunk);
+                  const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+                  
+                  let parentLabel = null;
+                  if (isChunk) {
+                    const parentEdge = edges.find(e => e.target === nodeId);
+                    if (parentEdge) {
+                      const parentNode = nodes.find(n => n.id === parentEdge.source);
+                      if (parentNode) parentLabel = String(parentNode.data.label);
+                    }
+                  }
+                  
+                  // Use the actual queue index for display, even if filtered
+                  const actualIdx = spawnQueueIds.indexOf(nodeId);
+
+                  return (
+                    <div 
+                      key={nodeId}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData('application/spawn-queue-id', nodeId);
+                        handleDragStart(e, nodeId);
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        handleDragOver(e);
+                      }}
+                      onDragEnter={(e) => handleDragEnter(e, nodeId)}
+                      onDragLeave={(e) => handleDragLeave(e, nodeId)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const draggedId = e.dataTransfer.getData('application/spawn-queue-id');
+                        if (draggedId && draggedId !== nodeId) {
+                          const oldIdx = spawnQueueIds.indexOf(draggedId);
+                          const newIdx = spawnQueueIds.indexOf(nodeId);
+                          if (oldIdx !== -1 && newIdx !== -1) {
+                            setSpawnQueueIds(prev => {
+                              const newQueue = [...prev];
+                              newQueue.splice(oldIdx, 1);
+                              newQueue.splice(newIdx, 0, draggedId);
+                              return newQueue;
+                            });
+                          }
+                        }
+                        handleDrop(e, nodeId);
+                      }}
+                      onClick={() => handleFocusNode(nodeId)}
+                      style={{
+                        display: 'flex', flexDirection: 'column',
+                        padding: '8px 12px', borderRadius: '8px', cursor: 'grab',
+                        background: dragOverNodeId === nodeId 
+                            ? 'rgba(56, 189, 248, 0.1)' 
+                            : (selectedNodeId === nodeId 
+                              ? 'var(--accent)' 
+                              : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))),
+                        border: dragOverNodeId === nodeId 
+                            ? '2px dashed var(--accent)' 
+                            : (selectedNodeId === nodeId 
+                              ? '1px solid var(--accent)' 
+                              : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))),
+                        transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
+                        transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontSize: '11px', opacity: 0.6, width: '20px' }}>{actualIdx + 1}.</span>
+                          {!isChunk && node.data.icon && (
+                            <img src={`/word_icon/${node.data.icon}.png`} alt="" title={`Missing File: ${node.data.icon}.png`} style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
+                          )}
+                          <strong style={{ textTransform: isChunk ? 'none' : 'capitalize' }}>{String(node.data.label)}</strong>
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {isChained && <Link size={14} color={selectedNodeId === nodeId ? "white" : "#818cf8"} />}
+                          <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
+                            {isChunk ? 'Chunk' : 'Word'}
                           </span>
-                        ))}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                );
+                      
+                      {isChunk && parentLabel && (
+                        <div style={{ fontSize: '10px', marginTop: '6px', color: selectedNodeId === nodeId ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          └ Chunk of: <span style={{ textTransform: 'capitalize', fontWeight: 600 }}>{parentLabel}</span>
+                        </div>
+                      )}
+                      
+                      {!isChunk && (
+                        <div style={{ fontSize: '10px', marginTop: '4px', opacity: 0.5 }}>
+                          Uncut Word
+                        </div>
+                      )}
+                    </div>
+                  );
               })}
-              {wordListNodes.length === 0 && (
+              {spawnQueueIds.length === 0 && (
                 <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px', marginTop: '20px' }}>
-                  No words in level.
+                  No items in drop queue.
                 </div>
               )}
             </div>
-          </>
+          </div>
         )}
 
         {leftPanelTab === 'chunks' && (
@@ -1738,7 +2051,8 @@ export default function GraphEditor() {
           ...n,
           data: {
             ...n.data,
-            isChained: rawLevelData?.useBubbleSeparator === 1 && rawLevelData?.bubbleSeparatorData?.linkedWords?.includes(String(n.data.label))
+            isChained: rawLevelData?.useBubbleSeparator === 1 && isNodeChained(n, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes),
+            dropIndex: spawnQueueIds.indexOf(n.id) !== -1 ? spawnQueueIds.indexOf(n.id) + 1 : undefined
           }
         }))}
         edges={edges.map(e => ({
@@ -1809,6 +2123,11 @@ export default function GraphEditor() {
         onImport={(categoryName, dictionary, singleNodeOnly) => handleImportDictionary(categoryName, dictionary, undefined, singleNodeOnly)}
       />
 
+      <UserManualModal 
+        isOpen={isManualModalOpen}
+        onClose={() => setIsManualModalOpen(false)}
+      />
+
       <LevelSettings 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
@@ -1836,6 +2155,7 @@ export default function GraphEditor() {
         nodes={nodes}
         edges={edges}
         levelData={rawLevelData}
+        spawnQueueIds={spawnQueueIds}
       />
 
       <Sidebar 

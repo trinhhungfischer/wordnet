@@ -1,0 +1,7 @@
+const yellow = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fef08a" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="4 4"></rect><circle cx="8.5" cy="8.5" r="1.5" fill="#ca8a04" stroke="none"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>';
+const white = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff" stroke="#cccccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="4 4"></rect><circle cx="8.5" cy="8.5" r="1.5" fill="#cccccc" stroke="none"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>';
+const gray = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline><line x1="3" y1="3" x2="21" y2="21"></line></svg>';
+
+console.log('YELLOW:', 'data:image/svg+xml;base64,' + Buffer.from(yellow).toString('base64'));
+console.log('WHITE:', 'data:image/svg+xml;base64,' + Buffer.from(white).toString('base64'));
+console.log('GRAY:', 'data:image/svg+xml;base64,' + Buffer.from(gray).toString('base64'));
