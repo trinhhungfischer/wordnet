@@ -1705,24 +1705,58 @@ export default function GraphEditor() {
   };
 
   const handleShuffleRange = () => {
-    const start = parseInt(shuffleStartIndex, 10);
-    const end = parseInt(shuffleEndIndex, 10);
+    // 1. Default to min (1) and max (length) if inputs are empty
+    const rawStart = shuffleStartIndex.trim() === '' ? 1 : parseInt(shuffleStartIndex, 10);
+    const rawEnd = shuffleEndIndex.trim() === '' ? spawnQueueIds.length : parseInt(shuffleEndIndex, 10);
     
-    if (isNaN(start) || isNaN(end) || start < 1 || end > spawnQueueIds.length || start >= end) {
+    if (isNaN(rawStart) || isNaN(rawEnd) || rawStart < 1 || rawEnd > spawnQueueIds.length || rawStart >= rawEnd) {
       alert(`Please enter valid indices between 1 and ${spawnQueueIds.length}, where Start < End.`);
       return;
     }
     
-    setSpawnQueueIds(prev => {
-      const newQueue = [...prev];
-      const sliceToShuffle = newQueue.slice(start - 1, end);
-      // shuffle
-      for (let i = sliceToShuffle.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [sliceToShuffle[i], sliceToShuffle[j]] = [sliceToShuffle[j], sliceToShuffle[i]];
+    const isCompletable = (queue: string[]) => {
+      // Linked words (bubble separators) must spawn right at the beginning of the level.
+      // If any linked word appears AFTER a non-linked word, the level might break or not act as intended.
+      let seenNonLinked = false;
+      for (const id of queue) {
+        const node = nodes.find(n => n.id === id);
+        if (!node) continue;
+        const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+        
+        if (!isChained) {
+          seenNonLinked = true;
+        } else if (seenNonLinked) {
+          // Found a linked word appearing after a non-linked word
+          return false;
+        }
       }
-      newQueue.splice(start - 1, sliceToShuffle.length, ...sliceToShuffle);
-      return newQueue;
+      return true;
+    };
+
+    setSpawnQueueIds(prev => {
+      let newQueue = [...prev];
+      let attempts = 0;
+      const maxAttempts = 50;
+      
+      while (attempts < maxAttempts) {
+        newQueue = [...prev];
+        const sliceToShuffle = newQueue.slice(rawStart - 1, rawEnd);
+        // shuffle
+        for (let i = sliceToShuffle.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [sliceToShuffle[i], sliceToShuffle[j]] = [sliceToShuffle[j], sliceToShuffle[i]];
+        }
+        newQueue.splice(rawStart - 1, sliceToShuffle.length, ...sliceToShuffle);
+        
+        if (isCompletable(newQueue)) {
+          alert(`Shuffled successfully from index ${rawStart} to ${rawEnd}!`);
+          return newQueue;
+        }
+        attempts++;
+      }
+      
+      alert(`Could not find a completable shuffle arrangement after ${maxAttempts} attempts. Try again.`);
+      return prev;
     });
   };
 
