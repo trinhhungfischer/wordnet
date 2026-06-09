@@ -1546,10 +1546,17 @@ export default function GraphEditor() {
               const c2Id = uuidv4();
               const baseX = oldWordNode.position.x;
               const baseY = oldWordNode.position.y;
-              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: nextGlobalIndex++ }});
-              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: nextGlobalIndex++ }});
+              const chunkInheritedIndex = oldChunkNodes[0]?.data?.globalIndex ?? inheritedGlobalIndex;
+              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: chunkInheritedIndex }});
+              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: chunkInheritedIndex !== undefined ? chunkInheritedIndex + 0.5 : undefined }});
               newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
               newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
+              
+              // Remove globalIndex from parent word so it is not in spawn queue
+              const parentNodeIndex = newImportedNodes.findIndex(n => n.id === wordId);
+              if (parentNodeIndex !== -1) {
+                newImportedNodes[parentNodeIndex].data.globalIndex = undefined;
+              }
               
               newIds = [c1Id, c2Id];
 
@@ -1572,15 +1579,104 @@ export default function GraphEditor() {
             const c2Id = uuidv4();
             const baseX = oldWordNode?.position.x || 0;
             const baseY = oldWordNode?.position.y || 0;
-            newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: nextGlobalIndex++ }});
-            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: nextGlobalIndex++ }});
+            newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
+            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex !== undefined ? inheritedGlobalIndex + 0.5 : undefined }});
             newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
             newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
             newIds = [c1Id, c2Id];
+            
+            // Remove globalIndex from parent word so it is not in spawn queue
+            const parentNodeIndex = newImportedNodes.findIndex(n => n.id === wordId);
+            if (parentNodeIndex !== -1) {
+              newImportedNodes[parentNodeIndex].data.globalIndex = undefined;
+            }
           }
 
           if (oldIds.length > 0) {
             queueUpdates.push({ oldIds, newIds });
+          }
+
+          // Update mechanics with new word
+          if (oldWordNode && clonedRawData) {
+            const oldLabel = String(oldWordNode.data.label).toLowerCase();
+            const newLabel = String(w.word).toLowerCase();
+
+            // 1. Chain (bubbleSeparatorData.linkedWords)
+            if (clonedRawData.bubbleSeparatorData?.linkedWords) {
+              clonedRawData.bubbleSeparatorData.linkedWords = clonedRawData.bubbleSeparatorData.linkedWords.map((lw: string) => 
+                lw.toLowerCase() === oldLabel ? newLabel : lw
+              );
+              // Also update chunks in chain if any
+              const oldChunkNodes = nodes.filter(n => n.data.isChunk && edges.some(e => e.source === oldWordNode.id && e.target === n.id));
+              if (oldChunkNodes.length > 0) {
+                const oldC1 = oldChunkNodes[0]?.data.label;
+                const oldC2 = oldChunkNodes[1]?.data.label;
+                if (oldC1 && oldC2) {
+                  const wordStr = w.word.toLowerCase();
+                  const chunkLen = Math.floor(wordStr.length / 2) || 1;
+                  const newC1 = wordStr.substring(0, chunkLen);
+                  const newC2 = wordStr.substring(chunkLen);
+                  clonedRawData.bubbleSeparatorData.linkedWords = clonedRawData.bubbleSeparatorData.linkedWords.map((lw: string) => {
+                    if (lw.toLowerCase() === String(oldC1).toLowerCase()) return newC1;
+                    if (lw.toLowerCase() === String(oldC2).toLowerCase()) return newC2;
+                    return lw;
+                  });
+                }
+              }
+            }
+
+            // 2. Frozen Bubbles
+            if (clonedRawData.frozenBubbles) {
+              clonedRawData.frozenBubbles = clonedRawData.frozenBubbles.map((fb: any) => 
+                fb.word.toLowerCase() === oldLabel ? { ...fb, word: w.word } : fb
+              );
+            }
+
+            // 3. Burst Bubbles
+            if (clonedRawData.burstBubbles) {
+              clonedRawData.burstBubbles = clonedRawData.burstBubbles.map((bb: any) => 
+                bb.word.toLowerCase() === oldLabel ? { ...bb, word: w.word } : bb
+              );
+            }
+
+            // 4. Backward Bubbles
+            if (clonedRawData.backwardBubbles) {
+              clonedRawData.backwardBubbles = clonedRawData.backwardBubbles.map((bw: any) => 
+                bw.word.toLowerCase() === oldLabel ? { ...bw, word: w.word } : bw
+              );
+            }
+
+            // 5. Key Lock Bubbles
+            if (clonedRawData.keyLockBubbles) {
+              clonedRawData.keyLockBubbles = clonedRawData.keyLockBubbles.map((kl: any) => ({
+                ...kl,
+                keyWord: kl.keyWord.toLowerCase() === oldLabel ? w.word : kl.keyWord,
+                lockWord: kl.lockWord.toLowerCase() === oldLabel ? w.word : kl.lockWord
+              }));
+            }
+
+            // 6. Screw Lock Bubbles
+            if (clonedRawData.screwLockBubbles) {
+              clonedRawData.screwLockBubbles = clonedRawData.screwLockBubbles.map((sl: any) => ({
+                ...sl,
+                screwLockWord: sl.screwLockWord.toLowerCase() === oldLabel ? w.word : sl.screwLockWord,
+                screwDriverWords: sl.screwDriverWords.map((sdw: string) => sdw.toLowerCase() === oldLabel ? w.word : sdw)
+              }));
+            }
+
+            // 7. Cryptic Bubbles
+            if (clonedRawData.crypticBubbles) {
+              clonedRawData.crypticBubbles = clonedRawData.crypticBubbles.map((cb: any) => {
+                if (cb.word.toLowerCase() === oldLabel) {
+                  const newLetters = w.word.split('').map((char: string) => ({
+                    letter: char.charCodeAt(0),
+                    revealAtMerge: 0
+                  }));
+                  return { ...cb, word: w.word, letters: newLetters };
+                }
+                return cb;
+              });
+            }
           }
         });
       };
@@ -2060,7 +2156,9 @@ export default function GraphEditor() {
                     >
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: '13px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ fontSize: '11px', opacity: 0.6, width: '24px' }}>{node.data.globalIndex as number}.</span>
+                          <span style={{ fontSize: '11px', opacity: 0.6, width: '24px' }}>
+                            {`${spawnQueueIds.indexOf(nodeId) + 1}.`}
+                          </span>
                           {(!isChunk && node.data.icon) ? (
                             <img src={`/word_icon/${String(node.data.icon)}.png`} alt="" title={`Missing File: ${String(node.data.icon)}.png`} style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
                           ) : null}
