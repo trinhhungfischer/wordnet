@@ -1,9 +1,10 @@
 import { Handle, Position } from '@xyflow/react';
-import { Link } from 'lucide-react';
+import { Link, Snowflake } from 'lucide-react';
 
 const CustomNode = ({ data, selected }: any) => {
   const isChunk = data.isChunk === true;
   const isChained = data.isChained === true;
+  const isFrozen = data.isFrozen === true;
 
   return (
     <div 
@@ -16,9 +17,9 @@ const CustomNode = ({ data, selected }: any) => {
       textAlign: 'center',
       cursor: 'pointer',
       transition: 'all 0.2s',
-      background: isChunk ? 'rgba(0,0,0,0.4)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)'),
-      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)')),
-      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)')
+      background: isChunk ? 'rgba(0,0,0,0.4)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)')),
+      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (isFrozen ? '2px solid rgba(56, 189, 248, 0.8)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)'))),
+      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (isFrozen ? '0 0 15px rgba(56, 189, 248, 0.3)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)'))
     }}>
       <Handle
         type="target"
@@ -32,6 +33,7 @@ const CustomNode = ({ data, selected }: any) => {
         )}
         <span>{String(data.label)}</span>
         {isChained && <Link size={14} style={{ color: '#818cf8', marginLeft: '4px' }} />}
+        {isFrozen && <Snowflake size={14} style={{ color: '#38bdf8', marginLeft: isChained ? '2px' : '4px' }} />}
       </div>
       
       {data.isRoot && (

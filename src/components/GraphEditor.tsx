@@ -28,7 +28,7 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake } from 'lucide-react';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -60,6 +60,33 @@ const isNodeChained = (node: Node, linkedWordsList: string[], edges: Edge[], nod
       .filter(child => child && child.data.isChunk)
       .map(child => String(child!.data.label).toLowerCase());
     if (chunkLabels.some(cLabel => linkedWordsList.some((w: string) => w.toLowerCase() === cLabel))) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const isNodeFrozen = (node: Node, frozenBubblesList: any[], edges: Edge[], nodes: Node[]) => {
+  if (!frozenBubblesList || frozenBubblesList.length === 0) return false;
+  const label = String(node.data.label).toLowerCase();
+  
+  if (frozenBubblesList.some((f: any) => f.word.toLowerCase() === label)) return true;
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode && frozenBubblesList.some((f: any) => f.word.toLowerCase() === String(parentNode.data.label).toLowerCase())) {
+        return true;
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    if (chunkLabels.some(cLabel => frozenBubblesList.some((f: any) => f.word.toLowerCase() === cLabel))) {
       return true;
     }
   }
@@ -565,13 +592,18 @@ export default function GraphEditor() {
     
     const newCategories: any[] = [];
     
-    // Identify category nodes: Either explicitly tagged, or any node that has outgoing edges (children) EXCEPT if all children are chunks
     const categoryNodes = nodes.filter(n => {
-      if (n.data.isCategory) return true;
       const childEdges = edges.filter(e => e.source === n.id);
-      if (childEdges.length === 0) return false;
       const childNodes = childEdges.map(e => nodes.find(node => node.id === e.target)).filter(Boolean) as Node[];
-      return childNodes.some(child => !child.data.isChunk);
+      
+      // If a node has ANY chunk children, it is a Word that splits into chunks, NOT a category.
+      if (childNodes.length > 0 && childNodes.some(child => child.data.isChunk)) {
+        return false;
+      }
+
+      if (n.data.isCategory) return true;
+      if (childEdges.length === 0) return false;
+      return true;
     });
     
     categoryNodes.forEach(catNode => {
@@ -1969,6 +2001,7 @@ export default function GraphEditor() {
                   
                   const isChunk = Boolean(node.data.isChunk);
                   const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+                  const isFrozen = isNodeFrozen(node, rawLevelData?.frozenBubbles || [], edges, nodes);
                   
                   let parentLabel: string | null = null;
                   if (isChunk) {
@@ -2014,12 +2047,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))),
+                              : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))),
+                              : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -2034,6 +2067,7 @@ export default function GraphEditor() {
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           {isChained && <Link size={14} color={selectedNodeId === nodeId ? "white" : "#818cf8"} />}
+                          {isFrozen && <Snowflake size={14} color={selectedNodeId === nodeId ? "white" : "#38bdf8"} />}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
                             {isChunk ? 'Chunk' : 'Word'}
                           </span>
@@ -2124,6 +2158,7 @@ export default function GraphEditor() {
           data: {
             ...n.data,
             isChained: rawLevelData?.useBubbleSeparator === 1 && isNodeChained(n, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes),
+            isFrozen: isNodeFrozen(n, rawLevelData?.frozenBubbles || [], edges, nodes),
             dropIndex: spawnQueueIds.indexOf(n.id) !== -1 ? spawnQueueIds.indexOf(n.id) + 1 : undefined
           }
         }))}

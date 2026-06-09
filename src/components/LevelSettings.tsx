@@ -1,4 +1,4 @@
-import { X, Link, Calculator } from 'lucide-react';
+import { X, Link, Calculator, Snowflake } from 'lucide-react';
 
 interface LevelSettingsProps {
   isOpen: boolean;
@@ -166,6 +166,82 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
               </div>
             </>
           )}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Snowflake size={16} color="#38bdf8" />
+          Mechanic: Frozen Bubbles
+        </h3>
+        <div style={{ marginTop: '12px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+            Frozen Words (Drag & Drop from left panel):
+          </div>
+          <div 
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+              if (wordLabel) {
+                const currentFrozen = levelData.frozenBubbles || [];
+                if (!currentFrozen.some((f: any) => f.word === wordLabel)) {
+                  handleChange('frozenBubbles', [...currentFrozen, { word: wordLabel, mergesNeeded: 5 }]);
+                }
+              }
+            }}
+            style={{ 
+              minHeight: '80px', padding: '8px', border: '1px dashed rgba(56,189,248,0.5)', 
+              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+            }}
+          >
+            {(!levelData.frozenBubbles || levelData.frozenBubbles.length === 0) ? (
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                Drop words here
+              </span>
+            ) : (
+              levelData.frozenBubbles.map((frozenItem: any, i: number) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(56,189,248,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(56,189,248,0.3)' }}>
+                  <span 
+                    onClick={() => {
+                      if (onFocusWord) onFocusWord(frozenItem.word);
+                    }}
+                    style={{ 
+                      fontSize: '13px', fontWeight: 600, color: 'white', 
+                      cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {frozenItem.word}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Merges:</span>
+                    <input 
+                      type="number" 
+                      value={frozenItem.mergesNeeded}
+                      onChange={(e) => {
+                        const newFrozen = [...levelData.frozenBubbles];
+                        newFrozen[i].mergesNeeded = parseInt(e.target.value) || 1;
+                        handleChange('frozenBubbles', newFrozen);
+                      }}
+                      style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                    />
+                  </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleChange('frozenBubbles', levelData.frozenBubbles.filter((f: any) => f.word !== frozenItem.word));
+                    }}
+                    style={{ 
+                      background: 'transparent', border: 'none', 
+                      color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                    }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>
