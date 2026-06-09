@@ -353,29 +353,32 @@ export default function GraphEditor() {
             cat.words.forEach((w: any) => {
               const wordLower = w.fullWord.toLowerCase();
               
-              // If this word is actually a sub-category that we already processed, skip creating a duplicate node
-              if (catNodesMap[wordLower]) return;
+              let wordNode: Node;
+              // If this word is actually a sub-category that we already processed, use it instead of creating a duplicate node
+              if (catNodesMap[wordLower]) {
+                wordNode = catNodesMap[wordLower];
+              } else {
+                let gIndex = undefined;
+                if (data.allWordEntries && Array.isArray(data.allWordEntries)) {
+                  const arrIdx = data.allWordEntries.findIndex((e: any) => e.fullWord.toLowerCase() === wordLower);
+                  if (arrIdx !== -1) gIndex = arrIdx + 1;
+                }
 
-              let gIndex = undefined;
-              if (data.allWordEntries && Array.isArray(data.allWordEntries)) {
-                const arrIdx = data.allWordEntries.findIndex((e: any) => e.fullWord.toLowerCase() === wordLower);
-                if (arrIdx !== -1) gIndex = arrIdx + 1;
+                wordNode = {
+                  id: uuidv4(),
+                  type: 'custom',
+                  position: { x: 0, y: 0 },
+                  data: { label: wordLower, isCategory: false, icon: w.icon, globalIndex: gIndex }
+                };
+                newNodes.push(wordNode);
+                newEdges.push({
+                  id: `e-${parentCatNode.id}-${wordNode.id}`,
+                  source: parentCatNode.id,
+                  target: wordNode.id,
+                  animated: true,
+                  style: { stroke: 'var(--accent)' }
+                });
               }
-
-              const wordNode: Node = {
-                id: uuidv4(),
-                type: 'custom',
-                position: { x: 0, y: 0 },
-                data: { label: wordLower, isCategory: false, icon: w.icon, globalIndex: gIndex }
-              };
-              newNodes.push(wordNode);
-              newEdges.push({
-                id: `e-${parentCatNode.id}-${wordNode.id}`,
-                source: parentCatNode.id,
-                target: wordNode.id,
-                animated: true,
-                style: { stroke: 'var(--accent)' }
-              });
 
               // Support old JSON format
               if (w.chunks && Array.isArray(w.chunks) && w.chunks.length > 0) {
