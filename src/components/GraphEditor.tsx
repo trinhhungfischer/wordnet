@@ -72,7 +72,7 @@ export default function GraphEditor() {
   
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   
-  const [leftPanelTab, setLeftPanelTab] = useState<'words'|'chunks'|'dropQueue'|'settings'>('words');
+  const [leftPanelTab, setLeftPanelTab] = useState<'chunks'|'dropQueue'|'settings'>('dropQueue');
   const [autoCutWords, setAutoCutWords] = useState<boolean>(false);
   const [globalDict, setGlobalDict] = useState<any[]>([]);
   const [misleadingWords, setMisleadingWords] = useState<string[]>([]);
@@ -1876,8 +1876,8 @@ export default function GraphEditor() {
             onClick={() => setLeftPanelTab('dropQueue')}
             style={{ 
               flex: 1, padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600,
-              background: leftPanelTab === 'dropQueue' || leftPanelTab === 'words' ? 'var(--accent)' : 'transparent',
-              color: leftPanelTab === 'dropQueue' || leftPanelTab === 'words' ? 'white' : 'var(--text-muted)'
+              background: leftPanelTab === 'dropQueue' ? 'var(--accent)' : 'transparent',
+              color: leftPanelTab === 'dropQueue' ? 'white' : 'var(--text-muted)'
             }}
           >
             Drop Queue
