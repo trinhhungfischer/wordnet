@@ -96,30 +96,7 @@ export default function GraphEditor() {
                 .map(n => n.id);
   }, [nodes]);
 
-  const setSpawnQueueIds = useCallback((updater: string[] | ((prev: string[]) => string[])) => {
-    setNodes(nds => {
-      const currentQueue = nds.filter(n => typeof n.data.globalIndex === 'number')
-                              .sort((a, b) => (a.data.globalIndex as number) - (b.data.globalIndex as number))
-                              .map(n => n.id);
-      
-      const newQueue = typeof updater === 'function' ? updater(currentQueue) : updater;
-      
-      return nds.map(n => {
-        const idx = newQueue.indexOf(n.id);
-        if (idx !== -1) {
-          if (n.data.globalIndex !== idx + 1) {
-            return { ...n, data: { ...n.data, globalIndex: idx + 1 } };
-          }
-          return n;
-        } else {
-          if (typeof n.data.globalIndex === 'number') {
-             return { ...n, data: { ...n.data, globalIndex: undefined } };
-          }
-          return n;
-        }
-      });
-    });
-  }, [setNodes]);
+  
   const [shuffleStartIndex, setShuffleStartIndex] = useState<string>('');
   const [shuffleEndIndex, setShuffleEndIndex] = useState<string>('');
   
@@ -203,7 +180,10 @@ export default function GraphEditor() {
           setRawLevelData(parsed.rawLevelData);
           setSelectedLevelName(parsed.selectedLevelName);
           if (parsed.spawnQueueIds) {
-            setSpawnQueueIds(parsed.spawnQueueIds);
+            parsed.nodes.forEach((n: Node) => {
+              const idx = parsed.spawnQueueIds.indexOf(n.id);
+              if (idx !== -1) n.data.globalIndex = idx + 1;
+            });
           }
         }
       } catch (e) {
@@ -230,26 +210,7 @@ export default function GraphEditor() {
     return () => clearTimeout(timeout);
   }, [nodes, edges, globalDict, levels, selectedLevelName, rawLevelData, spawnQueueIds]);
 
-  // Sync spawnQueueIds with nodes/edges
-  useEffect(() => {
-    const currentDropNodeIds = nodes
-      .filter(n => n.data.isChunk || (!n.data.isCategory && !n.data.isChunk && !edges.some(e => e.source === n.id)))
-      .map(n => n.id);
-
-    setSpawnQueueIds(prev => {
-      const next = prev.filter(id => currentDropNodeIds.includes(id));
-      currentDropNodeIds.forEach(id => {
-        if (!next.includes(id)) {
-          next.push(id);
-        }
-      });
-      // Only update if changed to avoid loop
-      if (next.length !== prev.length || next.some((id, i) => id !== prev[i])) {
-        return next;
-      }
-      return prev;
-    });
-  }, [nodes, edges]);
+  
 
   useEffect(() => {
     if (globalDict.length === 0 || nodes.length === 0) return;
@@ -826,11 +787,12 @@ export default function GraphEditor() {
       const existingChildren = edges.filter(e => e.source === parentNode.id).length;
       const siblingIndex = existingChildren + newNodesToAppend.length;
       const xOffset = siblingIndex === 0 ? 0 : (siblingIndex % 2 === 0 ? 1 : -1) * Math.ceil(siblingIndex / 2) * 150;
+      const maxGlobalIndex = nodes.reduce((max, n) => Math.max(max, (n.data?.globalIndex as number) || 0), 0);
       childNode = {
         id: uuidv4(),
         type: 'custom',
         position: { x: parentNode.position.x + xOffset, y: parentNode.position.y + 120 },
-        data: { label: childLabel, isCategory: false, isChunk }
+        data: { label: childLabel, isCategory: false, isChunk, globalIndex: maxGlobalIndex + 1 }
       };
       newNodesToAppend.push(childNode);
     }
@@ -939,6 +901,7 @@ export default function GraphEditor() {
     const importedNodes: Node[] = [];
     const importedEdges: Edge[] = [];
     const createdCats = new Set<string>();
+    let nextGlobalIndex = nodes.reduce((max, n) => Math.max(max, (n.data?.globalIndex as number) || 0), 0) + 1;
 
     let actualTargetParentId = targetParentId;
     let oldRootNodeId: string | null = null;
@@ -1076,7 +1039,7 @@ export default function GraphEditor() {
             id: wordId,
             type: 'custom',
             position: { x: 0, y: 0 },
-            data: { label: w.word.toLowerCase(), isCategory: false, icon: w.icon }
+            data: { label: w.word.toLowerCase(), isCategory: false, icon: w.icon, globalIndex: nextGlobalIndex++ }
           });
           importedEdges.push({
             id: `e-${nodeId}-${wordId}`,
@@ -1279,25 +1242,7 @@ export default function GraphEditor() {
     setEdges(eds => [...eds.filter(e => !nodeIdsToRemove.has(e.source) && !nodeIdsToRemove.has(e.target)), ...importedEdges]);
     if (updatedRawLevelData !== rawLevelData) setRawLevelData(updatedRawLevelData);
     
-    if (queueUpdates.length > 0 || queueInsertions.length > 0) {
-      setSpawnQueueIds(prev => {
-        let newQueue = [...prev];
-        
-        // Use queueUpdates gathered during importBranch
-        queueUpdates.forEach((update: { oldIds: string[], newIds: string[] }) => {
-          // Find the earliest index of oldIds in the queue
-          const indices = update.oldIds.map((id: string) => newQueue.indexOf(id)).filter((idx: number) => idx !== -1);
-          if (indices.length > 0) {
-            const minIndex = Math.min(...indices);
-            // Remove all oldIds
-            newQueue = newQueue.filter(id => !update.oldIds.includes(id));
-            // Insert newIds at that spot
-            newQueue.splice(minIndex, 0, ...update.newIds);
-          }
-        });
-        return newQueue;
-      });
-    }
+    
     
     saveHistory();
 
@@ -1313,6 +1258,7 @@ export default function GraphEditor() {
   const handleMagicChange = (popularWords: string, minPopularity: number = 0) => {
     saveHistory();
     const usedCategories = new Set<string>();
+    let nextGlobalIndex = nodes.reduce((max, n) => Math.max(max, (n.data?.globalIndex as number) || 0), 0) + 1;
     
     // Helper to get signature
     const getTreeSig = (nodeId: string): any => {
@@ -1521,7 +1467,7 @@ export default function GraphEditor() {
             id: wordId,
             type: 'custom',
             position: oldWordNode?.position || { x: 0, y: 0 },
-            data: { label: w.word.toLowerCase(), isCategory: false, icon: newIcon }
+            data: { label: w.word.toLowerCase(), isCategory: false, icon: newIcon, globalIndex: inheritedGlobalIndex !== undefined ? inheritedGlobalIndex : nextGlobalIndex++ }
           });
           newImportedEdges.push({
             id: `e-${nodeId}-${wordId}`,
@@ -1565,8 +1511,8 @@ export default function GraphEditor() {
               const c2Id = uuidv4();
               const baseX = oldWordNode.position.x;
               const baseY = oldWordNode.position.y;
-              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true }});
-              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true }});
+              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: nextGlobalIndex++ }});
+              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: nextGlobalIndex++ }});
               newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
               newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
               
@@ -1591,8 +1537,8 @@ export default function GraphEditor() {
             const c2Id = uuidv4();
             const baseX = oldWordNode?.position.x || 0;
             const baseY = oldWordNode?.position.y || 0;
-            newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true }});
-            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true }});
+            newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: nextGlobalIndex++ }});
+            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: nextGlobalIndex++ }});
             newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
             newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
             newIds = [c1Id, c2Id];
@@ -1619,25 +1565,7 @@ export default function GraphEditor() {
       clonedNodes.push(...newImportedNodes);
       clonedEdges.push(...newImportedEdges);
       
-      // Update spawnQueueIds to replace old word IDs with new word/chunk IDs
-      setSpawnQueueIds(prev => {
-        let newQueue = [...prev];
-        
-        // Use queueUpdates gathered during importBranch
-        queueUpdates.forEach((update: { oldIds: string[], newIds: string[] }) => {
-          // Find the earliest index of oldIds in the queue
-          const indices = update.oldIds.map((id: string) => newQueue.indexOf(id)).filter((idx: number) => idx !== -1);
-          if (indices.length > 0) {
-            const minIndex = Math.min(...indices);
-            // Remove all oldIds
-            newQueue = newQueue.filter(id => !update.oldIds.includes(id));
-            // Insert newIds at that position
-            newQueue.splice(minIndex, 0, ...update.newIds);
-          }
-        });
-        
-        return newQueue;
-      });
+      
     }
 
     setNodes(clonedNodes);
@@ -1751,82 +1679,22 @@ export default function GraphEditor() {
       return;
     }
     
-    setSpawnQueueIds(prev => {
-      const newQueue = [...prev];
-      const sliceToShuffle = newQueue.slice(rawStart - 1, rawEnd);
-      
-      const maxBubbles = rawLevelData?.maxBubblesInScene || 20;
-      
-      const linkedItems: string[] = [];
-      const normalItems: string[] = [];
-      
-      sliceToShuffle.forEach(id => {
-        const node = nodes.find(n => n.id === id);
-        if (node && isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes)) {
-          linkedItems.push(id);
-        } else {
-          normalItems.push(id);
+    setNodes(nds => {
+      const queue = nds.filter(n => typeof n.data?.globalIndex === 'number')
+                       .sort((a,b) => (a.data?.globalIndex as number) - (b.data?.globalIndex as number));
+      const sliceToShuffle = queue.slice(rawStart - 1, rawEnd);
+      const indices = sliceToShuffle.map(n => n.data.globalIndex);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      return nds.map(n => {
+        const sliceIdx = sliceToShuffle.findIndex(sn => sn.id === n.id);
+        if (sliceIdx !== -1) {
+          return { ...n, data: { ...n.data, globalIndex: indices[sliceIdx] } };
         }
+        return n;
       });
-      
-      // Determine allowed local indices for linked items so absolute index < maxBubbles
-      // absolute index = rawStart - 1 + local_index
-      const maxLocalIndexForLinked = Math.max(0, maxBubbles - (rawStart - 1));
-      
-      const availableLocalIndices = Array.from({ length: sliceToShuffle.length }, (_, i) => i);
-      const preferredLocalIndices = availableLocalIndices.filter(i => i < maxLocalIndexForLinked);
-      
-      const shuffleArray = (arr: any[]) => {
-        const res = [...arr];
-        for (let i = res.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [res[i], res[j]] = [res[j], res[i]];
-        }
-        return res;
-      };
-      
-      const shuffledPreferred = shuffleArray(preferredLocalIndices);
-      const chosenLinkedIndices: number[] = [];
-      
-      // Assign preferred indices to linked items as much as possible
-      for (let i = 0; i < linkedItems.length; i++) {
-        if (shuffledPreferred.length > 0) {
-          const chosen = shuffledPreferred.pop()!;
-          chosenLinkedIndices.push(chosen);
-          const idx = availableLocalIndices.indexOf(chosen);
-          if (idx !== -1) availableLocalIndices.splice(idx, 1);
-        } else {
-          break;
-        }
-      }
-      
-      // Assign any leftover linked items to remaining available indices
-      const remainingLinkedCount = linkedItems.length - chosenLinkedIndices.length;
-      if (remainingLinkedCount > 0) {
-        const shuffledRemaining = shuffleArray(availableLocalIndices);
-        for (let i = 0; i < remainingLinkedCount; i++) {
-          const chosen = shuffledRemaining.pop()!;
-          chosenLinkedIndices.push(chosen);
-          const idx = availableLocalIndices.indexOf(chosen);
-          if (idx !== -1) availableLocalIndices.splice(idx, 1);
-        }
-      }
-      
-      const shuffledLinkedItems = shuffleArray(linkedItems);
-      const shuffledNormalItems = shuffleArray(normalItems);
-      
-      const newSlice: string[] = new Array(sliceToShuffle.length);
-      for (let i = 0; i < chosenLinkedIndices.length; i++) {
-        newSlice[chosenLinkedIndices[i]] = shuffledLinkedItems[i];
-      }
-      for (let i = 0; i < availableLocalIndices.length; i++) {
-        newSlice[availableLocalIndices[i]] = shuffledNormalItems[i];
-      }
-      
-      newQueue.splice(rawStart - 1, newSlice.length, ...newSlice);
-      
-      alert(`Shuffled successfully from index ${rawStart} to ${rawEnd}!`);
-      return newQueue;
     });
   };
 
@@ -2132,15 +2000,10 @@ export default function GraphEditor() {
                         e.preventDefault();
                         const draggedId = e.dataTransfer.getData('application/spawn-queue-id');
                         if (draggedId && draggedId !== nodeId) {
-                          const oldIdx = spawnQueueIds.indexOf(draggedId);
-                          const newIdx = spawnQueueIds.indexOf(nodeId);
-                          if (oldIdx !== -1 && newIdx !== -1) {
-                            setSpawnQueueIds(prev => {
-                              const newQueue = [...prev];
-                              newQueue.splice(oldIdx, 1);
-                              newQueue.splice(newIdx, 0, draggedId);
-                              return newQueue;
-                            });
+                          const draggedNode = nodes.find(n => n.id === draggedId);
+                          const targetNode = nodes.find(n => n.id === nodeId);
+                          if (draggedNode && targetNode && typeof targetNode.data.globalIndex === 'number') {
+                            handleUpdateNodeIndex(draggedId, targetNode.data.globalIndex);
                           }
                         }
                         handleDrop(e, nodeId);
