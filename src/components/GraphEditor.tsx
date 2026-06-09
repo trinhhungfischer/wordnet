@@ -578,8 +578,14 @@ export default function GraphEditor() {
     
     const newCategories: any[] = [];
     
-    // Identify category nodes: Either explicitly tagged, or any node that has outgoing edges (children)
-    const categoryNodes = nodes.filter(n => n.data.isCategory || edges.some(e => e.source === n.id));
+    // Identify category nodes: Either explicitly tagged, or any node that has outgoing edges (children) EXCEPT if all children are chunks
+    const categoryNodes = nodes.filter(n => {
+      if (n.data.isCategory) return true;
+      const childEdges = edges.filter(e => e.source === n.id);
+      if (childEdges.length === 0) return false;
+      const childNodes = childEdges.map(e => nodes.find(node => node.id === e.target)).filter(Boolean) as Node[];
+      return childNodes.some(child => !child.data.isChunk);
+    });
     
     categoryNodes.forEach(catNode => {
       // Find parent category
