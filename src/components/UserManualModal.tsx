@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ArrowRight, MousePointer2, Settings, Puzzle, Link, Image as ImageIcon } from 'lucide-react';
+import { X, MousePointer2, Settings, Puzzle, Link } from 'lucide-react';
 
 interface UserManualModalProps {
   isOpen: boolean;

@@ -71,9 +71,8 @@ export default function GraphEditor() {
   const [edges, setEdges] = useEdgesState(initialEdges);
   
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [selectedEdgeIds, setSelectedEdgeIds] = useState<string[]>([]);
   
-  const [leftPanelTab, setLeftPanelTab] = useState<'words'|'chunks'|'dropOrder'|'settings'>('words');
+  const [leftPanelTab, setLeftPanelTab] = useState<'words'|'chunks'|'dropQueue'|'settings'>('words');
   const [autoCutWords, setAutoCutWords] = useState<boolean>(false);
   const [globalDict, setGlobalDict] = useState<any[]>([]);
   const [misleadingWords, setMisleadingWords] = useState<string[]>([]);
@@ -92,6 +91,8 @@ export default function GraphEditor() {
   const [wordIndexSearchQuery, setWordIndexSearchQuery] = useState('');
   const [sortLinksFirst, setSortLinksFirst] = useState(false);
   const [spawnQueueIds, setSpawnQueueIds] = useState<string[]>([]);
+  const [shuffleStartIndex, setShuffleStartIndex] = useState<string>('');
+  const [shuffleEndIndex, setShuffleEndIndex] = useState<string>('');
   
   const { setCenter, fitView } = useReactFlow();
 
@@ -1100,13 +1101,14 @@ export default function GraphEditor() {
     const queueUpdates: { oldIds: string[], newIds: string[] }[] = [];
 
     if (replaceNodes.length > 0) {
-      const oldWordNodes = replaceNodes.filter(n => !n.data.isCategory && !n.data.isChunk);
-      const oldIndices = oldWordNodes.map(n => n.data.globalIndex).filter(idx => idx !== undefined).sort((a:any,b:any)=>a-b);
+      const oldWordNodes = replaceNodes.filter(n => !n.data.isCategory && !n.data.isChunk).sort((a, b) => ((a.data.globalIndex as number) || 0) - ((b.data.globalIndex as number) || 0));
+      const oldIndices = oldWordNodes.map(n => n.data.globalIndex).filter(idx => idx !== undefined);
       
-      if (oldIndices.length > 0 && newWordNodes.length === oldIndices.length) {
+      if (oldIndices.length > 0) {
         if (rawLevelData && Array.isArray(rawLevelData.allWordEntries)) {
           const newEntries = [...rawLevelData.allWordEntries];
           oldIndices.forEach((idx, i) => {
+            if (i >= newWordNodes.length) return;
             const newWordNode = newWordNodes[i];
             const oldWordNode = oldWordNodes[i];
             newWordNode.data.globalIndex = idx;
@@ -1137,7 +1139,9 @@ export default function GraphEditor() {
         } else {
           // Even if no rawLevelData, apply indices
           oldIndices.forEach((idx, i) => {
-            newWordNodes[i].data.globalIndex = idx;
+            if (i < newWordNodes.length) {
+              newWordNodes[i].data.globalIndex = idx;
+            }
           });
         }
       }
@@ -1147,50 +1151,47 @@ export default function GraphEditor() {
       const chunkNodesToRemove = chunkEdgesToRemove.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isChunk);
       chunkNodesToRemove.forEach(n => { if (n) nodeIdsToRemove.add(n.id); });
 
-      if (oldIndices.length > 0 && newWordNodes.length === oldIndices.length) {
-        oldWordNodes.forEach((oldNode, i) => {
-          let newIds = [newWordNodes[i].id];
-          let oldIds = [oldNode.id];
-          
-          const oldChunkNodes = nodes.filter(n => n.data.isChunk && edges.some(e => e.source === oldNode.id && e.target === n.id));
+      oldWordNodes.forEach((oldNode, i) => {
+        if (i >= newWordNodes.length) return;
+        let newIds = [newWordNodes[i].id];
+        let oldIds = [oldNode.id];
+        
+        const oldChunkNodes = nodes.filter(n => n.data.isChunk && edges.some(e => e.source === oldNode.id && e.target === n.id));
+        if (oldChunkNodes.length > 0 || autoCutWords) {
           if (oldChunkNodes.length > 0) {
             oldIds.push(...oldChunkNodes.map(c => c.id));
-            const newChunks = createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
-            // newChunks are the node objects returned by createChunksForWord
-            if (newChunks && newChunks.length > 0) {
-              newChunks.forEach(c => c.data.globalIndex = newWordNodes[i].data.globalIndex);
-              newIds = newChunks.map(c => c.id);
-            }
           }
-          queueUpdates.push({ oldIds, newIds });
-        });
+          const newChunks = createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+          // newChunks are the node objects returned by createChunksForWord
+          if (newChunks && newChunks.length > 0) {
+            newChunks.forEach(c => c.data.globalIndex = newWordNodes[i].data.globalIndex);
+            newIds = newChunks.map(c => c.id);
+          }
+        }
+        queueUpdates.push({ oldIds, newIds });
+      });
+      
+      // If newWordNodes has more items than oldWordNodes, and autoCutWords is true
+      for (let i = oldWordNodes.length; i < newWordNodes.length; i++) {
+        if (autoCutWords) {
+          createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+        }
       }
     } else if (keepOldTreeAnchor.length > 0) {
-      // If we keep the old tree but want to copy indices
-      const oldWordNodes = keepOldTreeAnchor.filter(n => !n.data.isCategory && !n.data.isChunk);
-      const oldIndices = oldWordNodes.map(n => n.data.globalIndex).filter(idx => idx !== undefined).sort((a:any,b:any)=>a-b);
+      // If we keep the old tree, do NOT copy globalIndex (user doesn't want auto-numbering for new trees)
+      const oldWordNodes = keepOldTreeAnchor.filter(n => !n.data.isCategory && !n.data.isChunk).sort((a, b) => ((a.data.globalIndex as number) || 0) - ((b.data.globalIndex as number) || 0));
       
-      if (oldIndices.length > 0 && newWordNodes.length === oldIndices.length) {
-        oldIndices.forEach((idx, i) => {
-          const newWordNode = newWordNodes[i];
-          const oldWordNode = oldWordNodes[i];
-          newWordNode.data.globalIndex = idx;
-          
-          const oldHasIcon = !!oldWordNode.data.icon;
-          if (!oldHasIcon) {
-            newWordNode.data.icon = null;
-          } else if (!newWordNode.data.icon) {
-            newWordNode.data.icon = String(newWordNode.data.label).toLowerCase();
-          }
-        });
-        
+      oldWordNodes.forEach((oldNode, i) => {
+        if (i >= newWordNodes.length) return;
+        const hasChunks = edges.some(e => e.source === oldNode.id && nodes.find(n => n.id === e.target)?.data.isChunk);
+        if (hasChunks || autoCutWords) {
+          createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+        }
+      });
+      
+      for (let i = oldWordNodes.length; i < newWordNodes.length; i++) {
         if (autoCutWords) {
-          oldWordNodes.forEach((oldNode, i) => {
-            const hasChunks = edges.some(e => e.source === oldNode.id && nodes.find(n => n.id === e.target)?.data.isChunk);
-            if (hasChunks) {
-              createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
-            }
-          });
+          createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
         }
       }
     } else {
@@ -1333,6 +1334,7 @@ export default function GraphEditor() {
       const newImportedNodes: Node[] = [];
       const newImportedEdges: Edge[] = [];
       const createdCats = new Set<string>();
+      const queueUpdates: {oldIds: string[], newIds: string[]}[] = [];
 
       const importBranch = (catName: string, parentId: string | null, depth: number, currentReqSig: any) => {
         const entry = globalDict.find((e: any) => e.name.toLowerCase() === catName.toLowerCase());
@@ -1527,9 +1529,9 @@ export default function GraphEditor() {
         let newQueue = [...prev];
         
         // Use queueUpdates gathered during importBranch
-        queueUpdates.forEach(update => {
+        queueUpdates.forEach((update: { oldIds: string[], newIds: string[] }) => {
           // Find the earliest index of oldIds in the queue
-          const indices = update.oldIds.map(id => newQueue.indexOf(id)).filter(idx => idx !== -1);
+          const indices = update.oldIds.map((id: string) => newQueue.indexOf(id)).filter((idx: number) => idx !== -1);
           if (indices.length > 0) {
             const minIndex = Math.min(...indices);
             // Remove all oldIds
@@ -1642,6 +1644,28 @@ export default function GraphEditor() {
       }
       return n;
     }));
+  };
+
+  const handleShuffleRange = () => {
+    const start = parseInt(shuffleStartIndex, 10);
+    const end = parseInt(shuffleEndIndex, 10);
+    
+    if (isNaN(start) || isNaN(end) || start < 1 || end > spawnQueueIds.length || start >= end) {
+      alert(`Please enter valid indices between 1 and ${spawnQueueIds.length}, where Start < End.`);
+      return;
+    }
+    
+    setSpawnQueueIds(prev => {
+      const newQueue = [...prev];
+      const sliceToShuffle = newQueue.slice(start - 1, end);
+      // shuffle
+      for (let i = sliceToShuffle.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [sliceToShuffle[i], sliceToShuffle[j]] = [sliceToShuffle[j], sliceToShuffle[i]];
+      }
+      newQueue.splice(start - 1, sliceToShuffle.length, ...sliceToShuffle);
+      return newQueue;
+    });
   };
 
   return (
@@ -1840,6 +1864,31 @@ export default function GraphEditor() {
               </div>
             </div>
             
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', alignItems: 'center', padding: '8px', background: 'rgba(0,0,0,0.15)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Shuffle from</span>
+              <input
+                type="number"
+                placeholder="Start"
+                value={shuffleStartIndex}
+                onChange={e => setShuffleStartIndex(e.target.value)}
+                style={{ width: '45px', padding: '4px', borderRadius: '4px', fontSize: '11px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none' }}
+              />
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>to</span>
+              <input
+                type="number"
+                placeholder="End"
+                value={shuffleEndIndex}
+                onChange={e => setShuffleEndIndex(e.target.value)}
+                style={{ width: '45px', padding: '4px', borderRadius: '4px', fontSize: '11px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none' }}
+              />
+              <button
+                onClick={handleShuffleRange}
+                style={{ marginLeft: 'auto', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600, background: 'rgba(168, 85, 247, 0.2)', color: '#d8b4fe', border: '1px solid #a855f7', cursor: 'pointer' }}
+              >
+                Shuffle
+              </button>
+            </div>
+
             <div style={{ position: 'relative', marginBottom: '12px' }}>
               <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input 
@@ -1884,14 +1933,14 @@ export default function GraphEditor() {
                   const node = nodes.find(n => n.id === nodeId);
                   return node && String(node.data.label).toLowerCase().includes(wordIndexSearchQuery.toLowerCase());
                 })
-                .map((nodeId: string, displayIdx: number) => {
+                .map((nodeId: string) => {
                   const node = nodes.find(n => n.id === nodeId);
                   if (!node) return null;
                   
                   const isChunk = Boolean(node.data.isChunk);
                   const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
                   
-                  let parentLabel = null;
+                  let parentLabel: string | null = null;
                   if (isChunk) {
                     const parentEdge = edges.find(e => e.target === nodeId);
                     if (parentEdge) {

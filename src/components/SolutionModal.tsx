@@ -348,7 +348,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                         </span>
                         
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          {isChained && <LinkIcon size={14} color="#818cf8" title="Chained Bubble" />}
+                          {isChained && <span title="Chained Bubble"><LinkIcon size={14} color="#818cf8" /></span>}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
                             {isTemp ? 'Merged Bubble' : (isChunk ? 'Chunk' : (isCategory ? 'Category' : 'Word'))}
                           </span>
