@@ -1389,29 +1389,65 @@ export default function GraphEditor() {
       // Shuffle matches to prevent alphabetical bias on ties
       matches.sort(() => Math.random() - 0.5);
 
-      if (minPopularity > 0) {
-        matches.sort((a: any, b: any) => {
+      let history: string[] = [];
+      try {
+        history = JSON.parse(localStorage.getItem('magicChangeHistory') || '[]');
+      } catch (e) {}
+
+      const getHistoryPenalty = (catName: string) => history.includes(catName) ? 1 : 0;
+
+      // Primary sorting logic
+      matches.sort((a: any, b: any) => {
+        // 1. History penalty (lower is better)
+        const aPenalty = getHistoryPenalty(a.name);
+        const bPenalty = getHistoryPenalty(b.name);
+        if (aPenalty !== bPenalty) return aPenalty - bPenalty;
+
+        // 2. minPopularity count (higher is better)
+        if (minPopularity > 0) {
           const aCount = a.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
           const bCount = b.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
-          return bCount - aCount;
-        });
-      }
+          if (aCount !== bCount) return bCount - aCount;
+        }
+
+        return 0; // fallback to random shuffle
+      });
 
       let chosenCat = matches[0];
 
+      // Pool selection to increase variance (if no specific popularWords provided)
+      if (!popularWords) {
+        let pool = matches.filter(m => getHistoryPenalty(m.name) === getHistoryPenalty(matches[0].name));
+        if (minPopularity > 0 && pool.length > 0) {
+          const maxCount = pool[0].words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
+          pool = pool.filter(m => {
+            const count = m.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
+            return count >= maxCount * 0.7; // allow 30% variance in word count
+          });
+        }
+        const poolSize = Math.min(10, Math.max(1, Math.floor(pool.length * 0.3))); // Top 30%, max 10
+        const randIndex = Math.floor(Math.random() * poolSize);
+        chosenCat = pool[randIndex] || matches[0];
+      }
+
       if (popularWords) {
-        const terms = popularWords.split(/[\n,]+/).map(t => t.trim().toLowerCase()).filter(Boolean);
+        const terms = popularWords.split(/[\\n,]+/).map(t => t.trim().toLowerCase()).filter(Boolean);
         if (terms.length > 0) {
           matches.sort((a: any, b: any) => {
             const aMatch = terms.some(t => a.name.toLowerCase().includes(t) || a.words.some((w:any) => w.word.toLowerCase().includes(t))) ? 1 : 0;
             const bMatch = terms.some(t => b.name.toLowerCase().includes(t) || b.words.some((w:any) => w.word.toLowerCase().includes(t))) ? 1 : 0;
-            return bMatch - aMatch;
+            return bMatch - aMatch; // exact term match overrides everything
           });
           chosenCat = matches[0];
         }
       }
       
       usedCategories.add(chosenCat.name);
+      history.push(chosenCat.name);
+      if (history.length > 30) history = history.slice(history.length - 30);
+      try {
+        localStorage.setItem('magicChangeHistory', JSON.stringify(history));
+      } catch (e) {}
 
       const newImportedNodes: Node[] = [];
       const newImportedEdges: Edge[] = [];
