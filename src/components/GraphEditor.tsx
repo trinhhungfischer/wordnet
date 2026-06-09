@@ -28,7 +28,7 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator } from 'lucide-react';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -145,6 +145,16 @@ export default function GraphEditor() {
       return { past: newPast, future: [] };
     });
   }, [nodes, edges]);
+
+  // Scroll to selected drop queue item
+  useEffect(() => {
+    if (selectedNodeId && leftPanelTab === 'dropQueue') {
+      const el = document.getElementById(`queue-item-${selectedNodeId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [selectedNodeId, leftPanelTab]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -1776,14 +1786,15 @@ export default function GraphEditor() {
         
         <div style={{ display: 'flex', gap: '8px' }}>
           <button 
-            onClick={() => setIsManualModalOpen(true)}
+            onClick={() => setIsSolutionModalOpen(true)}
+            disabled={!rawLevelData}
             style={{
-              padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--accent)',
-              background: 'rgba(56, 189, 248, 0.1)', color: 'var(--accent)', cursor: 'pointer',
-              fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px'
+              padding: '8px 12px', borderRadius: '8px', border: 'none',
+              background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed',
+              fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5
             }}
           >
-            <HelpCircle size={14} /> Hướng dẫn
+            <Calculator size={14} /> Calculate
           </button>
           <button 
             onClick={() => setIsDictOpen(true)}
@@ -2004,6 +2015,7 @@ export default function GraphEditor() {
 
                   return (
                     <div 
+                      id={`queue-item-${nodeId}`}
                       key={nodeId}
                       draggable
                       onDragStart={(e) => {
@@ -2182,33 +2194,55 @@ export default function GraphEditor() {
           style={{ background: 'var(--panel-bg)', borderColor: 'var(--panel-border)' }} 
         />
         
-        {/* Floating Action Button for New Node */}
-        <button
-          onClick={handleAddRoot}
-          title="Add New Root Node"
-          style={{
-            position: 'absolute',
-            bottom: '180px',
-            right: '20px',
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            background: 'var(--accent)',
-            color: 'white',
-            border: 'none',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            zIndex: 10,
-            transition: 'transform 0.2s',
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          <Plus size={28} />
-        </button>
+        {/* Floating Action Buttons */}
+        <div style={{ position: 'absolute', bottom: '180px', right: '20px', display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 10 }}>
+          <button
+            onClick={() => setIsManualModalOpen(true)}
+            title="User Manual"
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'rgba(0,0,0,0.6)',
+              color: 'white',
+              border: '2px solid rgba(255,255,255,0.2)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              backdropFilter: 'blur(10px)',
+              transition: 'transform 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <HelpCircle size={28} />
+          </button>
+          
+          <button
+            onClick={handleAddRoot}
+            title="Add New Root Node"
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'var(--accent)',
+              color: 'white',
+              border: 'none',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <Plus size={28} />
+          </button>
+        </div>
 
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} color="var(--panel-border)" />
       </ReactFlow>

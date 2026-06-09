@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon } from 'lucide-react';
+import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -49,14 +49,18 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
   const currentMove = activeStep ? activeStep.moveIndex : 0;
 
   const displayNodes = useMemo(() => {
-    const list = activeBoardState.map((nodeId, idx) => {
+    const list = activeBoardState.map((bubbleState: any, idx: number) => {
+      const nodeId = bubbleState.id;
       let isTemp = false;
-      let displayLabel = '';
+      let displayLabel = bubbleState.label;
       let familyId = nodeId;
       let familyName = '';
       let isChunk = false;
       let isCategory = false;
-      let isChained = false;
+      let isChained = bubbleState.isChained;
+      let chainMergesLeft = bubbleState.chainMergesLeft;
+      let iceMergesLeft = bubbleState.iceMergesLeft;
+      let crackMergesLeft = bubbleState.crackMergesLeft;
       let node = nodes.find(n => n.id === nodeId);
 
       if (nodeId.startsWith('temp_[')) {
@@ -78,21 +82,9 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
          familyId = parentEdge ? parentEdge.source : nodeId;
          const familyNode = nodes.find(n => n.id === familyId);
          if (familyNode) familyName = String(familyNode.data.label);
-         
-         const linkedWordsList = levelData?.bubbleSeparatorData?.linkedWords || [];
-         if (isChunk) {
-           if (parentEdge) {
-             const parentNode = nodes.find(n => n.id === parentEdge.source);
-             if (parentNode) {
-               isChained = linkedWordsList.some((w: string) => w.toLowerCase() === String(parentNode.data.label).toLowerCase());
-             }
-           }
-         } else {
-           isChained = linkedWordsList.some((w: string) => w.toLowerCase() === String(node.data.label).toLowerCase());
-         }
       }
 
-      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, originalIdx: idx };
+      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, originalIdx: idx };
     }).filter(Boolean) as any[];
 
     if (boardSortMode === 'name') {
@@ -179,7 +171,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   </span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  {solution.difficulty.factors.map((factor, i) => (
+                  {solution.difficulty.factors.map((factor: string, i: number) => (
                     <div key={i} style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '6px' }}>
                       <span style={{ color: solution.difficulty.color }}>•</span> {factor}
                     </div>
@@ -203,7 +195,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {solution.steps.map((step, idx) => {
+                  {solution.steps.map((step: any, idx: number) => {
                     const isSelected = selectedStepIndex === idx;
                     
                     return (
@@ -316,7 +308,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, originalIdx }) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, originalIdx }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -348,7 +340,21 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                         </span>
                         
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          {isChained && <span title="Chained Bubble"><LinkIcon size={14} color="#818cf8" /></span>}
+                          {isChained && (
+                            <span title={`Chained Bubble (${chainMergesLeft} groups left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#818cf8', fontSize: '11px', fontWeight: 'bold' }}>
+                              <LinkIcon size={14} color="#818cf8" /> {chainMergesLeft > 0 ? chainMergesLeft : ''}
+                            </span>
+                          )}
+                          {iceMergesLeft > 0 && (
+                            <span title={`Frozen (${iceMergesLeft} groups left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#38bdf8', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Snowflake size={14} color="#38bdf8" /> {iceMergesLeft}
+                            </span>
+                          )}
+                          {crackMergesLeft > 0 && (
+                            <span title={`Cracked Glass (${crackMergesLeft} groups left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#fbbf24', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Lock size={14} color="#fbbf24" /> {crackMergesLeft}
+                            </span>
+                          )}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
                             {isTemp ? 'Merged Bubble' : (isChunk ? 'Chunk' : (isCategory ? 'Category' : 'Word'))}
                           </span>

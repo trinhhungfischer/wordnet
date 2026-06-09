@@ -1,5 +1,14 @@
 import type { Node, Edge } from '@xyflow/react';
 
+export interface BoardBubbleState {
+  id: string;
+  label: string;
+  isChained: boolean;
+  chainMergesLeft: number;
+  iceMergesLeft: number;
+  crackMergesLeft: number;
+}
+
 export interface MergeStep {
   id: string;
   type: 'chunk' | 'category' | 'event' | 'success';
@@ -8,7 +17,7 @@ export interface MergeStep {
   result: string;
   text?: string;
   isComboBonus: boolean;
-  boardState: string[];
+  boardState: BoardBubbleState[];
   moveIndex: number;
 }
 
@@ -31,6 +40,59 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   let bonusTurns = 0;
   let stepIdCounter = 1;
 
+  let chainBroken = false;
+  let completedCategoriesCount = 0;
+  let crackBreakMap: Record<string, number> = {};
+
+  if (levelData?.allWordEntries) {
+    levelData.allWordEntries.forEach((e: any) => {
+      const wordName = e.parentWord ? String(e.parentWord).toLowerCase() : String(e.fullWord).toLowerCase();
+      if (e.crackBreakNum > 0) {
+        crackBreakMap[wordName] = e.crackBreakNum;
+      }
+    });
+  }
+
+  const linkedWords = new Set((levelData?.bubbleSeparatorData?.linkedWords || []).map((w: string) => w.toLowerCase()));
+  const breakThreshold = levelData?.bubbleSeparatorData?.breakThreshold || 3;
+
+  const getBubbleState = (bid: string): BoardBubbleState => {
+    const node = nodes.find(n => n.id === bid);
+    const displayLabel = node ? String(node.data.label) : bid.split('_')[1]?.replace(/^\[|\]$/g, '') || bid;
+
+    let isChained = false;
+    let chainMergesLeft = 0;
+    let iceMergesLeft = 0;
+    let crackMergesLeft = 0;
+
+    if (node) {
+      const w = displayLabel.toLowerCase();
+      
+      if (linkedWords.has(w) && !chainBroken && levelData?.useBubbleSeparator === 1) {
+         isChained = true;
+         chainMergesLeft = breakThreshold - completedCategoriesCount;
+      }
+      
+      if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) {
+         crackMergesLeft = crackBreakMap[w] - completedCategoriesCount;
+      }
+      
+      const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
+      if (frozenRule && completedCategoriesCount < frozenRule.mergesNeeded) {
+         iceMergesLeft = frozenRule.mergesNeeded - completedCategoriesCount;
+      }
+    }
+
+    return {
+      id: bid,
+      label: displayLabel,
+      isChained,
+      chainMergesLeft: chainMergesLeft > 0 ? chainMergesLeft : 0,
+      iceMergesLeft: iceMergesLeft > 0 ? iceMergesLeft : 0,
+      crackMergesLeft: crackMergesLeft > 0 ? crackMergesLeft : 0
+    };
+  };
+
   const addStep = (type: 'chunk' | 'category' | 'event' | 'success', left: string, right: string, result: string, text?: string) => {
     let currentMoveIndex = moveCount;
     if (type !== 'event' && type !== 'success') {
@@ -47,37 +109,23 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
         result,
         text,
         isComboBonus,
-        boardState: [...board],
+        boardState: board.map(bid => getBubbleState(bid)),
         moveIndex: currentMoveIndex
       });
     } else {
       steps.push({
         id: `step-${stepIdCounter++}`,
         type,
-        left: '',
-        right: '',
-        result: '',
+        left,
+        right,
+        result,
         text,
         isComboBonus: false,
-        boardState: [...board],
+        boardState: board.map(bid => getBubbleState(bid)),
         moveIndex: currentMoveIndex
       });
     }
   };
-
-  const linkedWords = new Set((levelData?.bubbleSeparatorData?.linkedWords || []).map((w: string) => w.toLowerCase()));
-  const breakThreshold = levelData?.bubbleSeparatorData?.breakThreshold || 3;
-  let chainBroken = false;
-
-  const crackBreakMap: Record<string, number> = {};
-  if (levelData?.allWordEntries) {
-    levelData.allWordEntries.forEach((e: any) => {
-      const wordName = e.parentWord ? String(e.parentWord).toLowerCase() : String(e.fullWord).toLowerCase();
-      if (e.crackBreakNum > 0) {
-        crackBreakMap[wordName] = e.crackBreakNum;
-      }
-    });
-  }
 
   const catNodes = nodes.filter(n => n.data.isCategory);
   
@@ -100,7 +148,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     catToWords.set(cat.id, wIds);
   });
 
-  let completedCategoriesCount = 0;
+  // (Variables moved up)
 
   const isWordLocked = (w: string) => {
     w = w.toLowerCase();
