@@ -106,6 +106,10 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     w = w.toLowerCase();
     if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) return true;
     if (linkedWords.has(w) && !chainBroken && levelData?.useBubbleSeparator === 1) return true;
+    
+    const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
+    if (frozenRule && completedCategoriesCount < frozenRule.mergesNeeded) return true;
+    
     return false;
   };
 
@@ -244,6 +248,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                   addStep('event', '', '', '', `🧊 Ice broken on "${w}" (${completedCategoriesCount} categories broken)`);
                 }
               });
+              
+              levelData?.frozenBubbles?.forEach((f: any) => {
+                if (f.mergesNeeded === completedCategoriesCount) {
+                  addStep('event', '', '', '', `🧊 Ice thawed on "${f.word}" (${completedCategoriesCount} categories broken)`);
+                }
+              });
 
               // Check Chain Events
               if (levelData?.useBubbleSeparator === 1 && !chainBroken) {
@@ -323,7 +333,7 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, move
     factors.push(`Chain Mechanic Enabled`);
   }
 
-  const frozenCount = levelData?.freezeWords?.length || 0;
+  const frozenCount = levelData?.frozenBubbles?.length || 0;
   if (frozenCount > 0) {
     score += frozenCount * 4;
     factors.push(`${frozenCount} Frozen Words`);

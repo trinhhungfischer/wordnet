@@ -68,13 +68,14 @@ interface SidebarProps {
   copiedTreeConfig?: any;
   setCopiedTreeConfig?: (config: any) => void;
   onPasteTreeConfig?: (categoryId: string, config: any) => void;
-  autoCutWords: boolean;
-  setAutoCutWords: (val: boolean) => void;
+  autoCutWords?: boolean;
+  setAutoCutWords?: (val: boolean) => void;
+  isSettingsOpen?: boolean;
 }
 
 type TabType = 'dict' | 'specific' | 'related' | 'wiki';
 
-export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig, autoCutWords, setAutoCutWords }: SidebarProps) {
+export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig, autoCutWords, setAutoCutWords, isSettingsOpen }: SidebarProps) {
   const [manualWord, setManualWord] = useState('');
   const [suggestions, setSuggestions] = useState<WordSuggestion[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('dict');
@@ -416,7 +417,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
   return (
     <div className="glass-panel" style={{
       position: 'absolute',
-      right: '20px',
+      right: isSettingsOpen ? '400px' : '20px',
       top: '20px',
       width: '360px',
       maxHeight: 'calc(100vh - 40px)',
@@ -425,6 +426,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
       display: 'flex',
       flexDirection: 'column',
       zIndex: 10,
+      transition: 'right 0.3s ease',
       boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
     }}>
       {/* Header */}
