@@ -173,6 +173,9 @@ export default function GraphEditor() {
           setEdges(parsed.edges);
           setRawLevelData(parsed.rawLevelData);
           setSelectedLevelName(parsed.selectedLevelName);
+          if (parsed.spawnQueueIds) {
+            setSpawnQueueIds(parsed.spawnQueueIds);
+          }
         }
       } catch (e) {
         console.error('Failed to load autosave', e);
