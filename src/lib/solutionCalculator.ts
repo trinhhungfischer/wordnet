@@ -1,4 +1,6 @@
 import type { Node, Edge } from '@xyflow/react';
+import globalDictData from '../../public/global_dictionary.json';
+const globalDict: any = globalDictData;
 
 export interface BoardBubbleState {
   id: string;
@@ -408,6 +410,53 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, move
   if (lockCount > 0) {
     score += lockCount * 8;
     factors.push(`${lockCount} Key-Lock Mechanics`);
+  }
+
+  // Rarity (Popularity) calculation
+  const wordNodes = nodes.filter(n => !n.data.isCategory && !n.data.isChunk);
+  if (wordNodes.length > 0) {
+    let ultraRare = 0;
+    let veryRare = 0;
+    let rare = 0;
+    let common = 0;
+    
+    wordNodes.forEach(wn => {
+      const wLabel = String(wn.data.label).toLowerCase();
+      let foundPop: number | null = null;
+      for (const cat of globalDict) {
+        const match = cat.words.find((w: any) => w.word.toLowerCase() === wLabel);
+        if (match && match.popularity) {
+          foundPop = match.popularity;
+          break;
+        }
+      }
+      if (foundPop !== null) {
+        if (foundPop < 15) ultraRare++;
+        else if (foundPop < 30) veryRare++;
+        else if (foundPop < 50) rare++;
+        else if (foundPop > 80) common++;
+      }
+    });
+
+    if (ultraRare > 0) {
+      const pts = ultraRare * 8;
+      score += pts;
+      factors.push(`${ultraRare} Ultra Rare words (+${pts} difficulty)`);
+    }
+    if (veryRare > 0) {
+      const pts = veryRare * 4;
+      score += pts;
+      factors.push(`${veryRare} Very Rare words (+${pts} difficulty)`);
+    }
+    if (rare > 0) {
+      const pts = rare * 2;
+      score += pts;
+      factors.push(`${rare} Rare words (+${pts} difficulty)`);
+    }
+    if (common > wordNodes.length * 0.7) {
+      score -= 10;
+      factors.push(`Majority of words are very common (-10 difficulty)`);
+    }
   }
 
   // Determine Label

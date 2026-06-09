@@ -29,6 +29,7 @@ import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
 import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator } from 'lucide-react';
+import nlp from 'compromise';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -1375,8 +1376,41 @@ export default function GraphEditor() {
     for (const root of rootNodes) {
       const sig = getTreeSig(root.id);
       const allOldNodes = [root, ...getAllDescendants(root.id)];
+
+      // --- 1. Compute Semantic Profile of Old Tree ---
+      const oldWordNodes = allOldNodes.filter(n => !n.data.isCategory && !n.data.isChunk);
+      let targetPopularity = 50;
+      let targetProperNounRatio = 0;
+
+      if (oldWordNodes.length > 0) {
+        let totalPop = 0;
+        let popCount = 0;
+        let properCount = 0;
+        
+        oldWordNodes.forEach(wn => {
+          const wLabel = String(wn.data.label).toLowerCase();
+          if (nlp(String(wn.data.label)).has('#ProperNoun')) properCount++;
+          
+          let foundPop: number | null = null;
+          for (const cat of globalDict) {
+            const match = cat.words.find((w: any) => w.word.toLowerCase() === wLabel);
+            if (match && match.popularity) {
+              foundPop = match.popularity;
+              break;
+            }
+          }
+          if (foundPop !== null) {
+            totalPop += foundPop;
+            popCount++;
+          }
+        });
+
+        if (popCount > 0) targetPopularity = totalPop / popCount;
+        targetProperNounRatio = properCount / oldWordNodes.length;
+      }
+      // ----------------------------------------------
       
-      const matches = globalDict.filter((cat: any) => {
+      let matches = globalDict.filter((cat: any) => {
         if (usedCategories.has(cat.name)) return false;
         return isFulfilled(sig, getDictSig(cat.name));
       });
@@ -1394,7 +1428,32 @@ export default function GraphEditor() {
         history = JSON.parse(localStorage.getItem('magicChangeHistory') || '[]');
       } catch (e) {}
 
+      // Lọc bỏ hoàn toàn các category đã nằm trong lịch sử (chống trùng lặp tuyệt đối)
+      let filteredMatches = matches.filter(cat => !history.includes(cat.name));
+      // Trừ khi xui quá không còn category nào mới, ta mới đành dùng lại toàn bộ danh sách
+      if (filteredMatches.length > 0) {
+        matches = filteredMatches;
+      }
+
       const getHistoryPenalty = (catName: string) => history.includes(catName) ? 1 : 0;
+
+      const categoryScores = new Map<string, number>();
+      if (!minPopularity || minPopularity === 0) {
+        matches.forEach((cat: any) => {
+           let totalPop = 0;
+           let properCount = 0;
+           let wCount = 0;
+           cat.words.forEach((w: any) => {
+              if (w.popularity) { totalPop += w.popularity; wCount++; }
+              if (nlp(w.word).has('#ProperNoun')) properCount++;
+           });
+           const avgPop = wCount > 0 ? totalPop / wCount : 50;
+           const properRatio = cat.words.length > 0 ? properCount / cat.words.length : 0;
+           const popDist = Math.abs(avgPop - targetPopularity);
+           const properDist = Math.abs(properRatio - targetProperNounRatio) * 50;
+           categoryScores.set(cat.name, popDist + properDist);
+        });
+      }
 
       // Primary sorting logic
       matches.sort((a: any, b: any) => {
@@ -1408,6 +1467,11 @@ export default function GraphEditor() {
           const aCount = a.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
           const bCount = b.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
           if (aCount !== bCount) return bCount - aCount;
+        } else {
+          // 3. Clone Rarity/Semantic distance (lower is better)
+          const scoreA = categoryScores.get(a.name) || 0;
+          const scoreB = categoryScores.get(b.name) || 0;
+          return scoreA - scoreB;
         }
 
         return 0; // fallback to random shuffle
@@ -1424,8 +1488,13 @@ export default function GraphEditor() {
             const count = m.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
             return count >= maxCount * 0.7; // allow 30% variance in word count
           });
+        } else if (pool.length > 0) {
+           // With no minPopularity, pool already consists of penalty-matched items.
+           // Since matches are sorted by semantic distance, pool is sorted by semantic distance.
         }
-        const poolSize = Math.min(10, Math.max(1, Math.floor(pool.length * 0.3))); // Top 30%, max 10
+        
+        // Tăng sự ngẫu nhiên: Lấy Top 50% pool (tối thiểu 1) để chọn ngẫu nhiên
+        const poolSize = Math.max(1, Math.floor(pool.length * 0.5));
         const randIndex = Math.floor(Math.random() * poolSize);
         chosenCat = pool[randIndex] || matches[0];
       }
@@ -1444,7 +1513,8 @@ export default function GraphEditor() {
       
       usedCategories.add(chosenCat.name);
       history.push(chosenCat.name);
-      if (history.length > 30) history = history.slice(history.length - 30);
+      // Tăng bộ nhớ lên 50 (nếu số lượng Category nhiều thì 50 là vừa phải để chống lặp lâu)
+      if (history.length > 50) history = history.slice(history.length - 50);
       try {
         localStorage.setItem('magicChangeHistory', JSON.stringify(history));
       } catch (e) {}
@@ -1540,7 +1610,19 @@ export default function GraphEditor() {
             if (aMet && bMet) return 0;
             return bPop - aPop;
           }
-          return 0;
+          
+          // Clone Semantic Rarity for anchor
+          const aPop = a.popularity || 50;
+          const bPop = b.popularity || 50;
+          const aProper = nlp(a.word).has('#ProperNoun') ? 1 : 0;
+          const bProper = nlp(b.word).has('#ProperNoun') ? 1 : 0;
+          
+          const wantsProper = targetProperNounRatio >= 0.5 ? 1 : 0;
+          const aProperScore = Math.abs(aProper - wantsProper);
+          const bProperScore = Math.abs(bProper - wantsProper);
+          
+          if (aProperScore !== bProperScore) return aProperScore - bProperScore; // lower is better
+          return Math.abs(aPop - targetPopularity) - Math.abs(bPop - targetPopularity);
         });
 
         // 4. The anchor is the first element
@@ -1570,7 +1652,18 @@ export default function GraphEditor() {
           const bPop = b.popularity || 0;
           return Math.abs(aPop - anchorPop) - Math.abs(bPop - anchorPop);
         });
-        wordsToImport = wordsToImport.slice(0, currentReqSig.numWords);
+        
+        // Bốc ngẫu nhiên N từ trong khoảng N + 4 từ sát với Anchor nhất để tăng sự ngẫu nhiên (chống lặp tuyệt đối)
+        const numRequired = currentReqSig.numWords;
+        if (numRequired > 1 && wordsToImport.length > numRequired) {
+           const expandedSlice = wordsToImport.slice(0, numRequired + 4);
+           const anchorWord = expandedSlice[0];
+           const remainingExpanded = expandedSlice.slice(1);
+           remainingExpanded.sort(() => Math.random() - 0.5);
+           wordsToImport = [anchorWord, ...remainingExpanded].slice(0, numRequired);
+        } else {
+           wordsToImport = wordsToImport.slice(0, numRequired);
+        }
 
         wordsToImport.forEach((w: any, index: number) => {
           const oldWordNode = nodes.find(n => n.id === currentReqSig.wordNodeIds[index]);
