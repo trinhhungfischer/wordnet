@@ -1482,10 +1482,20 @@ export default function GraphEditor() {
           !chosenSubcategories.some((sub: string) => sub.toLowerCase() === w.word.toLowerCase())
         );
 
+        // 1. Initial random shuffle
         wordsToImport.sort(() => Math.random() - 0.5);
 
-        if (minPopularity > 0) {
-          wordsToImport.sort((a: any, b: any) => {
+        // 2. Setup priorities
+        const terms = popularWords ? popularWords.split(/[\\n,]+/).map(t => t.trim().toLowerCase()).filter(Boolean) : [];
+
+        // 3. Sort to find the BEST anchor (index 0)
+        wordsToImport.sort((a: any, b: any) => {
+          if (terms.length > 0) {
+            const aMatch = terms.some(t => a.word.toLowerCase().includes(t)) ? 1 : 0;
+            const bMatch = terms.some(t => b.word.toLowerCase().includes(t)) ? 1 : 0;
+            if (aMatch !== bMatch) return bMatch - aMatch;
+          }
+          if (minPopularity > 0) {
             const aPop = a.popularity || 0;
             const bPop = b.popularity || 0;
             const aMet = aPop >= minPopularity ? 1 : 0;
@@ -1493,17 +1503,37 @@ export default function GraphEditor() {
             if (aMet !== bMet) return bMet - aMet;
             if (aMet && bMet) return 0;
             return bPop - aPop;
-          });
-        }
+          }
+          return 0;
+        });
 
-        if (popularWords) {
-          const terms = popularWords.split(/[\n,]+/).map(t => t.trim().toLowerCase()).filter(Boolean);
-          wordsToImport.sort((a: any, b: any) => {
+        // 4. The anchor is the first element
+        const anchor = wordsToImport[0];
+        const anchorPop = anchor?.popularity || 0;
+
+        // 5. Final sort: cluster by popularity distance to anchor, while respecting priorities
+        wordsToImport.sort((a: any, b: any) => {
+          if (a === anchor) return -1;
+          if (b === anchor) return 1;
+
+          if (terms.length > 0) {
             const aMatch = terms.some(t => a.word.toLowerCase().includes(t)) ? 1 : 0;
             const bMatch = terms.some(t => b.word.toLowerCase().includes(t)) ? 1 : 0;
-            return bMatch - aMatch;
-          });
-        }
+            if (aMatch !== bMatch) return bMatch - aMatch;
+          }
+          if (minPopularity > 0) {
+            const aPop = a.popularity || 0;
+            const bPop = b.popularity || 0;
+            const aMet = aPop >= minPopularity ? 1 : 0;
+            const bMet = bPop >= minPopularity ? 1 : 0;
+            if (aMet !== bMet) return bMet - aMet;
+            if (!aMet && !bMet) return bPop - aPop;
+          }
+          
+          const aPop = a.popularity || 0;
+          const bPop = b.popularity || 0;
+          return Math.abs(aPop - anchorPop) - Math.abs(bPop - anchorPop);
+        });
         wordsToImport = wordsToImport.slice(0, currentReqSig.numWords);
 
         wordsToImport.forEach((w: any, index: number) => {
