@@ -151,7 +151,7 @@ export default function GraphEditor() {
     if (selectedNodeId && leftPanelTab === 'dropQueue') {
       const el = document.getElementById(`queue-item-${selectedNodeId}`);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
       }
     }
   }, [selectedNodeId, leftPanelTab]);
@@ -293,9 +293,17 @@ export default function GraphEditor() {
   const createChunksForWord = (wordId: string, word: string, targetNodes: Node[], targetEdges: Edge[], parentX: number, parentY: number, parentGlobalIndex?: number) => {
     const cleanWord = String(word).trim().toLowerCase();
     if (cleanWord.length <= 1) return [];
-    const half = Math.ceil(cleanWord.length / 2);
-    const chunk1 = cleanWord.slice(0, half);
-    const chunk2 = cleanWord.slice(half);
+    
+    let chunk1, chunk2;
+    const spaceIndex = cleanWord.indexOf(' ');
+    if (spaceIndex !== -1) {
+      chunk1 = cleanWord.slice(0, spaceIndex);
+      chunk2 = cleanWord.slice(spaceIndex + 1);
+    } else {
+      const half = Math.ceil(cleanWord.length / 2);
+      chunk1 = cleanWord.slice(0, half);
+      chunk2 = cleanWord.slice(half);
+    }
     
     const c1Id = uuidv4();
     const c1Node: Node = {
@@ -1587,10 +1595,17 @@ export default function GraphEditor() {
 
           // If autoCutWords is enabled and the old word did NOT have chunks, we generate them now
           if (autoCutWords && (!oldWordNode || !nodes.some(n => n.data.isChunk && edges.some(e => e.source === oldWordNode.id && e.target === n.id)))) {
-            const wordStr = w.word.toLowerCase();
-            const chunkLen = Math.floor(wordStr.length / 2) || 1;
-            const c1 = wordStr.substring(0, chunkLen);
-            const c2 = wordStr.substring(chunkLen);
+            const wordStr = w.word.trim().toLowerCase();
+            let c1, c2;
+            const spaceIdx = wordStr.indexOf(' ');
+            if (spaceIdx !== -1) {
+              c1 = wordStr.substring(0, spaceIdx);
+              c2 = wordStr.substring(spaceIdx + 1);
+            } else {
+              const chunkLen = Math.ceil(wordStr.length / 2) || 1;
+              c1 = wordStr.substring(0, chunkLen);
+              c2 = wordStr.substring(chunkLen);
+            }
             const c1Id = uuidv4();
             const c2Id = uuidv4();
             const baseX = oldWordNode?.position.x || 0;
