@@ -857,14 +857,40 @@ export default function GraphEditor() {
     );
   };
 
-  const handleUpdateNodeIndex = (nodeId: string, newIndex: number | undefined) => {
-    setNodes((nds) => nds.map((n) => {
+  const handleUpdateNodeIndex = useCallback((nodeId: string, newIndex: number | undefined) => {
+    saveHistory();
+    setNodes(nds => nds.map(n => {
       if (n.id === nodeId) {
         return { ...n, data: { ...n.data, globalIndex: newIndex } };
       }
       return n;
     }));
-  };
+  }, [saveHistory]);
+
+  const handleUpdateDropOrder = useCallback((nodeId: string, newPos: number | undefined) => {
+    saveHistory();
+    setSpawnQueueIds(prev => {
+      const arr = [...prev];
+      const currentIndex = arr.indexOf(nodeId);
+      
+      if (newPos === undefined || newPos < 1) {
+        if (currentIndex !== -1) arr.splice(currentIndex, 1);
+        return arr;
+      }
+      
+      let targetIndex = newPos - 1;
+      
+      if (currentIndex !== -1) {
+        arr.splice(currentIndex, 1);
+        if (targetIndex > arr.length) targetIndex = arr.length;
+        arr.splice(targetIndex, 0, nodeId);
+      } else {
+        if (targetIndex > arr.length) targetIndex = arr.length;
+        arr.splice(targetIndex, 0, nodeId);
+      }
+      return arr;
+    });
+  }, [saveHistory]);;
 
   const handlePasteTreeConfig = useCallback((categoryId: string, config: any) => {
     saveHistory();
@@ -888,7 +914,6 @@ export default function GraphEditor() {
             ...newNds[cNodeIdx],
             data: {
               ...newNds[cNodeIdx].data,
-              globalIndex: wConf.globalIndex,
               icon: wConf.icon
             }
           };
@@ -1493,7 +1518,7 @@ export default function GraphEditor() {
             id: wordId,
             type: 'custom',
             position: oldWordNode?.position || { x: 0, y: 0 },
-            data: { label: w.word.toLowerCase(), isCategory: false, icon: newIcon, globalIndex: inheritedGlobalIndex }
+            data: { label: w.word.toLowerCase(), isCategory: false, icon: newIcon }
           });
           newImportedEdges.push({
             id: `e-${nodeId}-${wordId}`,
@@ -1537,8 +1562,8 @@ export default function GraphEditor() {
               const c2Id = uuidv4();
               const baseX = oldWordNode.position.x;
               const baseY = oldWordNode.position.y;
-              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
-              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
+              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true }});
+              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true }});
               newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
               newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
               
@@ -1563,8 +1588,8 @@ export default function GraphEditor() {
             const c2Id = uuidv4();
             const baseX = oldWordNode?.position.x || 0;
             const baseY = oldWordNode?.position.y || 0;
-            newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
-            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
+            newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true }});
+            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true }});
             newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
             newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
             newIds = [c1Id, c2Id];
@@ -2355,6 +2380,8 @@ export default function GraphEditor() {
         onRenameNode={handleRenameNode}
         onToggleNodeIcon={handleToggleNodeIcon}
         onUpdateNodeIndex={handleUpdateNodeIndex}
+        onUpdateDropOrder={handleUpdateDropOrder}
+        spawnQueueIds={spawnQueueIds}
         onImportDictionary={handleImportDictionary}
         copiedTreeConfig={copiedTreeConfig}
         setCopiedTreeConfig={setCopiedTreeConfig}
