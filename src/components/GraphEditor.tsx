@@ -137,13 +137,6 @@ export default function GraphEditor() {
     }
   };
 
-  // Mutual exclusion: if any node is selected, close settings
-  useEffect(() => {
-    if (selectedNodeId !== null || nodes.some(n => n.selected)) {
-      setIsSettingsOpen(false);
-    }
-  }, [selectedNodeId, nodes]);
-  
   const [, setHistory] = useState<{ past: { nodes: Node[], edges: Edge[] }[], future: { nodes: Node[], edges: Edge[] }[] }>({ past: [], future: [] });
 
   const saveHistory = useCallback(() => {
@@ -1818,13 +1811,9 @@ export default function GraphEditor() {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button 
             onClick={() => {
-              const nextState = !isSettingsOpen;
-              setIsSettingsOpen(nextState);
-              if (nextState) {
-                setSelectedNodeId(null);
-                setNodes(nds => nds.map(n => ({...n, selected: false})));
-              }
-            }}
+                const nextState = !isSettingsOpen;
+                setIsSettingsOpen(nextState);
+              }}
             disabled={!rawLevelData}
             style={{
               padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--panel-border)',
@@ -2285,6 +2274,7 @@ export default function GraphEditor() {
         onPasteTreeConfig={handlePasteTreeConfig}
         autoCutWords={autoCutWords}
         setAutoCutWords={setAutoCutWords}
+        isSettingsOpen={isSettingsOpen}
       />
     </div>
   );

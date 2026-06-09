@@ -490,7 +490,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
               display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
               height: '42px', boxSizing: 'border-box'
             }}
-            onClick={() => setAutoCutWords(!autoCutWords)}
+            onClick={() => setAutoCutWords?.(!autoCutWords)}
             title="Automatically cut words into chunks when importing"
           >
             <input 
