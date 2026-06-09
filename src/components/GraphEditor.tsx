@@ -476,7 +476,8 @@ export default function GraphEditor() {
             const chunkNode = newNodes.find(n => 
               n.data.isChunk && 
               String(n.data.label).toLowerCase() === String(entry.fullWord).toLowerCase() &&
-              newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.parentWord).toLowerCase())
+              newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.parentWord).toLowerCase()) &&
+              !loadedSpawnQueueIds.includes(n.id)
             );
             if (chunkNode) loadedSpawnQueueIds.push(chunkNode.id);
           } else {
@@ -490,9 +491,10 @@ export default function GraphEditor() {
                 const chunkNode = newNodes.find(n => 
                   n.data.isChunk && 
                   String(n.data.label).toLowerCase() === String(chunkStr).toLowerCase() &&
-                  newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.fullWord).toLowerCase())
+                  newEdges.some(e => e.target === n.id && String(newNodes.find(pn => pn.id === e.source)?.data.label).toLowerCase() === String(entry.fullWord).toLowerCase()) &&
+                  !loadedSpawnQueueIds.includes(n.id)
                 );
-                if (chunkNode && !loadedSpawnQueueIds.includes(chunkNode.id)) {
+                if (chunkNode) {
                   loadedSpawnQueueIds.push(chunkNode.id);
                 }
               });
@@ -500,7 +502,8 @@ export default function GraphEditor() {
               // UNCUT WORD (works for both old and new format)
               const wordNode = newNodes.find(n => 
                 !n.data.isCategory && !n.data.isChunk &&
-                String(n.data.label).toLowerCase() === String(entry.fullWord).toLowerCase()
+                String(n.data.label).toLowerCase() === String(entry.fullWord).toLowerCase() &&
+                !loadedSpawnQueueIds.includes(n.id)
               );
               if (wordNode) loadedSpawnQueueIds.push(wordNode.id);
             }
@@ -1099,6 +1102,7 @@ export default function GraphEditor() {
     const newWordNodes = importedNodes.filter(n => !n.data.isCategory && !n.data.isChunk);
 
     const queueUpdates: { oldIds: string[], newIds: string[] }[] = [];
+    const queueInsertions: { oldIds: string[], newIds: string[] }[] = [];
 
     if (replaceNodes.length > 0) {
       const oldWordNodes = replaceNodes.filter(n => !n.data.isCategory && !n.data.isChunk).sort((a, b) => ((a.data.globalIndex as number) || 0) - ((b.data.globalIndex as number) || 0));
@@ -1178,15 +1182,43 @@ export default function GraphEditor() {
         }
       }
     } else if (keepOldTreeAnchor.length > 0) {
-      // If we keep the old tree, do NOT copy globalIndex (user doesn't want auto-numbering for new trees)
+      // If we keep the old tree, copy globalIndex and insert nodes right after the old ones in the drop queue
       const oldWordNodes = keepOldTreeAnchor.filter(n => !n.data.isCategory && !n.data.isChunk).sort((a, b) => ((a.data.globalIndex as number) || 0) - ((b.data.globalIndex as number) || 0));
+      const oldIndices = oldWordNodes.map(n => n.data.globalIndex).filter(idx => idx !== undefined);
+      
+      if (oldIndices.length > 0) {
+        oldIndices.forEach((idx, i) => {
+          if (i >= newWordNodes.length) return;
+          const newWordNode = newWordNodes[i];
+          const oldWordNode = oldWordNodes[i];
+          newWordNode.data.globalIndex = idx;
+          
+          const oldHasIcon = !!oldWordNode.data.icon;
+          if (!oldHasIcon) {
+            newWordNode.data.icon = null;
+          } else if (!newWordNode.data.icon) {
+            newWordNode.data.icon = String(newWordNode.data.label).toLowerCase();
+          }
+        });
+      }
       
       oldWordNodes.forEach((oldNode, i) => {
         if (i >= newWordNodes.length) return;
-        const hasChunks = edges.some(e => e.source === oldNode.id && nodes.find(n => n.id === e.target)?.data.isChunk);
-        if (hasChunks || autoCutWords) {
-          createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+        let newIds = [newWordNodes[i].id];
+        let oldIds = [oldNode.id];
+        
+        const oldChunkNodes = nodes.filter(n => n.data.isChunk && edges.some(e => e.source === oldNode.id && e.target === n.id));
+        if (oldChunkNodes.length > 0 || autoCutWords) {
+          if (oldChunkNodes.length > 0) {
+            oldIds.push(...oldChunkNodes.map(c => c.id));
+          }
+          const newChunks = createChunksForWord(newWordNodes[i].id, String(newWordNodes[i].data.label), importedNodes, importedEdges, newWordNodes[i].position.x, newWordNodes[i].position.y);
+          if (newChunks && newChunks.length > 0) {
+            newChunks.forEach(c => c.data.globalIndex = newWordNodes[i].data.globalIndex);
+            newIds = newChunks.map(c => c.id);
+          }
         }
+        queueInsertions.push({ oldIds, newIds });
       });
       
       for (let i = oldWordNodes.length; i < newWordNodes.length; i++) {
@@ -1207,14 +1239,19 @@ export default function GraphEditor() {
     setEdges(eds => [...eds.filter(e => !nodeIdsToRemove.has(e.source) && !nodeIdsToRemove.has(e.target)), ...importedEdges]);
     if (updatedRawLevelData !== rawLevelData) setRawLevelData(updatedRawLevelData);
     
-    if (queueUpdates.length > 0) {
+    if (queueUpdates.length > 0 || queueInsertions.length > 0) {
       setSpawnQueueIds(prev => {
         let newQueue = [...prev];
-        queueUpdates.forEach(update => {
-          const indices = update.oldIds.map(id => newQueue.indexOf(id)).filter(idx => idx !== -1);
+        
+        // Use queueUpdates gathered during importBranch
+        queueUpdates.forEach((update: { oldIds: string[], newIds: string[] }) => {
+          // Find the earliest index of oldIds in the queue
+          const indices = update.oldIds.map((id: string) => newQueue.indexOf(id)).filter((idx: number) => idx !== -1);
           if (indices.length > 0) {
             const minIndex = Math.min(...indices);
+            // Remove all oldIds
             newQueue = newQueue.filter(id => !update.oldIds.includes(id));
+            // Insert newIds at that spot
             newQueue.splice(minIndex, 0, ...update.newIds);
           }
         });
@@ -1503,6 +1540,25 @@ export default function GraphEditor() {
               }
             }
           }
+          }
+
+          // If autoCutWords is enabled and the old word did NOT have chunks, we generate them now
+          if (autoCutWords && (!oldWordNode || !nodes.some(n => n.data.isChunk && edges.some(e => e.source === oldWordNode.id && e.target === n.id)))) {
+            const wordStr = w.word.toLowerCase();
+            const chunkLen = Math.floor(wordStr.length / 2) || 1;
+            const c1 = wordStr.substring(0, chunkLen);
+            const c2 = wordStr.substring(chunkLen);
+            const c1Id = uuidv4();
+            const c2Id = uuidv4();
+            const baseX = oldWordNode?.position.x || 0;
+            const baseY = oldWordNode?.position.y || 0;
+            newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
+            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
+            newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
+            newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
+            newIds = [c1Id, c2Id];
+          }
+
           if (oldIds.length > 0) {
             queueUpdates.push({ oldIds, newIds });
           }

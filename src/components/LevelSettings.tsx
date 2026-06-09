@@ -68,6 +68,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
         <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>General</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           <LabelInput label="Move Limit" value={levelData.moveLimit} onChange={(val: string) => handleChange('moveLimit', parseInt(val))} type="number" />
+          <LabelInput label="Difficulty (0-2)" value={levelData.levelDifficulty} onChange={(val: string) => handleChange('levelDifficulty', parseInt(val))} type="number" />
           <LabelInput label="Max Bubbles" value={levelData.maxBubblesInScene} onChange={(val: string) => handleChange('maxBubblesInScene', parseInt(val))} type="number" />
           <LabelInput label="Tutorial ID" value={levelData.tutorialId} onChange={(val: string) => handleChange('tutorialId', parseInt(val))} type="number" />
           <LabelInput label="Max Word Len" value={levelData.maxWordLength} onChange={(val: string) => handleChange('maxWordLength', parseInt(val))} type="number" />

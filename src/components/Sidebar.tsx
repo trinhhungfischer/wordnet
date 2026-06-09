@@ -613,7 +613,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
           <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
             <input 
               type="number"
-              value={(selectedNode.data.globalIndex as number) || ''}
+              value={selectedNode.data.globalIndex !== undefined ? (selectedNode.data.globalIndex as number) : ''}
               onChange={(e) => {
                 if (onUpdateNodeIndex) {
                   const val = e.target.value === '' ? undefined : parseInt(e.target.value, 10);
