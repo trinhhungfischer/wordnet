@@ -80,8 +80,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       }
       
       const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
-      if (frozenRule && completedCategoriesCount < frozenRule.mergesNeeded) {
-         iceMergesLeft = frozenRule.mergesNeeded - completedCategoriesCount;
+      if (frozenRule && moveCount < frozenRule.mergesNeeded) {
+         iceMergesLeft = frozenRule.mergesNeeded - moveCount;
       }
     }
 
@@ -113,6 +113,23 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
         isComboBonus,
         boardState: board.map(bid => getBubbleState(bid)),
         moveIndex: currentMoveIndex
+      });
+
+      // Check Ice Thaw events immediately after a merge
+      levelData?.frozenBubbles?.forEach((f: any) => {
+        if (f.mergesNeeded === currentMoveIndex) {
+          steps.push({
+            id: `step-${stepIdCounter++}`,
+            type: 'event',
+            left: '',
+            right: '',
+            result: '',
+            text: `🧊 Ice thawed on "${f.word}" (${currentMoveIndex} merges performed)`,
+            isComboBonus: false,
+            boardState: board.map(bid => getBubbleState(bid)),
+            moveIndex: currentMoveIndex
+          });
+        }
       });
     } else {
       steps.push({
@@ -157,7 +174,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) return true;
     
     const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
-    if (frozenRule && completedCategoriesCount < frozenRule.mergesNeeded) return true;
+    if (frozenRule && moveCount < frozenRule.mergesNeeded) return true;
     
     return false;
   };
@@ -312,12 +329,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
               Object.keys(crackBreakMap).forEach(w => {
                 if (crackBreakMap[w] === completedCategoriesCount) {
                   addStep('event', '', '', '', `🧊 Ice broken on "${w}" (${completedCategoriesCount} categories broken)`);
-                }
-              });
-              
-              levelData?.frozenBubbles?.forEach((f: any) => {
-                if (f.mergesNeeded === completedCategoriesCount) {
-                  addStep('event', '', '', '', `🧊 Ice thawed on "${f.word}" (${completedCategoriesCount} categories broken)`);
                 }
               });
 
