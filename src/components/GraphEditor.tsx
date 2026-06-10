@@ -661,6 +661,18 @@ export default function GraphEditor() {
       return;
     }
     
+    const queueWords = spawnQueueIds.map(id => {
+      const node = nodes.find(n => n.id === id);
+      return node ? String(node.data.label).toLowerCase() : "";
+    }).filter(Boolean);
+
+    const duplicateWords = queueWords.filter((w, i) => queueWords.indexOf(w) !== i);
+    const uniqueDuplicates = [...new Set(duplicateWords)];
+
+    if (uniqueDuplicates.length > 0) {
+      alert(`Cảnh báo: Các từ sau bị trùng lặp trong Drop Queue: ${uniqueDuplicates.join(", ")}`);
+    }
+
     const newData = JSON.parse(JSON.stringify(rawLevelData));
     
     // Scrub legacy garbage keys
@@ -2226,6 +2238,14 @@ export default function GraphEditor() {
     });
   };
 
+  const duplicateQueueWordsSet = useMemo(() => {
+    const words = spawnQueueIds.map(id => {
+      const node = nodes.find(n => n.id === id);
+      return node ? String(node.data.label).toLowerCase() : "";
+    }).filter(Boolean);
+    return new Set(words.filter((w, i) => words.indexOf(w) !== i));
+  }, [spawnQueueIds, nodes]);
+
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       
@@ -2543,12 +2563,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))),
+                              : (duplicateQueueWordsSet.has(String(node.data.label).toLowerCase()) ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))),
+                              : (duplicateQueueWordsSet.has(String(node.data.label).toLowerCase()) ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
