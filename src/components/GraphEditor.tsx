@@ -370,7 +370,7 @@ export default function GraphEditor() {
     let chunk1, chunk2;
     const spaceIndex = cleanWord.indexOf(' ');
     if (spaceIndex !== -1) {
-      chunk1 = cleanWord.slice(0, spaceIndex);
+      chunk1 = cleanWord.slice(0, spaceIndex + 1); // Giữ lại khoảng trắng ở cuối chunk1
       chunk2 = cleanWord.slice(spaceIndex + 1);
     } else {
       const half = Math.ceil(cleanWord.length / 2);
