@@ -182,6 +182,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   // Simulator State
   const maxBubbles = levelData?.maxBubblesInScene || 20;
   let board: string[] = []; // Array of node IDs currently on the board
+  const droppedWords = new Set<string>(); // Tracks all words/chunks that have entered the board
   let queueIndex = 0;
   const resolvedWords = new Set<string>(); // Word IDs that have been merged from chunks
   const resolvedCategories = new Set<string>(); // Cat IDs that have been completed
@@ -194,6 +195,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     while (dropped < count && board.length < maxBubbles && queueIndex < spawnQueueIds.length) {
       const nextId = spawnQueueIds[queueIndex];
       board.push(nextId);
+      droppedWords.add(nextId);
       newlyDropped.push(nextId);
       queueIndex++;
       dropped++;
@@ -226,6 +228,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           // Update Board State BEFORE generating steps so steps capture the new board state
           board = board.filter(id => !chunkIds.includes(id)); // Remove chunks
           board.push(wordId); // Add word to board
+          droppedWords.add(wordId);
           resolvedWords.add(wordId);
           mergedSomething = true;
           progress = true;
@@ -248,99 +251,83 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
         }
       }
 
-      // Try Word -> Category Merge
-      for (const [catId, wordIds] of catToWords.entries()) {
+      // Try Word -> Category Merge (Partial Merge Logic)
+      for (const [catId, originalWordIds] of catToWords.entries()) {
         if (!resolvedCategories.has(catId)) {
-          // Check if all required words are on the board
-          const allWordsOnBoard = wordIds.every(wid => board.includes(wid));
-          if (allWordsOnBoard) {
-            // Check if all required words are unlocked from Ice/Crack
-            const allWordsUnlocked = wordIds.every(wid => {
-              const label = String(nodes.find(n => n.id === wid)?.data.label);
-              return !isWordIceOrCrackLocked(label);
-            });
+          const piecesOnBoard = board.filter(id => {
+             if (originalWordIds.includes(id)) return true;
+             if (id.endsWith(`_[${catId}]`)) return true;
+             return false;
+          });
 
-            if (allWordsUnlocked) {
-              // Check Chain logic: words can only merge if ALL of them are chained, or NONE of them are chained.
-              const isChainActive = levelData?.useBubbleSeparator === 1 && !chainBroken;
-              let canMergeChain = true;
+          const availablePieces = piecesOnBoard.filter(pid => {
+             if (pid.startsWith('temp_')) return true;
+             const label = getBubbleState(pid).label;
+             return !isWordIceOrCrackLocked(label);
+          });
 
-              if (isChainActive) {
-                const chainedCount = wordIds.filter(wid => {
+          if (availablePieces.length >= 2) {
+             let p1 = availablePieces[0];
+             let p2 = availablePieces[1];
+
+             const isChainActive = levelData?.useBubbleSeparator === 1 && !chainBroken;
+             let canMergeChain = true;
+
+             if (isChainActive) {
+                const chainedCount = originalWordIds.filter(wid => {
                   const label = String(nodes.find(n => n.id === wid)?.data.label).toLowerCase();
                   return linkedWords.has(label);
                 }).length;
-
-                // Mixed chain status prevents merge
-                if (chainedCount > 0 && chainedCount < wordIds.length) {
+                if (chainedCount > 0 && chainedCount < originalWordIds.length) {
                   canMergeChain = false;
                 }
-              }
+             }
 
-              if (canMergeChain) {
-                // We do NOT remove words from the board yet!
-                // Instead, we merge them step by step.
-                const catLabel = String(nodes.find(n => n.id === catId)?.data.label);
-                const words = wordIds.map(wid => String(nodes.find(n => n.id === wid)?.data.label));
-              
-                if (words.length > 1) {
-                let currentBubbleStr = words[0];
-                let currentBubbleId = wordIds[0];
+             if (canMergeChain) {
+               const label1 = getBubbleState(p1).label;
+               const label2 = getBubbleState(p2).label;
+               const mergedString = `${label1} | ${label2}`;
+               const mergedId = `temp_[${mergedString}]_[${catId}]`;
 
-                for (let i = 1; i < words.length; i++) {
-                  const nextWordStr = words[i];
-                  const nextWordId = wordIds[i];
-                  const mergedString = `${currentBubbleStr} | ${nextWordStr}`;
-                  const mergedId = `temp_[${mergedString}]_[${catId}]`;
+               board = board.filter(id => id !== p1 && id !== p2);
+               board.push(mergedId);
 
-                  // Update Board State: remove the two parts, add the combined part
-                  board = board.filter(id => id !== currentBubbleId && id !== nextWordId);
-                  board.push(mergedId);
+               addStep('category', label1, label2, mergedString);
+               mergedSomething = true;
+               progress = true;
 
-                  addStep('category', currentBubbleStr, nextWordStr, mergedString);
+               const undroppedCount = originalWordIds.filter(id => !droppedWords.has(id)).length;
+               if (undroppedCount === 0 && piecesOnBoard.length === 2) {
+                  board = board.filter(id => id !== mergedId);
+                  const isSubCategory = edges.some(e => e.target === catId && catNodes.some(n => n.id === e.source));
+                  if (isSubCategory) {
+                    board.push(catId);
+                    droppedWords.add(catId);
+                  }
+                  resolvedCategories.add(catId);
+                  completedCategoriesCount++;
 
-                  currentBubbleStr = mergedString;
-                  currentBubbleId = mergedId;
-                }
+                  const catLabel = String(nodes.find(n => n.id === catId)?.data.label);
+                  addStep('success', '', '', '', `✨ Completed Category: ${catLabel.toUpperCase()}`);
 
-                // Final step: remove the fully combined bubble from board
-                board = board.filter(id => id !== currentBubbleId);
-              }
+                  const dropCount = isSubCategory ? 3 : 4;
+                  if (doDrops(dropCount)) progress = true;
 
-              const isSubCategory = edges.some(e => e.target === catId && catNodes.some(n => n.id === e.source));
-              if (isSubCategory) {
-                board.push(catId);
-              }
+                  Object.keys(crackBreakMap).forEach(w => {
+                    if (crackBreakMap[w] === completedCategoriesCount) {
+                      addStep('event', '', '', '', `🧊 Ice broken on "${w}" (${completedCategoriesCount} categories broken)`);
+                    }
+                  });
 
-              resolvedCategories.add(catId);
-              completedCategoriesCount++;
-              mergedSomething = true;
-              progress = true;
-
-              addStep('success', '', '', '', `✨ Completed Category: ${catLabel.toUpperCase()}`);
-
-              // Rule: Category merge drops 4 bubbles, OR 3 if it's a sub-category
-              const dropCount = isSubCategory ? 3 : 4;
-              if (doDrops(dropCount)) {
-                progress = true;
-              }
-
-              // Check Ice Events
-              Object.keys(crackBreakMap).forEach(w => {
-                if (crackBreakMap[w] === completedCategoriesCount) {
-                  addStep('event', '', '', '', `🧊 Ice broken on "${w}" (${completedCategoriesCount} categories broken)`);
-                }
-              });
-
-              // Check Chain Events
-              if (levelData?.useBubbleSeparator === 1 && !chainBroken) {
-                if (completedCategoriesCount === breakThreshold) {
-                  addStep('event', '', '', '', `⛓️ Chain destroyed! (${completedCategoriesCount}/${breakThreshold} categories broken)`);
-                  chainBroken = true;
-                }
-              }
-              } // closes if (canMergeChain)
-            }
+                  if (levelData?.useBubbleSeparator === 1 && !chainBroken) {
+                    if (completedCategoriesCount === breakThreshold) {
+                      addStep('event', '', '', '', `⛓️ Chain destroyed! (${completedCategoriesCount}/${breakThreshold} categories broken)`);
+                      chainBroken = true;
+                    }
+                  }
+               }
+               break; // Break loop to re-evaluate board
+             }
           }
         }
       }
