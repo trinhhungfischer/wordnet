@@ -24,9 +24,9 @@ const CustomNode = ({ data, selected }: any) => {
       textAlign: 'center',
       cursor: 'pointer',
       transition: 'all 0.2s',
-      background: isChunk ? 'rgba(0,0,0,0.4)' : (keyIndex !== -1 ? `${keyColor}20` : (lockIndex !== -1 ? `${lockColor}20` : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)')))),
-      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (keyIndex !== -1 ? `2px solid ${keyColor}80` : (lockIndex !== -1 ? `2px solid ${lockColor}80` : (isFrozen ? '2px solid rgba(56, 189, 248, 0.8)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)'))))),
-      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (keyIndex !== -1 ? `0 0 15px ${keyColor}4d` : (lockIndex !== -1 ? `0 0 15px ${lockColor}4d` : (isFrozen ? '0 0 15px rgba(56, 189, 248, 0.3)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)'))))
+      background: isChunk ? 'rgba(0,0,0,0.4)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)')))),
+      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (keyIndex !== -1 ? '2px solid rgba(250, 204, 21, 0.8)' : (lockIndex !== -1 ? '2px solid rgba(161, 161, 170, 0.8)' : (isFrozen ? '2px solid rgba(56, 189, 248, 0.8)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)'))))),
+      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (keyIndex !== -1 ? '0 0 15px rgba(250, 204, 21, 0.3)' : (lockIndex !== -1 ? '0 0 15px rgba(161, 161, 170, 0.3)' : (isFrozen ? '0 0 15px rgba(56, 189, 248, 0.3)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)'))))
     }}>
       <Handle
         type="target"

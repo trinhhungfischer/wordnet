@@ -1,4 +1,5 @@
 import { X, Link, Calculator, Snowflake, Lock, Key } from 'lucide-react';
+import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
   isOpen: boolean;
@@ -278,7 +279,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
             ) : (
               levelData.keyLockBubbles.map((lockItem: any, i: number) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(234,179,8,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(234,179,8,0.3)' }}>
-                  <Lock size={14} color="#eab308" />
+                  <Lock size={14} color={lockKeyColors[i % lockKeyColors.length]} />
                   <span 
                     onClick={() => {
                       if (onFocusWord) onFocusWord(lockItem.lockWord);
@@ -293,7 +294,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                   </span>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
-                    <Key size={14} color="#fcd34d" />
+                    <Key size={14} color={lockKeyColors[i % lockKeyColors.length]} />
                     <input 
                       type="text" 
                       placeholder="Key Word..."
