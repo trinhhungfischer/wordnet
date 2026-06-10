@@ -19,55 +19,16 @@
     "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
     "type": 3
   },
-  "m_Name": "Level 29",
+  "m_Name": "Level 28",
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Fruits",
-      "parentCategory": null,
-      "icon": "apple",
-      "words": [
-        {
-          "fullWord": "Apple",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Banana",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Grape",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Plum",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Computer",
+      "category": "Knight",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Programming",
+          "fullWord": "Armor",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -75,7 +36,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Hardware",
+          "fullWord": "Helmet",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -83,7 +44,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Software",
+          "fullWord": "Shield",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -91,7 +52,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Internet",
+          "fullWord": "Sword",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -101,12 +62,51 @@
       ]
     },
     {
-      "category": "Ocean",
+      "category": "Fireplace",
+      "parentCategory": "Cozy Room",
+      "icon": "fireplace",
+      "words": [
+        {
+          "fullWord": "Matches",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Log",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fire",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Chimney",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Cozy Room",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Fish",
+          "fullWord": "Sofa",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -114,7 +114,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Reef",
+          "fullWord": "Chair",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -122,7 +122,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "water",
+          "fullWord": "Rug",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -130,7 +130,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "coral",
+          "fullWord": "Fireplace",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -140,129 +140,12 @@
       ]
     },
     {
-      "category": "Money",
-      "parentCategory": "Valuable Items",
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "Currency",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Cash",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Cent",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Coins",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Gemstone",
-      "parentCategory": "Valuable Items",
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "Opal",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Diamond",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Onyx",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Pearl",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Hardware",
-      "parentCategory": "Computer",
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "Keyboard",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Mouse",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Monitor",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "CPU",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Ancient Egypt",
+      "category": "They Save Lives",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Pyramid",
+          "fullWord": "Vaccine",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -270,7 +153,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Pharaoh",
+          "fullWord": "Seatbelt",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -278,7 +161,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Mummy",
+          "fullWord": "Lifebuoy",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -286,7 +169,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Nile",
+          "fullWord": "Doctor",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -296,12 +179,12 @@
       ]
     },
     {
-      "category": "Valuable Items",
+      "category": "Piano",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Gold",
+          "fullWord": "Keys",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -309,7 +192,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Gemstone",
+          "fullWord": "Pedal",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -317,7 +200,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Money",
+          "fullWord": "Strings",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -325,7 +208,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Jewelry",
+          "fullWord": "Hammer",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -335,12 +218,12 @@
       ]
     },
     {
-      "category": "Fish",
-      "parentCategory": "Ocean",
-      "icon": "seahorse",
+      "category": "Doctor",
+      "parentCategory": "They Save Lives",
+      "icon": "doctor",
       "words": [
         {
-          "fullWord": "Tuna",
+          "fullWord": "Gloves",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -348,7 +231,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Salmon",
+          "fullWord": "Mask",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -356,7 +239,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Herring",
+          "fullWord": "Surgeon",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -364,7 +247,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Tilapia",
+          "fullWord": "Scalpel",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -374,12 +257,12 @@
       ]
     },
     {
-      "category": "Library",
+      "category": "Gadgets",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Books",
+          "fullWord": "Computer",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -387,7 +270,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Shelf",
+          "fullWord": "Smartphone",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -395,7 +278,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Librarian",
+          "fullWord": "Tablet",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -403,7 +286,85 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Silence",
+          "fullWord": "Laptop",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Genetics",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Mutation",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "DNA",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Genotype",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Hybrid",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Press",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Book",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Magazine",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Brochure",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Newspaper",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -414,12 +375,12 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 15,
+  "moveLimit": 5,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
     {
-      "fullWord": "Apple",
+      "fullWord": "Armor",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -428,7 +389,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Banana",
+      "fullWord": "Hel",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Helmet"
+    },
+    {
+      "fullWord": "Met",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Helmet"
+    },
+    {
+      "fullWord": "Shield",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -437,7 +416,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Grape",
+      "fullWord": "Sword",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -446,7 +425,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Plum",
+      "fullWord": "Matches",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -455,7 +434,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Programming",
+      "fullWord": "Log",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -464,7 +443,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Software",
+      "fullWord": "Fire",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -473,7 +452,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Internet",
+      "fullWord": "Chim",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Chimney"
+    },
+    {
+      "fullWord": "Ney",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Chimney"
+    },
+    {
+      "fullWord": "Sofa",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -482,7 +479,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Reef",
+      "fullWord": "Chair",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -491,7 +488,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "water",
+      "fullWord": "Rug",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -500,25 +497,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Co",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Coral"
-    },
-    {
-      "fullWord": "Ral",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Coral"
-    },
-    {
-      "fullWord": "Currency",
+      "fullWord": "Vaccine",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -527,7 +506,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Cash",
+      "fullWord": "Seatbelt",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -536,7 +515,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Cent",
+      "fullWord": "Lifebuoy",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -545,7 +524,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Coins",
+      "fullWord": "Keys",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -554,7 +533,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Opal",
+      "fullWord": "Pedal",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -563,25 +542,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Dia",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Diamond"
-    },
-    {
-      "fullWord": "Mond",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Diamond"
-    },
-    {
-      "fullWord": "Onyx",
+      "fullWord": "Strings",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -590,7 +551,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pearl",
+      "fullWord": "Hammer",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -599,7 +560,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Keyboard",
+      "fullWord": "Glo",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Gloves"
+    },
+    {
+      "fullWord": "Ves",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Gloves"
+    },
+    {
+      "fullWord": "Mask",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -608,7 +587,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Mouse",
+      "fullWord": "Sur",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Surgeon"
+    },
+    {
+      "fullWord": "Geon",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Surgeon"
+    },
+    {
+      "fullWord": "Scalpel",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -617,34 +614,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Moni",
+      "fullWord": "Com",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Monitor"
+      "parentWord": "Computer"
     },
     {
-      "fullWord": "Tor",
+      "fullWord": "Puter",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Monitor"
+      "parentWord": "Computer"
     },
     {
-      "fullWord": "CPU",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Pyramid",
+      "fullWord": "Smartphone",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -653,7 +641,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pharaoh",
+      "fullWord": "Tablet",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -662,7 +650,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Mummy",
+      "fullWord": "Lap",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Laptop"
+    },
+    {
+      "fullWord": "Top",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Laptop"
+    },
+    {
+      "fullWord": "Mutation",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -671,7 +677,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Nile",
+      "fullWord": "DNA",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -680,7 +686,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Gold",
+      "fullWord": "Genotype",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -689,7 +695,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Jewelry",
+      "fullWord": "Hybrid",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -698,7 +704,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Tuna",
+      "fullWord": "Book",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -707,25 +713,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Sal",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Salmon"
-    },
-    {
-      "fullWord": "Mon",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Salmon"
-    },
-    {
-      "fullWord": "Herring",
+      "fullWord": "Magazine",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -734,43 +722,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Tilapia",
+      "fullWord": "Bro",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": null
+      "parentWord": "Brochure"
     },
     {
-      "fullWord": "Books",
+      "fullWord": "Chure",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": null
+      "parentWord": "Brochure"
     },
     {
-      "fullWord": "Shelf",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Librarian",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Silence",
+      "fullWord": "Newspaper",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -780,24 +750,7 @@
     }
   ],
   "allWords": [],
-  "frozenBubbles": [
-    {
-      "word": "Banana",
-      "mergesNeeded": 5
-    },
-    {
-      "word": "Currency",
-      "mergesNeeded": 6
-    },
-    {
-      "word": "Keyboard",
-      "mergesNeeded": 4
-    },
-    {
-      "word": "Plum",
-      "mergesNeeded": 3
-    }
-  ],
+  "frozenBubbles": [],
   "burstBubbles": [],
   "keyLockBubbles": [],
   "bubbleChains": [],

@@ -2202,17 +2202,9 @@ export default function GraphEditor() {
             }}
           >
             <option value="">-- Load Level --</option>
-            {levels.map(lvl => {
-              const match = lvl.match(/Level\s+(\d+)/i);
-              let displayLvl = lvl;
-              if (match) {
-                const num = parseInt(match[1], 10);
-                displayLvl = `Level ${num + 1}`;
-              }
-              return (
-                <option key={lvl} value={lvl}>{displayLvl}</option>
-              );
-            })}
+            {levels.map(lvl => (
+              <option key={lvl} value={lvl}>{lvl}</option>
+            ))}
           </select>
           <button 
             onClick={() => {

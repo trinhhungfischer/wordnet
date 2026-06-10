@@ -19,16 +19,55 @@
     "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
     "type": 3
   },
-  "m_Name": "Level 90",
+  "m_Name": "Level 89",
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Carnivorous Plants",
+      "category": "green energy",
+      "parentCategory": "energy sources",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "solar",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "wind",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "hydro",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "geothermal",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "energy sources",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Venus Flytrap",
+          "fullWord": "green energy",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -36,7 +75,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Pitcher Plant",
+          "fullWord": "fossil",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -44,7 +83,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Sundew",
+          "fullWord": "nuclear",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -52,7 +91,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Bladderwort",
+          "fullWord": "chemical",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -62,12 +101,12 @@
       ]
     },
     {
-      "category": "Water Transportation",
+      "category": "gadgets",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Boat",
+          "fullWord": "smartphone",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -75,7 +114,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Ship",
+          "fullWord": "tablet",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -83,7 +122,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Submarine",
+          "fullWord": "smartwatch",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -91,7 +130,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Ferry",
+          "fullWord": "laptop",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -101,12 +140,12 @@
       ]
     },
     {
-      "category": "Emotions",
+      "category": "wild plants",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Joy",
+          "fullWord": "fern",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -114,7 +153,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Anger",
+          "fullWord": "moss",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -122,7 +161,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Fear",
+          "fullWord": "dandelion",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -130,7 +169,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Sadness",
+          "fullWord": "mushroom",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -140,12 +179,12 @@
       ]
     },
     {
-      "category": "EU Countries",
+      "category": "alaska",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Germany",
+          "fullWord": "bears",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -153,7 +192,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Italy",
+          "fullWord": "salmon",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -161,7 +200,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "France",
+          "fullWord": "glacier",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -169,7 +208,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Spain",
+          "fullWord": "snow",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -179,12 +218,12 @@
       ]
     },
     {
-      "category": "Germany",
-      "parentCategory": "EU Countries",
+      "category": "bears",
+      "parentCategory": "alaska",
       "icon": null,
       "words": [
         {
-          "fullWord": "Berlin",
+          "fullWord": "polar bear",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -192,7 +231,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Autobahn",
+          "fullWord": "grizzly",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -200,7 +239,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Beer",
+          "fullWord": "panda",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -208,7 +247,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Oktoberfest",
+          "fullWord": "black bear",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -218,12 +257,12 @@
       ]
     },
     {
-      "category": "France",
-      "parentCategory": "EU Countries",
+      "category": "appliances",
+      "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Paris",
+          "fullWord": "microwave",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -231,7 +270,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Wine",
+          "fullWord": "air fryer",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -239,7 +278,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Eiffel Tower",
+          "fullWord": "oven",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -247,7 +286,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Baguette",
+          "fullWord": "stove",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -257,12 +296,12 @@
       ]
     },
     {
-      "category": "Spain",
-      "parentCategory": "EU Countries",
+      "category": "drinks",
+      "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Madrid",
+          "fullWord": "coffee",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -270,7 +309,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Flamenco",
+          "fullWord": "tea",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -278,7 +317,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Paella",
+          "fullWord": "juice",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -286,7 +325,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Bullfight",
+          "fullWord": "soda",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -296,12 +335,12 @@
       ]
     },
     {
-      "category": "Italy",
-      "parentCategory": "EU Countries",
+      "category": "main course",
+      "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Rome",
+          "fullWord": "steak",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -309,7 +348,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Pasta",
+          "fullWord": "pasta",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -317,7 +356,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Colosseum",
+          "fullWord": "pizza",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -325,7 +364,46 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Venice",
+          "fullWord": "burger",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "fossil",
+      "parentCategory": "energy sources",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "coal",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "oil",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "gas",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "amber",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -335,13 +413,13 @@
       ]
     }
   ],
-  "maxBubblesInScene": 20,
+  "maxBubblesInScene": 22,
   "moveLimit": 10,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
     {
-      "fullWord": "Venus Flytrap",
+      "fullWord": "solar",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -350,7 +428,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pitcher Plant",
+      "fullWord": "wind",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -359,7 +437,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Sundew",
+      "fullWord": "hydro",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -368,7 +446,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Bladderwort",
+      "fullWord": "geothermal",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -377,7 +455,43 @@
       "parentWord": null
     },
     {
-      "fullWord": "Boat",
+      "fullWord": "Nuc",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Nuclear"
+    },
+    {
+      "fullWord": "Lear",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Nuclear"
+    },
+    {
+      "fullWord": "Che",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Chemical"
+    },
+    {
+      "fullWord": "Mical",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Chemical"
+    },
+    {
+      "fullWord": "smartphone",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -386,7 +500,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Ship",
+      "fullWord": "Tab",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Tablet"
+    },
+    {
+      "fullWord": "Let",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Tablet"
+    },
+    {
+      "fullWord": "smartwatch",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -395,7 +527,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Submarine",
+      "fullWord": "Lap",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Laptop"
+    },
+    {
+      "fullWord": "Top",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Laptop"
+    },
+    {
+      "fullWord": "fern",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -404,7 +554,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Ferry",
+      "fullWord": "moss",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -413,7 +563,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Joy",
+      "fullWord": "dandelion",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -422,7 +572,43 @@
       "parentWord": null
     },
     {
-      "fullWord": "Anger",
+      "fullWord": "Mush",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Mushroom"
+    },
+    {
+      "fullWord": "Room",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Mushroom"
+    },
+    {
+      "fullWord": "Sal",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Salmon"
+    },
+    {
+      "fullWord": "Mon",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Salmon"
+    },
+    {
+      "fullWord": "glacier",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -431,7 +617,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Fear",
+      "fullWord": "snow",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -440,7 +626,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Sadness",
+      "fullWord": "polar bear",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -449,7 +635,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Berlin",
+      "fullWord": "grizzly",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -458,7 +644,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Autobahn",
+      "fullWord": "panda",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -467,7 +653,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Beer",
+      "fullWord": "black bear",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -476,7 +662,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Oktoberfest",
+      "fullWord": "microwave",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -485,7 +671,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Paris",
+      "fullWord": "air fryer",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -494,7 +680,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Wine",
+      "fullWord": "oven",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -503,7 +689,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Eiffel Tower",
+      "fullWord": "stove",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -512,7 +698,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Baguette",
+      "fullWord": "coffee",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -521,7 +707,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Madrid",
+      "fullWord": "tea",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -530,7 +716,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Flamenco",
+      "fullWord": "juice",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -539,7 +725,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Paella",
+      "fullWord": "soda",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -548,7 +734,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Bullfight",
+      "fullWord": "steak",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -557,7 +743,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Rome",
+      "fullWord": "pasta",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -566,7 +752,43 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pasta",
+      "fullWord": "Piz",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Pizza"
+    },
+    {
+      "fullWord": "Za",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Pizza"
+    },
+    {
+      "fullWord": "Bur",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Burger"
+    },
+    {
+      "fullWord": "Ger",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Burger"
+    },
+    {
+      "fullWord": "coal",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -575,7 +797,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Colosseum",
+      "fullWord": "oil",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -584,7 +806,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Venice",
+      "fullWord": "gas",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "amber",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -598,10 +829,19 @@
   "burstBubbles": [],
   "keyLockBubbles": [],
   "bubbleChains": [],
-  "useBubbleSeparator": 0,
+  "useBubbleSeparator": 1,
   "bubbleSeparatorData": {
     "breakThreshold": 3,
-    "linkedWords": []
+    "linkedWords": [
+      "Solar",
+      "Wind",
+      "Hydro",
+      "Geothermal",
+      "Nuc",
+      "lear",
+      "Che",
+      "mical"
+    ]
   },
   "crypticBubbles": [],
   "screwLockBubbles": [],
