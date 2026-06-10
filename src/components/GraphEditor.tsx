@@ -365,10 +365,13 @@ export default function GraphEditor() {
 
   const createChunksForWord = (wordId: string, word: string, targetNodes: Node[], targetEdges: Edge[], parentX: number, parentY: number, parentGlobalIndex?: number) => {
     const cleanWord = String(word).trim().toLowerCase();
-    if (cleanWord.length <= 1) return [];
+    const spaceIndex = cleanWord.indexOf(' ');
+    
+    // Nếu là từ đơn (không có khoảng trắng) và có độ dài nhỏ hơn 6
+    // Thì không cho phép cắt (tránh tạo ra các chunk 1 hoặc 2 chữ cái như cat -> c, at)
+    if (spaceIndex === -1 && cleanWord.length < 6) return [];
     
     let chunk1, chunk2;
-    const spaceIndex = cleanWord.indexOf(' ');
     if (spaceIndex !== -1) {
       chunk1 = cleanWord.slice(0, spaceIndex + 1); // Giữ lại khoảng trắng ở cuối chunk1
       chunk2 = cleanWord.slice(spaceIndex + 1);
