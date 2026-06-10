@@ -1812,9 +1812,46 @@ export default function GraphEditor() {
           const bPop = b.popularity || 0;
           return Math.abs(aPop - anchorPop) - Math.abs(bPop - anchorPop);
         });
+
+        // 6. Lọc loại bỏ các từ trùng gốc (VD: day và days, run và running)
+        const getRoot = (w: string) => {
+           let r = nlp(w).compute('root').text('root');
+           return (r ? r : w).toLowerCase().trim();
+        };
+
+        const uniqueWords: any[] = [];
+        const duplicateWords: any[] = [];
+        const seenRoots = new Set<string>();
+
+        for (const w of wordsToImport) {
+           const root = getRoot(w.word);
+           // Fallback kiểm tra chuỗi nếu compromise không bắt được (vd: cat vs cats)
+           let isDuplicate = seenRoots.has(root);
+           if (!isDuplicate) {
+              for (const seen of seenRoots) {
+                 if ((root.startsWith(seen) || seen.startsWith(root)) && Math.abs(root.length - seen.length) <= 2) {
+                    isDuplicate = true;
+                    break;
+                 }
+              }
+           }
+
+           if (!isDuplicate) {
+               seenRoots.add(root);
+               uniqueWords.push(w);
+           } else {
+               duplicateWords.push(w);
+           }
+        }
+        
+        // Fallback: Nếu lọc xong mà không đủ chữ để tạo cây, ta đành lấy lại từ trùng lặp
+        const numRequired = currentReqSig.numWords;
+        while (uniqueWords.length < numRequired && duplicateWords.length > 0) {
+            uniqueWords.push(duplicateWords.shift());
+        }
+        wordsToImport = uniqueWords;
         
         // Bốc ngẫu nhiên N từ trong khoảng N + 4 từ sát với Anchor nhất để tăng sự ngẫu nhiên (chống lặp tuyệt đối)
-        const numRequired = currentReqSig.numWords;
         if (numRequired > 1 && wordsToImport.length > numRequired) {
            const expandedSlice = wordsToImport.slice(0, numRequired + 4);
            const anchorWord = expandedSlice[0];
