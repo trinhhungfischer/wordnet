@@ -9,6 +9,8 @@ export interface BoardBubbleState {
   chainMergesLeft: number;
   iceMergesLeft: number;
   crackMergesLeft: number;
+  isLocked: boolean;
+  isKey: boolean;
 }
 
 export interface MergeStep {
@@ -66,6 +68,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let chainMergesLeft = 0;
     let iceMergesLeft = 0;
     let crackMergesLeft = 0;
+    let isLocked = false;
+    let isKey = false;
 
     if (node) {
       const w = displayLabel.toLowerCase();
@@ -83,6 +87,16 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       if (frozenRule && moveCount < frozenRule.mergesNeeded) {
          iceMergesLeft = frozenRule.mergesNeeded - moveCount;
       }
+      
+      const lockRule = levelData?.keyLockBubbles?.find((k: any) => k.lockWord.toLowerCase() === w);
+      if (lockRule && !usedWords.has(lockRule.keyWord.toLowerCase())) {
+        isLocked = true;
+      }
+
+      const keyRule = levelData?.keyLockBubbles?.find((k: any) => k.keyWord.toLowerCase() === w);
+      if (keyRule && !usedWords.has(w)) {
+        isKey = true;
+      }
     }
 
     return {
@@ -91,7 +105,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       isChained,
       chainMergesLeft: chainMergesLeft > 0 ? chainMergesLeft : 0,
       iceMergesLeft: iceMergesLeft > 0 ? iceMergesLeft : 0,
-      crackMergesLeft: crackMergesLeft > 0 ? crackMergesLeft : 0
+      crackMergesLeft: crackMergesLeft > 0 ? crackMergesLeft : 0,
+      isLocked,
+      isKey
     };
   };
 
