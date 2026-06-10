@@ -342,6 +342,25 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                  score = Math.max(score, 100 - rem * 5);
              }
           });
+          // Also check if this word belongs to a category that has an active bomb on the board
+          const parentCat = edges.find(e => e.target === wordId && catNodes.some(n => n.id === e.source))?.source;
+          if (parentCat) {
+             const catWordIds = catToWords.get(parentCat) || [];
+             const piecesOnBoard = board.filter(id => {
+                if (catWordIds.includes(id)) return true;
+                if (id.endsWith(`_[${parentCat}]`)) return true;
+                return false;
+             });
+             piecesOnBoard.forEach(pid => {
+                const pLabel = getBubbleState(pid).label.toLowerCase();
+                const pBurst = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === pLabel);
+                if (pBurst) {
+                   const rem = pBurst.movesRemaining - moveCount;
+                   // High priority, but slightly lower than direct bomb on the chunk itself
+                   score = Math.max(score, 90 - rem * 5); 
+                }
+             });
+          }
           possibleMerges.push({ type: 'chunk', wordId, chunkIds, score });
         }
       }
