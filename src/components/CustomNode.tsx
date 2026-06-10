@@ -1,12 +1,17 @@
 import { Handle, Position } from '@xyflow/react';
 import { Link, Snowflake, Lock, Key } from 'lucide-react';
 
+import { lockKeyColors } from './GraphEditor';
+
 const CustomNode = ({ data, selected }: any) => {
   const isChunk = data.isChunk === true;
   const isChained = data.isChained === true;
   const isFrozen = data.isFrozen === true;
-  const isLock = data.isLock === true;
-  const isKey = data.isKey === true;
+  const lockIndex = data.lockIndex !== undefined ? data.lockIndex : -1;
+  const keyIndex = data.keyIndex !== undefined ? data.keyIndex : -1;
+
+  const lockColor = lockIndex !== -1 ? lockKeyColors[lockIndex % lockKeyColors.length] : '#a1a1aa';
+  const keyColor = keyIndex !== -1 ? lockKeyColors[keyIndex % lockKeyColors.length] : '#f59e0b';
 
   return (
     <div 
@@ -19,9 +24,9 @@ const CustomNode = ({ data, selected }: any) => {
       textAlign: 'center',
       cursor: 'pointer',
       transition: 'all 0.2s',
-      background: isChunk ? 'rgba(0,0,0,0.4)' : (isKey ? 'rgba(250, 204, 21, 0.15)' : (isLock ? 'rgba(161, 161, 170, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)')))),
-      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (isKey ? '2px solid rgba(250, 204, 21, 0.8)' : (isLock ? '2px solid rgba(161, 161, 170, 0.8)' : (isFrozen ? '2px solid rgba(56, 189, 248, 0.8)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)'))))),
-      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (isKey ? '0 0 15px rgba(250, 204, 21, 0.3)' : (isLock ? '0 0 15px rgba(161, 161, 170, 0.3)' : (isFrozen ? '0 0 15px rgba(56, 189, 248, 0.3)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)'))))
+      background: isChunk ? 'rgba(0,0,0,0.4)' : (keyIndex !== -1 ? `${keyColor}20` : (lockIndex !== -1 ? `${lockColor}20` : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)')))),
+      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (keyIndex !== -1 ? `2px solid ${keyColor}80` : (lockIndex !== -1 ? `2px solid ${lockColor}80` : (isFrozen ? '2px solid rgba(56, 189, 248, 0.8)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)'))))),
+      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (keyIndex !== -1 ? `0 0 15px ${keyColor}4d` : (lockIndex !== -1 ? `0 0 15px ${lockColor}4d` : (isFrozen ? '0 0 15px rgba(56, 189, 248, 0.3)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)'))))
     }}>
       <Handle
         type="target"
@@ -34,8 +39,8 @@ const CustomNode = ({ data, selected }: any) => {
           <img src={`/word_icon/${data.icon.endsWith('.png') ? data.icon : data.icon + '.png'}`} alt={String(data.label)} title={`Missing File: ${data.icon}`} style={{ width: '24px', height: '24px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
         )}
         <span>{String(data.label)}</span>
-        {isKey && <Key size={14} style={{ color: '#eab308', marginLeft: '4px' }} />}
-        {isLock && <Lock size={14} style={{ color: '#a1a1aa', marginLeft: '4px' }} />}
+        {keyIndex !== -1 && <Key size={14} style={{ color: keyColor, marginLeft: '4px' }} />}
+        {lockIndex !== -1 && <Lock size={14} style={{ color: lockColor, marginLeft: '4px' }} />}
         {isChained && <Link size={14} style={{ color: '#818cf8', marginLeft: '4px' }} />}
         {isFrozen && <Snowflake size={14} style={{ color: '#38bdf8', marginLeft: '4px' }} />}
       </div>

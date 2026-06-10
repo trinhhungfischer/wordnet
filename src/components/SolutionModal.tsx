@@ -3,6 +3,16 @@ import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, S
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
+const lockKeyColors = [
+  '#eab308', // yellow
+  '#ec4899', // pink
+  '#8b5cf6', // purple
+  '#14b8a6', // teal
+  '#f97316', // orange
+  '#3b82f6', // blue
+  '#10b981'  // emerald
+];
+
 interface SolutionModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -61,8 +71,8 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
       let chainMergesLeft = bubbleState.chainMergesLeft;
       let iceMergesLeft = bubbleState.iceMergesLeft;
       let crackMergesLeft = bubbleState.crackMergesLeft;
-      let isLocked = bubbleState.isLocked;
-      let isKey = bubbleState.isKey;
+      let lockIndex = bubbleState.lockIndex;
+      let keyIndex = bubbleState.keyIndex;
       let node = nodes.find(n => n.id === nodeId);
 
       if (nodeId.startsWith('temp_[')) {
@@ -86,7 +96,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
          if (familyNode) familyName = String(familyNode.data.label);
       }
 
-      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isLocked, isKey, originalIdx: idx };
+      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, lockIndex, keyIndex, originalIdx: idx };
     }).filter(Boolean) as any[];
 
     if (boardSortMode === 'name') {
@@ -310,7 +320,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isLocked, isKey, originalIdx }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, lockIndex, keyIndex, originalIdx }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -357,14 +367,14 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                               <Snowflake size={14} color="#fbbf24" /> {crackMergesLeft}
                             </span>
                           )}
-                          {isLocked && (
-                            <span title="Locked Word" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#eab308', fontSize: '11px', fontWeight: 'bold' }}>
-                              <Lock size={14} color="#eab308" /> Locked
+                          {lockIndex !== -1 && lockIndex !== undefined && (
+                            <span title="Locked Word" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: lockKeyColors[lockIndex % lockKeyColors.length], fontSize: '11px', fontWeight: 'bold' }}>
+                              <Lock size={14} color={lockKeyColors[lockIndex % lockKeyColors.length]} /> Locked
                             </span>
                           )}
-                          {isKey && (
-                            <span title="Key Word" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#f59e0b', fontSize: '11px', fontWeight: 'bold' }}>
-                              <Key size={14} color="#f59e0b" /> Key
+                          {keyIndex !== -1 && keyIndex !== undefined && (
+                            <span title="Key Word" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: lockKeyColors[keyIndex % lockKeyColors.length], fontSize: '11px', fontWeight: 'bold' }}>
+                              <Key size={14} color={lockKeyColors[keyIndex % lockKeyColors.length]} /> Key
                             </span>
                           )}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
