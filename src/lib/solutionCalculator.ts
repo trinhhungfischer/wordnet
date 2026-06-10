@@ -169,8 +169,19 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
   // (Variables moved up)
 
+  const usedWords = new Set<string>(); // Tracks all words/chunks that have been merged
+
   const isWordIceOrCrackLocked = (w: string) => {
     w = w.toLowerCase();
+    
+    // Check Key-Lock
+    const lockRule = levelData?.keyLockBubbles?.find((k: any) => k.lockWord.toLowerCase() === w);
+    if (lockRule) {
+      if (!usedWords.has(lockRule.keyWord.toLowerCase())) {
+         return true; // Still locked because key is not merged yet
+      }
+    }
+
     if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) return true;
     
     const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
@@ -230,11 +241,16 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           board.push(wordId); // Add word to board
           droppedWords.add(wordId);
           resolvedWords.add(wordId);
+          
+          // Generate Merge Steps for Chunks
+          const chunks = chunkIds.map(cid => String(nodes.find(n => n.id === cid)?.data.label));
+          
+          // Add chunks to usedWords since they were merged
+          chunks.forEach(c => usedWords.add(c.toLowerCase()));
+          
           mergedSomething = true;
           progress = true;
 
-          // Generate Merge Steps for Chunks
-          const chunks = chunkIds.map(cid => String(nodes.find(n => n.id === cid)?.data.label));
           let currentString = chunks[0];
           for (let i = 1; i < chunks.length; i++) {
             const nextChunk = chunks[i];
@@ -292,6 +308,10 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                board = board.filter(id => id !== p1 && id !== p2);
                board.push(mergedId);
 
+               // Add the pieces to usedWords since they were merged
+               usedWords.add(label1.toLowerCase());
+               usedWords.add(label2.toLowerCase());
+
                addStep('category', label1, label2, mergedString);
                mergedSomething = true;
                progress = true;
@@ -316,6 +336,15 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                   Object.keys(crackBreakMap).forEach(w => {
                     if (crackBreakMap[w] === completedCategoriesCount) {
                       addStep('event', '', '', '', `🧊 Ice broken on "${w}" (${completedCategoriesCount} categories broken)`);
+                    }
+                  });
+                  
+                  // Notify if any locks were opened
+                  levelData?.keyLockBubbles?.forEach((kl: any) => {
+                    if (usedWords.has(kl.keyWord.toLowerCase())) {
+                       // We can't know exactly WHICH move unlocked it without tracking previous state, 
+                       // but we can just let it unlock silently or check if it was just unlocked.
+                       // For simplicity, we just let it be silent.
                     }
                   });
 

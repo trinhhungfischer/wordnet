@@ -1,4 +1,4 @@
-import { X, Link, Calculator, Snowflake } from 'lucide-react';
+import { X, Link, Calculator, Snowflake, Lock, Key } from 'lucide-react';
 
 interface LevelSettingsProps {
   isOpen: boolean;
@@ -230,6 +230,97 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     onClick={(e) => {
                       e.stopPropagation();
                       handleChange('frozenBubbles', levelData.frozenBubbles.filter((f: any) => f.word !== frozenItem.word));
+                    }}
+                    style={{ 
+                      background: 'transparent', border: 'none', 
+                      color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                    }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Lock size={16} color="#eab308" />
+          Mechanic: Locks & Keys
+        </h3>
+        <div style={{ marginTop: '12px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+            Lock Words (Drag & Drop from left panel):
+          </div>
+          <div 
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+              if (wordLabel) {
+                const currentLocks = levelData.keyLockBubbles || [];
+                if (!currentLocks.some((l: any) => l.lockWord === wordLabel)) {
+                  handleChange('keyLockBubbles', [...currentLocks, { lockWord: wordLabel, keyWord: '' }]);
+                }
+              }
+            }}
+            style={{ 
+              minHeight: '80px', padding: '8px', border: '1px dashed rgba(234,179,8,0.5)', 
+              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+            }}
+          >
+            {(!levelData.keyLockBubbles || levelData.keyLockBubbles.length === 0) ? (
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                Drop words here to add Locks
+              </span>
+            ) : (
+              levelData.keyLockBubbles.map((lockItem: any, i: number) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(234,179,8,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(234,179,8,0.3)' }}>
+                  <Lock size={14} color="#eab308" />
+                  <span 
+                    onClick={() => {
+                      if (onFocusWord) onFocusWord(lockItem.lockWord);
+                    }}
+                    style={{ 
+                      fontSize: '13px', fontWeight: 600, color: 'white', 
+                      cursor: 'pointer', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis'
+                    }}
+                    title={lockItem.lockWord}
+                  >
+                    {lockItem.lockWord}
+                  </span>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+                    <Key size={14} color="#fcd34d" />
+                    <input 
+                      type="text" 
+                      placeholder="Key Word..."
+                      value={lockItem.keyWord}
+                      onChange={(e) => {
+                        const newLocks = [...levelData.keyLockBubbles];
+                        newLocks[i].keyWord = e.target.value;
+                        handleChange('keyLockBubbles', newLocks);
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                        if (wordLabel) {
+                          const newLocks = [...levelData.keyLockBubbles];
+                          newLocks[i].keyWord = wordLabel;
+                          handleChange('keyLockBubbles', newLocks);
+                        }
+                      }}
+                      style={{ width: '100%', minWidth: '60px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                      title="Type key word or drop a word here"
+                    />
+                  </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleChange('keyLockBubbles', levelData.keyLockBubbles.filter((l: any) => l.lockWord !== lockItem.lockWord));
                     }}
                     style={{ 
                       background: 'transparent', border: 'none', 
