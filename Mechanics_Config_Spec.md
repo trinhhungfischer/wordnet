@@ -4,7 +4,7 @@ Tài liệu này tổng hợp cấu trúc JSON thực tế mà game engine sử 
 
 > [!IMPORTANT]
 > **Về các trường `has___` và `minMax___`:**
-> Những trường này (ví dụ: `hasFrozenBubbles`, `minMaxFrozenBubbles`) **HIỆN TẠI KHÔNG QUAN TRỌNG VÀ KHÔNG ĐƯỢC SỬ DỤNG CHÍNH THỨC DƯỚI ENGINE** để render cơ chế. 
+> Những trường này (ví dụ: `hasFrozenBubbles`, `minMaxFrozenBubbles`) **HIỆN TẠI KHÔNG QUAN TRỌNG VÀ KHÔNG ĐƯỢC SỬ DỤNG CHÍNH THỨC DƯỚI ENGINE** để render cơ chế.
 > Đó là lý do bạn thấy `hasFrozenBubbles: 0` nhưng màn chơi vẫn xuất hiện bóng đóng băng. Nguyên nhân là do UI của tool Wordnet (`LevelSettings.tsx`) tự sinh ra các trường `has_`/`minMax_` này, trong khi Game Engine thực tế lại đọc dữ liệu từ các mảng Object chi tiết (như `frozenBubbles`, `burstBubbles`...) để biết chính xác chữ nào bị gắn mechanic gì.
 
 Dưới đây là cấu trúc chi tiết của các mảng Object mechanic thực tế:
@@ -12,9 +12,11 @@ Dưới đây là cấu trúc chi tiết của các mảng Object mechanic thự
 ---
 
 ## 1. Xích chia đôi (Chain) - Lv 20
+
 **Trường áp dụng:** `useBubbleSeparator` và `bubbleSeparatorData`
 
 Cấu trúc:
+
 ```json
 "useBubbleSeparator": 1,
 "bubbleSeparatorData": {
@@ -30,15 +32,18 @@ Cấu trúc:
   ]
 }
 ```
-*   `breakThreshold`: Số category cần đập vỡ để mở xích.
-*   `linkedWords`: Danh sách các từ (hoặc mảnh từ) nằm ở bên dưới dây xích.
+
+- `breakThreshold`: Số category cần đập vỡ để mở xích.
+- `linkedWords`: Danh sách các từ (hoặc mảnh từ) nằm ở bên dưới dây xích.
 
 ---
 
 ## 2. Bóng đóng băng (Frozen Bubble) - Lv 30
+
 **Trường áp dụng:** `frozenBubbles` (Mảng)
 
 Cấu trúc:
+
 ```json
 "frozenBubbles": [
   {
@@ -51,15 +56,18 @@ Cấu trúc:
   }
 ]
 ```
-*   `word`: Cụm từ đích danh bị đóng băng.
-*   `mergesNeeded`: Số lần hit (hoặc ghép) cần thiết để rã đông bóng.
+
+- `word`: Cụm từ đích danh bị đóng băng.
+- `mergesNeeded`: Số lần hit (hoặc ghép) cần thiết để rã đông bóng.
 
 ---
 
 ## 3. Ổ khóa & Chìa (Lock & Key) - Lv 50
+
 **Trường áp dụng:** `keyLockBubbles` (Mảng)
 
 Cấu trúc:
+
 ```json
 "keyLockBubbles": [
   {
@@ -74,16 +82,19 @@ Cấu trúc:
   }
 ]
 ```
-*   `keyWord`: Từ chứa chìa khóa.
-*   `lockWord`: Từ bị khóa (cần ghép thành công `keyWord` để mở).
-*   `id`: Tương ứng với màu/loại của khóa (để ghép đúng chìa với khóa).
+
+- `keyWord`: Từ chứa chìa khóa.
+- `lockWord`: Từ bị khóa (cần ghép thành công `keyWord` để mở).
+- `id`: Tương ứng với màu/loại của khóa (để ghép đúng chìa với khóa).
 
 ---
 
 ## 4. Quả Bom (Burst Bubbles) - Lv 81
+
 **Trường áp dụng:** `burstBubbles` (Mảng)
 
 Cấu trúc:
+
 ```json
 "burstBubbles": [
   {
@@ -96,15 +107,19 @@ Cấu trúc:
   }
 ]
 ```
-*   `word`: Chữ bị gắn bom nổ chậm.
-*   `movesRemaining`: Số lượt đi còn lại trước khi quả bom phát nổ. (Dưới 3 turn sẽ hiển thị cảnh báo đỏ).
+
+- `word`: Chữ bị gắn bom nổ chậm.
+- `movesRemaining`: Số lượt đi còn lại trước khi quả bom phát nổ. (Dưới 3 turn sẽ hiển thị cảnh báo đỏ). Mỗi lần hit (hoặc ghép) sẽ làm giảm đi 1.
+- `results`: Nếu bom nổ, lượt chơi sẽ trừ đi một lượt -> thay đổi cách tính toán và recommend lời giải
 
 ---
 
 ## 5. Bóng tàng hình / Khuyết chữ (Cryptic/Hide Text) - Lv 121
+
 **Trường áp dụng:** `crypticBubbles` (Mảng)
 
 Cấu trúc:
+
 ```json
 "crypticBubbles": [
   {
@@ -121,16 +136,19 @@ Cấu trúc:
   }
 ]
 ```
-*   `word`: Từ bị tàng hình.
-*   `letters`: Chứa danh sách các ký tự trong từ đó (mã hóa ASCII - ví dụ 68 là 'D', 111 là 'o').
-*   `revealAtMerge`: Định nghĩa ở lượt merge thứ mấy (của game) thì ký tự này mới ló mặt ra (0 = hiển thị luôn từ đầu).
+
+- `word`: Từ bị tàng hình.
+- `letters`: Chứa danh sách các ký tự trong từ đó (mã hóa ASCII - ví dụ 68 là 'D', 111 là 'o').
+- `revealAtMerge`: Định nghĩa ở lượt merge thứ mấy (của game) thì ký tự này mới ló mặt ra (0 = hiển thị luôn từ đầu).
 
 ---
 
 ## 6. Tuốc nơ vít & Ốc vít (Screw Lock) - Lv 161
+
 **Trường áp dụng:** `screwLockBubbles` (Mảng)
 
 Cấu trúc:
+
 ```json
 "screwLockBubbles": [
   {
@@ -147,17 +165,20 @@ Cấu trúc:
   }
 ]
 ```
-*   `screwLockWord`: Quả bóng bị khóa bởi các con ốc vít.
-*   `screwDriverWords`: Danh sách các từ đóng vai trò làm tuốc nơ vít để vặn ốc.
-*   `id`: Loại ốc / màu ốc.
-*   `screwCount`: Số lượng ốc vít đang gắn trên quả bóng bị khóa.
+
+- `screwLockWord`: Quả bóng bị khóa bởi các con ốc vít.
+- `screwDriverWords`: Danh sách các từ đóng vai trò làm tuốc nơ vít để vặn ốc.
+- `id`: Loại ốc / màu ốc.
+- `screwCount`: Số lượng ốc vít đang gắn trên quả bóng bị khóa.
 
 ---
 
 ## 7. Từ ngược (Backward Word) - Lv 201
+
 **Trường áp dụng:** `backwardBubbles` (Mảng)
 
 Cấu trúc:
+
 ```json
 "backwardBubbles": [
   {"word": "Water"},
@@ -165,4 +186,5 @@ Cấu trúc:
   {"word": "Television"}
 ]
 ```
-*   `word`: Từ sẽ bị hiển thị ngược chữ trên quả bóng (ví dụ: `Water` -> `retaW`).
+
+- `word`: Từ sẽ bị hiển thị ngược chữ trên quả bóng (ví dụ: `Water` -> `retaW`).

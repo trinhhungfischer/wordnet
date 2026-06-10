@@ -1,4 +1,4 @@
-import { X, Link, Calculator, Snowflake, Lock, Key } from 'lucide-react';
+import { X, Link, Calculator, Snowflake, Lock, Key, Bomb } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -231,6 +231,82 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     onClick={(e) => {
                       e.stopPropagation();
                       handleChange('frozenBubbles', levelData.frozenBubbles.filter((f: any) => f.word !== frozenItem.word));
+                    }}
+                    style={{ 
+                      background: 'transparent', border: 'none', 
+                      color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                    }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Bomb size={16} color="#f97316" />
+          Mechanic: Burst Bubbles (Bombs)
+        </h3>
+        <div style={{ marginTop: '12px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+            Bomb Words (Drag & Drop from left panel):
+          </div>
+          <div 
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+              if (wordLabel) {
+                const currentBurst = levelData.burstBubbles || [];
+                if (!currentBurst.some((b: any) => b.word === wordLabel)) {
+                  handleChange('burstBubbles', [...currentBurst, { word: wordLabel, movesRemaining: 6 }]);
+                }
+              }
+            }}
+            style={{ 
+              minHeight: '80px', padding: '8px', border: '1px dashed rgba(249,115,22,0.5)', 
+              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+            }}
+          >
+            {(!levelData.burstBubbles || levelData.burstBubbles.length === 0) ? (
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                Drop words here
+              </span>
+            ) : (
+              levelData.burstBubbles.map((burstItem: any, i: number) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(249,115,22,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(249,115,22,0.3)' }}>
+                  <span 
+                    onClick={() => {
+                      if (onFocusWord) onFocusWord(burstItem.word);
+                    }}
+                    style={{ 
+                      fontSize: '13px', fontWeight: 600, color: 'white', 
+                      cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {burstItem.word}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Moves:</span>
+                    <input 
+                      type="number" 
+                      value={burstItem.movesRemaining}
+                      onChange={(e) => {
+                        const newBurst = [...levelData.burstBubbles];
+                        newBurst[i].movesRemaining = parseInt(e.target.value) || 1;
+                        handleChange('burstBubbles', newBurst);
+                      }}
+                      style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                    />
+                  </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleChange('burstBubbles', levelData.burstBubbles.filter((b: any) => b.word !== burstItem.word));
                     }}
                     style={{ 
                       background: 'transparent', border: 'none', 

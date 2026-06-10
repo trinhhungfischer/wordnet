@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock, Key } from 'lucide-react';
+import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock, Key, Bomb } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -71,6 +71,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
       let chainMergesLeft = bubbleState.chainMergesLeft;
       let iceMergesLeft = bubbleState.iceMergesLeft;
       let crackMergesLeft = bubbleState.crackMergesLeft;
+      let burstMovesRemaining = bubbleState.burstMovesRemaining;
       let lockIndex = bubbleState.lockIndex;
       let keyIndex = bubbleState.keyIndex;
       let node = nodes.find(n => n.id === nodeId);
@@ -96,7 +97,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
          if (familyNode) familyName = String(familyNode.data.label);
       }
 
-      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, lockIndex, keyIndex, originalIdx: idx };
+      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, originalIdx: idx };
     }).filter(Boolean) as any[];
 
     if (boardSortMode === 'name') {
@@ -320,7 +321,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, lockIndex, keyIndex, originalIdx }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, originalIdx }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -365,6 +366,11 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {crackMergesLeft > 0 && (
                             <span title={`Cracked Glass (${crackMergesLeft} groups left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#fbbf24', fontSize: '11px', fontWeight: 'bold' }}>
                               <Snowflake size={14} color="#fbbf24" /> {crackMergesLeft}
+                            </span>
+                          )}
+                          {burstMovesRemaining !== undefined && (
+                            <span title={`Bomb (${burstMovesRemaining} moves left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: burstMovesRemaining <= 3 ? '#ef4444' : '#f97316', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Bomb size={14} color={burstMovesRemaining <= 3 ? '#ef4444' : '#f97316'} /> {burstMovesRemaining}
                             </span>
                           )}
                           {lockIndex !== -1 && lockIndex !== undefined && (

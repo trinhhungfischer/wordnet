@@ -28,7 +28,7 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb } from 'lucide-react';
 import nlp from 'compromise';
 
 const nodeTypes = {
@@ -92,6 +92,37 @@ const isNodeFrozen = (node: Node, frozenBubblesList: any[], edges: Edge[], nodes
     }
   }
   return false;
+};
+
+const isNodeBurst = (node: Node, burstBubblesList: any[], edges: Edge[], nodes: Node[]) => {
+  if (!burstBubblesList || burstBubblesList.length === 0) return { isBurst: false, movesRemaining: 0 };
+  const label = String(node.data.label).toLowerCase();
+  
+  let burstRule = burstBubblesList.find((b: any) => b.word.toLowerCase() === label);
+  if (burstRule) return { isBurst: true, movesRemaining: burstRule.movesRemaining };
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode) {
+        burstRule = burstBubblesList.find((b: any) => b.word.toLowerCase() === String(parentNode.data.label).toLowerCase());
+        if (burstRule) return { isBurst: true, movesRemaining: burstRule.movesRemaining };
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+      
+    for (const cLabel of chunkLabels) {
+      burstRule = burstBubblesList.find((b: any) => b.word.toLowerCase() === cLabel);
+      if (burstRule) return { isBurst: true, movesRemaining: burstRule.movesRemaining };
+    }
+  }
+  return { isBurst: false, movesRemaining: 0 };
 };
 
 export const lockKeyColors = [
@@ -2515,6 +2546,9 @@ export default function GraphEditor() {
                   const isChunk = Boolean(node.data.isChunk);
                   const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
                   const isFrozen = isNodeFrozen(node, rawLevelData?.frozenBubbles || [], edges, nodes);
+                  const burstState = isNodeBurst(node, rawLevelData?.burstBubbles || [], edges, nodes);
+                  const isBurst = burstState.isBurst;
+                  const burstMovesRemaining = burstState.movesRemaining;
                   const lockIndex = isNodeLock(node, rawLevelData?.keyLockBubbles || [], edges, nodes);
                   const keyIndex = isNodeKey(node, rawLevelData?.keyLockBubbles || [], edges, nodes);
                   
@@ -2563,12 +2597,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (duplicateQueueWordsSet.has(String(node.data.label).toLowerCase()) ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))),
+                              : (duplicateQueueWordsSet.has(String(node.data.label).toLowerCase()) ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (duplicateQueueWordsSet.has(String(node.data.label).toLowerCase()) ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))),
+                              : (duplicateQueueWordsSet.has(String(node.data.label).toLowerCase()) ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -2582,6 +2616,18 @@ export default function GraphEditor() {
                             <img src={`/word_icon/${String(node.data.icon)}.png`} alt="" title={`Missing File: ${String(node.data.icon)}.png`} style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
                           ) : null}
                           <strong style={{ textTransform: isChunk ? 'none' : 'capitalize' }}>{String(node.data.label)}</strong>
+                          {isBurst && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: burstMovesRemaining <= 3 ? '#ef4444' : '#f97316' }}>
+                              <Bomb size={12} />
+                              <span style={{ fontSize: '10px' }}>{burstMovesRemaining}</span>
+                            </div>
+                          )}
+                          {isFrozen && (
+                            <Snowflake size={12} color="#38bdf8" />
+                          )}
+                          {lockIndex !== -1 && (
+                            <Lock size={12} color={lockKeyColors[lockIndex % lockKeyColors.length]} />
+                          )}
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           {keyIndex !== -1 && <Key size={14} color={selectedNodeId === nodeId ? "white" : lockKeyColors[keyIndex % lockKeyColors.length]} />}
@@ -2679,6 +2725,8 @@ export default function GraphEditor() {
             ...n.data,
             isChained: rawLevelData?.useBubbleSeparator === 1 && isNodeChained(n, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes),
             isFrozen: isNodeFrozen(n, rawLevelData?.frozenBubbles || [], edges, nodes),
+            isBurst: isNodeBurst(n, rawLevelData?.burstBubbles || [], edges, nodes).isBurst,
+            burstMovesRemaining: isNodeBurst(n, rawLevelData?.burstBubbles || [], edges, nodes).movesRemaining,
             lockIndex: isNodeLock(n, rawLevelData?.keyLockBubbles || [], edges, nodes),
             keyIndex: isNodeKey(n, rawLevelData?.keyLockBubbles || [], edges, nodes),
             dropIndex: spawnQueueIds.indexOf(n.id) !== -1 ? spawnQueueIds.indexOf(n.id) + 1 : undefined
