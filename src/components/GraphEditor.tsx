@@ -1957,28 +1957,35 @@ export default function GraphEditor() {
             const wordStr = w.word.trim().toLowerCase();
             let c1, c2;
             const spaceIdx = wordStr.indexOf(' ');
+            let shouldCut = true;
+
             if (spaceIdx !== -1) {
-              c1 = wordStr.substring(0, spaceIdx);
+              c1 = wordStr.substring(0, spaceIdx + 1); // Giữ lại khoảng trắng ở cuối
               c2 = wordStr.substring(spaceIdx + 1);
-            } else {
-              const chunkLen = Math.ceil(wordStr.length / 2) || 1;
+            } else if (wordStr.length >= 6) {
+              const chunkLen = Math.ceil(wordStr.length / 2);
               c1 = wordStr.substring(0, chunkLen);
               c2 = wordStr.substring(chunkLen);
+            } else {
+              shouldCut = false;
             }
-            const c1Id = uuidv4();
-            const c2Id = uuidv4();
-            const baseX = oldWordNode?.position.x || 0;
-            const baseY = oldWordNode?.position.y || 0;
-            newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
-            newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex !== undefined && inheritedGlobalIndex !== null ? (inheritedGlobalIndex as number) + 0.5 : undefined }});
-            newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
-            newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
-            newIds = [c1Id, c2Id];
-            
-            // Remove globalIndex from parent word so it is not in spawn queue
-            const parentNodeIndex = newImportedNodes.findIndex(n => n.id === wordId);
-            if (parentNodeIndex !== -1) {
-              newImportedNodes[parentNodeIndex].data.globalIndex = undefined;
+
+            if (shouldCut && c1 && c2) {
+              const c1Id = uuidv4();
+              const c2Id = uuidv4();
+              const baseX = oldWordNode?.position.x || 0;
+              const baseY = oldWordNode?.position.y || 0;
+              newImportedNodes.push({ id: c1Id, type: 'custom', position: { x: baseX - 40, y: baseY + 60 }, data: { label: c1, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex }});
+              newImportedNodes.push({ id: c2Id, type: 'custom', position: { x: baseX + 40, y: baseY + 60 }, data: { label: c2, isCategory: false, isChunk: true, globalIndex: inheritedGlobalIndex !== undefined && inheritedGlobalIndex !== null ? (inheritedGlobalIndex as number) + 0.5 : undefined }});
+              newImportedEdges.push({ id: `e-${wordId}-${c1Id}`, source: wordId, target: c1Id, animated: true, style: { stroke: 'var(--accent)' }});
+              newImportedEdges.push({ id: `e-${wordId}-${c2Id}`, source: wordId, target: c2Id, animated: true, style: { stroke: 'var(--accent)' }});
+              newIds = [c1Id, c2Id];
+              
+              // Remove globalIndex from parent word so it is not in spawn queue
+              const parentNodeIndex = newImportedNodes.findIndex(n => n.id === wordId);
+              if (parentNodeIndex !== -1) {
+                newImportedNodes[parentNodeIndex].data.globalIndex = undefined;
+              }
             }
           }
 
