@@ -227,6 +227,33 @@ export default function GraphEditor() {
                 .map(n => n.id);
   }, [nodes]);
 
+  const duplicateQueueWordsSet = useMemo(() => {
+    const words: string[] = [];
+    const processedParents = new Set<string>();
+
+    nodes.filter(n => n.data.isCategory).forEach(n => {
+      words.push(String(n.data.label).toLowerCase());
+    });
+
+    spawnQueueIds.forEach(id => {
+      const node = nodes.find(n => n.id === id);
+      if (!node) return;
+      if (node.data.isChunk) {
+        const parentEdge = edges.find(e => e.target === id);
+        if (parentEdge) {
+          const parentNode = nodes.find(n => n.id === parentEdge.source);
+          if (parentNode && !processedParents.has(parentNode.id)) {
+            processedParents.add(parentNode.id);
+            words.push(String(parentNode.data.label).toLowerCase());
+          }
+        }
+      } else {
+        words.push(String(node.data.label).toLowerCase());
+      }
+    });
+
+    return new Set(words.filter((w, i) => words.indexOf(w) !== i));
+  }, [spawnQueueIds, nodes, edges]);
   
   const [shuffleStartIndex, setShuffleStartIndex] = useState<string>('');
   const [shuffleEndIndex, setShuffleEndIndex] = useState<string>('');
@@ -692,16 +719,8 @@ export default function GraphEditor() {
       return;
     }
     
-    const queueWords = spawnQueueIds.map(id => {
-      const node = nodes.find(n => n.id === id);
-      return node ? String(node.data.label).toLowerCase() : "";
-    }).filter(Boolean);
-
-    const duplicateWords = queueWords.filter((w, i) => queueWords.indexOf(w) !== i);
-    const uniqueDuplicates = [...new Set(duplicateWords)];
-
-    if (uniqueDuplicates.length > 0) {
-      alert(`Cảnh báo: Các từ sau bị trùng lặp trong Drop Queue: ${uniqueDuplicates.join(", ")}`);
+    if (duplicateQueueWordsSet.size > 0) {
+      alert(`Cảnh báo: Các từ sau bị trùng lặp trong Drop Queue hoặc Category: ${Array.from(duplicateQueueWordsSet).join(", ")}`);
     }
 
     const newData = JSON.parse(JSON.stringify(rawLevelData));
@@ -2270,33 +2289,7 @@ export default function GraphEditor() {
     });
   };
 
-  const duplicateQueueWordsSet = useMemo(() => {
-    const words: string[] = [];
-    const processedParents = new Set<string>();
 
-    nodes.filter(n => n.data.isCategory).forEach(n => {
-      words.push(String(n.data.label).toLowerCase());
-    });
-
-    spawnQueueIds.forEach(id => {
-      const node = nodes.find(n => n.id === id);
-      if (!node) return;
-      if (node.data.isChunk) {
-        const parentEdge = edges.find(e => e.target === id);
-        if (parentEdge) {
-          const parentNode = nodes.find(n => n.id === parentEdge.source);
-          if (parentNode && !processedParents.has(parentNode.id)) {
-            processedParents.add(parentNode.id);
-            words.push(String(parentNode.data.label).toLowerCase());
-          }
-        }
-      } else {
-        words.push(String(node.data.label).toLowerCase());
-      }
-    });
-
-    return new Set(words.filter((w, i) => words.indexOf(w) !== i));
-  }, [spawnQueueIds, nodes, edges]);
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
