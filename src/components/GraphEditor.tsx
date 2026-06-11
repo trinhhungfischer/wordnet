@@ -254,6 +254,17 @@ export default function GraphEditor() {
 
     return new Set(words.filter((w, i) => words.indexOf(w) !== i));
   }, [spawnQueueIds, nodes, edges]);
+
+  const duplicateQueueChunksSet = useMemo(() => {
+    const chunks: string[] = [];
+    spawnQueueIds.forEach(id => {
+      const node = nodes.find(n => n.id === id);
+      if (node && node.data.isChunk) {
+        chunks.push(String(node.data.label).toLowerCase());
+      }
+    });
+    return new Set(chunks.filter((c, i) => chunks.indexOf(c) !== i));
+  }, [spawnQueueIds, nodes]);
   
   const [shuffleStartIndex, setShuffleStartIndex] = useState<string>('');
   const [shuffleEndIndex, setShuffleEndIndex] = useState<string>('');
@@ -721,6 +732,9 @@ export default function GraphEditor() {
     
     if (duplicateQueueWordsSet.size > 0) {
       alert(`Cảnh báo: Các từ sau bị trùng lặp trong Drop Queue hoặc Category: ${Array.from(duplicateQueueWordsSet).join(", ")}`);
+    }
+    if (duplicateQueueChunksSet.size > 0) {
+      alert(`Cảnh báo: Các chunk sau bị trùng lặp trong Drop Queue: ${Array.from(duplicateQueueChunksSet).join(", ")}`);
     }
 
     const newData = JSON.parse(JSON.stringify(rawLevelData));
@@ -2558,6 +2572,19 @@ export default function GraphEditor() {
               </div>
             )}
 
+            {duplicateQueueChunksSet.size > 0 && (
+              <div style={{ padding: '8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', marginBottom: '8px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: '#ef4444', marginBottom: '4px' }}>Duplicated Chunk Zones</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                  {Array.from(duplicateQueueChunksSet).map(chunk => (
+                    <span key={chunk} style={{ fontSize: '11px', background: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5', padding: '2px 6px', borderRadius: '4px' }}>
+                      {chunk}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '4px' }}>
               {(sortLinksFirst 
                 ? [...spawnQueueIds].sort((a, b) => {
@@ -2599,7 +2626,9 @@ export default function GraphEditor() {
                   }
                   
                   const representedWord = isChunk && parentLabel ? parentLabel.toLowerCase() : String(node.data.label).toLowerCase();
-                  const isDuplicate = duplicateQueueWordsSet.has(representedWord);
+                  const isDuplicateWord = duplicateQueueWordsSet.has(representedWord);
+                  const isDuplicateChunk = isChunk && duplicateQueueChunksSet.has(String(node.data.label).toLowerCase());
+                  const isDuplicate = isDuplicateWord || isDuplicateChunk;
 
                   return (
                     <div 
