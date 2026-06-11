@@ -104,8 +104,17 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     
     if (node) {
       const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
-      if (frozenRule && moveCount < frozenRule.mergesNeeded) {
-         iceMergesLeft = frozenRule.mergesNeeded - moveCount;
+      if (frozenRule) {
+         let mergesDone = moveCount;
+         if (wordDropMove?.has(w)) {
+            mergesDone = moveCount - wordDropMove.get(w)!;
+         } else {
+            mergesDone = 0;
+         }
+         
+         if (mergesDone < frozenRule.mergesNeeded) {
+            iceMergesLeft = frozenRule.mergesNeeded - mergesDone;
+         }
       }
       
       const lockIdx = levelData?.keyLockBubbles?.findIndex((k: any) => k.lockWord.toLowerCase() === w);
@@ -164,18 +173,23 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
       // Check Ice Thaw events immediately after a merge
       levelData?.frozenBubbles?.forEach((f: any) => {
-        if (f.mergesNeeded === currentMoveIndex) {
-          steps.push({
-            id: `step-${stepIdCounter++}`,
-            type: 'event',
-            left: '',
-            right: '',
-            result: '',
-            text: `🧊 Ice thawed on "${f.word}" (${currentMoveIndex} merges performed)`,
-            isComboBonus: false,
-            boardState: board.map(bid => getBubbleState(bid)),
-            moveIndex: currentMoveIndex
-          });
+        const w = f.word.toLowerCase();
+        if (wordDropMove.has(w)) {
+          const dropTime = wordDropMove.get(w)!;
+          const mergesDone = currentMoveIndex - dropTime;
+          if (mergesDone === f.mergesNeeded) {
+            steps.push({
+              id: `step-${stepIdCounter++}`,
+              type: 'event',
+              left: '',
+              right: '',
+              result: '',
+              text: `🧊 Ice thawed on "${f.word}" (${f.mergesNeeded} merges performed)`,
+              isComboBonus: false,
+              boardState: board.map(bid => getBubbleState(bid)),
+              moveIndex: currentMoveIndex
+            });
+          }
         }
       });
 
@@ -257,7 +271,11 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) return true;
     
     const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
-    if (frozenRule && moveCount < frozenRule.mergesNeeded) return true;
+    if (frozenRule) {
+       const dropTime = wordDropMove.has(w) ? wordDropMove.get(w)! : moveCount;
+       const mergesDone = moveCount - dropTime;
+       if (mergesDone < frozenRule.mergesNeeded) return true;
+    }
     
     return false;
   };
