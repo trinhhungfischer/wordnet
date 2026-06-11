@@ -28,7 +28,7 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin } from 'lucide-react';
 import nlp from 'compromise';
 
 const nodeTypes = {
@@ -203,7 +203,7 @@ export default function GraphEditor() {
   
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   
-  const [leftPanelTab, setLeftPanelTab] = useState<'chunks'|'dropQueue'|'settings'>('dropQueue');
+  const [leftPanelTab, setLeftPanelTab] = useState<'chunks'|'dropQueue'|'settings'|'category'>('dropQueue');
   const [autoCutWords, setAutoCutWords] = useState<boolean>(false);
   const [globalDict, setGlobalDict] = useState<any[]>([]);
   const [misleadingWords, setMisleadingWords] = useState<string[]>([]);
@@ -2254,13 +2254,14 @@ export default function GraphEditor() {
       const queue = nds.filter(n => typeof n.data?.globalIndex === 'number')
                        .sort((a,b) => (a.data?.globalIndex as number) - (b.data?.globalIndex as number));
       const sliceToShuffle = queue.slice(rawStart - 1, rawEnd);
-      const indices = sliceToShuffle.map(n => n.data.globalIndex);
+      const unlockedSlice = sliceToShuffle.filter(n => !n.data.isPositionLocked);
+      const indices = unlockedSlice.map(n => n.data.globalIndex);
       for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [indices[i], indices[j]] = [indices[j], indices[i]];
       }
       return nds.map(n => {
-        const sliceIdx = sliceToShuffle.findIndex(sn => sn.id === n.id);
+        const sliceIdx = unlockedSlice.findIndex(sn => sn.id === n.id);
         if (sliceIdx !== -1) {
           return { ...n, data: { ...n.data, globalIndex: indices[sliceIdx] } };
         }
@@ -2270,12 +2271,32 @@ export default function GraphEditor() {
   };
 
   const duplicateQueueWordsSet = useMemo(() => {
-    const words = spawnQueueIds.map(id => {
+    const words: string[] = [];
+    const processedParents = new Set<string>();
+
+    nodes.filter(n => n.data.isCategory).forEach(n => {
+      words.push(String(n.data.label).toLowerCase());
+    });
+
+    spawnQueueIds.forEach(id => {
       const node = nodes.find(n => n.id === id);
-      return node ? String(node.data.label).toLowerCase() : "";
-    }).filter(Boolean);
+      if (!node) return;
+      if (node.data.isChunk) {
+        const parentEdge = edges.find(e => e.target === id);
+        if (parentEdge) {
+          const parentNode = nodes.find(n => n.id === parentEdge.source);
+          if (parentNode && !processedParents.has(parentNode.id)) {
+            processedParents.add(parentNode.id);
+            words.push(String(parentNode.data.label).toLowerCase());
+          }
+        }
+      } else {
+        words.push(String(node.data.label).toLowerCase());
+      }
+    });
+
     return new Set(words.filter((w, i) => words.indexOf(w) !== i));
-  }, [spawnQueueIds, nodes]);
+  }, [spawnQueueIds, nodes, edges]);
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
@@ -2440,6 +2461,16 @@ export default function GraphEditor() {
           >
             Chunks
           </button>
+          <button 
+            onClick={() => setLeftPanelTab('category')}
+            style={{ 
+              flex: 1, padding: '6px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600,
+              background: leftPanelTab === 'category' ? 'var(--accent)' : 'transparent',
+              color: leftPanelTab === 'category' ? 'white' : 'var(--text-muted)'
+            }}
+          >
+            Categories
+          </button>
         </div>
 
         {leftPanelTab === 'dropQueue' && (
@@ -2521,6 +2552,19 @@ export default function GraphEditor() {
               Drag to reorder exact drop sequence. The JSON output will flatten all items based on this list.
             </div>
 
+            {duplicateQueueWordsSet.size > 0 && (
+              <div style={{ padding: '8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '8px', marginBottom: '8px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: '#ef4444', marginBottom: '4px' }}>Duplicated Word Zones</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                  {Array.from(duplicateQueueWordsSet).map(word => (
+                    <span key={word} style={{ fontSize: '11px', background: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5', padding: '2px 6px', borderRadius: '4px', textTransform: 'capitalize' }}>
+                      {word}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '4px' }}>
               {(sortLinksFirst 
                 ? [...spawnQueueIds].sort((a, b) => {
@@ -2561,6 +2605,8 @@ export default function GraphEditor() {
                     }
                   }
                   
+                  const representedWord = isChunk && parentLabel ? parentLabel.toLowerCase() : String(node.data.label).toLowerCase();
+                  const isDuplicate = duplicateQueueWordsSet.has(representedWord);
 
                   return (
                     <div 
@@ -2597,12 +2643,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (duplicateQueueWordsSet.has(String(node.data.label).toLowerCase()) ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))),
+                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (duplicateQueueWordsSet.has(String(node.data.label).toLowerCase()) ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))),
+                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -2630,6 +2676,16 @@ export default function GraphEditor() {
                           )}
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setNodes(nds => nds.map(n => n.id === nodeId ? { ...n, data: { ...n.data, isPositionLocked: !n.data.isPositionLocked } } : n));
+                            }}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', opacity: node.data.isPositionLocked ? 1 : 0.4 }}
+                            title="Lock Position"
+                          >
+                            <Pin size={14} color={node.data.isPositionLocked ? "#ef4444" : "var(--text-main)"} />
+                          </button>
                           {keyIndex !== -1 && <Key size={14} color={selectedNodeId === nodeId ? "white" : lockKeyColors[keyIndex % lockKeyColors.length]} />}
                           {lockIndex !== -1 && <Lock size={14} color={selectedNodeId === nodeId ? "white" : lockKeyColors[lockIndex % lockKeyColors.length]} />}
                           {isChained && <Link size={14} color={selectedNodeId === nodeId ? "white" : "#818cf8"} />}
@@ -2712,6 +2768,39 @@ export default function GraphEditor() {
                 )
               ) : (
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Add chunks to see analysis.</span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {leftPanelTab === 'category' && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Categories in Level</div>
+            <div style={{ overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', paddingRight: '4px' }}>
+              {nodes.filter(n => n.data.isCategory).map(n => (
+                <div 
+                  key={n.id}
+                  onClick={() => handleFocusNode(n.id)}
+                  style={{
+                    padding: '8px 12px', borderRadius: '8px', cursor: 'pointer',
+                    background: selectedNodeId === n.id ? 'var(--accent)' : 'rgba(0,0,0,0.2)',
+                    border: selectedNodeId === n.id ? '1px solid var(--accent)' : '1px solid var(--panel-border)',
+                    color: selectedNodeId === n.id ? 'white' : 'var(--text-main)',
+                    display: 'flex', alignItems: 'center', gap: '8px'
+                  }}
+                >
+                  {n.data.icon ? (
+                    <img src={`/word_icon/${String(n.data.icon)}.png`} alt="" style={{ width: 16, height: 16 }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  ) : (
+                    <div style={{ width: 16, height: 16, borderRadius: '4px', background: 'var(--panel-border)' }} />
+                  )}
+                  <span style={{ textTransform: 'capitalize', fontWeight: 600 }}>{String(n.data.label)}</span>
+                </div>
+              ))}
+              {nodes.filter(n => n.data.isCategory).length === 0 && (
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', marginTop: '20px' }}>
+                  No categories found.
+                </div>
               )}
             </div>
           </div>
