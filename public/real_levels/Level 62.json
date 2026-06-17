@@ -19,20 +19,16 @@
     "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
     "type": 3
   },
-  "m_Name": "Level 817",
+  "m_Name": "Level 61",
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Woodwind Instruments",
+      "category": "Type of environment",
       "parentCategory": null,
-      "icon": "woodwind instruments",
+      "icon": null,
       "words": [
         {
-          "fullWord": "clarinet",
-          "chunks": [
-            "clar",
-            "inet"
-          ],
+          "fullWord": "Urban",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -40,11 +36,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "bassoon",
-          "chunks": [
-            "bass",
-            "oon"
-          ],
+          "fullWord": "Coastal",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -52,27 +44,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "saxophone",
-          "chunks": [
-            "saxop",
-            "hone"
-          ],
-          "icon": "saxophone.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Flute",
-      "parentCategory": "Woodwind Instruments",
-      "icon": "flute",
-      "words": [
-        {
-          "fullWord": "tone",
-          "chunks": [],
+          "fullWord": "Suburban",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -80,35 +52,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "embouchure",
-          "chunks": [
-            "embou",
-            "chure"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "headjoint",
-          "chunks": [
-            "headj",
-            "oint"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "footjoint",
-          "chunks": [
-            "footj",
-            "oint"
-          ],
+          "fullWord": "Rural",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -118,16 +62,51 @@
       ]
     },
     {
-      "category": "Depths",
+      "category": "Urban",
+      "parentCategory": "Type of environment",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Roads",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Transit",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Traffic",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Crowd",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Weather types",
       "parentCategory": null,
-      "icon": "depths",
+      "icon": null,
       "words": [
         {
-          "fullWord": "trench",
-          "chunks": [
-            "tre",
-            "nch"
-          ],
+          "fullWord": "Tropical",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -135,8 +114,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "abyss",
-          "chunks": [],
+          "fullWord": "Rainy",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -144,8 +122,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "cave",
-          "chunks": [],
+          "fullWord": "Clear",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -153,8 +130,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "ocean",
-          "chunks": [],
+          "fullWord": "Temperate",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -164,16 +140,90 @@
       ]
     },
     {
-      "category": "Tartlet",
+      "category": "Tropical",
+      "parentCategory": "Weather types",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Beach",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Palm",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lagoon",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Mango",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Rainy",
+      "parentCategory": "Weather types",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Weather",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Hood",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Showers",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Patter",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Living room",
       "parentCategory": null,
-      "icon": "tartlet",
+      "icon": null,
       "words": [
         {
-          "fullWord": "mint leaf",
-          "chunks": [
-            "mint ",
-            "leaf"
-          ],
+          "fullWord": "Tv",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -181,11 +231,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "lemon wedge",
-          "chunks": [
-            "lemon ",
-            "wedge"
-          ],
+          "fullWord": "Carpet",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -193,11 +239,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "apple slice",
-          "chunks": [
-            "apple ",
-            "slice"
-          ],
+          "fullWord": "Sofa",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -205,11 +247,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "almond bits",
-          "chunks": [
-            "almond ",
-            "bits"
-          ],
+          "fullWord": "Couch",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -219,16 +257,51 @@
       ]
     },
     {
-      "category": "Rhetorical devices",
+      "category": "Tv",
+      "parentCategory": "Living room",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Screen",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cable",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Remote",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Channel",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Birds Of Prey",
       "parentCategory": null,
-      "icon": "rhetorical devices",
+      "icon": null,
       "words": [
         {
-          "fullWord": "allusion",
-          "chunks": [
-            "allu",
-            "sion"
-          ],
+          "fullWord": "Raven",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -236,11 +309,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "metaphor",
-          "chunks": [
-            "meta",
-            "phor"
-          ],
+          "fullWord": "Hawk",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -248,11 +317,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "hyperbole",
-          "chunks": [
-            "hyper",
-            "bole"
-          ],
+          "fullWord": "Owl",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -260,11 +325,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "synecdoche",
-          "chunks": [
-            "synec",
-            "doche"
-          ],
+          "fullWord": "Kite",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -274,16 +335,12 @@
       ]
     },
     {
-      "category": "Meteorology",
-      "parentCategory": null,
-      "icon": "meteorology",
+      "category": "Raven",
+      "parentCategory": "Birds Of Prey",
+      "icon": null,
       "words": [
         {
-          "fullWord": "blizzard",
-          "chunks": [
-            "bliz",
-            "zard"
-          ],
+          "fullWord": "Ebony",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -291,11 +348,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "sunshine",
-          "chunks": [
-            "suns",
-            "hine"
-          ],
+          "fullWord": "Lenore",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -303,11 +356,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "storms",
-          "chunks": [
-            "sto",
-            "rms"
-          ],
+          "fullWord": "Poe",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -315,11 +364,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "monsoon",
-          "chunks": [
-            "mons",
-            "oon"
-          ],
+          "fullWord": "Edgar",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -329,16 +374,12 @@
       ]
     },
     {
-      "category": "Famous movies",
-      "parentCategory": null,
-      "icon": "famous movies",
+      "category": "Hawk",
+      "parentCategory": "Birds Of Prey",
+      "icon": null,
       "words": [
         {
-          "fullWord": "titanic",
-          "chunks": [
-            "tita",
-            "nic"
-          ],
+          "fullWord": "Peregrine",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -346,11 +387,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "godfather",
-          "chunks": [
-            "godfa",
-            "ther"
-          ],
+          "fullWord": "Buzzard",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -358,11 +395,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "inception",
-          "chunks": [
-            "incep",
-            "tion"
-          ],
+          "fullWord": "Red-tailed",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -370,256 +403,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "the matrix",
-          "chunks": [
-            "the ",
-            "matrix"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Allocate",
-      "parentCategory": null,
-      "icon": "allocate",
-      "words": [
-        {
-          "fullWord": "assign",
-          "chunks": [
-            "ass",
-            "ign"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "appoint",
-          "chunks": [
-            "appo",
-            "int"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "allot",
-          "chunks": [],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "earmark",
-          "chunks": [
-            "earm",
-            "ark"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Hard-Shelled",
-      "parentCategory": null,
-      "icon": "hard-shelled",
-      "words": [
-        {
-          "fullWord": "coconut",
-          "chunks": [
-            "coco",
-            "nut"
-          ],
-          "icon": "coconut.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "turtle",
-          "chunks": [
-            "tur",
-            "tle"
-          ],
-          "icon": "turtle.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "clam",
-          "chunks": [],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Nuts",
-      "parentCategory": "Hard-Shelled",
-      "icon": "nuts",
-      "words": [
-        {
-          "fullWord": "walnut",
-          "chunks": [
-            "wal",
-            "nut"
-          ],
-          "icon": "walnut.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "almond",
-          "chunks": [
-            "alm",
-            "ond"
-          ],
-          "icon": "almond.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "peanut",
-          "chunks": [
-            "pea",
-            "nut"
-          ],
-          "icon": "peanut.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "pistachio",
-          "chunks": [
-            "pista",
-            "chio"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Farm Tools",
-      "parentCategory": null,
-      "icon": "farm tools",
-      "words": [
-        {
-          "fullWord": "bucket",
-          "chunks": [
-            "buc",
-            "ket"
-          ],
-          "icon": "bucket.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "pitchfork",
-          "chunks": [
-            "pitch",
-            "fork"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "rake",
-          "chunks": [],
-          "icon": "rake.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "shovel",
-          "chunks": [
-            "sho",
-            "vel"
-          ],
-          "icon": "shovel.png",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Prehistoric",
-      "parentCategory": null,
-      "icon": "prehistoric",
-      "words": [
-        {
-          "fullWord": "flint",
-          "chunks": [],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "mammoth",
-          "chunks": [
-            "mamm",
-            "oth"
-          ],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "nomad",
-          "chunks": [],
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "cave",
-          "chunks": [],
+          "fullWord": "Osprey",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -630,13 +414,13 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 10,
+  "moveLimit": 40,
   "randomSeed": 0,
-  "levelDifficulty": 0,
+  "levelDifficulty": 1,
   "allWordEntries": [
     {
-      "fullWord": "tone",
-      "chunks": [],
+      "fullWord": "Beach",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -644,11 +428,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "embouchure",
-      "chunks": [
-        "embou",
-        "chure"
-      ],
+      "fullWord": "Pa",
+      "parentWord": "Palm",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -656,11 +437,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "headjoint",
-      "chunks": [
-        "headj",
-        "oint"
-      ],
+      "fullWord": "Lm",
+      "parentWord": "Palm",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -668,11 +446,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "footjoint",
-      "chunks": [
-        "footj",
-        "oint"
-      ],
+      "fullWord": "Lagoon",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -680,11 +455,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "clarinet",
-      "chunks": [
-        "clar",
-        "inet"
-      ],
+      "fullWord": "Mango",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -692,11 +464,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "bassoon",
-      "chunks": [
-        "bass",
-        "oon"
-      ],
+      "fullWord": "Coa",
+      "parentWord": "Coastal",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -704,23 +473,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "saxophone",
-      "chunks": [
-        "saxop",
-        "hone"
-      ],
-      "icon": "saxophone.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "trench",
-      "chunks": [
-        "tre",
-        "nch"
-      ],
+      "fullWord": "Stal",
+      "parentWord": "Coastal",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -728,8 +482,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "abyss",
-      "chunks": [],
+      "fullWord": "Suburban",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -737,8 +491,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "cave",
-      "chunks": [],
+      "fullWord": "Rural",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -746,8 +500,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "ocean",
-      "chunks": [],
+      "fullWord": "Clear",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -755,11 +509,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "mint leaf",
-      "chunks": [
-        "mint ",
-        "leaf"
-      ],
+      "fullWord": "Temp",
+      "parentWord": "Temperate",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -767,11 +518,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "lemon wedge",
-      "chunks": [
-        "lemon ",
-        "wedge"
-      ],
+      "fullWord": "Erate",
+      "parentWord": "Temperate",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -779,11 +527,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "apple slice",
-      "chunks": [
-        "apple ",
-        "slice"
-      ],
+      "fullWord": "Screen",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -791,11 +536,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "almond bits",
-      "chunks": [
-        "almond ",
-        "bits"
-      ],
+      "fullWord": "Cable",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -803,11 +545,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "allusion",
-      "chunks": [
-        "allu",
-        "sion"
-      ],
+      "fullWord": "Remote",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -815,11 +554,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "metaphor",
-      "chunks": [
-        "meta",
-        "phor"
-      ],
+      "fullWord": "Channel",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -827,11 +563,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "hyperbole",
-      "chunks": [
-        "hyper",
-        "bole"
-      ],
+      "fullWord": "Carpet",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -839,11 +572,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "synecdoche",
-      "chunks": [
-        "synec",
-        "doche"
-      ],
+      "fullWord": "Sofa",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -851,11 +581,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "blizzard",
-      "chunks": [
-        "bliz",
-        "zard"
-      ],
+      "fullWord": "Wea",
+      "parentWord": "Weather",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -863,11 +590,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "sunshine",
-      "chunks": [
-        "suns",
-        "hine"
-      ],
+      "fullWord": "Ther",
+      "parentWord": "Weather",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -875,11 +599,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "storms",
-      "chunks": [
-        "sto",
-        "rms"
-      ],
+      "fullWord": "Hood",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -887,11 +608,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "monsoon",
-      "chunks": [
-        "mons",
-        "oon"
-      ],
+      "fullWord": "Showers",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -899,11 +617,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "titanic",
-      "chunks": [
-        "tita",
-        "nic"
-      ],
+      "fullWord": "Cr",
+      "parentWord": "Crowd",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -911,11 +626,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "godfather",
-      "chunks": [
-        "godfa",
-        "ther"
-      ],
+      "fullWord": "Lenore",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -923,11 +635,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "inception",
-      "chunks": [
-        "incep",
-        "tion"
-      ],
+      "fullWord": "Poe",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -935,11 +644,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "the matrix",
-      "chunks": [
-        "the ",
-        "matrix"
-      ],
+      "fullWord": "Edgar",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -947,11 +653,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "assign",
-      "chunks": [
-        "ass",
-        "ign"
-      ],
+      "fullWord": "Red-tailed",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -959,11 +662,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "appoint",
-      "chunks": [
-        "appo",
-        "int"
-      ],
+      "fullWord": "Patter",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -971,8 +671,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "allot",
-      "chunks": [],
+      "fullWord": "Buzzard",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -980,11 +680,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "earmark",
-      "chunks": [
-        "earm",
-        "ark"
-      ],
+      "fullWord": "Peregrine",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -992,47 +689,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "walnut",
-      "chunks": [
-        "wal",
-        "nut"
-      ],
-      "icon": "walnut.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "almond",
-      "chunks": [
-        "alm",
-        "ond"
-      ],
-      "icon": "almond.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "peanut",
-      "chunks": [
-        "pea",
-        "nut"
-      ],
-      "icon": "peanut.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "pistachio",
-      "chunks": [
-        "pista",
-        "chio"
-      ],
+      "fullWord": "Ebony",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -1040,32 +698,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "coconut",
-      "chunks": [
-        "coco",
-        "nut"
-      ],
-      "icon": "coconut.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "turtle",
-      "chunks": [
-        "tur",
-        "tle"
-      ],
-      "icon": "turtle.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "clam",
-      "chunks": [],
+      "fullWord": "Owl",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -1073,23 +707,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "bucket",
-      "chunks": [
-        "buc",
-        "ket"
-      ],
-      "icon": "bucket.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "pitchfork",
-      "chunks": [
-        "pitch",
-        "fork"
-      ],
+      "fullWord": "Traffic",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -1097,29 +716,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "rake",
-      "chunks": [],
-      "icon": "rake.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "shovel",
-      "chunks": [
-        "sho",
-        "vel"
-      ],
-      "icon": "shovel.png",
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "flint",
-      "chunks": [],
+      "fullWord": "Owd",
+      "parentWord": "Crowd",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -1127,11 +725,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "mammoth",
-      "chunks": [
-        "mamm",
-        "oth"
-      ],
+      "fullWord": "Transit",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -1139,8 +734,35 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "nomad",
-      "chunks": [],
+      "fullWord": "Kite",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Roads",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Osprey",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Couch",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -1149,14 +771,39 @@
     }
   ],
   "allWords": [],
-  "frozenBubbles": [],
+  "frozenBubbles": [
+    {
+      "word": "Suburban",
+      "mergesNeeded": 10
+    },
+    {
+      "word": "Rural",
+      "mergesNeeded": 7
+    },
+    {
+      "word": "Channel",
+      "mergesNeeded": 5
+    },
+    {
+      "word": "Buzzard",
+      "mergesNeeded": 5
+    }
+  ],
   "burstBubbles": [],
   "keyLockBubbles": [],
   "bubbleChains": [],
-  "useBubbleSeparator": 0,
+  "useBubbleSeparator": 1,
   "bubbleSeparatorData": {
     "breakThreshold": 3,
-    "linkedWords": []
+    "linkedWords": [
+      "beach",
+      "pa",
+      "lagoon",
+      "mango",
+      "temp",
+      "erate",
+      "lm"
+    ]
   },
   "crypticBubbles": [],
   "screwLockBubbles": [],
