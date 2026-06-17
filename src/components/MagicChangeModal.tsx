@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, Sparkles, AlertCircle } from 'lucide-react';
 
 interface MagicChangeModalProps {
