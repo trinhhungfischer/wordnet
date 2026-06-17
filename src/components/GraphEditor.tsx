@@ -1554,7 +1554,7 @@ export default function GraphEditor() {
     }, 50);
   };
 
-  const handleMagicChange = (popularWords: string, minPopularity: number = 0) => {
+  const handleMagicChange = (popularWords: string, minPopularity: number = 0, maxPopularity: number = 1) => {
     saveHistory();
     const usedCategories = new Set<string>();
     let nextGlobalIndex = nodes.reduce((max, n) => Math.max(max, (n.data?.globalIndex as number) || 0), 0) + 1;
@@ -1677,7 +1677,7 @@ export default function GraphEditor() {
       const getHistoryPenalty = (catName: string) => history.includes(catName) ? 1 : 0;
 
       const categoryScores = new Map<string, number>();
-      if (!minPopularity || minPopularity === 0) {
+      if (minPopularity === 0 && maxPopularity === 1) {
         matches.forEach((cat: any) => {
            let totalPop = 0;
            let properCount = 0;
@@ -1701,10 +1701,14 @@ export default function GraphEditor() {
         const bPenalty = getHistoryPenalty(b.name);
         if (aPenalty !== bPenalty) return aPenalty - bPenalty;
 
-        // 2. minPopularity count (higher is better)
-        if (minPopularity > 0) {
-          const aCount = a.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
-          const bCount = b.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
+        // 2. popularity bounds count (higher is better)
+        if (minPopularity > 0 || maxPopularity < 1) {
+          const countWords = (cat: any) => cat.words.filter((w: any) => {
+             const pop = w.popularity || 0;
+             return pop >= minPopularity && pop <= maxPopularity;
+          }).length;
+          const aCount = countWords(a);
+          const bCount = countWords(b);
           if (aCount !== bCount) return bCount - aCount;
         } else {
           // 3. Clone Rarity/Semantic distance (lower is better)
@@ -1721,10 +1725,14 @@ export default function GraphEditor() {
       // Pool selection to increase variance (if no specific popularWords provided)
       if (!popularWords) {
         let pool = matches.filter(m => getHistoryPenalty(m.name) === getHistoryPenalty(matches[0].name));
-        if (minPopularity > 0 && pool.length > 0) {
-          const maxCount = pool[0].words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
+        if ((minPopularity > 0 || maxPopularity < 1) && pool.length > 0) {
+          const countWords = (cat: any) => cat.words.filter((w: any) => {
+             const pop = w.popularity || 0;
+             return pop >= minPopularity && pop <= maxPopularity;
+          }).length;
+          const maxCount = countWords(pool[0]);
           pool = pool.filter(m => {
-            const count = m.words.filter((w: any) => (w.popularity || 0) >= minPopularity).length;
+            const count = countWords(m);
             return count >= maxCount * 0.7; // allow 30% variance in word count
           });
         } else if (pool.length > 0) {
@@ -2953,9 +2961,9 @@ export default function GraphEditor() {
       <MagicChangeModal
         isOpen={isMagicChangeOpen}
         onClose={() => setIsMagicChangeOpen(false)}
-        onExecute={(popularWords, minPopularity) => {
+        onExecute={(popularWords, minPopularity, maxPopularity) => {
           setIsMagicChangeOpen(false);
-          handleMagicChange(popularWords, minPopularity);
+          handleMagicChange(popularWords, minPopularity, maxPopularity);
         }}
       />
 

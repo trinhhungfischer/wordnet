@@ -1,15 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Sparkles, AlertCircle } from 'lucide-react';
 
 interface MagicChangeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onExecute: (popularWords: string, minPopularity: number) => void;
+  onExecute: (popularWords: string, minPopularity: number, maxPopularity: number) => void;
 }
 
 export default function MagicChangeModal({ isOpen, onClose, onExecute }: MagicChangeModalProps) {
   const [popularWords, setPopularWords] = useState('');
   const [minPopularity, setMinPopularity] = useState<number>(0);
+  const [maxPopularity, setMaxPopularity] = useState<number>(1);
+
+  // Handle overlapping sliders
+  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.min(parseFloat(e.target.value), maxPopularity);
+    setMinPopularity(value);
+  };
+
+  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.max(parseFloat(e.target.value), minPopularity);
+    setMaxPopularity(value);
+  };
 
   if (!isOpen) return null;
 
@@ -47,22 +59,51 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute }: MagicCh
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'white', marginBottom: '8px' }}>
-              English Word Popularity Minimum (Mức độ phổ biến)
+              Word Popularity Range (Độ phổ biến)
             </label>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '8px', lineHeight: 1.4 }}>
-              Set minimum popularity score for words to be picked (0 = any word, 1 = extremely popular).
+              Set popularity score range for words to be picked (0 = extremely rare, 1 = extremely popular).
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            
+            <div style={{ position: 'relative', height: '30px', marginTop: '16px', display: 'flex', alignItems: 'center' }}>
+              <div style={{ position: 'absolute', left: 0, right: 0, height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px' }}>
+                <div style={{
+                  position: 'absolute',
+                  left: `${minPopularity * 100}%`,
+                  right: `${100 - maxPopularity * 100}%`,
+                  height: '100%',
+                  background: 'var(--accent)',
+                  borderRadius: '2px'
+                }} />
+              </div>
               <input 
                 type="range" 
                 min="0" max="1" step="0.01" 
                 value={minPopularity} 
-                onChange={e => setMinPopularity(parseFloat(e.target.value))} 
-                style={{ flex: 1, accentColor: 'var(--accent)' }}
+                onChange={handleMinChange}
+                style={{ 
+                  position: 'absolute', width: '100%', appearance: 'none', background: 'transparent', pointerEvents: 'none', zIndex: 3
+                }}
+                className="dual-slider"
               />
-              <span style={{ fontSize: '13px', color: 'white', fontWeight: 600, width: '40px' }}>
-                {minPopularity.toFixed(2)}
-              </span>
+              <input 
+                type="range" 
+                min="0" max="1" step="0.01" 
+                value={maxPopularity} 
+                onChange={handleMaxChange}
+                style={{ 
+                  position: 'absolute', width: '100%', appearance: 'none', background: 'transparent', pointerEvents: 'none', zIndex: 4
+                }}
+                className="dual-slider"
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'white', fontWeight: 600, marginTop: '8px' }}>
+              <span>{minPopularity.toFixed(2)}</span>
+              <span>{maxPopularity.toFixed(2)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#a855f7', fontWeight: 500, marginTop: '4px' }}>
+              <span>Rarity (Độ hiếm): {(1 - minPopularity).toFixed(2)}</span>
+              <span>Rarity (Độ hiếm): {(1 - maxPopularity).toFixed(2)}</span>
             </div>
           </div>
 
@@ -105,13 +146,37 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute }: MagicCh
             Cancel
           </button>
           <button 
-            onClick={() => onExecute(popularWords, minPopularity)}
+            onClick={() => onExecute(popularWords, minPopularity, maxPopularity)}
             style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <Sparkles size={16} /> Execute Magic Change
           </button>
         </div>
+        
+        {/* Style for dual slider thumbs */}
+        <style dangerouslySetInnerHTML={{__html: `
+          .dual-slider::-webkit-slider-thumb {
+            appearance: none;
+            pointer-events: all;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--accent);
+          }
+          .dual-slider::-moz-range-thumb {
+            pointer-events: all;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--accent);
+          }
+        `}} />
       </div>
     </div>
   );
 }
+
