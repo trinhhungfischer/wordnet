@@ -1705,7 +1705,7 @@ export default function GraphEditor() {
         if (minPopularity > 0 || maxPopularity < 1) {
           const countWords = (cat: any) => cat.words.filter((w: any) => {
              const pop = w.popularity || 0;
-             return pop >= minPopularity && pop <= maxPopularity;
+             return pop >= minPopularity * 100 && pop <= maxPopularity * 100;
           }).length;
           const aCount = countWords(a);
           const bCount = countWords(b);
@@ -1728,7 +1728,7 @@ export default function GraphEditor() {
         if ((minPopularity > 0 || maxPopularity < 1) && pool.length > 0) {
           const countWords = (cat: any) => cat.words.filter((w: any) => {
              const pop = w.popularity || 0;
-             return pop >= minPopularity && pop <= maxPopularity;
+             return pop >= minPopularity * 100 && pop <= maxPopularity * 100;
           }).length;
           const maxCount = countWords(pool[0]);
           pool = pool.filter(m => {

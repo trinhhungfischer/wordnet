@@ -24,7 +24,7 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute, globalDic
       if (cat.words && Array.isArray(cat.words)) {
         cat.words.forEach((w: any) => {
           const pop = w.popularity || 0;
-          if (pop >= minPopularity && pop <= maxPopularity) {
+          if (pop >= minPopularity * 100 && pop <= maxPopularity * 100) {
             wordCount++;
             hasWord = true;
           }
