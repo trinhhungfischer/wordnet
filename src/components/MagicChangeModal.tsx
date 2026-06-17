@@ -101,9 +101,8 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute }: MagicCh
               <span>{minPopularity.toFixed(2)}</span>
               <span>{maxPopularity.toFixed(2)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#a855f7', fontWeight: 500, marginTop: '4px' }}>
-              <span>Rarity (Độ hiếm): {(1 - minPopularity).toFixed(2)}</span>
-              <span>Rarity (Độ hiếm): {(1 - maxPopularity).toFixed(2)}</span>
+            <div style={{ textAlign: 'center', fontSize: '12px', color: '#a855f7', fontWeight: 500, marginTop: '8px', background: 'rgba(168, 85, 247, 0.1)', padding: '6px', borderRadius: '6px' }}>
+              Khoảng Độ hiếm (Rarity Range): <strong>{(1 - maxPopularity).toFixed(2)}</strong> tới <strong>{(1 - minPopularity).toFixed(2)}</strong>
             </div>
           </div>
 
