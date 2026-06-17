@@ -11,7 +11,7 @@ interface MagicChangeModalProps {
 export default function MagicChangeModal({ isOpen, onClose, onExecute, globalDict }: MagicChangeModalProps) {
   const [popularWords, setPopularWords] = useState('');
   const [minPopularity, setMinPopularity] = useState<number>(0);
-  const [maxPopularity, setMaxPopularity] = useState<number>(1);
+  const [maxPopularity, setMaxPopularity] = useState<number>(100);
 
   // Calculate estimates
   const estimates = useMemo(() => {
@@ -24,7 +24,7 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute, globalDic
       if (cat.words && Array.isArray(cat.words)) {
         cat.words.forEach((w: any) => {
           const pop = w.popularity || 0;
-          if (pop >= minPopularity * 100 && pop <= maxPopularity * 100) {
+          if (pop >= minPopularity && pop <= maxPopularity) {
             wordCount++;
             hasWord = true;
           }
@@ -86,15 +86,15 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute, globalDic
               Word Popularity Range (Độ phổ biến)
             </label>
             <div style={{ fontSize: '12px', color: '#888', marginBottom: '8px', lineHeight: 1.4 }}>
-              Set popularity score range for words to be picked (0 = extremely rare, 1 = extremely popular).
+              Set popularity score range for words to be picked (0 = extremely rare, 100 = extremely popular).
             </div>
             
             <div style={{ position: 'relative', height: '30px', marginTop: '16px', display: 'flex', alignItems: 'center' }}>
               <div style={{ position: 'absolute', left: 0, right: 0, height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px' }}>
                 <div style={{
                   position: 'absolute',
-                  left: `${minPopularity * 100}%`,
-                  right: `${100 - maxPopularity * 100}%`,
+                  left: `${minPopularity}%`,
+                  right: `${100 - maxPopularity}%`,
                   height: '100%',
                   background: 'var(--accent)',
                   borderRadius: '2px'
@@ -102,7 +102,7 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute, globalDic
               </div>
               <input 
                 type="range" 
-                min="0" max="1" step="0.01" 
+                min="0" max="100" step="1" 
                 value={minPopularity} 
                 onChange={handleMinChange}
                 style={{ 
@@ -112,7 +112,7 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute, globalDic
               />
               <input 
                 type="range" 
-                min="0" max="1" step="0.01" 
+                min="0" max="100" step="1" 
                 value={maxPopularity} 
                 onChange={handleMaxChange}
                 style={{ 
@@ -123,10 +123,10 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute, globalDic
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <span style={{ fontSize: '13px', color: 'white', fontWeight: 600 }}>{minPopularity.toFixed(2)}</span>
+                <span style={{ fontSize: '13px', color: 'white', fontWeight: 600 }}>{Math.round(minPopularity)}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                <span style={{ fontSize: '13px', color: 'white', fontWeight: 600 }}>{maxPopularity.toFixed(2)}</span>
+                <span style={{ fontSize: '13px', color: 'white', fontWeight: 600 }}>{Math.round(maxPopularity)}</span>
               </div>
             </div>
             <div style={{ textAlign: 'center', fontSize: '12px', color: '#a855f7', fontWeight: 500, marginTop: '12px', background: 'rgba(168, 85, 247, 0.1)', padding: '8px', borderRadius: '6px' }}>

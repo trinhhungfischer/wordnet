@@ -1554,7 +1554,7 @@ export default function GraphEditor() {
     }, 50);
   };
 
-  const handleMagicChange = (popularWords: string, minPopularity: number = 0, maxPopularity: number = 1) => {
+  const handleMagicChange = (popularWords: string, minPopularity: number = 0, maxPopularity: number = 100) => {
     saveHistory();
     const usedCategories = new Set<string>();
     let nextGlobalIndex = nodes.reduce((max, n) => Math.max(max, (n.data?.globalIndex as number) || 0), 0) + 1;
@@ -1677,7 +1677,7 @@ export default function GraphEditor() {
       const getHistoryPenalty = (catName: string) => history.includes(catName) ? 1 : 0;
 
       const categoryScores = new Map<string, number>();
-      if (minPopularity === 0 && maxPopularity === 1) {
+      if (minPopularity === 0 && maxPopularity === 100) {
         matches.forEach((cat: any) => {
            let totalPop = 0;
            let properCount = 0;
@@ -1702,10 +1702,10 @@ export default function GraphEditor() {
         if (aPenalty !== bPenalty) return aPenalty - bPenalty;
 
         // 2. popularity bounds count (higher is better)
-        if (minPopularity > 0 || maxPopularity < 1) {
+        if (minPopularity > 0 || maxPopularity < 100) {
           const countWords = (cat: any) => cat.words.filter((w: any) => {
              const pop = w.popularity || 0;
-             return pop >= minPopularity * 100 && pop <= maxPopularity * 100;
+             return pop >= minPopularity && pop <= maxPopularity;
           }).length;
           const aCount = countWords(a);
           const bCount = countWords(b);
@@ -1725,10 +1725,10 @@ export default function GraphEditor() {
       // Pool selection to increase variance (if no specific popularWords provided)
       if (!popularWords) {
         let pool = matches.filter(m => getHistoryPenalty(m.name) === getHistoryPenalty(matches[0].name));
-        if ((minPopularity > 0 || maxPopularity < 1) && pool.length > 0) {
+        if ((minPopularity > 0 || maxPopularity < 100) && pool.length > 0) {
           const countWords = (cat: any) => cat.words.filter((w: any) => {
              const pop = w.popularity || 0;
-             return pop >= minPopularity * 100 && pop <= maxPopularity * 100;
+             return pop >= minPopularity && pop <= maxPopularity;
           }).length;
           const maxCount = countWords(pool[0]);
           pool = pool.filter(m => {

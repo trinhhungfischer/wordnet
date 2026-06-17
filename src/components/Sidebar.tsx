@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { Node, Edge } from '@xyflow/react';
 import { Plus, X, Trash2, BookOpen, Layers, Globe, Search as SearchIcon, Copy, ClipboardPaste } from 'lucide-react';
 import { fetchSpecificTypes, fetchRelatedWords, fetchWikipediaSuggestions, type WordSuggestion } from '../lib/api';
@@ -109,6 +109,18 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
       loadSuggestions(activeTab);
     }
   }, [selectedNode, activeTab, contextChildLabel]);
+
+  const selectedNodePopularity = useMemo(() => {
+    if (!selectedNode || selectedNode.data.isCategory || selectedNode.data.isChunk || !dictionary) return null;
+    const label = String(selectedNode.data.label).toLowerCase();
+    for (const cat of dictionary) {
+      if (cat.words) {
+        const match = cat.words.find((w: any) => w.word.toLowerCase() === label);
+        if (match && match.popularity !== undefined) return match.popularity;
+      }
+    }
+    return null;
+  }, [selectedNode, dictionary]);
 
   const isMultiSelection = selectedNodes.length > 1;
   const selectionId = selectedNodes.map(n => n.id).sort().join(',');
@@ -463,13 +475,20 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
               </button>
             </form>
           ) : (
-            <h2 
-              onDoubleClick={() => setIsEditing(true)}
-              title="Double click to edit"
-              style={{ fontSize: '22px', fontWeight: 600, color: 'var(--accent)', textTransform: 'capitalize', cursor: 'text' }}
-            >
-              {String(selectedNode.data.label)}
-            </h2>
+            <div>
+              <h2 
+                onDoubleClick={() => setIsEditing(true)}
+                title="Double click to edit"
+                style={{ fontSize: '22px', fontWeight: 600, color: 'var(--accent)', textTransform: 'capitalize', cursor: 'text', margin: 0 }}
+              >
+                {String(selectedNode.data.label)}
+              </h2>
+              {selectedNodePopularity !== null && (
+                <div style={{ fontSize: '12px', color: '#a855f7', marginTop: '4px', fontWeight: 500 }}>
+                  Độ phổ biến: {selectedNodePopularity}
+                </div>
+              )}
+            </div>
           )}
         </div>
         <button onClick={onClose} style={{
