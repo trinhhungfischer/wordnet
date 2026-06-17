@@ -235,7 +235,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                         }}
                       >
                         {(step.type !== 'event' && step.type !== 'success') ? (
-                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', width: '20px', textAlign: 'right' }}>{idx + 1}.</span>
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', width: '20px', textAlign: 'right' }}>{step.moveIndex}.</span>
                         ) : (
                           <span style={{ fontSize: '12px', color: 'var(--text-muted)', width: '20px', textAlign: 'right' }}>-</span>
                         )}

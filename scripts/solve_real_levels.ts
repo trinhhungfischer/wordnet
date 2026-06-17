@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { calculateSolution } from '../src/lib/solutionCalculator.js';
 
 const levelsDir = path.join(process.cwd(), 'public', 'real_levels');
+const globalDict = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'public', 'global_dictionary.json'), 'utf8'));
 
 function buildGraph(data: any) {
   const newNodes: any[] = [];
@@ -125,7 +126,7 @@ function getSpawnQueue(nodes: any[], edges: any[], data: any) {
 
 function runAnalysis() {
   const results: string[] = [];
-  results.push('Level,Total Nodes,Spawn Queue Length,Solver Moves,Bonus Turns,Recommended Moves,Difficulty Score,Difficulty Label');
+  results.push('Level,Total Nodes,Spawn Queue Length,Solver Moves,Bonus Turns,Config Move Limit,Old Score,Old Label,Peak Congestion,Congestion Turns,Rarity Score,Mechanics Count,Move Tightness,Finetuned Score,Finetuned Label');
 
   for (let i = 0; i <= 1000; i++) {
     const filePath = path.join(levelsDir, `Level ${i}.json`);
@@ -143,10 +144,77 @@ function runAnalysis() {
       
       const res = calculateSolution(nodes, edges, data, spawnQueueIds);
       
-      results.push(`Level ${i},${nodes.length},${spawnQueueIds.length},${res.totalMoves},${res.bonusTurns},${res.recommendedMoveLimit},${res.difficulty.score},${res.difficulty.label}`);
+      let peakCongestion = 0;
+      let congestionTurns = 0;
+      const maxBubbles = data.maxBubblesInScene || 20;
+      const threshold = maxBubbles * 0.8;
+
+      res.steps.forEach((step: any) => {
+        const boardSize = step.boardState.length;
+        if (boardSize > peakCongestion) peakCongestion = boardSize;
+        if (boardSize >= threshold) congestionTurns++;
+      });
+      
+      let rarityScore = 0;
+      const wordNodes = nodes.filter(n => !n.data.isCategory && !n.data.isChunk);
+      if (wordNodes.length > 0) {
+        let ultraRare = 0; let veryRare = 0; let rare = 0; let common = 0;
+        wordNodes.forEach(wn => {
+          const wLabel = String(wn.data.label).toLowerCase();
+          let foundPop: number | null = null;
+          for (const cat of globalDict) {
+            const match = cat.words.find((w: any) => w.word.toLowerCase() === wLabel);
+            if (match && match.popularity) {
+              foundPop = match.popularity;
+              break;
+            }
+          }
+          if (foundPop !== null) {
+            if (foundPop < 15) ultraRare++;
+            else if (foundPop < 30) veryRare++;
+            else if (foundPop < 50) rare++;
+            else if (foundPop > 80) common++;
+          }
+        });
+        rarityScore = (ultraRare * 8) + (veryRare * 4) + (rare * 2);
+        if (common > wordNodes.length * 0.7) rarityScore -= 10;
+      }
+      
+      // Calculate Mechanics
+      let mechanicsCount = 0;
+      if (data.useBubbleSeparator === 1) mechanicsCount++;
+      if (data.frozenBubbles && data.frozenBubbles.length > 0) mechanicsCount++;
+      if (data.keyLockBubbles && data.keyLockBubbles.length > 0) mechanicsCount++;
+      if (data.burstBubbles && data.burstBubbles.length > 0) mechanicsCount++;
+      if (data.crypticBubbles && data.crypticBubbles.length > 0) mechanicsCount++;
+      if (data.screwLockBubbles && data.screwLockBubbles.length > 0) mechanicsCount++;
+      if (data.backwardBubbles && data.backwardBubbles.length > 0) mechanicsCount++;
+      if (data.crackedBubbles && data.crackedBubbles.length > 0) mechanicsCount++;
+      if (data.linkedBubbles && data.linkedBubbles.length > 0) mechanicsCount++;
+      
+      const configMoveLimit = data.moveLimit || 0;
+      const moveTightness = configMoveLimit - res.totalMoves;
+      
+      let finetunedScore = (
+        nodes.length * 0.84 +
+        mechanicsCount * 5.51 +
+        peakCongestion * 0.83 +
+        congestionTurns * 0.16 -
+        moveTightness * 0.23 -
+        rarityScore * 0.32 -
+        34.7
+      );
+      finetunedScore = Math.max(0, Math.round(finetunedScore * 10) / 10);
+      
+      let finetunedLabel = 'Easy';
+      if (finetunedScore > 50) finetunedLabel = 'Expert';
+      else if (finetunedScore > 30) finetunedLabel = 'Hard';
+      else if (finetunedScore > 15) finetunedLabel = 'Medium';
+      
+      results.push(`Level ${i},${nodes.length},${spawnQueueIds.length},${res.totalMoves},${res.bonusTurns},${configMoveLimit},${res.difficulty.score},${res.difficulty.label},${peakCongestion},${congestionTurns},${rarityScore},${mechanicsCount},${moveTightness},${finetunedScore},${finetunedLabel}`);
     } catch (e: any) {
       console.error(`Error in Level ${i}:`, e.message);
-      results.push(`Level ${i},ERROR,,,,,,`);
+      results.push(`Level ${i},ERROR,,,,,,,,,,,,,`);
     }
   }
 
