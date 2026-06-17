@@ -97,12 +97,15 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute }: MagicCh
                 className="dual-slider"
               />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'white', fontWeight: 600, marginTop: '8px' }}>
-              <span>{minPopularity.toFixed(2)}</span>
-              <span>{maxPopularity.toFixed(2)}</span>
-            </div>
-            <div style={{ textAlign: 'center', fontSize: '12px', color: '#a855f7', fontWeight: 500, marginTop: '8px', background: 'rgba(168, 85, 247, 0.1)', padding: '6px', borderRadius: '6px' }}>
-              Độ hiếm (Rarity) tương ứng: <strong>{(1 - minPopularity).toFixed(2)}</strong> tới <strong>{(1 - maxPopularity).toFixed(2)}</strong>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '13px', color: 'white', fontWeight: 600 }}>{minPopularity.toFixed(2)}</span>
+                <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 500 }}>Độ hiếm: {(1 - minPopularity).toFixed(2)}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <span style={{ fontSize: '13px', color: 'white', fontWeight: 600 }}>{maxPopularity.toFixed(2)}</span>
+                <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 500 }}>Độ hiếm: {(1 - maxPopularity).toFixed(2)}</span>
+              </div>
             </div>
           </div>
 
