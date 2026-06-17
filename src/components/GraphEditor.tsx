@@ -2960,6 +2960,7 @@ export default function GraphEditor() {
 
       <MagicChangeModal
         isOpen={isMagicChangeOpen}
+        globalDict={globalDict}
         onClose={() => setIsMagicChangeOpen(false)}
         onExecute={(popularWords, minPopularity, maxPopularity) => {
           setIsMagicChangeOpen(false);

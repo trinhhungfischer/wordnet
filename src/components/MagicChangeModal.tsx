@@ -1,16 +1,40 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { X, Sparkles, AlertCircle } from 'lucide-react';
 
 interface MagicChangeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onExecute: (popularWords: string, minPopularity: number, maxPopularity: number) => void;
+  globalDict: any[];
 }
 
-export default function MagicChangeModal({ isOpen, onClose, onExecute }: MagicChangeModalProps) {
+export default function MagicChangeModal({ isOpen, onClose, onExecute, globalDict }: MagicChangeModalProps) {
   const [popularWords, setPopularWords] = useState('');
   const [minPopularity, setMinPopularity] = useState<number>(0);
   const [maxPopularity, setMaxPopularity] = useState<number>(1);
+
+  // Calculate estimates
+  const estimates = useMemo(() => {
+    if (!globalDict) return { words: 0, categories: 0 };
+    let wordCount = 0;
+    let catCount = 0;
+    
+    globalDict.forEach(cat => {
+      let hasWord = false;
+      if (cat.words && Array.isArray(cat.words)) {
+        cat.words.forEach((w: any) => {
+          const pop = w.popularity || 0;
+          if (pop >= minPopularity && pop <= maxPopularity) {
+            wordCount++;
+            hasWord = true;
+          }
+        });
+      }
+      if (hasWord) catCount++;
+    });
+    
+    return { words: wordCount, categories: catCount };
+  }, [globalDict, minPopularity, maxPopularity]);
 
   // Handle overlapping sliders
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,12 +124,13 @@ export default function MagicChangeModal({ isOpen, onClose, onExecute }: MagicCh
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <span style={{ fontSize: '13px', color: 'white', fontWeight: 600 }}>{minPopularity.toFixed(2)}</span>
-                <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 500 }}>Độ hiếm: {(1 - minPopularity).toFixed(2)}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                 <span style={{ fontSize: '13px', color: 'white', fontWeight: 600 }}>{maxPopularity.toFixed(2)}</span>
-                <span style={{ fontSize: '11px', color: '#a855f7', fontWeight: 500 }}>Độ hiếm: {(1 - maxPopularity).toFixed(2)}</span>
               </div>
+            </div>
+            <div style={{ textAlign: 'center', fontSize: '12px', color: '#a855f7', fontWeight: 500, marginTop: '12px', background: 'rgba(168, 85, 247, 0.1)', padding: '8px', borderRadius: '6px' }}>
+              Ước lượng thoả mãn: <strong>{estimates.categories}</strong> chủ đề (chứa tổng cộng <strong>{estimates.words}</strong> từ)
             </div>
           </div>
 
