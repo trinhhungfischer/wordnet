@@ -193,16 +193,16 @@ function runAnalysis() {
       if (data.linkedBubbles && data.linkedBubbles.length > 0) mechanicsCount++;
       
       const configMoveLimit = data.moveLimit || 0;
-      const moveTightness = configMoveLimit - res.totalMoves;
+      const moveTightness = configMoveLimit - res.recommendedMoveLimit;
       
       let finetunedScore = (
-        nodes.length * 0.84 +
-        mechanicsCount * 5.51 +
-        peakCongestion * 0.83 +
-        congestionTurns * 0.16 -
-        moveTightness * 0.23 -
-        rarityScore * 0.32 -
-        34.7
+        nodes.length * 0.77 +
+        mechanicsCount * 7.08 +
+        peakCongestion * 2.98 +
+        congestionTurns * 0.08 -
+        moveTightness * 0.58 -
+        rarityScore * 0.42 -
+        73.2
       );
       finetunedScore = Math.max(0, Math.round(finetunedScore * 10) / 10);
       
@@ -211,15 +211,16 @@ function runAnalysis() {
       else if (finetunedScore > 30) finetunedLabel = 'Hard';
       else if (finetunedScore > 15) finetunedLabel = 'Medium';
       
-      results.push(`Level ${i},${nodes.length},${spawnQueueIds.length},${res.totalMoves},${res.bonusTurns},${configMoveLimit},${res.difficulty.score},${res.difficulty.label},${peakCongestion},${congestionTurns},${rarityScore},${mechanicsCount},${moveTightness},${finetunedScore},${finetunedLabel}`);
+      // I am exporting res.recommendedMoveLimit instead of res.totalMoves for the Solver Moves column!
+      results.push(`Level ${i},${nodes.length},${spawnQueueIds.length},${res.recommendedMoveLimit},${res.bonusTurns},${configMoveLimit},${res.difficulty.score},${res.difficulty.label},${peakCongestion},${congestionTurns},${rarityScore},${mechanicsCount},${moveTightness},${finetunedScore},${finetunedLabel}`);
     } catch (e: any) {
       console.error(`Error in Level ${i}:`, e.message);
       results.push(`Level ${i},ERROR,,,,,,,,,,,,,`);
     }
   }
 
-  fs.writeFileSync('Real_Levels_Difficulty.csv', results.join('\n'), 'utf8');
-  console.log('✅ Wrote Real_Levels_Difficulty.csv');
+  fs.writeFileSync('Real_Levels_Difficulty_v2.csv', results.join('\n'));
+  console.log('✅ Wrote Real_Levels_Difficulty_v2.csv');
 }
 
 runAnalysis();

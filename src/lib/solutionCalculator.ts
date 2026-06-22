@@ -544,7 +544,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     addStep('success', '', '', '', `🏆 Level Complete! All bubbles cleared.`);
   }
 
-  const recommendedMoveLimit = Math.max(1, moveCount - bonusTurns + bombPenalties + 2);
+  const recommendedMoveLimit = Math.max(1, moveCount - bonusTurns + bombPenalties);
   const difficulty = calculateDifficulty(nodes, edges, levelData, moveCount);
 
   return {
