@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock, Key, Bomb, Wrench, PenTool } from 'lucide-react';
+import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock, Key, Bomb, Wrench, PenTool, ArrowLeftRight } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -333,8 +333,10 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   
                   const useFamilyColor = boardSortMode === 'family';
 
-                  const bgColor = useFamilyColor ? familyBg : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'));
-                  const borderColor = useFamilyColor ? familyBorder : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'));
+                  const isBackward = levelData?.backwardBubbles?.some((b: any) => b.word.toLowerCase() === displayLabel.toLowerCase());
+
+                  const bgColor = useFamilyColor ? familyBg : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')));
+                  const borderColor = useFamilyColor ? familyBorder : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')));
                   const textColor = useFamilyColor ? baseColorStr : (isChunk ? '#a5b4fc' : 'var(--text-main)');
 
                   return (
@@ -370,6 +372,11 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {crackMergesLeft > 0 && (
                             <span title={`Cracked Glass (${crackMergesLeft} groups left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#fbbf24', fontSize: '11px', fontWeight: 'bold' }}>
                               <Snowflake size={14} color="#fbbf24" /> {crackMergesLeft}
+                            </span>
+                          )}
+                          {isBackward && (
+                            <span title="Từ Ngược" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#a855f7', fontSize: '11px', fontWeight: 'bold' }}>
+                              <ArrowLeftRight size={14} color="#a855f7" /> Ngược
                             </span>
                           )}
                           {burstMovesRemaining !== undefined && (

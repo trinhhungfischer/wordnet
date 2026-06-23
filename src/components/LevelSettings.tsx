@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -354,6 +354,80 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     style={{ 
                       background: 'transparent', border: 'none', 
                       color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                    }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+          </div>
+        )}
+      </div>
+
+      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ArrowLeftRight size={16} color="#a855f7" />
+            Mechanic: Từ Ngược (Backward)
+          </h3>
+          <Toggle 
+            checked={forceOpen.backward || (levelData.backwardBubbles && levelData.backwardBubbles.length > 0)}
+            onChange={(checked) => {
+              setForceOpen(prev => ({ ...prev, backward: checked }));
+              handleChange('backwardBubbles', checked ? [] : undefined);
+            }}
+          />
+        </div>
+        {(forceOpen.backward || (levelData.backwardBubbles && levelData.backwardBubbles.length > 0)) && (
+          <div style={{ marginTop: '16px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+            Backward Words (Drag & Drop from left panel):
+          </div>
+          <div 
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+              if (wordLabel) {
+                const currentBackward = levelData.backwardBubbles || [];
+                if (!currentBackward.some((b: any) => b.word === wordLabel)) {
+                  handleChange('backwardBubbles', [...currentBackward, { word: wordLabel }]);
+                }
+              }
+            }}
+            style={{ 
+              minHeight: '80px', padding: '8px', border: '1px dashed rgba(168,85,247,0.5)', 
+              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+            }}
+          >
+            {(!levelData.backwardBubbles || levelData.backwardBubbles.length === 0) ? (
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                Drop words here
+              </span>
+            ) : (
+              levelData.backwardBubbles.map((bwItem: any, i: number) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(168,85,247,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(168,85,247,0.3)' }}>
+                  <span 
+                    onClick={() => {
+                      if (onFocusWord) onFocusWord(bwItem.word);
+                    }}
+                    style={{ 
+                      fontSize: '13px', fontWeight: 600, color: 'white', 
+                      cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {bwItem.word}
+                  </span>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleChange('backwardBubbles', levelData.backwardBubbles.filter((b: any) => b.word !== bwItem.word));
+                    }}
+                    style={{ 
+                      background: 'transparent', border: 'none', 
+                      color: '#d8b4fe', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
                     }}
                   >
                     &times;
