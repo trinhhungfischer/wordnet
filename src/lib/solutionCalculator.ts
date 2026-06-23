@@ -12,6 +12,10 @@ export interface BoardBubbleState {
   lockIndex: number;
   keyIndex: number;
   burstMovesRemaining?: number;
+  screwCount?: number;
+  isScrewDriver?: boolean;
+  screwLockIndex?: number;
+  screwDriverIndex?: number;
 }
 
 export interface MergeStep {
@@ -51,6 +55,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   
   let bombPenalties = 0;
   const explodedBombs = new Set<string>();
+  const screwEventsEmitted = new Set<string>();
 
   if (levelData?.allWordEntries) {
     levelData.allWordEntries.forEach((e: any) => {
@@ -90,6 +95,10 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let lockIndex = -1;
     let keyIndex = -1;
     let burstMovesRemaining: number | undefined;
+    let screwCountCalc: number | undefined;
+    let isScrewDriverCheck: boolean | undefined;
+    let screwLockIndex = -1;
+    let screwDriverIndex = -1;
 
     const w = displayLabel.toLowerCase();
     
@@ -136,6 +145,22 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
         if (rem < 0) rem = 0;
         burstMovesRemaining = rem;
       }
+      const screwLockRuleIdx = levelData?.screwLockBubbles?.findIndex((s: any) => s.screwLockWord.toLowerCase() === w);
+      if (screwLockRuleIdx !== undefined && screwLockRuleIdx !== -1) {
+        const screwLockRule = levelData.screwLockBubbles[screwLockRuleIdx];
+        screwLockIndex = screwLockRuleIdx;
+        const mergedDrivers = screwLockRule.screwDriverWords.filter((dw: string) => usedWords.has(dw.toLowerCase())).length;
+        screwCountCalc = screwLockRule.screwCount - mergedDrivers;
+        if (screwCountCalc < 0) screwCountCalc = 0;
+      }
+      
+      const screwDriverIdx = levelData?.screwLockBubbles?.findIndex((s: any) => s.screwDriverWords.some((dw: string) => dw.toLowerCase() === w));
+      if (screwDriverIdx !== undefined && screwDriverIdx !== -1) {
+        screwDriverIndex = screwDriverIdx;
+        isScrewDriverCheck = true;
+      } else {
+        isScrewDriverCheck = false;
+      }
     }
 
     return {
@@ -147,7 +172,11 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       crackMergesLeft: crackMergesLeft > 0 ? crackMergesLeft : 0,
       lockIndex,
       keyIndex,
-      burstMovesRemaining
+      burstMovesRemaining,
+      screwCount: screwCountCalc,
+      isScrewDriver: isScrewDriverCheck,
+      screwLockIndex,
+      screwDriverIndex
     };
   };
 
@@ -216,6 +245,28 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           }
         }
       });
+
+      // Check Screw Drivers
+      levelData?.screwLockBubbles?.forEach((s: any) => {
+         const driverLabels = s.screwDriverWords.map((dw:string) => dw.toLowerCase());
+         driverLabels.forEach((dw: string) => {
+            if (usedWords.has(dw) && !screwEventsEmitted.has(dw)) {
+               screwEventsEmitted.add(dw);
+               const driverOriginalCase = s.screwDriverWords.find((d:string) => d.toLowerCase() === dw) || dw;
+               steps.push({
+                 id: `step-${stepIdCounter++}`,
+                 type: 'event',
+                 left: '',
+                 right: '',
+                 result: '',
+                 text: `🔧 Tháo 1 ốc của "${s.screwLockWord}" nhờ "${driverOriginalCase}"`,
+                 isComboBonus: false,
+                 boardState: board.map(bid => getBubbleState(bid)),
+                 moveIndex: currentMoveIndex
+               });
+            }
+         });
+      });
     } else {
       steps.push({
         id: `step-${stepIdCounter++}`,
@@ -269,6 +320,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     }
 
     if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) return true;
+    
+    const screwLockRule = levelData?.screwLockBubbles?.find((s: any) => s.screwLockWord.toLowerCase() === w);
+    if (screwLockRule) {
+      const mergedDrivers = screwLockRule.screwDriverWords.filter((dw: string) => usedWords.has(dw.toLowerCase())).length;
+      if (screwLockRule.screwCount - mergedDrivers > 0) return true;
+    }
     
     const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
     if (frozenRule) {
@@ -603,11 +660,17 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, move
     factors.push(`${burstCount} Bomb Words`);
   }
 
-  const lockCount = levelData?.keyLockWords?.length || 0;
-  if (lockCount > 0) {
-    score += lockCount * 8;
-    factors.push(`${lockCount} Key-Lock Mechanics`);
-  }
+    const lockCount = levelData?.keyLockBubbles?.length || 0;
+    if (lockCount > 0) {
+      score += lockCount * 2;
+      factors.push(`${lockCount} Key-Lock Mechanics`);
+    }
+
+    const screwLockMechanicsCount = levelData?.screwLockBubbles?.length || 0;
+    if (screwLockMechanicsCount > 0) {
+      score += screwLockMechanicsCount * 3;
+      factors.push(`${screwLockMechanicsCount} Screw-Lock Mechanics`);
+    }
 
   // Rarity (Popularity) calculation
   const wordNodes = nodes.filter(n => !n.data.isCategory && !n.data.isChunk);

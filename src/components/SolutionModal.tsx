@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock, Key, Bomb } from 'lucide-react';
+import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock, Key, Bomb, Wrench, PenTool } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -74,6 +74,10 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
       let burstMovesRemaining = bubbleState.burstMovesRemaining;
       let lockIndex = bubbleState.lockIndex;
       let keyIndex = bubbleState.keyIndex;
+      let screwCount = bubbleState.screwCount;
+      let isScrewDriver = bubbleState.isScrewDriver;
+      let screwLockIndex = bubbleState.screwLockIndex;
+      let screwDriverIndex = bubbleState.screwDriverIndex;
       let node = nodes.find(n => n.id === nodeId);
 
       if (nodeId.startsWith('temp_[')) {
@@ -97,7 +101,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
          if (familyNode) familyName = String(familyNode.data.label);
       }
 
-      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, originalIdx: idx };
+      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, originalIdx: idx };
     }).filter(Boolean) as any[];
 
     if (boardSortMode === 'name') {
@@ -321,7 +325,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, originalIdx }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, originalIdx }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -381,6 +385,16 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {keyIndex !== -1 && keyIndex !== undefined && (
                             <span title="Key Word" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: lockKeyColors[keyIndex % lockKeyColors.length], fontSize: '11px', fontWeight: 'bold' }}>
                               <Key size={14} color={lockKeyColors[keyIndex % lockKeyColors.length]} /> Key
+                            </span>
+                          )}
+                          {screwCount !== undefined && screwCount > 0 && (
+                            <span title={`Screw Locked (${screwCount} left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: (screwLockIndex !== undefined && screwLockIndex !== -1) ? lockKeyColors[screwLockIndex % lockKeyColors.length] : '#f97316', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Wrench size={14} color={(screwLockIndex !== undefined && screwLockIndex !== -1) ? lockKeyColors[screwLockIndex % lockKeyColors.length] : '#f97316'} /> {screwCount}
+                            </span>
+                          )}
+                          {isScrewDriver && (
+                            <span title="Screw Driver" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: (screwDriverIndex !== undefined && screwDriverIndex !== -1) ? lockKeyColors[screwDriverIndex % lockKeyColors.length] : '#fb923c', fontSize: '11px', fontWeight: 'bold' }}>
+                              <PenTool size={14} color={(screwDriverIndex !== undefined && screwDriverIndex !== -1) ? lockKeyColors[screwDriverIndex % lockKeyColors.length] : '#fb923c'} /> Driver
                             </span>
                           )}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>

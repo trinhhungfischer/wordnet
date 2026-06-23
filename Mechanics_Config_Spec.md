@@ -124,22 +124,13 @@ Cấu trúc:
 "crypticBubbles": [
   {
     "word": "Dolphin",
-    "letters": [
-      {"letter": 68, "revealAtMerge": 5},
-      {"letter": 111, "revealAtMerge": 0},
-      {"letter": 108, "revealAtMerge": 2},
-      {"letter": 112, "revealAtMerge": 3},
-      {"letter": 104, "revealAtMerge": 1},
-      {"letter": 105, "revealAtMerge": 4},
-      {"letter": 110, "revealAtMerge": 0}
-    ]
+    "revealAtMerge": [5, 0, 2, 3, 1, 4, 0]
   }
 ]
 ```
 
 - `word`: Từ bị tàng hình.
-- `letters`: Chứa danh sách các ký tự trong từ đó (mã hóa ASCII - ví dụ 68 là 'D', 111 là 'o').
-- `revealAtMerge`: Định nghĩa ở lượt merge thứ mấy (của game) thì ký tự này mới ló mặt ra (0 = hiển thị luôn từ đầu).
+- `revealAtMerge`: Định nghĩa ở lượt merge thứ mấy (của game) thì ký tự tương ứng tại vị trí đó mới ló mặt ra (0 = hiển thị luôn từ đầu). Mảng này chứa các số nguyên tương ứng với vị trí từng chữ cái trong `word`.
 
 ---
 
@@ -170,6 +161,8 @@ Cấu trúc:
 - `screwDriverWords`: Danh sách các từ đóng vai trò làm tuốc nơ vít để vặn ốc.
 - `id`: Loại ốc / màu ốc.
 - `screwCount`: Số lượng ốc vít đang gắn trên quả bóng bị khóa.
+
+**Luật chơi:** Các từ bị lock (`screwLockWord`) sẽ không thể merge cho đến khi các screw (thông qua việc merge các `screwDriverWords`) được vặn hết (mất screw đi).
 
 ---
 
