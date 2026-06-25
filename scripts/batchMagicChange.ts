@@ -13,18 +13,30 @@ let startLevel = 1;
 let endLevel = 1;
 let minPop = 0;
 let targetProperNoun = -1; // -1 means auto-calculate from old tree
+let inDir = '../level_configs';
+let outDir = '../level_configs';
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--start' && args[i + 1]) startLevel = parseInt(args[++i]);
   else if (args[i] === '--end' && args[i + 1]) endLevel = parseInt(args[++i]);
   else if (args[i] === '--minPop' && args[i + 1]) minPop = parseInt(args[++i]);
   else if (args[i] === '--targetProperNoun' && args[i + 1]) targetProperNoun = parseFloat(args[++i]);
+  else if (args[i] === '--inDir' && args[i + 1]) inDir = args[++i];
+  else if (args[i] === '--outDir' && args[i + 1]) outDir = args[++i];
 }
 
 console.log(`Starting Batch Magic Change from Level ${startLevel} to ${endLevel}`);
 console.log(`minPopularity: ${minPop}, targetProperNoun: ${targetProperNoun === -1 ? 'Auto' : targetProperNoun}`);
+console.log(`Input Directory: ${inDir}`);
+console.log(`Output Directory: ${outDir}`);
 
-const levelConfigsDir = path.join(__dirname, '../level_configs');
+const levelConfigsDir = path.isAbsolute(inDir) ? inDir : path.join(__dirname, inDir);
+const outputConfigsDir = path.isAbsolute(outDir) ? outDir : path.join(__dirname, outDir);
+
+if (!fs.existsSync(outputConfigsDir)) {
+  fs.mkdirSync(outputConfigsDir, { recursive: true });
+}
+
 const dictionaryPath = path.join(__dirname, '../public/global_dictionary.json');
 
 // Load Dictionary
@@ -69,13 +81,12 @@ const isDuplicateRoot = (root: string, seenRoots: Set<string>) => {
     return false;
 };
 
-// --- TREE SIGNATURE LOGIC ---
-const getTreeSig = (catName: string, allCategories: any[]): any => {
-  const cat = allCategories.find(c => c.category === catName);
-  if (!cat) return { numWords: 0, subcats: [] };
-  const subcatNodes = allCategories.filter(c => c.parentCategory === cat.category);
-  const subcats = subcatNodes.map(c => getTreeSig(c.category, allCategories));
-  return { numWords: cat.words.length, subcats };
+const getTreeSig = (catName: string, allCats: any[]): any => {
+  const c = allCats.find((x: any) => x.category === catName);
+  if (!c) return { numWords: 0, subcats: [], oldWords: [] };
+  const subcats = allCats.filter((x: any) => x.parentCategory === catName);
+  const subSig = subcats.map((x: any) => getTreeSig(x.category, allCats));
+  return { numWords: c.words.length, subcats: subSig, oldWords: c.words.map((w: any) => w.fullWord) };
 };
 
 const dictSigCache = new Map<string, any>();
@@ -121,7 +132,7 @@ const createChunks = (word: string) => {
 };
 
 // --- IMPORT BRANCH LOGIC ---
-const generateNewBranch = (catName: string, parentCategory: string | null, reqSig: any, outCategories: any[], outWordEntries: any[], autoProperRatio: number, targetPop: number, magicChangeRoots: Set<string>) => {
+const generateNewBranch = (catName: string, parentCategory: string | null, reqSig: any, outCategories: any[], outWordEntries: any[], autoProperRatio: number, targetPop: number, magicChangeRoots: Set<string>, wordMapping: Map<string, string>, oldAllWordEntries: any[]) => {
   const entry = globalDict.find((e: any) => e.name.toLowerCase() === catName.toLowerCase());
   if (!entry) return;
 
@@ -147,7 +158,7 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
       availSubs.splice(matchIdx, 1);
       chosenSubcategories.push(chosenSub);
       magicChangeRoots.add(getRoot(chosenSub));
-      generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop, magicChangeRoots);
+      generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop, magicChangeRoots, wordMapping, oldAllWordEntries);
     } else {
       // Fallback
       const fallbackIdx = availSubs.findIndex(subName => isFulfilled(rSub, getDictSig(subName)));
@@ -156,7 +167,7 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
           availSubs.splice(fallbackIdx, 1);
           chosenSubcategories.push(chosenSub);
           magicChangeRoots.add(getRoot(chosenSub));
-          generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop, magicChangeRoots);
+          generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop, magicChangeRoots, wordMapping, oldAllWordEntries);
       }
     }
   });
@@ -229,6 +240,19 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
   }
 
   const numRequired = reqSig.numWords;
+  let retries = 0;
+  while (uniqueWords.length < numRequired && retries < 1000) {
+      retries++;
+      let randomCat = globalDict[Math.floor(Math.random() * globalDict.length)];
+      if (!randomCat.words || randomCat.words.length === 0) continue;
+      let randomWord = randomCat.words[Math.floor(Math.random() * randomCat.words.length)];
+      let r = getRoot(randomWord.word);
+      if (!isDuplicateRoot(r, tempSeenRoots)) {
+          tempSeenRoots.add(r);
+          uniqueWords.push(randomWord);
+      }
+  }
+
   while (uniqueWords.length < numRequired && duplicateWords.length > 0) {
     uniqueWords.push(duplicateWords.shift());
   }
@@ -244,7 +268,7 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
     wordsToImport = wordsToImport.slice(0, numRequired);
   }
 
-  wordsToImport.forEach((w: any) => {
+  wordsToImport.forEach((w: any, index: number) => {
     const wRoot = getRoot(w.word);
     magicChangeRoots.add(wRoot);
     
@@ -252,20 +276,41 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
     historyWords.push(wRoot);
     if (historyWords.length > MAX_WORD_HISTORY) historyWords.shift();
 
+    const oldWordStr = reqSig.oldWords && reqSig.oldWords[index];
+    let oldEntry = null;
+    if (oldWordStr) {
+      wordMapping.set(oldWordStr.toLowerCase(), w.word.toLowerCase());
+      oldEntry = oldAllWordEntries?.find((e: any) => e.fullWord.toLowerCase() === oldWordStr.toLowerCase());
+    }
+
     const chunks = createChunks(w.word);
+    
+    // Default values
+    let isCracked = 0;
+    let crackBreakNum = 0;
+    let isLinked = 0;
+    
+    // Inherit from old word entry to preserve mechanics!
+    if (oldEntry) {
+      isCracked = oldEntry.IsCracked || 0;
+      crackBreakNum = oldEntry.crackBreakNum || 0;
+      isLinked = oldEntry.IsLinked || 0;
+    }
+
     const wordEntry = {
-      fullWord: w.word.toLowerCase(),
+      ...(oldEntry || {}),
+      fullWord: w.word.charAt(0).toUpperCase() + w.word.slice(1),
       chunks: chunks,
-      icon: w.icon || null,
-      IsCracked: 0,
-      crackBreakNum: 0,
-      IsLinked: 0,
+      icon: null,
+      IsCracked: isCracked,
+      crackBreakNum: crackBreakNum,
+      IsLinked: isLinked,
       linkedChunkWords: []
     };
     newCat.words.push({
       fullWord: w.word.toLowerCase(),
       chunks: chunks,
-      icon: wordEntry.icon,
+      icon: null,
       IsCracked: 0,
       crackBreakNum: 0,
       IsLinked: 0,
@@ -289,6 +334,7 @@ for (let i = startLevel; i <= endLevel; i++) {
   const newCategories: any[] = [];
   const newAllWordEntries: any[] = [];
   const magicChangeRoots = new Set<string>();
+  const wordMapping = new Map<string, string>(); // oldWordLowerCase -> newWordLowerCase
 
   const rootCategories = levelData.categories.filter((c: any) => !c.parentCategory);
 
@@ -423,11 +469,54 @@ for (let i = startLevel; i <= endLevel; i++) {
     historyCategories.push(chosenCat.name.toLowerCase());
     if (historyCategories.length > MAX_CAT_HISTORY) historyCategories.shift();
 
-    generateNewBranch(chosenCat.name, null, sig, newCategories, newAllWordEntries, autoProperRatio, targetPop, magicChangeRoots);
+    generateNewBranch(chosenCat.name, null, sig, newCategories, newAllWordEntries, autoProperRatio, targetPop, magicChangeRoots, wordMapping, levelData.allWordEntries || []);
   }
 
   levelData.categories = newCategories;
   levelData.allWordEntries = newAllWordEntries;
+
+  // Remap mechanics (frozenBubbles, burstBubbles, etc.)
+  const remapWord = (w: string) => {
+    if (!w) return w;
+    const lower = w.toLowerCase();
+    if (wordMapping.has(lower)) {
+       const newWordLower = wordMapping.get(lower)!;
+       return newWordLower.charAt(0).toUpperCase() + newWordLower.slice(1);
+    }
+    return w;
+  };
+
+  if (levelData.frozenBubbles) {
+    levelData.frozenBubbles = levelData.frozenBubbles.map((fb: any) => ({ ...fb, word: remapWord(fb.word) }));
+  }
+  if (levelData.burstBubbles) {
+    levelData.burstBubbles = levelData.burstBubbles.map((bb: any) => ({ ...bb, word: remapWord(bb.word) }));
+  }
+  if (levelData.backwardBubbles) {
+    levelData.backwardBubbles = levelData.backwardBubbles.map((bw: any) => ({ ...bw, word: remapWord(bw.word) }));
+  }
+  if (levelData.keyLockBubbles) {
+    levelData.keyLockBubbles = levelData.keyLockBubbles.map((kl: any) => ({ ...kl, keyWord: remapWord(kl.keyWord), lockWord: remapWord(kl.lockWord) }));
+  }
+  if (levelData.bubbleChains) {
+    levelData.bubbleChains = levelData.bubbleChains.map((bc: any) => ({
+      ...bc,
+      chainRootWord: remapWord(bc.chainRootWord),
+      linkList: bc.linkList ? bc.linkList.map((ll: any) => ({ ...ll, linkedWord: remapWord(ll.linkedWord) })) : []
+    }));
+  }
+  if (levelData.crypticBubbles) {
+    levelData.crypticBubbles = levelData.crypticBubbles.map((cb: any) => ({ ...cb, word: remapWord(cb.word) }));
+  }
+  if (levelData.screwLockBubbles) {
+    levelData.screwLockBubbles = levelData.screwLockBubbles.map((sl: any) => ({ ...sl, screwWord: remapWord(sl.screwWord), dropWord: remapWord(sl.dropWord) }));
+  }
+  if (levelData.crackedBubbles) {
+    levelData.crackedBubbles = levelData.crackedBubbles.map((cb: any) => typeof cb === 'string' ? remapWord(cb) : { ...cb, word: remapWord(cb.word) });
+  }
+  if (levelData.linkedBubbles) {
+    levelData.linkedBubbles = levelData.linkedBubbles.map((lb: any) => typeof lb === 'string' ? remapWord(lb) : { ...lb, word: remapWord(lb.word) });
+  }
 
   // Deduplicate allWordEntries just in case
   const uniqueEntriesMap = new Map();
@@ -436,8 +525,9 @@ for (let i = startLevel; i <= endLevel; i++) {
   });
   levelData.allWordEntries = Array.from(uniqueEntriesMap.values());
 
-  fs.writeFileSync(filePath, JSON.stringify(levelData, null, 2), 'utf8');
-  console.log(`Saved Level ${i}`);
+  const outFilePath = path.join(outputConfigsDir, `Level ${i}.json`);
+  fs.writeFileSync(outFilePath, JSON.stringify(levelData, null, 2), 'utf8');
+  console.log(`Saved Level ${i} to ${outFilePath}`);
 }
 
 console.log('Batch Magic Change completed successfully!');

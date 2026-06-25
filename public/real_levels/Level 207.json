@@ -1,0 +1,1033 @@
+{
+  "m_ObjectHideFlags": 0,
+  "m_CorrespondingSourceObject": {
+    "fileID": 0
+  },
+  "m_PrefabInstance": {
+    "fileID": 0
+  },
+  "m_PrefabAsset": {
+    "fileID": 0
+  },
+  "m_GameObject": {
+    "fileID": 0
+  },
+  "m_Enabled": 1,
+  "m_EditorHideFlags": 0,
+  "m_Script": {
+    "fileID": 11500000,
+    "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
+    "type": 3
+  },
+  "m_Name": "Level 206",
+  "m_EditorClassIdentifier": null,
+  "categories": [
+    {
+      "category": "Rooms In A House",
+      "parentCategory": null,
+      "icon": "rooms in a house",
+      "words": [
+        {
+          "fullWord": "bedroom",
+          "chunks": [
+            "bedr",
+            "oom"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "kitchen",
+          "chunks": [
+            "kitc",
+            "hen"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "basement",
+          "chunks": [
+            "base",
+            "ment"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "garage",
+          "chunks": [
+            "gar",
+            "age"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Bathroom",
+      "parentCategory": "Rooms In A House",
+      "icon": "bathroom",
+      "words": [
+        {
+          "fullWord": "tile",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "soap",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "shampoo",
+          "chunks": [
+            "sham",
+            "poo"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "basin",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Map Types",
+      "parentCategory": null,
+      "icon": "map types",
+      "words": [
+        {
+          "fullWord": "physical",
+          "chunks": [
+            "phys",
+            "ical"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "climate",
+          "chunks": [
+            "clim",
+            "ate"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "political",
+          "chunks": [
+            "polit",
+            "ical"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "topographic",
+          "chunks": [
+            "topogr",
+            "aphic"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Ocean",
+      "parentCategory": null,
+      "icon": "ocean",
+      "words": [
+        {
+          "fullWord": "depths",
+          "chunks": [
+            "dep",
+            "ths"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "gulf",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "salty",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "abyss",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Fish",
+      "parentCategory": "Ocean",
+      "icon": "fish",
+      "words": [
+        {
+          "fullWord": "pike",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "salmon",
+          "chunks": [
+            "sal",
+            "mon"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "trout",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "carp",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Waves",
+      "parentCategory": "Ocean",
+      "icon": "waves",
+      "words": [
+        {
+          "fullWord": "surf",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "sound",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "curls",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "radio",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Reef",
+      "parentCategory": "Ocean",
+      "icon": "reef",
+      "words": [
+        {
+          "fullWord": "lagoon",
+          "chunks": [
+            "lag",
+            "oon"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "algae",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "coral",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "shell",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Medieval roles",
+      "parentCategory": null,
+      "icon": "medieval roles",
+      "words": [
+        {
+          "fullWord": "knight",
+          "chunks": [
+            "kni",
+            "ght"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "blacksmith",
+          "chunks": [
+            "black",
+            "smith"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "scribe",
+          "chunks": [
+            "scr",
+            "ibe"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "jester",
+          "chunks": [
+            "jes",
+            "ter"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Geological eras",
+      "parentCategory": null,
+      "icon": "geological eras",
+      "words": [
+        {
+          "fullWord": "cretaceous",
+          "chunks": [
+            "creta",
+            "ceous"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "devonian",
+          "chunks": [
+            "devo",
+            "nian"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "jurassic",
+          "chunks": [
+            "jura",
+            "ssic"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "triassic",
+          "chunks": [
+            "tria",
+            "ssic"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Duty",
+      "parentCategory": null,
+      "icon": "duty",
+      "words": [
+        {
+          "fullWord": "delegate",
+          "chunks": [
+            "dele",
+            "gate"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "mandate",
+          "chunks": [
+            "mand",
+            "ate"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "responsibility",
+          "chunks": [
+            "respons",
+            "ibility"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "onus",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    }
+  ],
+  "maxBubblesInScene": 24,
+  "moveLimit": 10,
+  "randomSeed": 0,
+  "levelDifficulty": 0,
+  "allWordEntries": [
+    {
+      "fullWord": "Tile",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Soap",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Shampoo",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "sham",
+        "poo"
+      ]
+    },
+    {
+      "fullWord": "Basin",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Bedroom",
+      "chunks": [
+        "bedr",
+        "oom"
+      ],
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Kitchen",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "kitc",
+        "hen"
+      ]
+    },
+    {
+      "fullWord": "Basement",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "base",
+        "ment"
+      ]
+    },
+    {
+      "fullWord": "Garage",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "gar",
+        "age"
+      ]
+    },
+    {
+      "fullWord": "Physical",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "phys",
+        "ical"
+      ]
+    },
+    {
+      "fullWord": "Climate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "clim",
+        "ate"
+      ]
+    },
+    {
+      "fullWord": "Political",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "polit",
+        "ical"
+      ]
+    },
+    {
+      "fullWord": "Topographic",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "topogr",
+        "aphic"
+      ]
+    },
+    {
+      "fullWord": "Pike",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Salmon",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "sal",
+        "mon"
+      ]
+    },
+    {
+      "fullWord": "Trout",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Carp",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Surf",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Sound",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Curls",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Radio",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Lagoon",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "lag",
+        "oon"
+      ]
+    },
+    {
+      "fullWord": "Algae",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Coral",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Shell",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Depths",
+      "chunks": [
+        "dep",
+        "ths"
+      ],
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Gulf",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Salty",
+      "chunks": [],
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Abyss",
+      "chunks": [],
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Knight",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "kni",
+        "ght"
+      ]
+    },
+    {
+      "fullWord": "Blacksmith",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "black",
+        "smith"
+      ]
+    },
+    {
+      "fullWord": "Scribe",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "scr",
+        "ibe"
+      ]
+    },
+    {
+      "fullWord": "Jester",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "jes",
+        "ter"
+      ]
+    },
+    {
+      "fullWord": "Cretaceous",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "creta",
+        "ceous"
+      ]
+    },
+    {
+      "fullWord": "Devonian",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "devo",
+        "nian"
+      ]
+    },
+    {
+      "fullWord": "Jurassic",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "jura",
+        "ssic"
+      ]
+    },
+    {
+      "fullWord": "Triassic",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "tria",
+        "ssic"
+      ]
+    },
+    {
+      "fullWord": "Delegate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "dele",
+        "gate"
+      ]
+    },
+    {
+      "fullWord": "Mandate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "mand",
+        "ate"
+      ]
+    },
+    {
+      "fullWord": "Responsibility",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "respons",
+        "ibility"
+      ]
+    },
+    {
+      "fullWord": "Onus",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    }
+  ],
+  "allWords": [],
+  "frozenBubbles": [],
+  "burstBubbles": [],
+  "keyLockBubbles": [],
+  "bubbleChains": [],
+  "useBubbleSeparator": 0,
+  "bubbleSeparatorData": {
+    "breakThreshold": 3,
+    "linkedWords": []
+  },
+  "crypticBubbles": [],
+  "screwLockBubbles": [
+    {
+      "screwLockWord": "Sunglasses",
+      "screwDriverWords": [
+        "show",
+        "act",
+        "scale",
+        "sparrow",
+        "steak"
+      ],
+      "id": 0,
+      "screwCount": 5
+    },
+    {
+      "screwLockWord": "water",
+      "screwDriverWords": [
+        "pizza",
+        "eagle"
+      ],
+      "id": 1,
+      "screwCount": 2
+    }
+  ],
+  "backwardBubbles": [],
+  "crackedBubbles": [],
+  "linkedBubbles": []
+}

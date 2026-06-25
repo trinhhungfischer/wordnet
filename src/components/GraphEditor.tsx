@@ -28,7 +28,7 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown } from 'lucide-react';
 import nlp from 'compromise';
 
 const nodeTypes = {
@@ -325,6 +325,7 @@ export default function GraphEditor() {
   const [misleadingWords, setMisleadingWords] = useState<string[]>([]);
   
   const [levels, setLevels] = useState<string[]>([]);
+  const [isRealLevels, setIsRealLevels] = useState<boolean>(false);
   const [selectedLevelName, setSelectedLevelName] = useState<string>('');
   
   const [rawLevelData, setRawLevelData] = useState<any>(null);
@@ -333,6 +334,8 @@ export default function GraphEditor() {
   const [isDictOpen, setIsDictOpen] = useState(false);
   const [isSolutionModalOpen, setIsSolutionModalOpen] = useState(false);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   const [copiedTreeConfig, setCopiedTreeConfig] = useState<any | null>(null);
   const [wordIndexSearchQuery, setWordIndexSearchQuery] = useState('');
@@ -461,11 +464,34 @@ export default function GraphEditor() {
   }, [nodes, edges, rawLevelData, setNodes, setEdges, setRawLevelData]);
 
   useEffect(() => {
-    fetch('/levels/index.json')
+    fetch(isRealLevels ? '/real_levels/index.json' : '/levels/index.json')
       .then(res => res.json())
       .then(data => setLevels(data))
       .catch(console.error);
+  }, [isRealLevels]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      setTimeout(() => {
+        const selectedEl = document.getElementById(`level-option-${selectedLevelName}`);
+        if (selectedEl) {
+          selectedEl.scrollIntoView({ block: 'center' });
+        }
+      }, 50);
+    }
+  }, [isDropdownOpen, selectedLevelName]);
+
+  useEffect(() => {
     fetch(`/global_dictionary.json?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => setGlobalDict(data))
@@ -824,15 +850,18 @@ export default function GraphEditor() {
       setSelectedNodeId(null);
   };
 
-  const loadLevel = async (levelName: string) => {
-    if (!levelName) return;
+  const loadLevel = async (levelName: string, forceRealLevels?: boolean) => {
+    if (!levelName) return false;
+    const realLevelsFlag = forceRealLevels !== undefined ? forceRealLevels : isRealLevels;
     try {
-      const res = await fetch(`/levels/${levelName}.json`);
+      const res = await fetch(realLevelsFlag ? `/real_levels/${levelName}.json` : `/levels/${levelName}.json`);
+      if (!res.ok) throw new Error("Not found");
       const data = await res.json();
       loadDataIntoGraph(data, levelName);
+      return true;
     } catch (err) {
       console.error("Failed to load level:", err);
-      alert("Error loading level JSON.");
+      return false;
     }
   };
 
@@ -2094,8 +2123,21 @@ export default function GraphEditor() {
            }
         }
         
-        // Fallback: Nếu lọc xong mà không đủ chữ để tạo cây, ta đành lấy lại từ trùng lặp
+        // Fallback: Nếu lọc xong mà không đủ chữ để tạo cây, bốc ngẫu nhiên từ globalDict để KHÔNG BAO GIỜ bị trùng
         const numRequired = currentReqSig.numWords;
+        let retries = 0;
+        while (uniqueWords.length < numRequired && retries < 1000) {
+            retries++;
+            let randomCat = globalDict[Math.floor(Math.random() * globalDict.length)];
+            if (!randomCat.words || randomCat.words.length === 0) continue;
+            let randomWord = randomCat.words[Math.floor(Math.random() * randomCat.words.length)];
+            let r = getRoot(randomWord.word);
+            if (!isDuplicateRoot(r, tempSeenRoots)) {
+                tempSeenRoots.add(r);
+                uniqueWords.push(randomWord);
+            }
+        }
+        // Failsafe tuyệt đối nếu không tìm được (gần như không bao giờ xảy ra)
         while (uniqueWords.length < numRequired && duplicateWords.length > 0) {
             uniqueWords.push(duplicateWords.shift());
         }
@@ -2117,15 +2159,7 @@ export default function GraphEditor() {
           const oldWordNode = nodes.find(n => n.id === currentReqSig.wordNodeIds[index]);
           const wordId = uuidv4();
           
-          let newIcon = w.icon;
-          if (oldWordNode) {
-            const oldHasIcon = !!oldWordNode.data.icon;
-            if (!oldHasIcon) {
-              newIcon = null;
-            } else if (!newIcon) {
-              newIcon = w.word.toLowerCase();
-            }
-          }
+          let newIcon = null;
 
           const inheritedGlobalIndex = oldWordNode?.data.globalIndex;
 
@@ -2493,19 +2527,97 @@ export default function GraphEditor() {
           <div style={{ fontWeight: 700, fontSize: '20px', letterSpacing: '1px' }}>
             WordNet Builder
           </div>
-          <select 
-            value={selectedLevelName} 
-            onChange={(e) => loadLevel(e.target.value)}
+          <div 
+            onClick={async () => {
+              const newIsReal = !isRealLevels;
+              setIsRealLevels(newIsReal);
+              if (selectedLevelName) {
+                const success = await loadLevel(selectedLevelName, newIsReal);
+                if (!success) {
+                  setSelectedLevelName('');
+                }
+              }
+            }}
             style={{
-              padding: '6px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)',
-              border: '1px solid var(--panel-border)', color: 'white', outline: 'none'
+              display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
+              background: 'rgba(0,0,0,0.2)', padding: '4px 12px 4px 6px', borderRadius: '20px',
+              border: '1px solid var(--panel-border)'
             }}
           >
-            <option value="">-- Load Level --</option>
-            {levels.map(lvl => (
-              <option key={lvl} value={lvl}>{lvl}</option>
-            ))}
-          </select>
+            <div style={{
+              width: '32px', height: '18px', borderRadius: '10px',
+              background: isRealLevels ? 'var(--accent)' : 'rgba(255,255,255,0.2)',
+              position: 'relative', transition: '0.2s'
+            }}>
+              <div style={{
+                width: '14px', height: '14px', borderRadius: '50%', background: 'white',
+                position: 'absolute', top: '2px', left: isRealLevels ? '16px' : '2px',
+                transition: '0.2s'
+              }} />
+            </div>
+            <span style={{ fontSize: '13px', fontWeight: 500, color: 'white' }}>Real Levels</span>
+          </div>
+
+          <div ref={dropdownRef} style={{ position: 'relative' }}>
+            <div 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              style={{
+                padding: '6px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)',
+                border: '1px solid var(--panel-border)', color: 'white', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: '160px',
+                fontSize: '13px'
+              }}
+            >
+              <span>{selectedLevelName || '-- Load Level --'}</span>
+              <ChevronDown size={14} style={{ opacity: 0.7 }} />
+            </div>
+            
+            {isDropdownOpen && (
+              <div style={{
+                position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
+                background: '#1e293b', border: '1px solid var(--panel-border)',
+                borderRadius: '6px', maxHeight: '300px', overflowY: 'auto', zIndex: 100,
+                boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
+              }}>
+                <div 
+                  id={`level-option-`}
+                  onClick={() => { loadLevel(''); setIsDropdownOpen(false); }}
+                  style={{
+                    padding: '8px 12px', fontSize: '13px', cursor: 'pointer', color: 'white',
+                    background: !selectedLevelName ? 'var(--accent)' : 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedLevelName) e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedLevelName) e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  -- Load Level --
+                </div>
+                {levels.map(lvl => (
+                  <div 
+                    key={lvl}
+                    id={`level-option-${lvl}`}
+                    onClick={() => { loadLevel(lvl); setIsDropdownOpen(false); }}
+                    style={{
+                      padding: '8px 12px', fontSize: '13px', cursor: 'pointer', color: 'white',
+                      background: selectedLevelName === lvl ? 'var(--accent)' : 'transparent',
+                      borderTop: '1px solid rgba(255,255,255,0.05)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (selectedLevelName !== lvl) e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (selectedLevelName !== lvl) e.currentTarget.style.background = 'transparent';
+                    }}
+                  >
+                    {lvl}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <button 
             onClick={() => {
               if (confirm('Create a new empty level? Unsaved progress will be lost.')) {

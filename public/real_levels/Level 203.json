@@ -1,0 +1,1134 @@
+{
+  "m_ObjectHideFlags": 0,
+  "m_CorrespondingSourceObject": {
+    "fileID": 0
+  },
+  "m_PrefabInstance": {
+    "fileID": 0
+  },
+  "m_PrefabAsset": {
+    "fileID": 0
+  },
+  "m_GameObject": {
+    "fileID": 0
+  },
+  "m_Enabled": 1,
+  "m_EditorHideFlags": 0,
+  "m_Script": {
+    "fileID": 11500000,
+    "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
+    "type": 3
+  },
+  "m_Name": "Level 202",
+  "m_EditorClassIdentifier": null,
+  "categories": [
+    {
+      "category": "Flee",
+      "parentCategory": null,
+      "icon": "flee",
+      "words": [
+        {
+          "fullWord": "vanish",
+          "chunks": [
+            "van",
+            "ish"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "run",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "scram",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "evade",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Seasoning types",
+      "parentCategory": null,
+      "icon": "seasoning types",
+      "words": [
+        {
+          "fullWord": "umami",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "spices",
+          "chunks": [
+            "spi",
+            "ces"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "herbs",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "salt",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Knife",
+      "parentCategory": null,
+      "icon": "knife",
+      "words": [
+        {
+          "fullWord": "blade",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "pocket",
+          "chunks": [
+            "poc",
+            "ket"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "sharp",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "swiss",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Spoon",
+      "parentCategory": "Knife",
+      "icon": "spoon",
+      "words": [
+        {
+          "fullWord": "fork",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "ladle",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "cuddle",
+          "chunks": [
+            "cud",
+            "dle"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "silver",
+          "chunks": [
+            "sil",
+            "ver"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Can be cooked",
+      "parentCategory": null,
+      "icon": "can be cooked",
+      "words": [
+        {
+          "fullWord": "vegetables",
+          "chunks": [
+            "veget",
+            "ables"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "meat",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "rice",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "pasta",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Optical devices",
+      "parentCategory": null,
+      "icon": "optical devices",
+      "words": [
+        {
+          "fullWord": "mirror",
+          "chunks": [
+            "mir",
+            "ror"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "microscope",
+          "chunks": [
+            "micro",
+            "scope"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "laser",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "periscope",
+          "chunks": [
+            "peris",
+            "cope"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Prism",
+      "parentCategory": "Optical devices",
+      "icon": "prism",
+      "words": [
+        {
+          "fullWord": "crystal",
+          "chunks": [
+            "crys",
+            "tal"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "disperse",
+          "chunks": [
+            "disp",
+            "erse"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "triangle",
+          "chunks": [
+            "tria",
+            "ngle"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "newton",
+          "chunks": [
+            "new",
+            "ton"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Purple things",
+      "parentCategory": null,
+      "icon": "purple things",
+      "words": [
+        {
+          "fullWord": "lavender",
+          "chunks": [
+            "lave",
+            "nder"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "amethyst",
+          "chunks": [
+            "amet",
+            "hyst"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "eggplant",
+          "chunks": [
+            "eggp",
+            "lant"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "wolfsbane",
+          "chunks": [
+            "wolfs",
+            "bane"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Grape",
+      "parentCategory": "Purple things",
+      "icon": "grape",
+      "words": [
+        {
+          "fullWord": "vineyard",
+          "chunks": [
+            "vine",
+            "yard"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "pinot",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "malbec",
+          "chunks": [
+            "mal",
+            "bec"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "shiraz",
+          "chunks": [
+            "shi",
+            "raz"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Historical ages",
+      "parentCategory": null,
+      "icon": "historical ages",
+      "words": [
+        {
+          "fullWord": "bronze",
+          "chunks": [
+            "bro",
+            "nze"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "iron",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "stone",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "copper",
+          "chunks": [
+            "cop",
+            "per"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Half-humans",
+      "parentCategory": null,
+      "icon": "half-humans",
+      "words": [
+        {
+          "fullWord": "mermaid",
+          "chunks": [
+            "merm",
+            "aid"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "centaur",
+          "chunks": [
+            "cent",
+            "aur"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "minotaur",
+          "chunks": [
+            "mino",
+            "taur"
+          ],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "satyr",
+          "chunks": [],
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    }
+  ],
+  "maxBubblesInScene": 24,
+  "moveLimit": 10,
+  "randomSeed": 0,
+  "levelDifficulty": 0,
+  "allWordEntries": [
+    {
+      "fullWord": "Vanish",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "van",
+        "ish"
+      ]
+    },
+    {
+      "fullWord": "Run",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Scram",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Evade",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Umami",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Spices",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "spi",
+        "ces"
+      ]
+    },
+    {
+      "fullWord": "Herbs",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Salt",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Fork",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Ladle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Cuddle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "cud",
+        "dle"
+      ]
+    },
+    {
+      "fullWord": "Silver",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "sil",
+        "ver"
+      ]
+    },
+    {
+      "fullWord": "Blade",
+      "chunks": [],
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Pocket",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "poc",
+        "ket"
+      ]
+    },
+    {
+      "fullWord": "Sharp",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Swiss",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Vegetables",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "veget",
+        "ables"
+      ]
+    },
+    {
+      "fullWord": "Meat",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Rice",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Pasta",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Crystal",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "crys",
+        "tal"
+      ]
+    },
+    {
+      "fullWord": "Disperse",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "disp",
+        "erse"
+      ]
+    },
+    {
+      "fullWord": "Triangle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "tria",
+        "ngle"
+      ]
+    },
+    {
+      "fullWord": "Newton",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "new",
+        "ton"
+      ]
+    },
+    {
+      "fullWord": "Mirror",
+      "chunks": [
+        "mir",
+        "ror"
+      ],
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Microscope",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "micro",
+        "scope"
+      ]
+    },
+    {
+      "fullWord": "Laser",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Periscope",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "peris",
+        "cope"
+      ]
+    },
+    {
+      "fullWord": "Vineyard",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "vine",
+        "yard"
+      ]
+    },
+    {
+      "fullWord": "Pinot",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Malbec",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "mal",
+        "bec"
+      ]
+    },
+    {
+      "fullWord": "Shiraz",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "shi",
+        "raz"
+      ]
+    },
+    {
+      "fullWord": "Lavender",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "lave",
+        "nder"
+      ]
+    },
+    {
+      "fullWord": "Amethyst",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "amet",
+        "hyst"
+      ]
+    },
+    {
+      "fullWord": "Eggplant",
+      "chunks": [
+        "eggp",
+        "lant"
+      ],
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Wolfsbane",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "wolfs",
+        "bane"
+      ]
+    },
+    {
+      "fullWord": "Bronze",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "bro",
+        "nze"
+      ]
+    },
+    {
+      "fullWord": "Iron",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Stone",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    },
+    {
+      "fullWord": "Copper",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "cop",
+        "per"
+      ]
+    },
+    {
+      "fullWord": "Mermaid",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "merm",
+        "aid"
+      ]
+    },
+    {
+      "fullWord": "Centaur",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "cent",
+        "aur"
+      ]
+    },
+    {
+      "fullWord": "Minotaur",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": [
+        "mino",
+        "taur"
+      ]
+    },
+    {
+      "fullWord": "Satyr",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null,
+      "chunks": []
+    }
+  ],
+  "allWords": [],
+  "frozenBubbles": [
+    {
+      "word": "Scram",
+      "mergesNeeded": 10
+    },
+    {
+      "word": "Vanish",
+      "mergesNeeded": 7
+    },
+    {
+      "word": "Run",
+      "mergesNeeded": 15
+    },
+    {
+      "word": "Triangle",
+      "mergesNeeded": 5
+    }
+  ],
+  "burstBubbles": [],
+  "keyLockBubbles": [],
+  "bubbleChains": [],
+  "useBubbleSeparator": 0,
+  "bubbleSeparatorData": {
+    "breakThreshold": 3,
+    "linkedWords": []
+  },
+  "crypticBubbles": [],
+  "screwLockBubbles": [],
+  "backwardBubbles": [
+    {
+      "word": "Swiss"
+    },
+    {
+      "word": "Wolfsbane"
+    },
+    {
+      "word": "Ladle"
+    }
+  ],
+  "crackedBubbles": [],
+  "linkedBubbles": []
+}
