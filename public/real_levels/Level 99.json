@@ -62,7 +62,7 @@
       ]
     },
     {
-      "category": "Bodies of Water",
+      "category": "Bodies of water",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -102,19 +102,11 @@
     },
     {
       "category": "River",
-      "parentCategory": "Bodies of Water",
+      "parentCategory": "Bodies of water",
       "icon": null,
       "words": [
         {
           "fullWord": "Fish",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Amazon",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -131,6 +123,14 @@
         },
         {
           "fullWord": "Rapids",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Current",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -180,25 +180,9 @@
     },
     {
       "category": "Lake",
-      "parentCategory": "Bodies of Water",
+      "parentCategory": "Bodies of water",
       "icon": null,
       "words": [
-        {
-          "fullWord": "Superior",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Erie",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
         {
           "fullWord": "Ontario",
           "icon": null,
@@ -214,12 +198,28 @@
           "crackBreakNum": 0,
           "IsLinked": 0,
           "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Baikal",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Michigan",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
         }
       ]
     },
     {
       "category": "Ocean",
-      "parentCategory": "Bodies of Water",
+      "parentCategory": "Bodies of water",
       "icon": null,
       "words": [
         {
@@ -247,7 +247,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Waves",
+          "fullWord": "Depths",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -335,12 +335,12 @@
       ]
     },
     {
-      "category": "Bat",
+      "category": "Utilities",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Echo",
+          "fullWord": "Electricity",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -348,7 +348,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Nocturnal",
+          "fullWord": "Gas",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -356,7 +356,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Night",
+          "fullWord": "Internet",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -364,7 +364,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Wings",
+          "fullWord": "Water",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -375,7 +375,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 33,
+  "moveLimit": 38,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -515,7 +515,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Echo",
+      "fullWord": "Electricity",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -524,7 +524,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Nocturnal",
+      "fullWord": "Gas",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -533,7 +533,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Night",
+      "fullWord": "Internet",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -542,7 +542,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Wings",
+      "fullWord": "Water",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -587,8 +587,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Studios",
-      "parentWord": null,
+      "fullWord": "Gan",
+      "parentWord": "Michigan",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -596,8 +596,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Amazon",
-      "parentWord": null,
+      "fullWord": "Michi",
+      "parentWord": "Michigan",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -605,61 +605,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Stream",
-      "parentWord": null,
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Rapids",
-      "parentWord": null,
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Supe",
-      "parentWord": "Superior",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Rior",
-      "parentWord": "Superior",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Erie",
-      "parentWord": null,
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Ontario",
-      "parentWord": null,
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Victoria",
+      "fullWord": "Coral",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -686,7 +632,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Coral",
+      "fullWord": "Rapids",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -695,7 +641,61 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Waves",
+      "fullWord": "Stream",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Studios",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Victoria",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Baikal",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ontario",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Current",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Depths",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -707,11 +707,11 @@
   "allWords": [],
   "frozenBubbles": [
     {
-      "word": "Night",
+      "word": "internet",
       "mergesNeeded": 10
     },
     {
-      "word": "Wings",
+      "word": "water",
       "mergesNeeded": 7
     },
     {
@@ -734,10 +734,11 @@
       "vodka",
       "uila",
       "beer",
-      "echo",
-      "nocturnal",
-      "night",
-      "wings"
+      "electricity",
+      "gas",
+      "internet",
+      "water",
+      "teq"
     ]
   },
   "crypticBubbles": [],
