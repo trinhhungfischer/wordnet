@@ -1,5 +1,5 @@
 import type { Node, Edge } from '@xyflow/react';
-import globalDictData from '../../public/global_dictionary.json';
+import globalDictData from '../data/global_dictionary.json';
 const globalDict: any = globalDictData;
 
 export interface BoardBubbleState {

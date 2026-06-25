@@ -83,10 +83,10 @@ const isDuplicateRoot = (root: string, seenRoots: Set<string>) => {
 
 const getTreeSig = (catName: string, allCats: any[]): any => {
   const c = allCats.find((x: any) => x.category === catName);
-  if (!c) return { numWords: 0, subcats: [], oldWords: [] };
+  if (!c) return { numWords: 0, subcats: [], oldWords: [], oldHasIcon: false };
   const subcats = allCats.filter((x: any) => x.parentCategory === catName);
   const subSig = subcats.map((x: any) => getTreeSig(x.category, allCats));
-  return { numWords: c.words.length, subcats: subSig, oldWords: c.words.map((w: any) => w.fullWord) };
+  return { numWords: c.words.length, subcats: subSig, oldWords: c.words.map((w: any) => w.fullWord), oldHasIcon: !!c.icon };
 };
 
 const dictSigCache = new Map<string, any>();
@@ -119,27 +119,41 @@ const isFulfilled = (req: any, avail: any): boolean => {
 // --- CHUNK AUTO CUT LOGIC ---
 const createChunks = (word: string) => {
   const cleanWord = String(word).trim().toLowerCase();
+  
+  // GraphEditor inherited chunk logic doesn't check length, it always cuts.
+  // We prioritize splitting by space if it exists, otherwise Math.floor(length/2) 
+  // to match GraphEditor's behavior.
   const spaceIndex = cleanWord.indexOf(' ');
-  
-  if (spaceIndex === -1 && cleanWord.length < 6) return [];
-  
   if (spaceIndex !== -1) {
     return [cleanWord.slice(0, spaceIndex + 1), cleanWord.slice(spaceIndex + 1)];
   } else {
-    const half = Math.ceil(cleanWord.length / 2);
-    return [cleanWord.slice(0, half), cleanWord.slice(half)];
+    // Match GraphEditor Math.floor
+    const chunkLen = Math.floor(cleanWord.length / 2) || 1;
+    return [cleanWord.substring(0, chunkLen), cleanWord.substring(chunkLen)];
   }
 };
 
 // --- IMPORT BRANCH LOGIC ---
-const generateNewBranch = (catName: string, parentCategory: string | null, reqSig: any, outCategories: any[], outWordEntries: any[], autoProperRatio: number, targetPop: number, magicChangeRoots: Set<string>, wordMapping: Map<string, string>, oldAllWordEntries: any[]) => {
+const generateNewBranch = (
+  catName: string,
+  parentCategory: string | null,
+  reqSig: any,
+  outCategories: any[],
+  outWordEntries: any[],
+  targetProperNoun: number,
+  targetPop: number,
+  magicChangeRoots: Set<string>,
+  wordMapping: Map<string, string>,
+  chunkMapping: Map<string, string>,
+  oldAllWordEntries: any[]
+) => {
   const entry = globalDict.find((e: any) => e.name.toLowerCase() === catName.toLowerCase());
   if (!entry) return;
 
   const newCat = {
     category: entry.name,
     parentCategory: parentCategory,
-    icon: entry.icon || entry.name.toLowerCase(),
+    icon: reqSig?.oldHasIcon ? (entry.icon || entry.name.toLowerCase()) : null,
     words: [] as any[]
   };
   outCategories.push(newCat);
@@ -158,7 +172,7 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
       availSubs.splice(matchIdx, 1);
       chosenSubcategories.push(chosenSub);
       magicChangeRoots.add(getRoot(chosenSub));
-      generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop, magicChangeRoots, wordMapping, oldAllWordEntries);
+      generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, targetProperNoun, targetPop, magicChangeRoots, wordMapping, chunkMapping, oldAllWordEntries);
     } else {
       // Fallback
       const fallbackIdx = availSubs.findIndex(subName => isFulfilled(rSub, getDictSig(subName)));
@@ -167,21 +181,24 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
           availSubs.splice(fallbackIdx, 1);
           chosenSubcategories.push(chosenSub);
           magicChangeRoots.add(getRoot(chosenSub));
-          generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop, magicChangeRoots, wordMapping, oldAllWordEntries);
+          generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, targetProperNoun, targetPop, magicChangeRoots, wordMapping, chunkMapping, oldAllWordEntries);
       }
     }
   });
 
-  let wordsToImport = entry.words.filter((w: any) => 
+  let forcedWords = entry.words.filter((w: any) => 
+    chosenSubcategories.some((sub: string) => sub.toLowerCase() === w.word.toLowerCase())
+  );
+  let otherWords = entry.words.filter((w: any) => 
     !chosenSubcategories.some((sub: string) => sub.toLowerCase() === w.word.toLowerCase())
   );
 
-  wordsToImport.sort(() => Math.random() - 0.5);
+  otherWords.sort(() => Math.random() - 0.5);
 
   // Sort logic
   const wantsProper = targetProperNoun !== -1 ? targetProperNoun : autoProperRatio;
   
-  wordsToImport.sort((a: any, b: any) => {
+  otherWords.sort((a: any, b: any) => {
     const aPop = a.popularity || 50;
     const bPop = b.popularity || 50;
     const aMet = aPop >= minPop ? 1 : 0;
@@ -204,30 +221,38 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
     return Math.abs(aPop - targetPop) - Math.abs(bPop - targetPop);
   });
 
-  const anchor = wordsToImport[0];
+  const anchor = otherWords[0];
   const anchorPop = anchor?.popularity || 0;
 
-  wordsToImport.sort((a: any, b: any) => {
-    if (a === anchor) return -1;
-    if (b === anchor) return 1;
+  if (anchor) {
+    otherWords.sort((a: any, b: any) => {
+      if (a === anchor) return -1;
+      if (b === anchor) return 1;
 
-    const aMet = (a.popularity || 0) >= minPop ? 1 : 0;
-    const bMet = (b.popularity || 0) >= minPop ? 1 : 0;
-    if (aMet !== bMet) return bMet - aMet;
+      const aMet = (a.popularity || 0) >= minPop ? 1 : 0;
+      const bMet = (b.popularity || 0) >= minPop ? 1 : 0;
+      if (aMet !== bMet) return bMet - aMet;
 
-    const aHist = getWordHistoryPenalty(getRoot(a.word));
-    const bHist = getWordHistoryPenalty(getRoot(b.word));
-    if (aHist !== bHist) return aHist - bHist;
+      const aHist = getWordHistoryPenalty(getRoot(a.word));
+      const bHist = getWordHistoryPenalty(getRoot(b.word));
+      if (aHist !== bHist) return aHist - bHist;
 
-    return Math.abs((a.popularity || 0) - anchorPop) - Math.abs((b.popularity || 0) - anchorPop);
-  });
+      return Math.abs((a.popularity || 0) - anchorPop) - Math.abs((b.popularity || 0) - anchorPop);
+    });
+  }
 
   // Duplicate root filtering
   const uniqueWords: any[] = [];
   const duplicateWords: any[] = [];
   const tempSeenRoots = new Set<string>(magicChangeRoots);
 
-  for (const w of wordsToImport) {
+  for (const w of forcedWords) {
+    const root = getRoot(w.word);
+    tempSeenRoots.add(root);
+    uniqueWords.push(w);
+  }
+
+  for (const w of otherWords) {
     const root = getRoot(w.word);
     let isDuplicate = isDuplicateRoot(root, tempSeenRoots);
 
@@ -256,17 +281,8 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
   while (uniqueWords.length < numRequired && duplicateWords.length > 0) {
     uniqueWords.push(duplicateWords.shift());
   }
-  wordsToImport = uniqueWords;
 
-  if (numRequired > 1 && wordsToImport.length > numRequired) {
-    const expandedSlice = wordsToImport.slice(0, numRequired + 4);
-    const anchorWord = expandedSlice[0];
-    const remainingExpanded = expandedSlice.slice(1);
-    remainingExpanded.sort(() => Math.random() - 0.5);
-    wordsToImport = [anchorWord, ...remainingExpanded].slice(0, numRequired);
-  } else {
-    wordsToImport = wordsToImport.slice(0, numRequired);
-  }
+  let wordsToImport = uniqueWords.slice(0, numRequired);
 
   wordsToImport.forEach((w: any, index: number) => {
     const wRoot = getRoot(w.word);
@@ -278,12 +294,26 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
 
     const oldWordStr = reqSig.oldWords && reqSig.oldWords[index];
     let oldEntry = null;
+    let oldChunks: any[] = [];
     if (oldWordStr) {
-      wordMapping.set(oldWordStr.toLowerCase(), w.word.toLowerCase());
-      oldEntry = oldAllWordEntries?.find((e: any) => e.fullWord.toLowerCase() === oldWordStr.toLowerCase());
+      const oldWordLower = oldWordStr.toLowerCase();
+      wordMapping.set(oldWordLower, w.word.toLowerCase());
+      oldEntry = oldAllWordEntries?.find((e: any) => !e.parentWord && String(e.fullWord).toLowerCase() === oldWordLower);
+      oldChunks = oldAllWordEntries?.filter((e: any) => e.parentWord && String(e.parentWord).toLowerCase() === oldWordLower) || [];
+      
+      // If parent entry doesn't exist but chunks do, inherit mechanics from the first chunk
+      if (!oldEntry && oldChunks.length > 0) {
+        oldEntry = oldChunks[0];
+      }
     }
 
-    const chunks = createChunks(w.word);
+    const isSubcategory = chosenSubcategories.some((sub: string) => sub.toLowerCase() === w.word.toLowerCase());
+    let chunks: string[] = [];
+    if (!isSubcategory && oldWordStr) {
+      if (oldChunks.length > 0) {
+        chunks = createChunks(w.word);
+      }
+    }
     
     // Default values
     let isCracked = 0;
@@ -297,16 +327,49 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
       isLinked = oldEntry.IsLinked || 0;
     }
 
+    const parentWordStr = w.word.charAt(0).toUpperCase() + w.word.slice(1);
     const wordEntry = {
       ...(oldEntry || {}),
-      fullWord: w.word.charAt(0).toUpperCase() + w.word.slice(1),
-      chunks: chunks,
+      fullWord: parentWordStr,
+      parentWord: null,
       icon: null,
       IsCracked: isCracked,
       crackBreakNum: crackBreakNum,
       IsLinked: isLinked,
       linkedChunkWords: []
     };
+    delete wordEntry.chunks;
+
+    if (chunks.length === 0) {
+      outWordEntries.push(wordEntry);
+    } else {
+      if (oldChunks.length > 0) {
+        const oldC1 = oldChunks[0]?.fullWord.toLowerCase();
+        const oldC2 = oldChunks[1]?.fullWord.toLowerCase();
+        if (oldC1 && chunks.length > 0) chunkMapping.set(oldC1, chunks[0].toLowerCase());
+        if (oldC2 && chunks.length > 1) chunkMapping.set(oldC2, chunks[1].toLowerCase());
+      }
+      chunks.forEach((chunkStr) => {
+        let chunkOldEntry = oldChunks.find((e: any) => String(e.fullWord).toLowerCase() === chunkStr.toLowerCase());
+        if (!chunkOldEntry && oldChunks.length > 0) chunkOldEntry = oldChunks[0];
+        
+        let cIsCracked = chunkOldEntry?.IsCracked || 0;
+        let cCrackBreakNum = chunkOldEntry?.crackBreakNum || 0;
+        let cIsLinked = chunkOldEntry?.IsLinked || 0;
+
+        outWordEntries.push({
+          ...(chunkOldEntry || {}),
+          fullWord: chunkStr.charAt(0).toUpperCase() + chunkStr.slice(1),
+          parentWord: parentWordStr,
+          icon: null,
+          IsCracked: cIsCracked,
+          crackBreakNum: cCrackBreakNum,
+          IsLinked: cIsLinked,
+          linkedChunkWords: []
+        });
+      });
+    }
+
     newCat.words.push({
       fullWord: w.word.toLowerCase(),
       chunks: chunks,
@@ -316,7 +379,6 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
       IsLinked: 0,
       linkedChunkWords: []
     });
-    outWordEntries.push(wordEntry);
   });
 };
 
@@ -335,6 +397,7 @@ for (let i = startLevel; i <= endLevel; i++) {
   const newAllWordEntries: any[] = [];
   const magicChangeRoots = new Set<string>();
   const wordMapping = new Map<string, string>(); // oldWordLowerCase -> newWordLowerCase
+  const chunkMapping = new Map<string, string>(); // oldChunkLowerCase -> newChunkLowerCase
 
   const rootCategories = levelData.categories.filter((c: any) => !c.parentCategory);
 
@@ -360,10 +423,11 @@ for (let i = startLevel; i <= endLevel; i++) {
       let properCount = 0;
       
       allOldWords.forEach(wLabel => {
-        if (hasProperNoun(wLabel)) properCount++;
+        const wStr = String(wLabel);
+        if (hasProperNoun(wStr)) properCount++;
         let foundPop: number | null = null;
         for (const cat of globalDict) {
-          const match = cat.words.find((w: any) => w.word.toLowerCase() === wLabel.toLowerCase());
+          const match = cat.words.find((w: any) => w.word.toLowerCase() === wStr.toLowerCase());
           if (match && match.popularity) {
             foundPop = match.popularity;
             break;
@@ -406,7 +470,7 @@ for (let i = startLevel; i <= endLevel; i++) {
            if (c) {
               newCategories.push(c);
               c.words.forEach((w: any) => {
-                  if (!newAllWordEntries.some(e => e.fullWord === w.fullWord)) {
+                  if (!newAllWordEntries.some(e => String(e.fullWord) === String(w.fullWord))) {
                       newAllWordEntries.push(w);
                   }
               });
@@ -469,59 +533,87 @@ for (let i = startLevel; i <= endLevel; i++) {
     historyCategories.push(chosenCat.name.toLowerCase());
     if (historyCategories.length > MAX_CAT_HISTORY) historyCategories.shift();
 
-    generateNewBranch(chosenCat.name, null, sig, newCategories, newAllWordEntries, autoProperRatio, targetPop, magicChangeRoots, wordMapping, levelData.allWordEntries || []);
+    generateNewBranch(chosenCat.name, null, sig, newCategories, newAllWordEntries, autoProperRatio, targetPop, magicChangeRoots, wordMapping, chunkMapping, levelData.allWordEntries || []);
   }
 
   levelData.categories = newCategories;
   levelData.allWordEntries = newAllWordEntries;
 
   // Remap mechanics (frozenBubbles, burstBubbles, etc.)
-  const remapWord = (w: string) => {
+  const remapWordOrChunk = (w: string) => {
     if (!w) return w;
     const lower = w.toLowerCase();
     if (wordMapping.has(lower)) {
        const newWordLower = wordMapping.get(lower)!;
        return newWordLower.charAt(0).toUpperCase() + newWordLower.slice(1);
     }
+    if (chunkMapping.has(lower)) {
+       const newChunkLower = chunkMapping.get(lower)!;
+       return newChunkLower.charAt(0).toUpperCase() + newChunkLower.slice(1);
+    }
     return w;
   };
 
+  if (levelData.bubbleSeparatorData?.linkedWords) {
+    levelData.bubbleSeparatorData.linkedWords = levelData.bubbleSeparatorData.linkedWords.map((lw: string) => remapWordOrChunk(lw));
+  }
   if (levelData.frozenBubbles) {
-    levelData.frozenBubbles = levelData.frozenBubbles.map((fb: any) => ({ ...fb, word: remapWord(fb.word) }));
+    levelData.frozenBubbles = levelData.frozenBubbles.map((fb: any) => ({ ...fb, word: remapWordOrChunk(fb.word) }));
   }
   if (levelData.burstBubbles) {
-    levelData.burstBubbles = levelData.burstBubbles.map((bb: any) => ({ ...bb, word: remapWord(bb.word) }));
+    levelData.burstBubbles = levelData.burstBubbles.map((bb: any) => ({ ...bb, word: remapWordOrChunk(bb.word) }));
   }
   if (levelData.backwardBubbles) {
-    levelData.backwardBubbles = levelData.backwardBubbles.map((bw: any) => ({ ...bw, word: remapWord(bw.word) }));
+    levelData.backwardBubbles = levelData.backwardBubbles.map((bw: any) => ({ ...bw, word: remapWordOrChunk(bw.word) }));
   }
   if (levelData.keyLockBubbles) {
-    levelData.keyLockBubbles = levelData.keyLockBubbles.map((kl: any) => ({ ...kl, keyWord: remapWord(kl.keyWord), lockWord: remapWord(kl.lockWord) }));
+    levelData.keyLockBubbles = levelData.keyLockBubbles.map((kl: any) => ({ ...kl, keyWord: remapWordOrChunk(kl.keyWord), lockWord: remapWordOrChunk(kl.lockWord) }));
   }
   if (levelData.bubbleChains) {
     levelData.bubbleChains = levelData.bubbleChains.map((bc: any) => ({
       ...bc,
-      chainRootWord: remapWord(bc.chainRootWord),
-      linkList: bc.linkList ? bc.linkList.map((ll: any) => ({ ...ll, linkedWord: remapWord(ll.linkedWord) })) : []
+      chainRootWord: remapWordOrChunk(bc.chainRootWord),
+      linkList: bc.linkList ? bc.linkList.map((ll: any) => ({ ...ll, linkedWord: remapWordOrChunk(ll.linkedWord) })) : []
     }));
   }
   if (levelData.crypticBubbles) {
-    levelData.crypticBubbles = levelData.crypticBubbles.map((cb: any) => ({ ...cb, word: remapWord(cb.word) }));
+    levelData.crypticBubbles = levelData.crypticBubbles.map((cb: any) => {
+      const lowerLabel = cb.word.toLowerCase();
+      if (wordMapping.has(lowerLabel)) {
+        const newWordLower = wordMapping.get(lowerLabel)!;
+        const newWord = newWordLower.charAt(0).toUpperCase() + newWordLower.slice(1);
+        const newRevealAtMerge = new Array(newWord.length).fill(0);
+        const oldReveal = cb.revealAtMerge || [];
+        for (let j = 0; j < Math.min(newWord.length, oldReveal.length); j++) {
+          newRevealAtMerge[j] = oldReveal[j];
+        }
+        const { letters, ...rest } = cb;
+        return { ...rest, word: newWord, revealAtMerge: newRevealAtMerge };
+      }
+      return cb;
+    });
   }
   if (levelData.screwLockBubbles) {
-    levelData.screwLockBubbles = levelData.screwLockBubbles.map((sl: any) => ({ ...sl, screwWord: remapWord(sl.screwWord), dropWord: remapWord(sl.dropWord) }));
+    levelData.screwLockBubbles = levelData.screwLockBubbles.map((sl: any) => ({
+      ...sl,
+      screwLockWord: remapWordOrChunk(sl.screwLockWord || sl.screwWord),
+      screwDriverWords: (sl.screwDriverWords || []).map((sdw: string) => remapWordOrChunk(sdw))
+    }));
   }
   if (levelData.crackedBubbles) {
-    levelData.crackedBubbles = levelData.crackedBubbles.map((cb: any) => typeof cb === 'string' ? remapWord(cb) : { ...cb, word: remapWord(cb.word) });
+    levelData.crackedBubbles = levelData.crackedBubbles.map((cb: any) => typeof cb === 'string' ? remapWordOrChunk(cb) : { ...cb, word: remapWordOrChunk(cb.word) });
   }
   if (levelData.linkedBubbles) {
-    levelData.linkedBubbles = levelData.linkedBubbles.map((lb: any) => typeof lb === 'string' ? remapWord(lb) : { ...lb, word: remapWord(lb.word) });
+    levelData.linkedBubbles = levelData.linkedBubbles.map((lb: any) => typeof lb === 'string' ? remapWordOrChunk(lb) : { ...lb, word: remapWordOrChunk(lb.word) });
   }
 
   // Deduplicate allWordEntries just in case
   const uniqueEntriesMap = new Map();
   levelData.allWordEntries.forEach((entry: any) => {
-      uniqueEntriesMap.set(entry.fullWord, entry);
+    const key = entry.parentWord ? `${String(entry.parentWord).toLowerCase()}_${String(entry.fullWord).toLowerCase()}` : `_${String(entry.fullWord).toLowerCase()}`;
+    if (!uniqueEntriesMap.has(key)) {
+      uniqueEntriesMap.set(key, entry);
+    }
   });
   levelData.allWordEntries = Array.from(uniqueEntriesMap.values());
 
