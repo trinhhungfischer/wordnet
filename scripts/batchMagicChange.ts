@@ -59,6 +59,16 @@ const getRoot = (w: string) => {
 const getHistoryPenalty = (catName: string) => historyCategories.includes(catName.toLowerCase()) ? 1 : 0;
 const getWordHistoryPenalty = (wordRoot: string) => historyWords.includes(wordRoot) ? 1 : 0;
 
+const isDuplicateRoot = (root: string, seenRoots: Set<string>) => {
+    if (seenRoots.has(root)) return true;
+    for (const seen of seenRoots) {
+        if ((root.startsWith(seen) || seen.startsWith(root)) && Math.abs(root.length - seen.length) <= 2) {
+            return true;
+        }
+    }
+    return false;
+};
+
 // --- TREE SIGNATURE LOGIC ---
 const getTreeSig = (catName: string, allCategories: any[]): any => {
   const cat = allCategories.find(c => c.category === catName);
@@ -111,7 +121,7 @@ const createChunks = (word: string) => {
 };
 
 // --- IMPORT BRANCH LOGIC ---
-const generateNewBranch = (catName: string, parentCategory: string | null, reqSig: any, outCategories: any[], outWordEntries: any[], autoProperRatio: number, targetPop: number) => {
+const generateNewBranch = (catName: string, parentCategory: string | null, reqSig: any, outCategories: any[], outWordEntries: any[], autoProperRatio: number, targetPop: number, magicChangeRoots: Set<string>) => {
   const entry = globalDict.find((e: any) => e.name.toLowerCase() === catName.toLowerCase());
   if (!entry) return;
 
@@ -128,12 +138,26 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
   availSubs.sort(() => Math.random() - 0.5);
 
   reqSig.subcats.forEach((rSub: any) => {
-    const matchIdx = availSubs.findIndex(subName => isFulfilled(rSub, getDictSig(subName)));
+    const matchIdx = availSubs.findIndex(subName => {
+        if (isDuplicateRoot(getRoot(subName), magicChangeRoots)) return false;
+        return isFulfilled(rSub, getDictSig(subName));
+    });
     if (matchIdx !== -1) {
       const chosenSub = availSubs[matchIdx];
       availSubs.splice(matchIdx, 1);
       chosenSubcategories.push(chosenSub);
-      generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop);
+      magicChangeRoots.add(getRoot(chosenSub));
+      generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop, magicChangeRoots);
+    } else {
+      // Fallback
+      const fallbackIdx = availSubs.findIndex(subName => isFulfilled(rSub, getDictSig(subName)));
+      if (fallbackIdx !== -1) {
+          const chosenSub = availSubs[fallbackIdx];
+          availSubs.splice(fallbackIdx, 1);
+          chosenSubcategories.push(chosenSub);
+          magicChangeRoots.add(getRoot(chosenSub));
+          generateNewBranch(chosenSub, entry.name, rSub, outCategories, outWordEntries, autoProperRatio, targetPop, magicChangeRoots);
+      }
     }
   });
 
@@ -190,21 +214,14 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
   // Duplicate root filtering
   const uniqueWords: any[] = [];
   const duplicateWords: any[] = [];
-  const seenRoots = new Set<string>();
+  const tempSeenRoots = new Set<string>(magicChangeRoots);
 
   for (const w of wordsToImport) {
     const root = getRoot(w.word);
-    let isDuplicate = seenRoots.has(root);
+    let isDuplicate = isDuplicateRoot(root, tempSeenRoots);
+
     if (!isDuplicate) {
-      for (const seen of seenRoots) {
-        if ((root.startsWith(seen) || seen.startsWith(root)) && Math.abs(root.length - seen.length) <= 2) {
-          isDuplicate = true;
-          break;
-        }
-      }
-    }
-    if (!isDuplicate) {
-      seenRoots.add(root);
+      tempSeenRoots.add(root);
       uniqueWords.push(w);
     } else {
       duplicateWords.push(w);
@@ -228,8 +245,10 @@ const generateNewBranch = (catName: string, parentCategory: string | null, reqSi
   }
 
   wordsToImport.forEach((w: any) => {
-    // Add to word history
     const wRoot = getRoot(w.word);
+    magicChangeRoots.add(wRoot);
+    
+    // Add to word history
     historyWords.push(wRoot);
     if (historyWords.length > MAX_WORD_HISTORY) historyWords.shift();
 
@@ -269,6 +288,7 @@ for (let i = startLevel; i <= endLevel; i++) {
 
   const newCategories: any[] = [];
   const newAllWordEntries: any[] = [];
+  const magicChangeRoots = new Set<string>();
 
   const rootCategories = levelData.categories.filter((c: any) => !c.parentCategory);
 
@@ -315,11 +335,20 @@ for (let i = startLevel; i <= endLevel; i++) {
     // Find matches
     let matches = globalDict.filter((cat: any) => {
       if (historyCategories.includes(cat.name.toLowerCase())) return false; // Strict no-duplicate in same generation cycle
+      if (isDuplicateRoot(getRoot(cat.name), magicChangeRoots)) return false;
       return isFulfilled(sig, getDictSig(cat.name));
     });
 
     if (matches.length === 0) {
        console.log(`Warning: No unused matches for tree ${root.category}, falling back to used matches`);
+       matches = globalDict.filter((cat: any) => {
+           if (isDuplicateRoot(getRoot(cat.name), magicChangeRoots)) return false;
+           return isFulfilled(sig, getDictSig(cat.name));
+       });
+    }
+
+    if (matches.length === 0) {
+       console.log(`Warning: Strict root filtering failed for tree ${root.category}, falling back to any match`);
        matches = globalDict.filter((cat: any) => isFulfilled(sig, getDictSig(cat.name)));
     }
 
@@ -390,10 +419,11 @@ for (let i = startLevel; i <= endLevel; i++) {
     const randIndex = Math.floor(Math.random() * poolSize);
     chosenCat = pool[randIndex] || matches[0];
 
+    magicChangeRoots.add(getRoot(chosenCat.name));
     historyCategories.push(chosenCat.name.toLowerCase());
     if (historyCategories.length > MAX_CAT_HISTORY) historyCategories.shift();
 
-    generateNewBranch(chosenCat.name, null, sig, newCategories, newAllWordEntries, autoProperRatio, targetPop);
+    generateNewBranch(chosenCat.name, null, sig, newCategories, newAllWordEntries, autoProperRatio, targetPop, magicChangeRoots);
   }
 
   levelData.categories = newCategories;

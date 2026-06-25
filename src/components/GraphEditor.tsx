@@ -1690,7 +1690,23 @@ export default function GraphEditor() {
   const handleMagicChange = (popularWords: string, minPopularity: number = 0, maxPopularity: number = 100) => {
     saveHistory();
     const usedCategories = new Set<string>();
+    const magicChangeRoots = new Set<string>();
     let nextGlobalIndex = nodes.reduce((max, n) => Math.max(max, (n.data?.globalIndex as number) || 0), 0) + 1;
+
+    const getRoot = (w: string) => {
+       let r = nlp(w).compute('root').text('root');
+       return (r ? r : w).toLowerCase().trim();
+    };
+
+    const isDuplicateRoot = (root: string, seenRoots: Set<string>) => {
+        if (seenRoots.has(root)) return true;
+        for (const seen of seenRoots) {
+            if ((root.startsWith(seen) || seen.startsWith(root)) && Math.abs(root.length - seen.length) <= 2) {
+                return true;
+            }
+        }
+        return false;
+    };
     
     // Helper to get signature
     const getTreeSig = (nodeId: string): any => {
@@ -1784,8 +1800,22 @@ export default function GraphEditor() {
       
       let matches = globalDict.filter((cat: any) => {
         if (usedCategories.has(cat.name)) return false;
+        if (isDuplicateRoot(getRoot(cat.name), magicChangeRoots)) return false;
         return isFulfilled(sig, getDictSig(cat.name));
       });
+
+      if (matches.length === 0) {
+        console.log(`Warning: No unused matches for tree ${root.id}, falling back to used matches`);
+        matches = globalDict.filter((cat: any) => {
+            if (isDuplicateRoot(getRoot(cat.name), magicChangeRoots)) return false;
+            return isFulfilled(sig, getDictSig(cat.name));
+        });
+      }
+      
+      if (matches.length === 0) {
+        console.log(`Warning: Strict root filtering failed for tree ${root.id}, falling back to any match`);
+        matches = globalDict.filter((cat: any) => isFulfilled(sig, getDictSig(cat.name)));
+      }
 
       if (matches.length === 0) {
         console.warn(`No matching dictionary category found for tree ${root.data.label}`);
@@ -1955,12 +1985,26 @@ export default function GraphEditor() {
         }
 
         currentReqSig.subcats.forEach((rSub: any) => {
-          const matchIdx = availSubs.findIndex(subName => isFulfilled(rSub, getDictSig(subName)));
+          const matchIdx = availSubs.findIndex(subName => {
+              if (isDuplicateRoot(getRoot(subName), magicChangeRoots)) return false;
+              return isFulfilled(rSub, getDictSig(subName));
+          });
           if (matchIdx !== -1) {
             const chosenSub = availSubs[matchIdx];
             availSubs.splice(matchIdx, 1);
             chosenSubcategories.push(chosenSub);
+            magicChangeRoots.add(getRoot(chosenSub));
             importBranch(chosenSub, nodeId, depth + 1, rSub);
+          } else {
+            // Fallback without strict root filtering
+            const fallbackIdx = availSubs.findIndex(subName => isFulfilled(rSub, getDictSig(subName)));
+            if (fallbackIdx !== -1) {
+                const chosenSub = availSubs[fallbackIdx];
+                availSubs.splice(fallbackIdx, 1);
+                chosenSubcategories.push(chosenSub);
+                magicChangeRoots.add(getRoot(chosenSub));
+                importBranch(chosenSub, nodeId, depth + 1, rSub);
+            }
           }
         });
 
@@ -2033,31 +2077,17 @@ export default function GraphEditor() {
           return Math.abs(aPop - anchorPop) - Math.abs(bPop - anchorPop);
         });
 
-        // 6. Lọc loại bỏ các từ trùng gốc (VD: day và days, run và running)
-        const getRoot = (w: string) => {
-           let r = nlp(w).compute('root').text('root');
-           return (r ? r : w).toLowerCase().trim();
-        };
-
+        // 6. Lọc loại bỏ các từ trùng gốc toàn cục (Global duplicate filter)
         const uniqueWords: any[] = [];
         const duplicateWords: any[] = [];
-        const seenRoots = new Set<string>();
+        const tempSeenRoots = new Set<string>(magicChangeRoots);
 
         for (const w of wordsToImport) {
            const root = getRoot(w.word);
-           // Fallback kiểm tra chuỗi nếu compromise không bắt được (vd: cat vs cats)
-           let isDuplicate = seenRoots.has(root);
-           if (!isDuplicate) {
-              for (const seen of seenRoots) {
-                 if ((root.startsWith(seen) || seen.startsWith(root)) && Math.abs(root.length - seen.length) <= 2) {
-                    isDuplicate = true;
-                    break;
-                 }
-              }
-           }
+           let isDuplicate = isDuplicateRoot(root, tempSeenRoots);
 
            if (!isDuplicate) {
-               seenRoots.add(root);
+               tempSeenRoots.add(root);
                uniqueWords.push(w);
            } else {
                duplicateWords.push(w);
@@ -2083,6 +2113,7 @@ export default function GraphEditor() {
         }
 
         wordsToImport.forEach((w: any, index: number) => {
+          magicChangeRoots.add(getRoot(w.word));
           const oldWordNode = nodes.find(n => n.id === currentReqSig.wordNodeIds[index]);
           const wordId = uuidv4();
           
