@@ -195,21 +195,22 @@ function runAnalysis() {
       const configMoveLimit = data.moveLimit || 0;
       const moveTightness = configMoveLimit - res.recommendedMoveLimit;
       
-      let finetunedScore = (
-        nodes.length * 0.77 +
-        mechanicsCount * 7.08 +
-        peakCongestion * 2.98 +
-        congestionTurns * 0.08 -
-        moveTightness * 0.58 -
-        rarityScore * 0.42 -
-        73.2
+      let rawScore = (
+        nodes.length * 9.4 +
+        peakCongestion * 4.7 +
+        rarityScore * 0.9 -
+        moveTightness * 2.1 -
+        congestionTurns * 1.6 -
+        358.1
       );
+      // Scale down to 100-point format (Max was ~480, divide by 4.8)
+      let finetunedScore = rawScore / 4.8;
       finetunedScore = Math.max(0, Math.round(finetunedScore * 10) / 10);
       
       let finetunedLabel = 'Easy';
-      if (finetunedScore > 50) finetunedLabel = 'Expert';
-      else if (finetunedScore > 30) finetunedLabel = 'Hard';
-      else if (finetunedScore > 15) finetunedLabel = 'Medium';
+      if (finetunedScore > 67) finetunedLabel = 'Expert';
+      else if (finetunedScore > 58) finetunedLabel = 'Hard';
+      else if (finetunedScore > 35) finetunedLabel = 'Medium';
       
       // I am exporting res.recommendedMoveLimit instead of res.totalMoves for the Solver Moves column!
       results.push(`Level ${i},${nodes.length},${spawnQueueIds.length},${res.recommendedMoveLimit},${res.bonusTurns},${configMoveLimit},${res.difficulty.score},${res.difficulty.label},${peakCongestion},${congestionTurns},${rarityScore},${mechanicsCount},${moveTightness},${finetunedScore},${finetunedLabel}`);

@@ -602,7 +602,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   }
 
   const recommendedMoveLimit = Math.max(1, moveCount - bonusTurns + bombPenalties);
-  const difficulty = calculateDifficulty(nodes, edges, levelData, moveCount);
+  const difficulty = calculateDifficulty(nodes, edges, levelData, recommendedMoveLimit, steps);
 
   return {
     steps,
@@ -613,73 +613,29 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   };
 }
 
-function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, moveCount: number) {
-  let score = 0;
+function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, recommendedMoveLimit: number, steps: any[]) {
   const factors: string[] = [];
 
-  // Base score from moves
-  score += moveCount;
-  factors.push(`Base: ${moveCount} required moves`);
+  // Compute Peak Congestion & Congestion Turns
+  let peakCongestion = 0;
+  let congestionTurns = 0;
+  const maxBubbles = levelData?.maxBubblesInScene || 20;
+  const threshold = maxBubbles * 0.8;
 
-  // Max Bubbles constraint
-  const maxBubbles = levelData?.maxBubblesInScene || 10;
-  const totalItems = nodes.length; // total nodes
-  if (totalItems > maxBubbles * 1.5) {
-    score += 15;
-    factors.push(`High Congestion: Total items (${totalItems}) far exceeds max bubbles on screen (${maxBubbles})`);
-  } else if (totalItems > maxBubbles) {
-    score += 5;
-    factors.push(`Medium Congestion: More items than screen limit`);
-  }
+  steps.forEach((step: any) => {
+    const boardSize = step.boardState?.length || 0;
+    if (boardSize > peakCongestion) peakCongestion = boardSize;
+    if (boardSize >= threshold) congestionTurns++;
+  });
 
-  // Chunks overlap / misleading
-  const chunkNodes = nodes.filter(n => n.data.isChunk).map(n => String(n.data.label));
-  const chunkCounts: Record<string, number> = {};
-  chunkNodes.forEach(c => { chunkCounts[c] = (chunkCounts[c] || 0) + 1; });
-  const duplicates = Object.values(chunkCounts).filter(v => v > 1).length;
-  if (duplicates > 0) {
-    score += duplicates * 8;
-    factors.push(`${duplicates} duplicated chunks (Causes confusion)`);
-  }
+  const configMoveLimit = levelData?.moveLimit || 0;
+  const moveTightness = configMoveLimit - recommendedMoveLimit;
 
-  // Mechanics
-  if (levelData?.useBubbleSeparator === 1) {
-    score += 10;
-    factors.push(`Chain Mechanic Enabled`);
-  }
-
-  const frozenCount = levelData?.frozenBubbles?.length || 0;
-  if (frozenCount > 0) {
-    score += frozenCount * 4;
-    factors.push(`${frozenCount} Frozen Words`);
-  }
-
-  const burstCount = levelData?.burstBubbles?.length || 0;
-  if (burstCount > 0) {
-    score += burstCount * 6;
-    factors.push(`${burstCount} Bomb Words`);
-  }
-
-    const lockCount = levelData?.keyLockBubbles?.length || 0;
-    if (lockCount > 0) {
-      score += lockCount * 2;
-      factors.push(`${lockCount} Key-Lock Mechanics`);
-    }
-
-    const screwLockMechanicsCount = levelData?.screwLockBubbles?.length || 0;
-    if (screwLockMechanicsCount > 0) {
-      score += screwLockMechanicsCount * 3;
-      factors.push(`${screwLockMechanicsCount} Screw-Lock Mechanics`);
-    }
-
-  // Rarity (Popularity) calculation
+  // Rarity calculation
+  let rarityScore = 0;
   const wordNodes = nodes.filter(n => !n.data.isCategory && !n.data.isChunk);
   if (wordNodes.length > 0) {
-    let ultraRare = 0;
-    let veryRare = 0;
-    let rare = 0;
-    let common = 0;
-    
+    let ultraRare = 0; let veryRare = 0; let rare = 0; let common = 0;
     wordNodes.forEach(wn => {
       const wLabel = String(wn.data.label).toLowerCase();
       let foundPop: number | null = null;
@@ -697,38 +653,42 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, move
         else if (foundPop > 80) common++;
       }
     });
-
-    if (ultraRare > 0) {
-      const pts = ultraRare * 8;
-      score += pts;
-      factors.push(`${ultraRare} Ultra Rare words (+${pts} difficulty)`);
-    }
-    if (veryRare > 0) {
-      const pts = veryRare * 4;
-      score += pts;
-      factors.push(`${veryRare} Very Rare words (+${pts} difficulty)`);
-    }
-    if (rare > 0) {
-      const pts = rare * 2;
-      score += pts;
-      factors.push(`${rare} Rare words (+${pts} difficulty)`);
-    }
-    if (common > wordNodes.length * 0.7) {
-      score -= 10;
-      factors.push(`Majority of words are very common (-10 difficulty)`);
-    }
+    rarityScore = (ultraRare * 8) + (veryRare * 4) + (rare * 2);
+    if (common > wordNodes.length * 0.7) rarityScore -= 10;
+    
+    if (ultraRare > 0) factors.push(`${ultraRare} Ultra Rare words`);
+    if (veryRare > 0) factors.push(`${veryRare} Very Rare words`);
+    if (rare > 0) factors.push(`${rare} Rare words`);
   }
+
+  // Calculate new Finetuned Score
+  const nodesPts = nodes.length * 9.4;
+  const congPts = peakCongestion * 4.7;
+  const rarityPts = rarityScore * 0.9;
+  const movePts = moveTightness * 2.1;
+  const turnsPts = congestionTurns * 1.6;
+
+  let rawScore = nodesPts + congPts + rarityPts - movePts - turnsPts - 358.1;
+  let score = rawScore / 4.8;
+  score = Math.max(0, Math.round(score * 10) / 10);
+
+  factors.push(`Nodes (${nodes.length}): +${(nodesPts / 4.8).toFixed(1)}`);
+  factors.push(`Peak Congestion (${peakCongestion}): +${(congPts / 4.8).toFixed(1)}`);
+  if (rarityScore !== 0) factors.push(`Rarity Score (${rarityScore}): +${(rarityPts / 4.8).toFixed(1)}`);
+  factors.push(`Move Tightness (${moveTightness}): -${(movePts / 4.8).toFixed(1)}`);
+  if (congestionTurns > 0) factors.push(`Congestion Turns (${congestionTurns}): -${(turnsPts / 4.8).toFixed(1)}`);
+  factors.push(`Base Offset: -74.6`);
 
   // Determine Label
   let label = 'Easy';
   let color = '#22c55e'; // green-500
-  if (score > 60) {
+  if (score > 67) {
     label = 'Expert';
     color = '#ef4444'; // red-500
-  } else if (score > 40) {
+  } else if (score > 58) {
     label = 'Hard';
     color = '#f97316'; // orange-500
-  } else if (score > 20) {
+  } else if (score > 35) {
     label = 'Medium';
     color = '#eab308'; // yellow-500
   }
