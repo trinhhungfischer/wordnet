@@ -340,34 +340,37 @@ const generateNewBranch = (
     };
     delete wordEntry.chunks;
 
-    if (chunks.length === 0) {
-      outWordEntries.push(wordEntry);
-    } else {
-      if (oldChunks.length > 0) {
-        const oldC1 = oldChunks[0]?.fullWord.toLowerCase();
-        const oldC2 = oldChunks[1]?.fullWord.toLowerCase();
-        if (oldC1 && chunks.length > 0) chunkMapping.set(oldC1, chunks[0].toLowerCase());
-        if (oldC2 && chunks.length > 1) chunkMapping.set(oldC2, chunks[1].toLowerCase());
-      }
-      chunks.forEach((chunkStr) => {
-        let chunkOldEntry = oldChunks.find((e: any) => String(e.fullWord).toLowerCase() === chunkStr.toLowerCase());
-        if (!chunkOldEntry && oldChunks.length > 0) chunkOldEntry = oldChunks[0];
-        
-        let cIsCracked = chunkOldEntry?.IsCracked || 0;
-        let cCrackBreakNum = chunkOldEntry?.crackBreakNum || 0;
-        let cIsLinked = chunkOldEntry?.IsLinked || 0;
+    // Do NOT add subcategories to outWordEntries!
+    if (!isSubcategory) {
+      if (chunks.length === 0) {
+        outWordEntries.push(wordEntry);
+      } else {
+        if (oldChunks.length > 0) {
+          const oldC1 = oldChunks[0]?.fullWord.toLowerCase();
+          const oldC2 = oldChunks[1]?.fullWord.toLowerCase();
+          if (oldC1 && chunks.length > 0) chunkMapping.set(oldC1, chunks[0].toLowerCase());
+          if (oldC2 && chunks.length > 1) chunkMapping.set(oldC2, chunks[1].toLowerCase());
+        }
+        chunks.forEach((chunkStr) => {
+          let chunkOldEntry = oldChunks.find((e: any) => String(e.fullWord).toLowerCase() === chunkStr.toLowerCase());
+          if (!chunkOldEntry && oldChunks.length > 0) chunkOldEntry = oldChunks[0];
+          
+          let cIsCracked = chunkOldEntry?.IsCracked || 0;
+          let cCrackBreakNum = chunkOldEntry?.crackBreakNum || 0;
+          let cIsLinked = chunkOldEntry?.IsLinked || 0;
 
-        outWordEntries.push({
-          ...(chunkOldEntry || {}),
-          fullWord: chunkStr.charAt(0).toUpperCase() + chunkStr.slice(1),
-          parentWord: parentWordStr,
-          icon: null,
-          IsCracked: cIsCracked,
-          crackBreakNum: cCrackBreakNum,
-          IsLinked: cIsLinked,
-          linkedChunkWords: []
+          outWordEntries.push({
+            ...(chunkOldEntry || {}),
+            fullWord: chunkStr.charAt(0).toUpperCase() + chunkStr.slice(1),
+            parentWord: parentWordStr,
+            icon: null,
+            IsCracked: cIsCracked,
+            crackBreakNum: cCrackBreakNum,
+            IsLinked: cIsLinked,
+            linkedChunkWords: []
+          });
         });
-      });
+      }
     }
 
     newCat.words.push({
@@ -469,8 +472,10 @@ for (let i = startLevel; i <= endLevel; i++) {
            const c = levelData.categories.find((x: any) => x.category === catName);
            if (c) {
               newCategories.push(c);
+              const subcatNames = levelData.categories.filter((x: any) => x.parentCategory).map((x: any) => x.category.toLowerCase());
               c.words.forEach((w: any) => {
-                  if (!newAllWordEntries.some(e => String(e.fullWord) === String(w.fullWord))) {
+                  const isSubcat = subcatNames.includes(w.fullWord.toLowerCase());
+                  if (!isSubcat && !newAllWordEntries.some(e => String(e.fullWord) === String(w.fullWord))) {
                       newAllWordEntries.push(w);
                   }
               });
