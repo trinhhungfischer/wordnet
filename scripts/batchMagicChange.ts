@@ -375,7 +375,6 @@ const generateNewBranch = (
 
     newCat.words.push({
       fullWord: w.word.toLowerCase(),
-      chunks: chunks,
       icon: null,
       IsCracked: 0,
       crackBreakNum: 0,
