@@ -472,7 +472,7 @@ export default function GraphEditor() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as globalThis.Node)) {
         setIsDropdownOpen(false);
       }
     };
