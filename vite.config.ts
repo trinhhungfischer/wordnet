@@ -1,7 +1,48 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Custom plugin to provide local API for updating dictionary
+const dictionaryApiPlugin = () => ({
+  name: 'dictionary-api',
+  configureServer(server: any) {
+    server.middlewares.use((req: any, res: any, next: any) => {
+      if (req.url === '/api/update-dictionary' && req.method === 'POST') {
+        let body = ''
+        req.on('data', (chunk: any) => {
+          body += chunk.toString()
+        })
+        
+        req.on('end', () => {
+          try {
+            const newData = JSON.parse(body)
+            const filePath = path.resolve(__dirname, 'src/data/global_dictionary.json')
+            
+            // Read existing data if necessary, or just overwrite
+            // Assuming the client sends the FULL updated dictionary to be overwritten
+            fs.writeFileSync(filePath, JSON.stringify(newData, null, 2), 'utf-8')
+            
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ success: true, message: 'Dictionary updated successfully' }))
+          } catch (error) {
+            console.error('Error writing dictionary:', error)
+            res.statusCode = 500
+            res.end(JSON.stringify({ success: false, error: 'Error writing file' }))
+          }
+        })
+      } else {
+        next()
+      }
+    })
+  }
+})
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), dictionaryApiPlugin()],
 })

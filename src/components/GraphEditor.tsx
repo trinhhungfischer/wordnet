@@ -28,7 +28,7 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import nlp from 'compromise';
 
 const nodeTypes = {
@@ -462,6 +462,27 @@ export default function GraphEditor() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [nodes, edges, rawLevelData, setNodes, setEdges, setRawLevelData]);
+
+  useEffect(() => {
+    const handleNavKeys = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (selectedLevelName && levels.length > 0) {
+          const idx = levels.indexOf(selectedLevelName);
+          if (idx > 0) loadLevel(levels[idx - 1]);
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (selectedLevelName && levels.length > 0) {
+          const idx = levels.indexOf(selectedLevelName);
+          if (idx < levels.length - 1 && idx !== -1) loadLevel(levels[idx + 1]);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleNavKeys);
+    return () => window.removeEventListener('keydown', handleNavKeys);
+  }, [selectedLevelName, levels, isRealLevels]);
 
   useEffect(() => {
     fetch(isRealLevels ? '/real_levels/index.json' : '/levels/index.json')
@@ -1070,6 +1091,23 @@ export default function GraphEditor() {
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
   };
+
+  const handleExportJsonRef = useRef(handleExportJson);
+  useEffect(() => {
+    handleExportJsonRef.current = handleExportJson;
+  }, [handleExportJson]);
+
+  useEffect(() => {
+    const handleSaveShortcut = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        handleExportJsonRef.current();
+      }
+    };
+    window.addEventListener('keydown', handleSaveShortcut);
+    return () => window.removeEventListener('keydown', handleSaveShortcut);
+  }, []);
+
 
   const handleNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -2558,20 +2596,37 @@ export default function GraphEditor() {
             <span style={{ fontSize: '13px', fontWeight: 500, color: 'white' }}>Real Levels</span>
           </div>
 
-          <div ref={dropdownRef} style={{ position: 'relative' }}>
-            <div 
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <button
+              onClick={() => {
+                if (!selectedLevelName || levels.length === 0) return;
+                const idx = levels.indexOf(selectedLevelName);
+                if (idx > 0) loadLevel(levels[idx - 1]);
+              }}
+              disabled={!selectedLevelName || levels.indexOf(selectedLevelName) <= 0}
+              title="Previous Level (Ctrl+Left)"
               style={{
-                padding: '6px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)',
+                padding: '6px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)',
                 border: '1px solid var(--panel-border)', color: 'white', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: '160px',
-                fontSize: '13px'
+                opacity: (!selectedLevelName || levels.indexOf(selectedLevelName) <= 0) ? 0.5 : 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}
             >
-              <span>{selectedLevelName || '-- Load Level --'}</span>
-              <ChevronDown size={14} style={{ opacity: 0.7 }} />
-            </div>
-            
+              <ChevronLeft size={16} />
+            </button>
+            <div ref={dropdownRef} style={{ position: 'relative' }}>
+              <div 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                style={{
+                  padding: '6px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)',
+                  border: '1px solid var(--panel-border)', color: 'white', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: '160px',
+                  fontSize: '13px'
+                }}
+              >
+                <span>{selectedLevelName || '-- Load Level --'}</span>
+                <ChevronDown size={14} style={{ opacity: 0.7 }} />
+              </div>
             {isDropdownOpen && (
               <div style={{
                 position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
@@ -2618,6 +2673,24 @@ export default function GraphEditor() {
               </div>
             )}
           </div>
+          <button
+            onClick={() => {
+              if (!selectedLevelName || levels.length === 0) return;
+              const idx = levels.indexOf(selectedLevelName);
+              if (idx < levels.length - 1 && idx !== -1) loadLevel(levels[idx + 1]);
+            }}
+            disabled={!selectedLevelName || levels.indexOf(selectedLevelName) === -1 || levels.indexOf(selectedLevelName) >= levels.length - 1}
+            title="Next Level (Ctrl+Right)"
+            style={{
+              padding: '6px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)',
+              border: '1px solid var(--panel-border)', color: 'white', cursor: 'pointer',
+              opacity: (!selectedLevelName || levels.indexOf(selectedLevelName) === -1 || levels.indexOf(selectedLevelName) >= levels.length - 1) ? 0.5 : 1,
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
           <button 
             onClick={() => {
               if (confirm('Create a new empty level? Unsaved progress will be lost.')) {

@@ -126,9 +126,9 @@ function getSpawnQueue(nodes: any[], edges: any[], data: any) {
 
 function runAnalysis() {
   const results: string[] = [];
-  results.push('Level,Total Nodes,Spawn Queue Length,Solver Moves,Bonus Turns,Config Move Limit,Old Score,Old Label,Peak Congestion,Congestion Turns,Rarity Score,Mechanics Count,Move Tightness,Finetuned Score,Finetuned Label');
+  results.push('Level,Total Nodes,Spawn Queue Length,Solver Moves,Bonus Turns,Config Move Limit,Old Score,Old Label,Peak Congestion,Congestion Turns,Rarity Score,Mechanics Count,Move Tightness,Finetuned Score,Finetuned Label,Total Categories');
 
-  for (let i = 0; i <= 1000; i++) {
+  for (let i = 0; i <= 2000; i++) {
     const filePath = path.join(levelsDir, `Level ${i}.json`);
     const altFilePath = path.join(levelsDir, `${i}.json`);
     
@@ -207,21 +207,23 @@ function runAnalysis() {
       let finetunedScore = rawScore / 4.8;
       finetunedScore = Math.max(0, Math.round(finetunedScore * 10) / 10);
       
-      let finetunedLabel = 'Easy';
-      if (finetunedScore > 67) finetunedLabel = 'Expert';
-      else if (finetunedScore > 58) finetunedLabel = 'Hard';
-      else if (finetunedScore > 35) finetunedLabel = 'Medium';
+      let finetunedLabel = 'Expert';
+      if (finetunedScore <= 35) finetunedLabel = 'Easy';
+      else if (finetunedScore <= 58) finetunedLabel = 'Medium';
+      else if (finetunedScore <= 67) finetunedLabel = 'Hard';
       
-      // I am exporting res.recommendedMoveLimit instead of res.totalMoves for the Solver Moves column!
-      results.push(`Level ${i},${nodes.length},${spawnQueueIds.length},${res.recommendedMoveLimit},${res.bonusTurns},${configMoveLimit},${res.difficulty.score},${res.difficulty.label},${peakCongestion},${congestionTurns},${rarityScore},${mechanicsCount},${moveTightness},${finetunedScore},${finetunedLabel}`);
+      const totalCategories = data.categories ? data.categories.length : 0;
+      
+      results.push(`Level ${i},${nodes.length},${spawnQueueIds.length},${res.recommendedMoveLimit},${res.bonusTurns},${configMoveLimit},${res.difficulty.score},${res.difficulty.label},${peakCongestion},${congestionTurns},${rarityScore},${mechanicsCount},${moveTightness},${finetunedScore},${finetunedLabel},${totalCategories}`);
     } catch (e: any) {
       console.error(`Error in Level ${i}:`, e.message);
-      results.push(`Level ${i},ERROR,,,,,,,,,,,,,`);
+      results.push(`Level ${i},ERROR,,,,,,,,,,,,,,`);
     }
   }
 
-  fs.writeFileSync('Real_Levels_Difficulty_v2.csv', results.join('\n'));
-  console.log('✅ Wrote Real_Levels_Difficulty_v2.csv');
+  const outPath = path.join(process.cwd(), 'analysis_scripts', '2026-06-26', 'Real_Levels_Difficulty_v3.csv');
+  fs.writeFileSync(outPath, results.join('\n'));
+  console.log('✅ Analysis complete. Output saved to ' + outPath);
 }
 
 runAnalysis();

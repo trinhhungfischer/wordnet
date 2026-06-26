@@ -29,7 +29,7 @@
       "words": [
         {
           "fullWord": "coffee",
-          "icon": null,
+          "icon": "coffee",
           "IsCracked": 0,
           "crackBreakNum": 0,
           "IsLinked": 0,
@@ -531,7 +531,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 36,
+  "moveLimit": 48,
   "randomSeed": 15,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -842,15 +842,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "O",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Ore"
-    },
-    {
       "fullWord": "Ambulance",
       "icon": null,
       "IsCracked": 0,
@@ -885,6 +876,15 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": "Music"
+    },
+    {
+      "fullWord": "Ore",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
     },
     {
       "fullWord": "Routine",
@@ -993,15 +993,6 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
-    },
-    {
-      "fullWord": "Re",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Ore"
     }
   ],
   "allWords": [],
@@ -1031,11 +1022,10 @@
       "screwLockWord": "Reservation",
       "screwDriverWords": [
         "Degree",
-        "Re",
         "Prescription"
       ],
       "id": 1,
-      "screwCount": 3
+      "screwCount": 2
     }
   ],
   "backwardBubbles": [],

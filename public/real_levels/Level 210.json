@@ -23,7 +23,7 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Computer Parts",
+      "category": "Computer parts",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -63,7 +63,7 @@
     },
     {
       "category": "Keyboard",
-      "parentCategory": "Computer Parts",
+      "parentCategory": "Computer parts",
       "icon": null,
       "words": [
         {
@@ -231,7 +231,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "tornado",
+          "fullWord": "wind",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -239,7 +239,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "wind",
+          "fullWord": "tornado",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -270,14 +270,6 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "tornado",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
           "fullWord": "thunder",
           "icon": null,
           "IsCracked": 0,
@@ -287,6 +279,14 @@
         },
         {
           "fullWord": "typhoon",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lightning",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -453,7 +453,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 36,
+  "moveLimit": 41,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -798,6 +798,15 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
+    },
+    {
+      "fullWord": "Lightning",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
     }
   ],
   "allWords": [],

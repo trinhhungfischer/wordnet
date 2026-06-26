@@ -23,10 +23,18 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Art Forms",
+      "category": "Art forms",
       "parentCategory": null,
       "icon": null,
       "words": [
+        {
+          "fullWord": "sculpture",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
         {
           "fullWord": "fabric patterns",
           "icon": null,
@@ -37,14 +45,6 @@
         },
         {
           "fullWord": "pottery",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "sculpture",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -63,7 +63,7 @@
     },
     {
       "category": "Sculpture",
-      "parentCategory": "Art Forms",
+      "parentCategory": "Art forms",
       "icon": null,
       "words": [
         {
@@ -102,7 +102,7 @@
     },
     {
       "category": "Fabric patterns",
-      "parentCategory": "Art Forms",
+      "parentCategory": "Art forms",
       "icon": null,
       "words": [
         {
@@ -141,7 +141,7 @@
     },
     {
       "category": "Pottery",
-      "parentCategory": "Art Forms",
+      "parentCategory": "Art forms",
       "icon": null,
       "words": [
         {
@@ -218,7 +218,7 @@
       ]
     },
     {
-      "category": "Goes Underwater",
+      "category": "Goes underwater",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -530,7 +530,7 @@
       ]
     },
     {
-      "category": "Underground Harvest",
+      "category": "Underground harvest",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -569,7 +569,7 @@
       ]
     },
     {
-      "category": "Track & Field",
+      "category": "Track & field",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -647,8 +647,8 @@
       ]
     }
   ],
-  "maxBubblesInScene": 24,
-  "moveLimit": 5,
+  "maxBubblesInScene": 26,
+  "moveLimit": 55,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
