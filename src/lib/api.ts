@@ -71,3 +71,27 @@ export async function fetchWikipediaSuggestions(query: string, limit: number = 2
     return [];
   }
 }
+
+export async function updateGlobalDictionary(updatedDictionaryData: any): Promise<boolean> {
+  try {
+    const response = await fetch('/api/update-dictionary', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedDictionaryData),
+    });
+
+    const result = await response.json();
+    if (result.success) {
+      console.log('Dictionary updated successfully');
+      return true;
+    } else {
+      console.error('Failed to update dictionary:', result.error);
+      return false;
+    }
+  } catch (err) {
+    console.error('Error calling update dictionary API:', err);
+    return false;
+  }
+}

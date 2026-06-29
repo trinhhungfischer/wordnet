@@ -28,8 +28,9 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud } from 'lucide-react';
 import nlp from 'compromise';
+import { updateGlobalDictionary } from '../lib/api';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -2551,6 +2552,52 @@ export default function GraphEditor() {
 
 
 
+  const handleUpdateGlobalDict = async () => {
+    let updatedDict = JSON.parse(JSON.stringify(globalDict));
+    
+    const catNodes = nodes.filter(n => n.data.isCategory);
+    let addedCount = 0;
+    
+    catNodes.forEach(catNode => {
+      const catName = String(catNode.data.label).toLowerCase();
+      let dictCat = updatedDict.find((c: any) => c.name.toLowerCase() === catName);
+      if (!dictCat) {
+        dictCat = { name: catName, parents: [], subcategories: [], words: [], popularity: 50 };
+        updatedDict.push(dictCat);
+      }
+      
+      const connectedEdges = edges.filter(e => e.source === catNode.id);
+      const wordNodes = connectedEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && !n.data.isCategory && !n.data.isChunk);
+      
+      wordNodes.forEach(wordNode => {
+        if (!wordNode) return;
+        const wordStr = String(wordNode.data.label).toLowerCase();
+        const existingWord = dictCat.words.find((w: any) => w.word.toLowerCase() === wordStr);
+        if (!existingWord) {
+          dictCat.words.push({
+            word: wordStr,
+            icon: wordNode.data.icon || null,
+            popularity: 50
+          });
+          addedCount++;
+        }
+      });
+    });
+
+    if (addedCount === 0) {
+      alert('Không tìm thấy từ mới nào chưa có trong Dictionary để cập nhật!');
+      return;
+    }
+
+    const success = await updateGlobalDictionary(updatedDict);
+    if (success) {
+      alert(`Đã cập nhật Global Dictionary thành công! Đã thêm ${addedCount} từ mới.`);
+      setGlobalDict(updatedDict);
+    } else {
+      alert('Lỗi khi cập nhật Global Dictionary.');
+    }
+  };
+
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
       
@@ -2795,6 +2842,16 @@ export default function GraphEditor() {
             }}
           >
             <RefreshCw size={14} /> Load JSON
+          </button>
+          <button 
+            onClick={handleUpdateGlobalDict}
+            style={{
+              padding: '8px 12px', borderRadius: '8px', border: 'none',
+              background: 'var(--accent)', color: 'white', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500
+            }}
+          >
+            <UploadCloud size={14} /> Update Dict
           </button>
         </div>
       </div>
