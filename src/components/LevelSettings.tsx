@@ -57,12 +57,12 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
 
   return (
     <div className="glass-panel" style={{
-      position: 'absolute', top: '20px', right: '20px', bottom: '20px', width: '360px',
-      overflowY: 'auto', borderRadius: '16px', padding: '20px', zIndex: 10,
+      position: 'absolute', top: '100px', right: '20px', bottom: '20px', width: '360px',
+      overflow: 'hidden', borderRadius: '16px', zIndex: 10,
       display: 'flex', flexDirection: 'column',
       boxShadow: '0 4px 24px rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', border: '1px solid var(--panel-border)'
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--panel-border)', flexShrink: 0 }}>
         <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 600, color: 'var(--accent)' }}>
           Level Settings
         </h2>
@@ -89,15 +89,15 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
         </div>
       </div>
 
-
-      {/* General Settings */}
-      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-        <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>General</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <LabelInput label="Move Limit" value={levelData.moveLimit} onChange={(val: string) => handleChange('moveLimit', parseInt(val))} type="number" />
-          <LabelInput label="Difficulty (0-2)" value={levelData.levelDifficulty} onChange={(val: string) => handleChange('levelDifficulty', parseInt(val))} type="number" />
-          <LabelInput label="Max Bubbles" value={levelData.maxBubblesInScene} onChange={(val: string) => handleChange('maxBubblesInScene', parseInt(val))} type="number" />
-          <LabelInput label="Tutorial ID" value={levelData.tutorialId} onChange={(val: string) => handleChange('tutorialId', parseInt(val))} type="number" />
+      <div style={{ padding: '20px', overflowY: 'auto', flex: 1 }}>
+        {/* General Settings */}
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>General</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <LabelInput label="Move Limit" value={levelData.moveLimit} onChange={(val: string) => handleChange('moveLimit', parseInt(val))} type="number" />
+            <LabelInput label="Difficulty (0-2)" value={levelData.levelDifficulty} onChange={(val: string) => handleChange('levelDifficulty', parseInt(val))} type="number" />
+            <LabelInput label="Max Bubbles" value={levelData.maxBubblesInScene} onChange={(val: string) => handleChange('maxBubblesInScene', parseInt(val))} type="number" />
+            <LabelInput label="Tutorial ID" value={levelData.tutorialId} onChange={(val: string) => handleChange('tutorialId', parseInt(val))} type="number" />
           <LabelInput label="Max Word Len" value={levelData.maxWordLength} onChange={(val: string) => handleChange('maxWordLength', parseInt(val))} type="number" />
         </div>
       </div>
@@ -758,6 +758,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
           </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

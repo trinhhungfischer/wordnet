@@ -245,20 +245,22 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
   if (isMultiSelection) {
     return (
       <div className="glass-panel" 
-        onScroll={(e) => {
-          const target = e.currentTarget;
-          if (target.scrollHeight - target.scrollTop - target.clientHeight < 50) {
-            setMatchPage(prev => prev + 1);
-          }
-        }}
         style={{
-          position: 'absolute', right: '20px', top: '20px', width: '360px',
-          maxHeight: 'calc(100vh - 40px)', overflowY: 'auto', borderRadius: '16px',
-          display: 'flex', flexDirection: 'column', zIndex: 10,
+          position: 'absolute', 
+          right: isSettingsOpen ? '400px' : '20px', 
+          top: '100px', 
+          width: '360px',
+          maxHeight: 'calc(100vh - 120px)', 
+          overflow: 'hidden', 
+          borderRadius: '16px',
+          display: 'flex', 
+          flexDirection: 'column', 
+          zIndex: 10,
+          transition: 'right 0.3s ease',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
         }}
       >
-        <div style={{ padding: '20px', borderBottom: '1px solid var(--panel-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ padding: '20px', borderBottom: '1px solid var(--panel-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
           <div>
             <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '4px' }}>MULTI-SELECTION</div>
             <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--accent)' }}>
@@ -270,7 +272,15 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
           </button>
         </div>
         
-        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div 
+          onScroll={(e) => {
+            const target = e.currentTarget;
+            if (target.scrollHeight - target.scrollTop - target.clientHeight < 50) {
+              setMatchPage(prev => prev + 1);
+            }
+          }}
+          style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto', flex: 1 }}
+        >
           <div style={{ background: 'rgba(99,102,241,0.1)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(99,102,241,0.3)' }}>
             <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#a5b4fc' }}>Structure Matcher</h4>
             <div style={{ fontSize: '12px', color: '#ddd', marginBottom: '16px' }}>
@@ -430,10 +440,10 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
     <div className="glass-panel" style={{
       position: 'absolute',
       right: isSettingsOpen ? '400px' : '20px',
-      top: '20px',
+      top: '100px',
       width: '360px',
-      maxHeight: 'calc(100vh - 40px)',
-      overflowY: 'auto',
+      maxHeight: 'calc(100vh - 120px)',
+      overflow: 'hidden',
       borderRadius: '16px',
       display: 'flex',
       flexDirection: 'column',
@@ -447,7 +457,8 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
         borderBottom: '1px solid var(--panel-border)',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        flexShrink: 0
       }}>
         <div style={{ flex: 1 }}>
           <div style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '4px' }}>SELECTED NODE</div>
@@ -498,7 +509,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
         </button>
       </div>
 
-      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto', flex: 1 }}>
         
         {/* Actions */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>

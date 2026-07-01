@@ -43,7 +43,7 @@ export default function DictionaryBrowser({ isOpen, onClose, onImport }: Diction
   }, []);
 
   useEffect(() => {
-    if (isOpen && dictionary.length === 0) {
+    if (isOpen) {
       loadDict();
     }
   }, [isOpen]);

@@ -1168,6 +1168,28 @@ export default function GraphEditor() {
     }, 50);
   };
 
+  const handleAddWord = () => {
+    const word = prompt("Enter a new word:");
+    if (!word) return;
+    
+    saveHistory();
+    const newNodeId = uuidv4();
+    const pos = { x: Math.random() * 400 + 100, y: Math.random() * 200 + 100 };
+    const newNode: Node = {
+      id: newNodeId,
+      type: 'custom',
+      position: pos,
+      data: { label: word.toLowerCase(), isCategory: false }
+    };
+    
+    setNodes((nds) => nds.map(n => ({...n, selected: false})).concat({...newNode, selected: true}));
+    
+    setTimeout(() => {
+      setSelectedNodeId(newNodeId);
+      setCenter(pos.x + 60, pos.y + 30, { zoom: 1.2, duration: 800 });
+    }, 50);
+  };
+
   const handleAddChild = (parentNode: Node, childLabel: string, isChunk: boolean = false) => {
     saveHistory();
     // Chunks are unique nodes to preserve order and duplicate names (e.g. "na", "na" for "banana")
@@ -2557,18 +2579,23 @@ export default function GraphEditor() {
     
     const catNodes = nodes.filter(n => n.data.isCategory);
     let addedCount = 0;
+    let addedItemsMsg = '';
     
     catNodes.forEach(catNode => {
       const catName = String(catNode.data.label).toLowerCase();
       let dictCat = updatedDict.find((c: any) => c.name.toLowerCase() === catName);
+      let isNewCat = false;
       if (!dictCat) {
         dictCat = { name: catName, parents: [], subcategories: [], words: [], popularity: 50 };
         updatedDict.push(dictCat);
+        isNewCat = true;
       }
       
       const connectedEdges = edges.filter(e => e.source === catNode.id);
       const wordNodes = connectedEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && !n.data.isCategory && !n.data.isChunk);
       
+      let catAddedItems: string[] = [];
+
       wordNodes.forEach(wordNode => {
         if (!wordNode) return;
         const wordStr = String(wordNode.data.label).toLowerCase();
@@ -2580,18 +2607,38 @@ export default function GraphEditor() {
             popularity: 50
           });
           addedCount++;
+          catAddedItems.push(`  + ${wordStr} (Word)`);
         }
       });
+
+      // Handle subcategories
+      const subcatNodes = connectedEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isCategory);
+      subcatNodes.forEach(subcatNode => {
+        if (!subcatNode) return;
+        const subcatStr = String(subcatNode.data.label).toLowerCase();
+        if (!dictCat.subcategories) dictCat.subcategories = [];
+        if (!dictCat.subcategories.includes(subcatStr)) {
+          dictCat.subcategories.push(subcatStr);
+          addedCount++;
+          catAddedItems.push(`  + ${subcatStr} (Subcategory)`);
+        }
+      });
+
+      if (catAddedItems.length > 0) {
+        addedItemsMsg += `\n[${catName}]${isNewCat ? ' (New Category)' : ''}\n` + catAddedItems.join('\n') + '\n';
+      } else if (isNewCat) {
+        addedItemsMsg += `\n[${catName}] (New Category - Empty)\n`;
+      }
     });
 
-    if (addedCount === 0) {
+    if (addedCount === 0 && addedItemsMsg === '') {
       alert('Không tìm thấy từ mới nào chưa có trong Dictionary để cập nhật!');
       return;
     }
 
     const success = await updateGlobalDictionary(updatedDict);
     if (success) {
-      alert(`Đã cập nhật Global Dictionary thành công! Đã thêm ${addedCount} từ mới.`);
+      alert(`Đã cập nhật Global Dictionary thành công! Đã thêm ${addedCount} mục mới:\n${addedItemsMsg}`);
       setGlobalDict(updatedDict);
     } else {
       alert('Lỗi khi cập nhật Global Dictionary.');
@@ -2603,7 +2650,7 @@ export default function GraphEditor() {
       
       {/* Top Navbar */}
       <div className="glass-panel" style={{
-        position: 'absolute', top: '20px', left: '20px', right: '360px', 
+        position: 'absolute', top: '20px', left: '20px', right: '20px', 
         height: '60px', borderRadius: '12px', zIndex: 10,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
@@ -2738,120 +2785,69 @@ export default function GraphEditor() {
             <ChevronRight size={16} />
           </button>
         </div>
-          <button 
-            onClick={() => {
-              if (confirm('Create a new empty level? Unsaved progress will be lost.')) {
-                setNodes([]);
-                setEdges([]);
-                setRawLevelData({
-                  theme: "New Theme",
-                  categories: [],
-                  allWordEntries: []
-                });
-                setSelectedLevelName('New_Level');
-                localStorage.removeItem('wordnet_autosave');
-              }
-            }}
-            style={{ 
-              padding: '6px 12px', borderRadius: '6px', background: 'rgba(56, 189, 248, 0.15)', 
-              color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.3)', cursor: 'pointer', 
-              fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' 
-            }}
-          >
-            <Plus size={14} /> New Level
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.15)', padding: '4px', borderRadius: '10px' }}>
+            <button 
+              onClick={() => {
+                if (confirm('Create a new empty level? Unsaved progress will be lost.')) {
+                  setNodes([]);
+                  setEdges([]);
+                  setRawLevelData({ theme: "New Theme", categories: [], allWordEntries: [] });
+                  setSelectedLevelName('New_Level');
+                  localStorage.removeItem('wordnet_autosave');
+                }
+              }}
+              style={{ padding: '6px 12px', borderRadius: '6px', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.3)', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <Plus size={14} /> New Level
+            </button>
+
+            <input type="file" accept=".json" ref={fileInputRef} onChange={handleLoadJson} style={{ display: 'none' }} />
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}
+            >
+              <RefreshCw size={14} /> Load JSON
+            </button>
+
+            <button 
+              onClick={handleExportJson}
+              disabled={!rawLevelData}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500, opacity: rawLevelData ? 1 : 0.5 }}
+            >
+              <Save size={14} /> Save JSON
+            </button>
+          </div>
         </div>
         
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button 
-            onClick={() => setIsSolutionModalOpen(true)}
-            disabled={!rawLevelData}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: 'none',
-              background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed',
-              fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5
-            }}
-          >
-            <Calculator size={14} /> Calculate
-          </button>
-          <button 
-            onClick={() => setIsDictOpen(true)}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--accent)',
-              background: 'rgba(56, 189, 248, 0.1)', color: 'var(--accent)', cursor: 'pointer',
-              fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px'
-            }}
-          >
-            <BookOpen size={14} /> Dictionary
-          </button>
-          
-          <button 
-            onClick={() => setIsMagicChangeOpen(true)}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: '1px solid #a855f7',
-              background: 'rgba(168, 85, 247, 0.1)', color: '#d8b4fe', cursor: 'pointer',
-              fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px'
-            }}
-          >
-            <Sparkles size={14} /> Magic Change
-          </button>
-        </div>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.15)', padding: '4px', borderRadius: '10px' }}>
+            <button 
+              onClick={() => setIsSolutionModalOpen(true)}
+              disabled={!rawLevelData}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
+            >
+              <Calculator size={14} /> Calculate
+            </button>
+            <button 
+              onClick={() => setIsMagicChangeOpen(true)}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #a855f7', background: 'rgba(168, 85, 247, 0.1)', color: '#d8b4fe', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <Sparkles size={14} /> Magic Change
+            </button>
+            <button 
+              onClick={() => setIsDictOpen(true)}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--accent)', background: 'rgba(56, 189, 248, 0.1)', color: 'var(--accent)', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <BookOpen size={14} /> Dictionary
+            </button>
+          </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
           <button 
-            onClick={() => {
-                const nextState = !isSettingsOpen;
-                setIsSettingsOpen(nextState);
-              }}
+            onClick={() => setIsSettingsOpen(!isSettingsOpen)}
             disabled={!rawLevelData}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--panel-border)',
-              background: isSettingsOpen ? 'var(--accent)' : 'transparent', 
-              color: isSettingsOpen ? 'white' : 'var(--text-main)', 
-              cursor: rawLevelData ? 'pointer' : 'not-allowed',
-              display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500, opacity: rawLevelData ? 1 : 0.5
-            }}
+            style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--panel-border)', background: isSettingsOpen ? 'var(--accent)' : 'transparent', color: isSettingsOpen ? 'white' : 'var(--text-main)', cursor: rawLevelData ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500, opacity: rawLevelData ? 1 : 0.5 }}
           >
             <Settings size={14} /> Config
-          </button>
-          <button 
-            onClick={handleExportJson}
-            disabled={!rawLevelData}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: 'none',
-              background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed',
-              display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500, opacity: rawLevelData ? 1 : 0.5
-            }}
-          >
-            <Save size={14} /> Save JSON
-          </button>
-          
-          <input 
-            type="file" 
-            accept=".json"
-            ref={fileInputRef}
-            onChange={handleLoadJson}
-            style={{ display: 'none' }}
-          />
-          <button 
-            onClick={() => fileInputRef.current?.click()}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: 'none',
-              background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500
-            }}
-          >
-            <RefreshCw size={14} /> Load JSON
-          </button>
-          <button 
-            onClick={handleUpdateGlobalDict}
-            style={{
-              padding: '8px 12px', borderRadius: '8px', border: 'none',
-              background: 'var(--accent)', color: 'white', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500
-            }}
-          >
-            <UploadCloud size={14} /> Update Dict
           </button>
         </div>
       </div>
@@ -3338,6 +3334,52 @@ export default function GraphEditor() {
             onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
           >
             <HelpCircle size={28} />
+          </button>
+          
+          <button
+            onClick={handleUpdateGlobalDict}
+            title="Update Global Dictionary"
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: '#8b5cf6',
+              color: 'white',
+              border: 'none',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <UploadCloud size={24} />
+          </button>
+          
+          <button
+            onClick={handleAddWord}
+            title="Add New Word Node"
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: '#0ea5e9',
+              color: 'white',
+              border: 'none',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <PenTool size={24} />
           </button>
           
           <button

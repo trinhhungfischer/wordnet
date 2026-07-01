@@ -13,19 +13,22 @@ const dictionaryApiPlugin = () => ({
   configureServer(server: any) {
     server.middlewares.use((req: any, res: any, next: any) => {
       if (req.url === '/api/update-dictionary' && req.method === 'POST') {
-        let body = ''
+        const chunks: any[] = []
         req.on('data', (chunk: any) => {
-          body += chunk.toString()
+          chunks.push(chunk)
         })
         
         req.on('end', () => {
           try {
+            const body = Buffer.concat(chunks).toString('utf-8')
             const newData = JSON.parse(body)
-            const filePath = path.resolve(__dirname, 'src/data/global_dictionary.json')
+            const filePathSrc = path.resolve(__dirname, 'src/data/global_dictionary.json')
+            const filePathPublic = path.resolve(__dirname, 'public/global_dictionary.json')
             
             // Read existing data if necessary, or just overwrite
             // Assuming the client sends the FULL updated dictionary to be overwritten
-            fs.writeFileSync(filePath, JSON.stringify(newData, null, 2), 'utf-8')
+            fs.writeFileSync(filePathSrc, JSON.stringify(newData, null, 2), 'utf-8')
+            fs.writeFileSync(filePathPublic, JSON.stringify(newData, null, 2), 'utf-8')
             
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify({ success: true, message: 'Dictionary updated successfully' }))
