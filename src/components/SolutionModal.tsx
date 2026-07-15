@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock, Key, Bomb, Wrench, PenTool, ArrowLeftRight } from 'lucide-react';
+import { X, Calculator, ArrowRight, Zap, Target, LayoutGrid, Link as LinkIcon, Snowflake, Lock, Key, Bomb, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -78,6 +78,8 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
       let isScrewDriver = bubbleState.isScrewDriver;
       let screwLockIndex = bubbleState.screwLockIndex;
       let screwDriverIndex = bubbleState.screwDriverIndex;
+      let cycleLockState = bubbleState.cycleLockState;
+      let isImmovable = bubbleState.isImmovable;
       let node = nodes.find(n => n.id === nodeId);
 
       if (nodeId.startsWith('temp_[')) {
@@ -101,7 +103,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
          if (familyNode) familyName = String(familyNode.data.label);
       }
 
-      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, originalIdx: idx };
+      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, originalIdx: idx };
     }).filter(Boolean) as any[];
 
     if (boardSortMode === 'name') {
@@ -325,7 +327,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, originalIdx }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, originalIdx }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -334,9 +336,10 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   const useFamilyColor = boardSortMode === 'family';
 
                   const isBackward = levelData?.backwardBubbles?.some((b: any) => b.word.toLowerCase() === displayLabel.toLowerCase());
+                  const isCycleLock = cycleLockState !== undefined;
 
-                  const bgColor = useFamilyColor ? familyBg : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')));
-                  const borderColor = useFamilyColor ? familyBorder : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')));
+                  const bgColor = useFamilyColor ? familyBg : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isCycleLock ? (cycleLockState === 1 ? 'rgba(20, 184, 166, 0.25)' : 'rgba(20, 184, 166, 0.1)') : (isImmovable ? 'rgba(107, 114, 128, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))));
+                  const borderColor = useFamilyColor ? familyBorder : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isCycleLock ? (cycleLockState === 1 ? '2px solid rgba(20, 184, 166, 0.8)' : '1px solid rgba(20, 184, 166, 0.4)') : (isImmovable ? '1px solid rgba(107, 114, 128, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))));
                   const textColor = useFamilyColor ? baseColorStr : (isChunk ? '#a5b4fc' : 'var(--text-main)');
 
                   return (
@@ -367,6 +370,11 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {iceMergesLeft > 0 && (
                             <span title={`Frozen (${iceMergesLeft} groups left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#38bdf8', fontSize: '11px', fontWeight: 'bold' }}>
                               <Snowflake size={14} color="#38bdf8" /> {iceMergesLeft}
+                            </span>
+                          )}
+                          {isImmovable && (
+                            <span title="Immovable" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#9ca3af', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Pin size={14} color="#9ca3af" /> Immovable
                             </span>
                           )}
                           {crackMergesLeft > 0 && (
@@ -402,6 +410,11 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {isScrewDriver && (
                             <span title="Screw Driver" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: (screwDriverIndex !== undefined && screwDriverIndex !== -1) ? lockKeyColors[screwDriverIndex % lockKeyColors.length] : '#fb923c', fontSize: '11px', fontWeight: 'bold' }}>
                               <PenTool size={14} color={(screwDriverIndex !== undefined && screwDriverIndex !== -1) ? lockKeyColors[screwDriverIndex % lockKeyColors.length] : '#fb923c'} /> Driver
+                            </span>
+                          )}
+                          {cycleLockState !== undefined && (
+                            <span title={`Cycle Lock (${cycleLockState === 1 ? 'Locked' : 'Unlocked'})`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#14b8a6', fontSize: '11px', fontWeight: 'bold' }}>
+                              <RefreshCw size={14} color="#14b8a6" /> {cycleLockState === 1 ? 'Locked' : 'Unlocked'}
                             </span>
                           )}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>

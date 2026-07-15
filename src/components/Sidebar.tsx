@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import type { Node, Edge } from '@xyflow/react';
-import { Plus, X, Trash2, BookOpen, Layers, Globe, Search as SearchIcon, Copy, ClipboardPaste } from 'lucide-react';
+import { Plus, X, Trash2, BookOpen, Layers, Globe, Search as SearchIcon, Copy, ClipboardPaste, Users, RefreshCw } from 'lucide-react';
 import { fetchSpecificTypes, fetchRelatedWords, fetchWikipediaSuggestions, type WordSuggestion } from '../lib/api';
 
 interface Signature {
@@ -73,7 +73,7 @@ interface SidebarProps {
   isSettingsOpen?: boolean;
 }
 
-type TabType = 'dict' | 'specific' | 'related' | 'wiki';
+type TabType = 'dict' | 'sibling' | 'specific' | 'related' | 'wiki';
 
 export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig, autoCutWords, setAutoCutWords, isSettingsOpen }: SidebarProps) {
   const [manualWord, setManualWord] = useState('');
@@ -239,6 +239,22 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
            searchStr === name + 's' || 
            searchStr === name + 'es';
   }) : null;
+
+  const parentDictEntry = selectedNode ? (() => {
+    const parentEdge = edges.find(e => e.target === selectedNode.id);
+    if (!parentEdge) return null;
+    const parentNode = nodes.find(n => n.id === parentEdge.source);
+    if (!parentNode) return null;
+    const searchStr = String(parentNode.data.label).toLowerCase();
+    return dictionary.find(d => {
+      const name = d.name.toLowerCase();
+      return name === searchStr || 
+             name === searchStr + 's' || 
+             name === searchStr + 'es' || 
+             searchStr === name + 's' || 
+             searchStr === name + 'es';
+    });
+  })() : null;
 
   if (!selectedNode && selectedNodes.length === 0) return null;
 
@@ -435,6 +451,11 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
       setIsEditing(false);
     }
   };
+
+  const existingLabels = new Set(nodes.map(n => String(n.data.label).toLowerCase()));
+  const filteredSiblings = parentDictEntry ? parentDictEntry.words.filter((w: any) => !existingLabels.has(w.word.toLowerCase())) : [];
+  const filteredDictWords = dictEntry ? dictEntry.words.filter((w: any) => !existingLabels.has(w.word.toLowerCase())) : [];
+  const filteredSuggestions = suggestions.filter((s: any) => !existingLabels.has(s.word.toLowerCase()));
 
   return (
     <div className="glass-panel" style={{
@@ -718,8 +739,11 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
 
         {/* Suggestion Tabs */}
         {!selectedNode.data.isChunk && (
-          <div style={{ display: 'flex', gap: '4px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px' }}>
+          <div style={{ display: 'flex', gap: '4px', borderBottom: '1px solid var(--panel-border)', paddingBottom: '8px', flexWrap: 'wrap' }}>
             <TabButton active={activeTab === 'dict'} onClick={() => setActiveTab('dict')} icon={<BookOpen size={14}/>} text="Dict" />
+            {parentDictEntry && parentDictEntry.words.length > 0 && (
+              <TabButton active={activeTab === 'sibling'} onClick={() => setActiveTab('sibling')} icon={<Users size={14}/>} text="Siblings" />
+            )}
             <TabButton active={activeTab === 'specific'} onClick={() => setActiveTab('specific')} icon={<Layers size={14}/>} text="Specific" />
             <TabButton active={activeTab === 'related'} onClick={() => setActiveTab('related')} icon={<BookOpen size={14}/>} text="Related" />
             <TabButton active={activeTab === 'wiki'} onClick={() => setActiveTab('wiki')} icon={<Globe size={14}/>} text="Wiki" />
@@ -735,12 +759,46 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
 
         {/* Dictionary / Suggestions Content */}
         <div style={{ marginTop: '10px' }}>
-          {activeTab === 'dict' ? (
+          {activeTab === 'sibling' ? (
+            filteredSiblings.length > 0 ? (
+              <div>
+                <h4 style={{ margin: '0 0 8px 0', fontSize: '12px', color: 'var(--text-muted)' }}>SIBLINGS (Same Parent)</h4>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {[...filteredSiblings].sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0)).map((wObj: any, i: number) => (
+                    <button 
+                      key={i}
+                      onClick={() => onRenameNode(selectedNode.id, wObj.word.toLowerCase())}
+                      style={{
+                        padding: '4px 10px', borderRadius: '12px',
+                        background: 'rgba(236, 72, 153, 0.1)', border: '1px solid rgba(236, 72, 153, 0.3)',
+                        color: '#f472b6', fontSize: '12px', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', gap: '4px'
+                      }}
+                    >
+                      {wObj.icon ? (
+                        <img src={`/word_icon/${wObj.icon.endsWith('.png') ? wObj.icon : wObj.icon + '.png'}`} alt={wObj.word} title={`Missing File: ${wObj.icon}`} style={{ width: '12px', height: '12px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline><line x1="3" y1="3" x2="21" y2="21"></line></svg>'; }} />
+                      ) : (
+                        <RefreshCw size={10} />
+                      )}
+                      <span>{wObj.word}</span>
+                      {wObj.popularity !== undefined && (
+                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '4px' }}>{wObj.popularity}</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px 0', fontSize: '13px' }}>
+                No new siblings found.
+              </div>
+            )
+          ) : activeTab === 'dict' ? (
             dictEntry ? (
               <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Found {dictEntry.subcategories.length} sub-categories and {dictEntry.words.length} words.
+                  Found {dictEntry.subcategories.length} sub-categories and {filteredDictWords.length} new words.
                 </span>
                 <button 
                   onClick={() => onImportDictionary(dictEntry.name, dictionary, selectedNode.id)}
@@ -775,11 +833,11 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                 </div>
               )}
 
-              {dictEntry.words.length > 0 && (
+              {filteredDictWords.length > 0 && (
                 <div>
                   <h4 style={{ margin: '0 0 8px 0', fontSize: '12px', color: 'var(--text-muted)' }}>WORDS</h4>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                    {[...dictEntry.words].sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0)).map((wObj: any, i: number) => (
+                    {[...filteredDictWords].sort((a: any, b: any) => (b.popularity || 0) - (a.popularity || 0)).map((wObj: any, i: number) => (
                       <button 
                         key={i}
                         onClick={() => onAddChild(selectedNode, wObj.word.toLowerCase())}
@@ -815,9 +873,9 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                 <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px 0', fontSize: '14px' }}>
                   Searching...
                 </div>
-              ) : suggestions.length > 0 ? (
+              ) : filteredSuggestions.length > 0 ? (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  {suggestions.map((s, i) => (
+                  {filteredSuggestions.map((s: any, i: number) => (
                     <button 
                       key={i}
                       onClick={() => onAddChild(selectedNode, s.word)}

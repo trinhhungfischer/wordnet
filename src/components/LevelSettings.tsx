@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight } from 'lucide-react';
+import { X, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -667,6 +667,96 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
       <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <RefreshCw size={16} color="#14b8a6" />
+            Mechanic: Cycle Lock
+          </h3>
+          <Toggle 
+            checked={forceOpen.cycleLock || (levelData.cycleLockBubbles && levelData.cycleLockBubbles.length > 0)}
+            onChange={(checked) => {
+              setForceOpen(prev => ({ ...prev, cycleLock: checked }));
+              handleChange('cycleLockBubbles', checked ? [] : undefined);
+            }}
+          />
+        </div>
+        
+        {(forceOpen.cycleLock || (levelData.cycleLockBubbles && levelData.cycleLockBubbles.length > 0)) && (
+          <div style={{ marginTop: '16px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+              Cycle Lock Words (Drag & Drop from left panel):
+            </div>
+            
+            <div 
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                if (wordLabel) {
+                  const currentCycleLocks = levelData.cycleLockBubbles || [];
+                  if (!currentCycleLocks.some((c: any) => c.cycleLockWord === wordLabel)) {
+                    handleChange('cycleLockBubbles', [...currentCycleLocks, { cycleLockWord: wordLabel, startingPosition: 0 }]);
+                  }
+                }
+              }}
+              style={{ 
+                minHeight: '60px', padding: '8px', border: '1px dashed rgba(20,184,166,0.5)', 
+                borderRadius: '6px', background: 'rgba(20,184,166,0.05)', display: 'flex', flexDirection: 'column', gap: '8px'
+              }}
+            >
+              {(!levelData.cycleLockBubbles || levelData.cycleLockBubbles.length === 0) ? (
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '44px' }}>
+                  Drop words here to add Cycle Locks
+                </span>
+              ) : (
+                levelData.cycleLockBubbles.map((cycleLock: any, i: number) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.2)', padding: '6px 12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <RefreshCw size={14} color="#14b8a6" />
+                      <span 
+                        onClick={() => {
+                          if (onFocusWord) onFocusWord(cycleLock.cycleLockWord);
+                        }}
+                        style={{ fontSize: '13px', fontWeight: 600, color: 'white', cursor: 'pointer' }}
+                        title={cycleLock.cycleLockWord}
+                      >
+                        {cycleLock.cycleLockWord}
+                      </span>
+                    </div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={cycleLock.startingPosition === 1}
+                          onChange={(e) => {
+                            const newCycleLocks = [...levelData.cycleLockBubbles];
+                            newCycleLocks[i].startingPosition = e.target.checked ? 1 : 0;
+                            handleChange('cycleLockBubbles', newCycleLocks);
+                          }}
+                          style={{ accentColor: '#14b8a6', cursor: 'pointer' }}
+                        />
+                        Locked Init (1)
+                      </label>
+                      <button
+                        onClick={() => {
+                          handleChange('cycleLockBubbles', levelData.cycleLockBubbles.filter((c: any) => c.cycleLockWord !== cycleLock.cycleLockWord));
+                        }}
+                        style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                        title="Remove"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Eye size={16} color="#c084fc" />
             Mechanic: Cryptic Bubbles
           </h3>
@@ -754,6 +844,82 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                   </div>
                 </div>
               ))
+            )}
+          </div>
+          </div>
+        )}
+      </div>
+
+      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Pin size={16} color="#9ca3af" />
+            Mechanic: Immovable Bubbles
+          </h3>
+          <Toggle 
+            checked={forceOpen.immovable || (levelData.immovableBubbles && levelData.immovableBubbles.length > 0)}
+            onChange={(checked) => {
+              setForceOpen(prev => ({ ...prev, immovable: checked }));
+              handleChange('immovableBubbles', checked ? [] : undefined);
+            }}
+          />
+        </div>
+        {(forceOpen.immovable || (levelData.immovableBubbles && levelData.immovableBubbles.length > 0)) && (
+          <div style={{ marginTop: '16px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+            Immovable Words (Drag & Drop from left panel):
+          </div>
+          <div 
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+              if (wordLabel) {
+                const currentImmovable = levelData.immovableBubbles || [];
+                if (!currentImmovable.some((f: any) => (typeof f === 'string' ? f : f.word) === wordLabel)) {
+                  handleChange('immovableBubbles', [...currentImmovable, { word: wordLabel }]);
+                }
+              }
+            }}
+            style={{ 
+              minHeight: '80px', padding: '8px', border: '1px dashed rgba(156,163,175,0.5)', 
+              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+            }}
+          >
+            {(!levelData.immovableBubbles || levelData.immovableBubbles.length === 0) ? (
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                Drop words here
+              </span>
+            ) : (
+              levelData.immovableBubbles.map((ib: any, i: number) => {
+                const wordLabel = typeof ib === 'string' ? ib : ib.word;
+                return (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(156,163,175,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(156,163,175,0.3)' }}>
+                  <span 
+                    onClick={() => {
+                      if (onFocusWord) onFocusWord(wordLabel);
+                    }}
+                    style={{ 
+                      fontSize: '13px', fontWeight: 600, color: 'white', 
+                      cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                    }}
+                  >
+                    {wordLabel}
+                  </span>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleChange('immovableBubbles', levelData.immovableBubbles.filter((w: any) => (typeof w === 'string' ? w : w.word) !== wordLabel));
+                    }}
+                    style={{ 
+                      background: 'transparent', border: 'none', 
+                      color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1
+                    }}
+                  >
+                    &times;
+                  </button>
+                </div>
+              )})
             )}
           </div>
           </div>

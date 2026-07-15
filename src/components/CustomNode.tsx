@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight } from 'lucide-react';
+import { Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
@@ -16,6 +16,8 @@ const CustomNode = ({ data, selected }: any) => {
   const screwLockIndex = data.screwLockIndex !== undefined ? data.screwLockIndex : -1;
   const screwDriverIndex = data.screwDriverIndex !== undefined ? data.screwDriverIndex : -1;
   const screwCount = data.screwCount !== undefined ? data.screwCount : 0;
+  const isCycleLock = data.isCycleLock === true;
+  const isImmovable = data.isImmovable === true;
 
   const lockColor = lockIndex !== -1 ? lockKeyColors[lockIndex % lockKeyColors.length] : '#a1a1aa';
   const keyColor = keyIndex !== -1 ? lockKeyColors[keyIndex % lockKeyColors.length] : '#f59e0b';
@@ -33,9 +35,9 @@ const CustomNode = ({ data, selected }: any) => {
       textAlign: 'center',
       cursor: 'pointer',
       transition: 'all 0.2s',
-      background: isChunk ? 'rgba(0,0,0,0.4)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)'))))))))),
-      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (keyIndex !== -1 ? '2px solid rgba(250, 204, 21, 0.8)' : (lockIndex !== -1 ? '2px solid rgba(161, 161, 170, 0.8)' : (screwDriverIndex !== -1 ? '2px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '2px solid rgba(249, 115, 22, 0.8)' : (isBurst ? (burstMovesRemaining <= 3 ? '2px solid rgba(239, 68, 68, 0.8)' : '2px solid rgba(249, 115, 22, 0.8)') : (isCryptic ? '2px solid rgba(192, 132, 252, 0.8)' : (isFrozen ? '2px solid rgba(56, 189, 248, 0.8)' : (isBackward ? '2px solid rgba(168, 85, 247, 0.8)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)')))))))))),
-      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (keyIndex !== -1 ? '0 0 15px rgba(250, 204, 21, 0.3)' : (lockIndex !== -1 ? '0 0 15px rgba(161, 161, 170, 0.3)' : (screwDriverIndex !== -1 ? '0 0 15px rgba(249, 115, 22, 0.2)' : (screwLockIndex !== -1 ? '0 0 15px rgba(249, 115, 22, 0.3)' : (isBurst ? (burstMovesRemaining <= 3 ? '0 0 15px rgba(239, 68, 68, 0.3)' : '0 0 15px rgba(249, 115, 22, 0.3)') : (isCryptic ? '0 0 15px rgba(192, 132, 252, 0.3)' : (isFrozen ? '0 0 15px rgba(56, 189, 248, 0.3)' : (isBackward ? '0 0 15px rgba(168, 85, 247, 0.3)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)')))))))))
+      background: isChunk ? 'rgba(0,0,0,0.4)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isImmovable ? 'rgba(107, 114, 128, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)'))))))))))),
+      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (keyIndex !== -1 ? '2px solid rgba(250, 204, 21, 0.8)' : (lockIndex !== -1 ? '2px solid rgba(161, 161, 170, 0.8)' : (screwDriverIndex !== -1 ? '2px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '2px solid rgba(249, 115, 22, 0.8)' : (isBurst ? (burstMovesRemaining <= 3 ? '2px solid rgba(239, 68, 68, 0.8)' : '2px solid rgba(249, 115, 22, 0.8)') : (isCryptic ? '2px solid rgba(192, 132, 252, 0.8)' : (isImmovable ? '2px solid rgba(107, 114, 128, 0.8)' : (isFrozen ? '2px solid rgba(56, 189, 248, 0.8)' : (isBackward ? '2px solid rgba(168, 85, 247, 0.8)' : (isCycleLock ? '2px solid rgba(20, 184, 166, 0.8)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)')))))))))))),
+      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (keyIndex !== -1 ? '0 0 15px rgba(250, 204, 21, 0.3)' : (lockIndex !== -1 ? '0 0 15px rgba(161, 161, 170, 0.3)' : (screwDriverIndex !== -1 ? '0 0 15px rgba(249, 115, 22, 0.2)' : (screwLockIndex !== -1 ? '0 0 15px rgba(249, 115, 22, 0.3)' : (isBurst ? (burstMovesRemaining <= 3 ? '0 0 15px rgba(239, 68, 68, 0.3)' : '0 0 15px rgba(249, 115, 22, 0.3)') : (isCryptic ? '0 0 15px rgba(192, 132, 252, 0.3)' : (isImmovable ? '0 0 15px rgba(107, 114, 128, 0.3)' : (isFrozen ? '0 0 15px rgba(56, 189, 248, 0.3)' : (isBackward ? '0 0 15px rgba(168, 85, 247, 0.3)' : (isCycleLock ? '0 0 15px rgba(20, 184, 166, 0.3)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)')))))))))))
     }}>
       <Handle
         type="target"
@@ -57,8 +59,10 @@ const CustomNode = ({ data, selected }: any) => {
             <span style={{ fontSize: '11px', fontWeight: 'bold' }}>{screwCount}</span>
           </div>
         )}
+        {isCycleLock && <RefreshCw size={14} style={{ color: '#14b8a6', marginLeft: '4px' }} />}
         {isChained && <Link size={14} style={{ color: '#818cf8', marginLeft: '4px' }} />}
         {isCryptic && <Eye size={14} style={{ color: '#c084fc', marginLeft: '4px' }} />}
+        {isImmovable && <Pin size={14} style={{ color: '#9ca3af', marginLeft: '4px' }} />}
         {isFrozen && <Snowflake size={14} style={{ color: '#38bdf8', marginLeft: '4px' }} />}
         {isBackward && <ArrowLeftRight size={14} style={{ color: '#a855f7', marginLeft: '4px' }} />}
         {isBurst && (

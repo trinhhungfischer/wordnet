@@ -16,6 +16,8 @@ export interface BoardBubbleState {
   isScrewDriver?: boolean;
   screwLockIndex?: number;
   screwDriverIndex?: number;
+  cycleLockState?: number;
+  isImmovable?: boolean;
 }
 
 export interface MergeStep {
@@ -56,6 +58,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   let bombPenalties = 0;
   const explodedBombs = new Set<string>();
   const screwEventsEmitted = new Set<string>();
+  const dynamicImmovable = new Set<string>();
 
   if (levelData?.allWordEntries) {
     levelData.allWordEntries.forEach((e: any) => {
@@ -99,6 +102,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let isScrewDriverCheck: boolean | undefined;
     let screwLockIndex = -1;
     let screwDriverIndex = -1;
+    let cycleLockState: number | undefined;
+    let isImmovable = false;
 
     const w = displayLabel.toLowerCase();
     
@@ -111,6 +116,11 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
        crackMergesLeft = crackBreakMap[w] - completedCategoriesCount;
     }
     
+    const immovableRule = levelData?.immovableBubbles?.find((i: any) => (typeof i === 'string' ? i : i.word).toLowerCase() === w);
+    if (immovableRule) {
+       isImmovable = true;
+    }
+
     if (node) {
       const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
       if (frozenRule) {
@@ -161,6 +171,21 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       } else {
         isScrewDriverCheck = false;
       }
+      
+      const cycleLockRule = levelData?.cycleLockBubbles?.find((c: any) => c.cycleLockWord.toLowerCase() === w);
+      if (cycleLockRule) {
+         let mergesDone = moveCount;
+         if (wordDropMove?.has(w)) {
+            mergesDone = moveCount - wordDropMove.get(w)!;
+         } else {
+            mergesDone = 0;
+         }
+         cycleLockState = (cycleLockRule.startingPosition + mergesDone) % 2;
+      }
+    }
+
+    if (dynamicImmovable.has(bid)) {
+       isImmovable = true;
     }
 
     return {
@@ -176,7 +201,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       screwCount: screwCountCalc,
       isScrewDriver: isScrewDriverCheck,
       screwLockIndex,
-      screwDriverIndex
+      screwDriverIndex,
+      cycleLockState,
+      isImmovable
     };
   };
 
@@ -334,6 +361,13 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
        if (mergesDone < frozenRule.mergesNeeded) return true;
     }
     
+    const cycleLockRule = levelData?.cycleLockBubbles?.find((c: any) => c.cycleLockWord.toLowerCase() === w);
+    if (cycleLockRule) {
+       const dropTime = wordDropMove.has(w) ? wordDropMove.get(w)! : moveCount;
+       const mergesDone = moveCount - dropTime;
+       if ((cycleLockRule.startingPosition + mergesDone) % 2 === 1) return true;
+    }
+    
     return false;
   };
 
@@ -402,7 +436,14 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       for (const [wordId, chunkIds] of wordToChunks.entries()) {
         if (!resolvedWords.has(wordId) && chunkIds.every(cid => board.includes(cid))) {
           let score = 10;
+
           const wordLabel = String(nodes.find(n => n.id === wordId)?.data.label).toLowerCase();
+
+          // chunk merge Immovable propagation
+          if (chunkIds.some(cid => getBubbleState(cid).isImmovable)) {
+             dynamicImmovable.add(wordId);
+             console.log(`[Simulator] Marked ${wordId} (${wordLabel}) as Immovable due to chunk merge!`);
+          }
           const burstRule = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === wordLabel);
           if (burstRule) {
              const rem = burstRule.movesRemaining - moveCount;
@@ -474,6 +515,11 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                    for (let j = i + 1; j < availablePieces.length; j++) {
                       let p1 = availablePieces[i];
                       let p2 = availablePieces[j];
+
+                      // Immovable logic: 2 immovable bubbles cannot merge with each other
+                      if (getBubbleState(p1).isImmovable && getBubbleState(p2).isImmovable) {
+                         continue;
+                      }
                       
                       let score = 20;
                       const label1 = getBubbleState(p1).label.toLowerCase();
@@ -501,6 +547,11 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           const { wordId, chunkIds } = bestMerge;
           board = board.filter(id => !chunkIds.includes(id)); // Remove chunks
           board.push(wordId); // Add word to board
+          
+          if (chunkIds.some((cid: string) => getBubbleState(cid).isImmovable)) {
+             dynamicImmovable.add(wordId);
+          }
+          
           droppedWords.add(wordId);
           resolvedWords.add(wordId);
           
@@ -532,6 +583,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           // If the constituent words are linked, the resulting merged word must also be linked
           if (linkedWords.has(label1.toLowerCase()) || linkedWords.has(label2.toLowerCase())) {
              linkedWords.add(mergedString.toLowerCase());
+          }
+          
+          if (getBubbleState(p1).isImmovable || getBubbleState(p2).isImmovable) {
+             dynamicImmovable.add(mergedId);
+             dynamicImmovable.add(catId);
+             console.log(`[Simulator] Marked ${mergedId} and ${catId} as Immovable!`);
           }
 
           board = board.filter(id => id !== p1 && id !== p2);
@@ -678,6 +735,15 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, reco
   factors.push(`Move Tightness (${moveTightness}): -${(movePts / 4.8).toFixed(1)}`);
   if (congestionTurns > 0) factors.push(`Congestion Turns (${congestionTurns}): -${(turnsPts / 4.8).toFixed(1)}`);
   factors.push(`Base Offset: -74.6`);
+  
+  if (levelData?.cycleLockBubbles?.length > 0) {
+    factors.push(`${levelData.cycleLockBubbles.length} Cycle Lock bubbles`);
+    score += levelData.cycleLockBubbles.length * 2;
+  }
+  if (levelData?.immovableBubbles?.length > 0) {
+    factors.push(`${levelData.immovableBubbles.length} Immovable bubbles`);
+    score += levelData.immovableBubbles.length * 1.5;
+  }
 
   // Determine Label
   let label = 'Easy';

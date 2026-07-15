@@ -181,3 +181,87 @@ Cấu trúc:
 ```
 
 - `word`: Từ sẽ bị hiển thị ngược chữ trên quả bóng (ví dụ: `Water` -> `retaW`).
+
+## 8. Cycle Lock
+
+**Trường áp dụng:** `cycleLockBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"cycleLockBubbles": [
+  {
+    "cycleLockWord": "Cycle",
+    "startingPosition": 0
+  }
+]
+```
+
+- `startingPosition`: Vị trí ban đầu của từ khi bắt đầu level (0 = không bị khoá khởi đầu, 1 = bị khoá khởi đầu)
+
+**Luật chơi:** Các từ bị Cycle Lock là 1 sẽ không thể merge và khi sang trạng thái 0 thì có thể merge. Số lần hit (hoặc ghép) sẽ chuyển khoá từ 0 sang 1 và ngược lại.
+
+## 9. Immovable Bubbles
+
+**Trường áp dụng:** `immovableBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"immovableBubbles": ["Immovable", "Unmovable"]
+```
+
+**Luật chơi:** Quả bóng không di chuyển được, chỉ bóng khác kéo vào merge, thay visual của bóng. Bóng merge vào cũng không thể di chuyển. Quan trọng, không thay đổi thuật toán giải gì khác
+
+**Chú ý:** Khi generate level, 2 từ cùng category sẽ không cùng có cơ chế Immovable. Nếu có, sẽ không thể merge hoàn thành được và gây lỗi logic game.
+
+## 10. Countdown Bubbles
+
+**Trường áp dụng:** `countdownBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"countdownBubbles": [
+  {
+    "word": "Countdown",
+    "countdownValue": [5,-3]
+  }
+```
+
+**Luật chơi:** Có một số đếm ngược phía bên phải của quả bóng. Mỗi lần hit (Hoặc ghép) countdown sẽ trừ đi 1 và trừ tối đa về min. Tới khi merge quả bóng này, cộng thêm số lượt move bằng số điểm countdown
+
+**Chú ý:** Không thể xuất hiện cùng lúc với các cơ chế khác như Frozen, Burst, Screw Lock, Cycle Lock. Nếu xuất hiện cùng lúc thì sẽ bị lỗi hiển thị.
+
+## 11. Linked Bubbles
+
+"**Trường áp dụng:** `linkedBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"linkedBubbles": [
+  {
+    "word": "Linked",
+    "linkedChunks": ["LinkedChunk1", "LinkedChunk2"]
+  }
+]
+
+```
+
+**Luật chơi:** Có 1 quả bóng bị linked với 1-2 chunk. Chỉ khi 2 chunk linked bị mất thì bóng kia mới được spawn ra và merge được - Quả bóng Chunk bị dính vào sẽ không thể kéo merge được. Chỉ có Chunk khác kéo vào thì nó sẽ tháo linked ra
+
+**Chú ý:** Chỉ có chunk ở linkedChunks thôi, không có từ hoàn chỉnh.
+
+## 12. Crack Bubbles
+
+**Trường áp dụng:** `crackBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"crackBubbles": [
+  {
+    "word": "Cracked",
+    "crackCount": 3,
+    "chunkWords": ["Cra", "cked"]
+  }
+]
+```
+
+**Luật chơi:** Quả bóng đang bị nứt. Mỗi lần hit (hoặc ghép) sẽ làm giảm crackCount đi 1. Khi crackCount = 0, quả bóng sẽ bị vỡ ra và spawn ra các chunkWords tương ứng. Các chunkWords này có thể merge được.
