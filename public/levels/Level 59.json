@@ -1,0 +1,976 @@
+{
+  "m_ObjectHideFlags": 0,
+  "m_CorrespondingSourceObject": {
+    "fileID": 0
+  },
+  "m_PrefabInstance": {
+    "fileID": 0
+  },
+  "m_PrefabAsset": {
+    "fileID": 0
+  },
+  "m_GameObject": {
+    "fileID": 0
+  },
+  "m_Enabled": 1,
+  "m_EditorHideFlags": 0,
+  "m_Script": {
+    "fileID": 11500000,
+    "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
+    "type": 3
+  },
+  "m_Name": "Level 58",
+  "m_EditorClassIdentifier": null,
+  "categories": [
+    {
+      "category": "Nuclear",
+      "parentCategory": "Energy Sources",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Reactor",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Uranium",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fission",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Radiation",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "City Transportation",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Bus",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Tram",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Subway",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Taxi",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Energy Sources",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Nuclear",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Solar",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Wind",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Hydro",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Hydro",
+      "parentCategory": "Energy Sources",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Dam",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Turbine",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Waterfall",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Generator",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Latin America",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Brazil",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Argentina",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Chile",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Peru",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Indoor Sports",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Basketball",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Volleyball",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Squash",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Badminton",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Terrain",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Canyon",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Plateau",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Valley",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Mountain",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Forest Animals",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Deer",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fox",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Bear",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Squirrel",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Canyon",
+      "parentCategory": "Terrain",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Gorge",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cliff",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Riverbed",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Ravine",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Volleyball",
+      "parentCategory": "Indoor Sports",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Net",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Serve",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Spike",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Block",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Breakfast",
+      "parentCategory": "Meals",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Cereal",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Omelette",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Pancakes",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Toast",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Meals",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Breakfast",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lunch",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Dinner",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Supper",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    }
+  ],
+  "maxBubblesInScene": 24,
+  "moveLimit": 5,
+  "randomSeed": 0,
+  "levelDifficulty": 0,
+  "allWordEntries": [
+    {
+      "fullWord": "Reac",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Reactor"
+    },
+    {
+      "fullWord": "Tor",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Reactor"
+    },
+    {
+      "fullWord": "Ura",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Uranium"
+    },
+    {
+      "fullWord": "Nium",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Uranium"
+    },
+    {
+      "fullWord": "Fis",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Fission"
+    },
+    {
+      "fullWord": "Sion",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Fission"
+    },
+    {
+      "fullWord": "Radia",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Radiation"
+    },
+    {
+      "fullWord": "Tion",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Radiation"
+    },
+    {
+      "fullWord": "Bus",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Tram",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Subway",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Taxi",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Solar",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Wind",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Dam",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Turbine",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Waterfall",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Generator",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Brazil",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Argen",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Argentina"
+    },
+    {
+      "fullWord": "Tina",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Argentina"
+    },
+    {
+      "fullWord": "Chile",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Peru",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Basketball",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Squash",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Badminton",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Plateau",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Valley",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Moun",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Mountain"
+    },
+    {
+      "fullWord": "Tain",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Mountain"
+    },
+    {
+      "fullWord": "Deer",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Fox",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Bear",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Squirrel",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Gorge",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Cliff",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Riverbed",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Ravine",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Net",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Serve",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Spike",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Block",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Cereal",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Omelette",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Pancakes",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Toast",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Lunch",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Dinner",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Sup",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Supper"
+    },
+    {
+      "fullWord": "Per",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Supper"
+    }
+  ],
+  "allWords": [],
+  "frozenBubbles": [],
+  "burstBubbles": [],
+  "keyLockBubbles": [],
+  "bubbleChains": [],
+  "useBubbleSeparator": 1,
+  "bubbleSeparatorData": {
+    "breakThreshold": 3,
+    "linkedWords": [
+      "reac",
+      "tor",
+      "ura",
+      "nium",
+      "fis",
+      "sion",
+      "radia",
+      "tion",
+      "Solar",
+      "Wind"
+    ]
+  },
+  "crypticBubbles": [],
+  "screwLockBubbles": [],
+  "backwardBubbles": [],
+  "crackedBubbles": [],
+  "linkedBubbles": []
+}

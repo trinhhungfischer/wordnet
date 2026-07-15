@@ -1,0 +1,661 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22e55d88a56a9cc174a4379c66bb9c6, type: 3}
+  m_Name: Level 791
+  m_EditorClassIdentifier:
+  categories:
+  - category: strategy games
+    parentCategory:
+    icon:
+    words:
+    - fullWord: checkers
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: chess
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: backgammon
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: scrabble
+      chunks:
+      - scrab
+      - ble
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: chess
+    parentCategory: strategy games
+    icon:
+    words:
+    - fullWord: check
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: gambit
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: castle
+      chunks:
+      - cast
+      - le
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: stalemate
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: theater venues
+    parentCategory:
+    icon:
+    words:
+    - fullWord: arena
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: amphitheater
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: circus
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: playhouse
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: fossil
+    parentCategory:
+    icon:
+    words:
+    - fullWord: amber
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: ammonite
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: bone
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: shell
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: circus
+    parentCategory: theater venues
+    icon:
+    words:
+    - fullWord: clown
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: tent
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: trapeze
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: lion
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: rumors
+    parentCategory:
+    icon:
+    words:
+    - fullWord: accuse
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: blame
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: gossip
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: hearsay
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: preposition
+    parentCategory:
+    icon:
+    words:
+    - fullWord: far
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: next
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: beside
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: under
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: opera
+    parentCategory:
+    icon:
+    words:
+    - fullWord: aida
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: carmen
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: tosca
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: turandot
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: laptop
+    parentCategory:
+    icon:
+    words:
+    - fullWord: battery
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: processor
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: screen
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: touchpad
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: conductor
+    parentCategory:
+    icon:
+    words:
+    - fullWord: baton
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: concert
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: stand
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: instrument
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  maxBubblesInScene: 24
+  moveLimit: 10
+  randomSeed: 0
+  levelDifficulty: 0
+  allWordEntries:
+  - fullWord: checkers
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: backgammon
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: scrabble
+    chunks:
+    - scrab
+    - ble
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: check
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: gambit
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: castle
+    chunks:
+    - cast
+    - le
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: stalemate
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: arena
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: amphitheater
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: playhouse
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: amber
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: ammonite
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: bone
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: shell
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: clown
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: tent
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: trapeze
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: lion
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: accuse
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: blame
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: gossip
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: hearsay
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: far
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: next
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: beside
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: under
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: aida
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: carmen
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: tosca
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: turandot
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: battery
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: processor
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: screen
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: touchpad
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: baton
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: concert
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: stand
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: instrument
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  allWords: []
+  frozenBubbles: []
+  burstBubbles: []
+  keyLockBubbles: []
+  bubbleChains: []
+  useBubbleSeparator: 0
+  bubbleSeparatorData:
+    breakThreshold: 3
+    linkedWords: []
+  crypticBubbles: []
+  screwLockBubbles: []
+  backwardBubbles: []
+  crackedBubbles: []
+  linkedBubbles: []
+  hasSeperator: 0
+  hasCrypticBubbles: 1
+  minMaxCrypticBubbles:
+  - 3
+  - 6
+  hasBurstBubbles: 0
+  minMaxBurstBubbles:
+  - 3
+  - 6
+  hasBackwardBubbles: 0
+  minMaxBackwardBubbles:
+  - 3
+  - 6
+  hasFrozenBubbles: 0
+  minMaxFrozenBubbles:
+  - 3
+  - 6
+  hasKeyLockBubbles: 0
+  minMaxKeyLockBubbles:
+  - 1
+  - 5
+  hasScrewLockBubbles: 0
+  minMaxScrewLockBubbles:
+  - 1
+  - 5
+  hasCrackBubbles: 0
+  minMaxCrackBubbles:
+  - 1
+  - 5
+  hasLinkedBubbles: 0
+  minMaxLinkedBubbles:
+  - 1
+  - 5

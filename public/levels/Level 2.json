@@ -1,0 +1,647 @@
+{
+  "m_ObjectHideFlags": 0,
+  "m_CorrespondingSourceObject": {
+    "fileID": 0
+  },
+  "m_PrefabInstance": {
+    "fileID": 0
+  },
+  "m_PrefabAsset": {
+    "fileID": 0
+  },
+  "m_GameObject": {
+    "fileID": 0
+  },
+  "m_Enabled": 1,
+  "m_EditorHideFlags": 0,
+  "m_Script": {
+    "fileID": 11500000,
+    "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
+    "type": 3
+  },
+  "m_Name": "Level 1",
+  "m_EditorClassIdentifier": null,
+  "categories": [
+    {
+      "category": "Vegetables",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Carrot",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Potato",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Onion",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lettuce",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Fruits",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Apple",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Banana",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Orange",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Grape",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Kitchen Tools",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Spoon",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fork",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Knife",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Plate",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Shapes",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Circle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Triangle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Square",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Rectangle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "House",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Bed",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Door",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Chair",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Table",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Nature",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Cloud",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Soil",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Hill",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Sky",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Dessert",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Candy",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cookie",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fudge",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Brownie",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Driving",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Car",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Traffic",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Brake",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Road",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    }
+  ],
+  "maxBubblesInScene": 21,
+  "moveLimit": 15,
+  "randomSeed": 0,
+  "levelDifficulty": 0,
+  "allWordEntries": [
+    {
+      "fullWord": "Carrot",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Potato",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Onion",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Lettuce",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Apple",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Banana",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Orange",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Grape",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Spoon",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Fork",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Knife",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Plate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Circle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Triangle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Square",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Rectangle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Bed",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Door",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Chair",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Table",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Cloud",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Soil",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Hill",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Sky",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Candy",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Cookie",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Fudge",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Brownie",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Car",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Traffic",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Brake",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Road",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    }
+  ],
+  "allWords": [],
+  "frozenBubbles": [],
+  "burstBubbles": [],
+  "keyLockBubbles": [],
+  "bubbleChains": [],
+  "useBubbleSeparator": 0,
+  "bubbleSeparatorData": {
+    "breakThreshold": 3,
+    "linkedWords": []
+  },
+  "crypticBubbles": [],
+  "screwLockBubbles": [],
+  "backwardBubbles": [],
+  "crackedBubbles": [],
+  "linkedBubbles": []
+}

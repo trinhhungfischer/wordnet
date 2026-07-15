@@ -1,0 +1,818 @@
+{
+  "m_ObjectHideFlags": 0,
+  "m_CorrespondingSourceObject": {
+    "fileID": 0
+  },
+  "m_PrefabInstance": {
+    "fileID": 0
+  },
+  "m_PrefabAsset": {
+    "fileID": 0
+  },
+  "m_GameObject": {
+    "fileID": 0
+  },
+  "m_Enabled": 1,
+  "m_EditorHideFlags": 0,
+  "m_Script": {
+    "fileID": 11500000,
+    "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
+    "type": 3
+  },
+  "m_Name": "Level 32",
+  "m_EditorClassIdentifier": null,
+  "categories": [
+    {
+      "category": "Species",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Reptile",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Bird",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Insects",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Mammals",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Reptile",
+      "parentCategory": "Species",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Turtle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Crocodile",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lizard",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Snake",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Bird",
+      "parentCategory": "Species",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Crow",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Owl",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Swan",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Parrot",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Insects",
+      "parentCategory": "Species",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Spider",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Beetle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fly",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Wasp",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Origami",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Crane",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Butterfly",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Frog",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fox",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Crane",
+      "parentCategory": "Origami",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Boom",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Neck",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cable",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Tall",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Trees",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Maple",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Pine",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cedar",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Elm",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Maple",
+      "parentCategory": "Trees",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Emblem",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Autumn",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Syrup",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Sap",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Pine",
+      "parentCategory": "Trees",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Cone",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Evergreen",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Needle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Resin",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Wing flavors",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Garlic",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cajun",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Pepper",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Habanero",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Brain lobes",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Frontal",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Temporal",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Parietal",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Occipital",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    }
+  ],
+  "maxBubblesInScene": 24,
+  "moveLimit": 45,
+  "randomSeed": 0,
+  "levelDifficulty": 0,
+  "allWordEntries": [
+    {
+      "fullWord": "Mammals",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Butterfly",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Frog",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Fox",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Cedar",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Elm",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Boom",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Neck",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Cable",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Tall",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Garlic",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Cajun",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Pepper",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Habanero",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Frontal",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Temporal",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Parietal",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Occipital",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Turtle",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Crocodile",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Lizard",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Snake",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Crow",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Fly",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Parrot",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Spider",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Beetle",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Autumn",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Wasp",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Sap",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Cone",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Evergreen",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Needle",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Owl",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Swan",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Resin",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Syrup",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Emblem",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    }
+  ],
+  "allWords": [],
+  "frozenBubbles": [],
+  "burstBubbles": [],
+  "keyLockBubbles": [],
+  "bubbleChains": [],
+  "useBubbleSeparator": 0,
+  "bubbleSeparatorData": {
+    "breakThreshold": 3,
+    "linkedWords": []
+  },
+  "crypticBubbles": [],
+  "screwLockBubbles": [],
+  "backwardBubbles": [],
+  "crackedBubbles": [],
+  "linkedBubbles": []
+}

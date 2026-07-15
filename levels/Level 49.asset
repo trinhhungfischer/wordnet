@@ -1,0 +1,709 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22e55d88a56a9cc174a4379c66bb9c6, type: 3}
+  m_Name: Level 49
+  m_EditorClassIdentifier:
+  categories:
+  - category: sea
+    parentCategory:
+    icon:
+    words:
+    - fullWord: aegean
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: baltic
+      chunks:
+      - bal
+      - tic
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: black
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: red
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: polygons
+    parentCategory:
+    icon:
+    words:
+    - fullWord: hexagon
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: heptagon
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: pentagon
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: decagon
+      chunks:
+      - deca
+      - gon
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: spiky things
+    parentCategory:
+    icon:
+    words:
+    - fullWord: hedgehog
+      chunks:
+      - hedge
+      - hog
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: cactus
+      chunks:
+      - cac
+      - tus
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: porcupine
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: durian
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: editing
+    parentCategory:
+    icon:
+    words:
+    - fullWord: copy
+      chunks:
+      - co
+      - py
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: delete
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: paste
+      chunks:
+      - pas
+      - te
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: edit
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: weddings
+    parentCategory:
+    icon:
+    words:
+    - fullWord: bride
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: groom
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: ring
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: vows
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: names
+    parentCategory:
+    icon:
+    words:
+    - fullWord: david
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: robert
+      chunks:
+      - rob
+      - ert
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: jason
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: lucas
+      chunks:
+      - lu
+      - cas
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: crowd
+    parentCategory:
+    icon:
+    words:
+    - fullWord: horde
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: mob
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: rabble
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: throng
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: beef cut
+    parentCategory:
+    icon:
+    words:
+    - fullWord: brisket
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: ribeye
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: sirloin
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: tenderloin
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: eye actions
+    parentCategory:
+    icon:
+    words:
+    - fullWord: wink
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: blink
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: roll
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: squint
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: grey shades
+    parentCategory:
+    icon:
+    words:
+    - fullWord: ash
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: charcoal
+      chunks:
+      - char
+      - coal
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: pewter
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: silver
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  maxBubblesInScene: 24
+  moveLimit: 10
+  randomSeed: 0
+  levelDifficulty: 0
+  allWordEntries:
+  - fullWord: aegean
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: baltic
+    chunks:
+    - bal
+    - tic
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: black
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: red
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: hexagon
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: heptagon
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: pentagon
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: decagon
+    chunks:
+    - deca
+    - gon
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: hedgehog
+    chunks:
+    - hedge
+    - hog
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: cactus
+    chunks:
+    - cac
+    - tus
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: porcupine
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: durian
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: copy
+    chunks:
+    - co
+    - py
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: delete
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: paste
+    chunks:
+    - pas
+    - te
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: edit
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: bride
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: groom
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: ring
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: vows
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: david
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: robert
+    chunks:
+    - rob
+    - ert
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: jason
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: lucas
+    chunks:
+    - lu
+    - cas
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: horde
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: mob
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: rabble
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: throng
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: brisket
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: ribeye
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: sirloin
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: tenderloin
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: wink
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: blink
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: roll
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: squint
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: ash
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: charcoal
+    chunks:
+    - char
+    - coal
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: pewter
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: silver
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  allWords: []
+  frozenBubbles: []
+  burstBubbles: []
+  keyLockBubbles:
+  - keyWord: Black
+    lockWord: Hexagon
+    id: 0
+  - keyWord: Tenderloin
+    lockWord: Mob
+    id: 1
+  bubbleChains: []
+  useBubbleSeparator: 0
+  bubbleSeparatorData:
+    breakThreshold: 3
+    linkedWords: []
+  crypticBubbles: []
+  screwLockBubbles: []
+  backwardBubbles: []
+  crackedBubbles: []
+  linkedBubbles: []
+  hasSeperator: 0
+  hasCrypticBubbles: 0
+  minMaxCrypticBubbles:
+  - 3
+  - 6
+  hasBurstBubbles: 0
+  minMaxBurstBubbles:
+  - 3
+  - 6
+  hasBackwardBubbles: 0
+  minMaxBackwardBubbles:
+  - 3
+  - 6
+  hasFrozenBubbles: 0
+  minMaxFrozenBubbles:
+  - 3
+  - 6
+  hasKeyLockBubbles: 0
+  minMaxKeyLockBubbles:
+  - 1
+  - 5
+  hasScrewLockBubbles: 0
+  minMaxScrewLockBubbles:
+  - 1
+  - 5
+  hasCrackBubbles: 0
+  minMaxCrackBubbles:
+  - 1
+  - 5
+  hasLinkedBubbles: 0
+  minMaxLinkedBubbles:
+  - 1
+  - 5

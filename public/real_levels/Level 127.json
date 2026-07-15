@@ -1,0 +1,936 @@
+{
+  "m_ObjectHideFlags": 0,
+  "m_CorrespondingSourceObject": {
+    "fileID": 0
+  },
+  "m_PrefabInstance": {
+    "fileID": 0
+  },
+  "m_PrefabAsset": {
+    "fileID": 0
+  },
+  "m_GameObject": {
+    "fileID": 0
+  },
+  "m_Enabled": 1,
+  "m_EditorHideFlags": 0,
+  "m_Script": {
+    "fileID": 11500000,
+    "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
+    "type": 3
+  },
+  "m_Name": "Level 126",
+  "m_EditorClassIdentifier": null,
+  "categories": [
+    {
+      "category": "Rakes",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Weeds",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Hay",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Tines",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Farmers",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Creatures",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Reptile",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Mammal",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Insect",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fish",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Reptile",
+      "parentCategory": "Creatures",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Iguana",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Whiptail",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lizard",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Turtle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Medical specializations",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Ent",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cardiology",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Geriatrics",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Forensic medicine",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Public Venues",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Circus",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Zoo",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Aquarium",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Stadium",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Circus",
+      "parentCategory": "Public Venues",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Elephant",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Popcorn",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Trapeze",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Clown",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Parts of a broom",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Handle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Bristles",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Head",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Ferrule",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Parts of animals",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Paw",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Hoof",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fur",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Forefoot",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "File Actions",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Rename",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Delete",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Save",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Open",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Invertebrates",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Snail",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Butterfly",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Slug",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Ladybug",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Economic Systems",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Socialism",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Communism",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Capitalism",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Feudalism",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Spatial terms",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Above",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Inside",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Near",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Under",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    }
+  ],
+  "maxBubblesInScene": 24,
+  "moveLimit": 40,
+  "randomSeed": 0,
+  "levelDifficulty": 0,
+  "allWordEntries": [
+    {
+      "fullWord": "Weeds",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Hay",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Tines",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Farmers",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Mammal",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Insect",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Fish",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ent",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Cardiology",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Geriatrics",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Forensic medicine",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Zoo",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Aquarium",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Stadium",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Iguana",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Whiptail",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Lizard",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Turtle",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Handle",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Bristles",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Head",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ferrule",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Elephant",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Popcorn",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Trapeze",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Clown",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Paw",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Hoof",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Fur",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Forefoot",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Rename",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Delete",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Save",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Open",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Snail",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Butterfly",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Slug",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ladybug",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Above",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Inside",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Near",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Under",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Socialism",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Communism",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Capitalism",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Feudalism",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    }
+  ],
+  "allWords": [],
+  "frozenBubbles": [],
+  "burstBubbles": [],
+  "keyLockBubbles": [],
+  "bubbleChains": [],
+  "useBubbleSeparator": 1,
+  "bubbleSeparatorData": {
+    "breakThreshold": 3,
+    "linkedWords": [
+      "weeds",
+      "hay",
+      "tines",
+      "farmers",
+      "insect",
+      "fish"
+    ]
+  },
+  "crypticBubbles": [],
+  "screwLockBubbles": [],
+  "backwardBubbles": [],
+  "crackedBubbles": [],
+  "linkedBubbles": []
+}

@@ -1,0 +1,1019 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22e55d88a56a9cc174a4379c66bb9c6, type: 3}
+  m_Name: Level 949
+  m_EditorClassIdentifier:
+  categories:
+  - category: leather
+    parentCategory: wallet
+    icon:
+    words:
+    - fullWord: hide
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: suede
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: patent
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: nubuck
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: bramble
+    parentCategory:
+    icon:
+    words:
+    - fullWord: in bloom
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: prickly
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: shrub
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: tangled
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: star patterns
+    parentCategory:
+    icon:
+    words:
+    - fullWord: big dipper
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: little dipper
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: orion's belt
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: scorpius
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: wallet
+    parentCategory: purse
+    icon:
+    words:
+    - fullWord: leather
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: billfold
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: clutch
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: trifold
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: climate classification
+    parentCategory:
+    icon:
+    words:
+    - fullWord: arid
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: desert
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: equatorial
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: monsoon
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: flour
+    parentCategory: bakery
+    icon:
+    words:
+    - fullWord: wheat
+      chunks:
+      - wh
+      - eat
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: rye
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: oat
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: barley
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: bakery
+    parentCategory:
+    icon:
+    words:
+    - fullWord: flour
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: oven
+      chunks:
+      - ov
+      - en
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: mixer
+      chunks:
+      - mix
+      - er
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: scale
+      chunks:
+      - sca
+      - le
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: document related
+    parentCategory:
+    icon:
+    words:
+    - fullWord: fax
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: folder
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: paper
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: printer
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: publishing a book
+    parentCategory:
+    icon:
+    words:
+    - fullWord: cover design
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: editing
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: launch
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: publish
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: skin marks
+    parentCategory:
+    icon:
+    words:
+    - fullWord: birthmark
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: freckle
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: mole
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: scar
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: light spectrum
+    parentCategory:
+    icon:
+    words:
+    - fullWord: infrared
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: microwave
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: uv
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: visible
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: accessories
+    parentCategory:
+    icon:
+    words:
+    - fullWord: purse
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: scarf
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: belt
+      chunks:
+      - be
+      - lt
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: mittens
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: home library
+    parentCategory:
+    icon:
+    words:
+    - fullWord: bookcase
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: bookmark
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: bookshelf
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: reading chair
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: purse
+    parentCategory: accessories
+    icon:
+    words:
+    - fullWord: wallet
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: handbag
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: satchel
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: pocketbook
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: classical ballets
+    parentCategory:
+    icon:
+    words:
+    - fullWord: don quixote
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: giselle
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: nutcracker
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: swan lake
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: forms of soap
+    parentCategory:
+    icon:
+    words:
+    - fullWord: bar
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: foam
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: gel
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: powder
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  maxBubblesInScene: 24
+  moveLimit: 10
+  randomSeed: 0
+  levelDifficulty: 0
+  allWordEntries:
+  - fullWord: hide
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: suede
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: patent
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: nubuck
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: in bloom
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: prickly
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: shrub
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: tangled
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: big dipper
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: little dipper
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: orion's belt
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: scorpius
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: billfold
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: clutch
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: trifold
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: arid
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: desert
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: equatorial
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: monsoon
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: wheat
+    chunks:
+    - wh
+    - eat
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: rye
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: oat
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: barley
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: oven
+    chunks:
+    - ov
+    - en
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: mixer
+    chunks:
+    - mix
+    - er
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: scale
+    chunks:
+    - sca
+    - le
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: fax
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: folder
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: paper
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: printer
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: cover design
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: editing
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: launch
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: publish
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: birthmark
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: freckle
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: mole
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: scar
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: infrared
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: microwave
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: uv
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: visible
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: scarf
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: belt
+    chunks:
+    - be
+    - lt
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: mittens
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: bookcase
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: bookmark
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: bookshelf
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: reading chair
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: handbag
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: satchel
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: pocketbook
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: don quixote
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: giselle
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: nutcracker
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: swan lake
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: bar
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: foam
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: gel
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: powder
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  allWords: []
+  frozenBubbles: []
+  burstBubbles: []
+  keyLockBubbles: []
+  bubbleChains: []
+  useBubbleSeparator: 0
+  bubbleSeparatorData:
+    breakThreshold: 3
+    linkedWords: []
+  crypticBubbles: []
+  screwLockBubbles: []
+  backwardBubbles: []
+  crackedBubbles: []
+  linkedBubbles: []
+  hasSeperator: 0
+  hasCrypticBubbles: 0
+  minMaxCrypticBubbles:
+  - 3
+  - 6
+  hasBurstBubbles: 0
+  minMaxBurstBubbles:
+  - 3
+  - 6
+  hasBackwardBubbles: 0
+  minMaxBackwardBubbles:
+  - 3
+  - 6
+  hasFrozenBubbles: 0
+  minMaxFrozenBubbles:
+  - 3
+  - 6
+  hasKeyLockBubbles: 0
+  minMaxKeyLockBubbles:
+  - 1
+  - 5
+  hasScrewLockBubbles: 0
+  minMaxScrewLockBubbles:
+  - 1
+  - 5
+  hasCrackBubbles: 1
+  minMaxCrackBubbles:
+  - 1
+  - 3
+  hasLinkedBubbles: 0
+  minMaxLinkedBubbles:
+  - 1
+  - 5

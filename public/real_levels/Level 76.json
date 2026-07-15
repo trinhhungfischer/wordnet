@@ -1,0 +1,832 @@
+{
+  "m_ObjectHideFlags": 0,
+  "m_CorrespondingSourceObject": {
+    "fileID": 0
+  },
+  "m_PrefabInstance": {
+    "fileID": 0
+  },
+  "m_PrefabAsset": {
+    "fileID": 0
+  },
+  "m_GameObject": {
+    "fileID": 0
+  },
+  "m_Enabled": 1,
+  "m_EditorHideFlags": 0,
+  "m_Script": {
+    "fileID": 11500000,
+    "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
+    "type": 3
+  },
+  "m_Name": "Level 75",
+  "m_EditorClassIdentifier": null,
+  "categories": [
+    {
+      "category": "Fruit",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Melon",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Pomegranate",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Guava",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Kiwi",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Melon",
+      "parentCategory": "Fruit",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Bailan",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cantaloupe",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Galia",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Honeydew",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Furniture",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Bed",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Bench",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Dining table",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Plant stand",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Waltz",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Rise",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Slow",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Box",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Count",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Time",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Year",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Week",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Magazine",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Century",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Vegetables",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Tuber",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Broccoli",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Eggplant",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lettuce",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Crafts",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Sculpture",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Paper",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Masonry",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Ceramics",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Food",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Omelet",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Fries",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Snacks",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Salad",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Wedding",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Invitation",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cake",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Celebration",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Photographer",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Theater",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Lobby",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Backdrop",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Tragedy",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Aisle",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    }
+  ],
+  "maxBubblesInScene": 20,
+  "moveLimit": 38,
+  "randomSeed": 0,
+  "levelDifficulty": 1,
+  "allWordEntries": [
+    {
+      "fullWord": "Pomeg",
+      "parentWord": "Pomegranate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ranate",
+      "parentWord": "Pomegranate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Guava",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Kiwi",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Bailan",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Cantaloupe",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Galia",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Hone",
+      "parentWord": "Honeydew",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ydew",
+      "parentWord": "Honeydew",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Bed",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Bench",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Dining table",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Plant stand",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Rise",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Slow",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Box",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Count",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Year",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Week",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Magazine",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Century",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Tuber",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Broccoli",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Eggp",
+      "parentWord": "Eggplant",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Lant",
+      "parentWord": "Eggplant",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Lettuce",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Sculpture",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Paper",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Masonry",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ceramics",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Omelet",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Fries",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Snacks",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Salad",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Invitation",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Cake",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Celebration",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Photographer",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Lobby",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Backdrop",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Tragedy",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Aisle",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    }
+  ],
+  "allWords": [],
+  "frozenBubbles": [
+    {
+      "word": "Guava",
+      "mergesNeeded": 6
+    },
+    {
+      "word": "Lettuce",
+      "mergesNeeded": 7
+    },
+    {
+      "word": "Magazine",
+      "mergesNeeded": 5
+    },
+    {
+      "word": "Century",
+      "mergesNeeded": 4
+    }
+  ],
+  "burstBubbles": [],
+  "keyLockBubbles": [],
+  "bubbleChains": [],
+  "useBubbleSeparator": 0,
+  "bubbleSeparatorData": {
+    "breakThreshold": 3,
+    "linkedWords": []
+  },
+  "crypticBubbles": [],
+  "screwLockBubbles": [],
+  "backwardBubbles": [],
+  "crackedBubbles": [],
+  "linkedBubbles": []
+}

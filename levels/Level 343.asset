@@ -1,0 +1,894 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22e55d88a56a9cc174a4379c66bb9c6, type: 3}
+  m_Name: Level 343
+  m_EditorClassIdentifier:
+  categories:
+  - category: smoked foods
+    parentCategory:
+    icon:
+    words:
+    - fullWord: brisket
+      chunks:
+      - bris
+      - ket
+      icon:
+      IsCracked: 1
+      crackBreakNum: 3
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: salmon
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: gouda
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: pulled pork
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: stuffed foods
+    parentCategory:
+    icon:
+    words:
+    - fullWord: pepper
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: mushroom
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: zucchini
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: roll
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: beer
+    parentCategory: frat party
+    icon:
+    words:
+    - fullWord: budweiser
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: heineken
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: sapporo
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: guinness
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: frat party
+    parentCategory:
+    icon:
+    words:
+    - fullWord: keg
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: beer
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: pong
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: house
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: paradox
+    parentCategory:
+    icon:
+    words:
+    - fullWord: oddity
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: contrary
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: fallacy
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: anomaly
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: writing book
+    parentCategory:
+    icon:
+    words:
+    - fullWord: draft
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: plot
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: character
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: edit
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: apparition
+    parentCategory:
+    icon:
+    words:
+    - fullWord: ghost
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: specter
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: spirit
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: phantom
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: model
+    parentCategory: photoshoot
+    icon:
+    words:
+    - fullWord: replica
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: mockup
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: reference
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: template
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: photoshoot
+    parentCategory:
+    icon:
+    words:
+    - fullWord: model
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: angle
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: glamour
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: pose
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: botanist
+    parentCategory: studies nature
+    icon:
+    words:
+    - fullWord: grafting
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: specimen
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: taxonomy
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: plants
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: studies nature
+    parentCategory:
+    icon:
+    words:
+    - fullWord: botanist
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: entomologist
+      chunks:
+      - entomo
+      - logist
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: paleontologist
+      chunks:
+      - paleo
+      - ntologist
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: geologist
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: entomologist
+    parentCategory: studies nature
+    icon:
+    words:
+    - fullWord: net
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: field guide
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: insect
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: larvae
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: geologist
+    parentCategory: studies nature
+    icon:
+    words:
+    - fullWord: drill
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: brush
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: chisel
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: rocks
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: homeless
+    parentCategory:
+    icon:
+    words:
+    - fullWord: poor
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: peasant
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: poverty
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: downtrodden
+      chunks:
+      - down
+      - trodden
+      icon:
+      IsCracked: 1
+      crackBreakNum: 3
+      IsLinked: 0
+      linkedChunkWords: []
+  maxBubblesInScene: 24
+  moveLimit: 10
+  randomSeed: 0
+  levelDifficulty: 0
+  allWordEntries:
+  - fullWord: brisket
+    chunks:
+    - bris
+    - ket
+    icon:
+    IsCracked: 1
+    crackBreakNum: 3
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: salmon
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: gouda
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: pulled pork
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: pepper
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: mushroom
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: zucchini
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: roll
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: budweiser
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: heineken
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: sapporo
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: guinness
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: keg
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: pong
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: house
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: oddity
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: contrary
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: fallacy
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: anomaly
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: draft
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: plot
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: character
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: edit
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: ghost
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: specter
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: spirit
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: phantom
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: replica
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: mockup
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: reference
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: template
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: angle
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: glamour
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: pose
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: grafting
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: specimen
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: taxonomy
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: plants
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: paleontologist
+    chunks:
+    - paleo
+    - ntologist
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: net
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: field guide
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: insect
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: larvae
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: drill
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: brush
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: chisel
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: rocks
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: poor
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: peasant
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: poverty
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: downtrodden
+    chunks:
+    - down
+    - trodden
+    icon:
+    IsCracked: 1
+    crackBreakNum: 3
+    IsLinked: 0
+    linkedChunkWords: []
+  allWords: []
+  frozenBubbles: []
+  burstBubbles: []
+  keyLockBubbles: []
+  bubbleChains: []
+  useBubbleSeparator: 0
+  bubbleSeparatorData:
+    breakThreshold: 3
+    linkedWords: []
+  crypticBubbles: []
+  screwLockBubbles: []
+  backwardBubbles: []
+  crackedBubbles:
+  - fullWord: brisket
+    chunkA: bris
+    chunkB: ket
+    breakNum: 3
+  - fullWord: downtrodden
+    chunkA: down
+    chunkB: trodden
+    breakNum: 3
+  linkedBubbles: []
+  hasSeperator: 0
+  hasCrypticBubbles: 0
+  minMaxCrypticBubbles:
+  - 3
+  - 6
+  hasBurstBubbles: 0
+  minMaxBurstBubbles:
+  - 3
+  - 6
+  hasBackwardBubbles: 0
+  minMaxBackwardBubbles:
+  - 3
+  - 6
+  hasFrozenBubbles: 0
+  minMaxFrozenBubbles:
+  - 3
+  - 6
+  hasKeyLockBubbles: 0
+  minMaxKeyLockBubbles:
+  - 1
+  - 5
+  hasScrewLockBubbles: 0
+  minMaxScrewLockBubbles:
+  - 1
+  - 5
+  hasCrackBubbles: 0
+  minMaxCrackBubbles:
+  - 1
+  - 5
+  hasLinkedBubbles: 0
+  minMaxLinkedBubbles:
+  - 1
+  - 5

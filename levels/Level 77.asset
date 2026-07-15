@@ -1,0 +1,946 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22e55d88a56a9cc174a4379c66bb9c6, type: 3}
+  m_Name: Level 77
+  m_EditorClassIdentifier:
+  categories:
+  - category: Forest Animals
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Fox
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Wolf
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Elk
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Rabbit
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Tourism
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Souvenir
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Guide
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Hotel
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Landmark
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Road Signs
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Stop
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Yield
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Speed Limit
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Detour
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Airshow
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Jet
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Pilot
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Stunt
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Smoke
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Extreme Sports
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Skydiving
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Bungee
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Surfing
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Snowboarding
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Landmark
+    parentCategory: Tourism
+    icon:
+    words:
+    - fullWord: Taj Mahal
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Eiffel Tower
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Great Wall
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Statue of Liberty
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Linguistics
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Grammar
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Syntax
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Phonetics
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Semantics
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Jet
+    parentCategory: Airshow
+    icon:
+    words:
+    - fullWord: Cockpit
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Afterburner
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Fuselage
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Turbine
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Wolf
+    parentCategory: Forest Animals
+    icon:
+    words:
+    - fullWord: Pack
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Howl
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Moon
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Alpha
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Egg
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Yolk
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Shell
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: White
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Nest
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Desert
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Heat
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Scorpion
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Cactus
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Camel
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Chef
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Apron
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Recipe
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Kitchen
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Whisk
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Skiing
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Poles
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Slope
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Lift
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Powder
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Modeling
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Pose
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Runway
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Fashion
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Beauty
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  - category: Striped Objects
+    parentCategory:
+    icon:
+    words:
+    - fullWord: Zebra
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Candy Cane
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Barber Pole
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+    - fullWord: Tiger
+      chunks: []
+      icon:
+      IsCracked: 0
+      crackBreakNum: 0
+      IsLinked: 0
+      linkedChunkWords: []
+  maxBubblesInScene: 24
+  moveLimit: 10
+  randomSeed: 0
+  levelDifficulty: 0
+  allWordEntries:
+  - fullWord: Fox
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Elk
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Rabbit
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Souvenir
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Guide
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Hotel
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Stop
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Yield
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Speed Limit
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Detour
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Pilot
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Stunt
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Smoke
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Skydiving
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Bungee
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Surfing
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Snowboarding
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Taj Mahal
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Eiffel Tower
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Great Wall
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Statue of Liberty
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Grammar
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Syntax
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Phonetics
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Semantics
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Cockpit
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Afterburner
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Fuselage
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Turbine
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Pack
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Howl
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Moon
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Alpha
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Yolk
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Shell
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: White
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Nest
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Heat
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Scorpion
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Cactus
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Camel
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Apron
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Recipe
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Kitchen
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Whisk
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Poles
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Slope
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Lift
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Powder
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Pose
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Runway
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Fashion
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Beauty
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Zebra
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Candy Cane
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Barber Pole
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  - fullWord: Tiger
+    chunks: []
+    icon:
+    IsCracked: 0
+    crackBreakNum: 0
+    IsLinked: 0
+    linkedChunkWords: []
+  allWords: []
+  frozenBubbles: []
+  burstBubbles: []
+  keyLockBubbles: []
+  bubbleChains: []
+  useBubbleSeparator: 0
+  bubbleSeparatorData:
+    breakThreshold: 3
+    linkedWords: []
+  crypticBubbles: []
+  screwLockBubbles: []
+  backwardBubbles: []
+  crackedBubbles: []
+  linkedBubbles: []
+  hasSeperator: 0
+  hasCrypticBubbles: 0
+  minMaxCrypticBubbles:
+  - 3
+  - 6
+  hasBurstBubbles: 0
+  minMaxBurstBubbles:
+  - 3
+  - 6
+  hasBackwardBubbles: 0
+  minMaxBackwardBubbles:
+  - 3
+  - 6
+  hasFrozenBubbles: 0
+  minMaxFrozenBubbles:
+  - 3
+  - 6
+  hasKeyLockBubbles: 0
+  minMaxKeyLockBubbles:
+  - 1
+  - 5
+  hasScrewLockBubbles: 0
+  minMaxScrewLockBubbles:
+  - 1
+  - 5
+  hasCrackBubbles: 0
+  minMaxCrackBubbles:
+  - 1
+  - 5
+  hasLinkedBubbles: 0
+  minMaxLinkedBubbles:
+  - 1
+  - 5

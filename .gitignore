@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Data & Reports
+data_exports/
+*.xlsx
+*.csv
+*.rar
+comparison_result.json
+excel_content.txt
+
+# Archived folders
+archives/
+
+# Scratch & Bugs
+scratch/
+bugs/
+
+# Private
+private
+analysis_scripts/
+
+.~lock.*
