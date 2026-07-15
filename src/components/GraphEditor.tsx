@@ -28,7 +28,7 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 import pluralize from 'pluralize';
@@ -148,6 +148,37 @@ const isNodeImmovable = (node: Node, immovableBubblesList: any[], edges: Edge[],
     }
   }
   return false;
+};
+
+const isNodeCountdown = (node: Node, countdownBubblesList: any[], edges: Edge[], nodes: Node[]) => {
+  if (!countdownBubblesList || countdownBubblesList.length === 0) return { isCountdown: false };
+  const label = String(node.data.label).toLowerCase();
+  
+  const found = countdownBubblesList.find((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === label);
+  if (found) return { isCountdown: true, value: found.countdownValue };
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode) {
+        const foundParent = countdownBubblesList.find((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === String(parentNode.data.label).toLowerCase());
+        if (foundParent) return { isCountdown: true, value: foundParent.countdownValue };
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    
+    for (const cLabel of chunkLabels) {
+      const foundChunk = countdownBubblesList.find((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === cLabel);
+      if (foundChunk) return { isCountdown: true, value: foundChunk.countdownValue };
+    }
+  }
+  return { isCountdown: false };
 };
 
 const isNodeBackward = (node: Node, backwardBubblesList: any[], edges: Edge[], nodes: Node[]) => {
@@ -1735,6 +1766,13 @@ export default function GraphEditor() {
             );
           }
 
+          // 5.6 Countdown Bubbles
+          if (updatedRawLevelData.countdownBubbles) {
+            updatedRawLevelData.countdownBubbles = updatedRawLevelData.countdownBubbles.map((cb: any) => 
+              (typeof cb === 'string' ? cb : cb.word).toLowerCase() === oldLabel ? { ...cb, word: newLabel } : cb
+            );
+          }
+
           // 6. Screw Lock
           if (updatedRawLevelData.screwLockBubbles) {
             updatedRawLevelData.screwLockBubbles = updatedRawLevelData.screwLockBubbles.map((sl: any) => ({
@@ -2452,6 +2490,13 @@ export default function GraphEditor() {
               );
             }
 
+            // 3.6 Countdown Bubbles
+            if (clonedRawData.countdownBubbles) {
+              clonedRawData.countdownBubbles = clonedRawData.countdownBubbles.map((cb: any) => 
+                (typeof cb === 'string' ? cb : cb.word).toLowerCase() === oldLabel ? { ...cb, word: w.word } : cb
+              );
+            }
+
             // 4. Backward Bubbles
             if (clonedRawData.backwardBubbles) {
               clonedRawData.backwardBubbles = clonedRawData.backwardBubbles.map((bw: any) => 
@@ -3148,6 +3193,9 @@ export default function GraphEditor() {
                   const screwLockIndex = isNodeScrewLock(node, rawLevelData?.screwLockBubbles || [], edges, nodes);
                   const screwDriverIndex = isNodeScrewDriver(node, rawLevelData?.screwLockBubbles || [], edges, nodes);
                   const isCycleLock = isNodeCycleLock(node, rawLevelData?.cycleLockBubbles || [], edges, nodes) !== null;
+                  const countdownState = isNodeCountdown(node, rawLevelData?.countdownBubbles || [], edges, nodes);
+                  const isCountdown = countdownState.isCountdown;
+                  const countdownValue = countdownState.value;
                   
                   let parentLabel: string | null = null;
                   if (isChunk) {
@@ -3198,12 +3246,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isImmovable ? 'rgba(107, 114, 128, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))))))))),
+                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isImmovable ? 'rgba(107, 114, 128, 0.15)' : (isCountdown ? 'rgba(236, 72, 153, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))))))))))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isImmovable ? '1px solid rgba(107, 114, 128, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.6)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))))))))),
+                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isImmovable ? '1px solid rgba(107, 114, 128, 0.4)' : (isCountdown ? '1px solid rgba(236, 72, 153, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.6)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))))))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -3246,6 +3294,12 @@ export default function GraphEditor() {
                           )}
                           {isCycleLock && (
                             <RefreshCw size={12} color="#14b8a6" />
+                          )}
+                          {isCountdown && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#ec4899' }}>
+                              <Timer size={12} />
+                              <span style={{ fontSize: '10px' }}>{countdownValue?.[0]}</span>
+                            </div>
                           )}
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -3402,6 +3456,8 @@ export default function GraphEditor() {
             screwDriverIndex: isNodeScrewDriver(n, rawLevelData?.screwLockBubbles || [], edges, nodes),
             screwCount: rawLevelData?.screwLockBubbles ? (rawLevelData.screwLockBubbles[isNodeScrewLock(n, rawLevelData.screwLockBubbles, edges, nodes)]?.screwCount || 0) : 0,
             isCycleLock: isNodeCycleLock(n, rawLevelData?.cycleLockBubbles || [], edges, nodes) !== null,
+            isCountdown: isNodeCountdown(n, rawLevelData?.countdownBubbles || [], edges, nodes).isCountdown,
+            countdownValue: isNodeCountdown(n, rawLevelData?.countdownBubbles || [], edges, nodes).value,
             dropIndex: spawnQueueIds.indexOf(n.id) !== -1 ? spawnQueueIds.indexOf(n.id) + 1 : undefined
           }
         }))}

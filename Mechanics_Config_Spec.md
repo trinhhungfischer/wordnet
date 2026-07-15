@@ -226,7 +226,7 @@ Cấu trúc:
   }
 ```
 
-**Luật chơi:** Có một số đếm ngược phía bên phải của quả bóng. Mỗi lần hit (Hoặc ghép) countdown sẽ trừ đi 1 và trừ tối đa về min. Tới khi merge quả bóng này, cộng thêm số lượt move bằng số điểm countdown
+**Luật chơi:** Có một số đếm ngược phía bên phải của quả bóng. Mỗi lần hit (Hoặc ghép) countdown sẽ trừ đi 1 và trừ tối đa về min trong config. Config "countdownValue" là mảng chứa giá trị ban đầu và giá trị tối thiểu. Tới khi merge quả bóng này, cộng thêm số lượt move bằng số điểm countdown
 
 **Chú ý:** Không thể xuất hiện cùng lúc với các cơ chế khác như Frozen, Burst, Screw Lock, Cycle Lock. Nếu xuất hiện cùng lúc thì sẽ bị lỗi hiển thị.
 

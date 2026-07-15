@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin } from 'lucide-react';
+import { X, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -904,6 +904,117 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                             onClick={(e) => {
                               e.stopPropagation();
                               handleChange('immovableBubbles', levelData.immovableBubbles.filter((w: any) => (typeof w === 'string' ? w : w.word) !== wordLabel));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      )})
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+      )
+    },
+    {
+      id: 'countdown',
+      isActive: () => forceOpen.countdown || (levelData.countdownBubbles && levelData.countdownBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Timer size={16} color="#ec4899" />
+                    Mechanic: Countdown Bubbles
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.countdown || (levelData.countdownBubbles && levelData.countdownBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, countdown: checked }));
+                      handleChange('countdownBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.countdown || (levelData.countdownBubbles && levelData.countdownBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Drag words from the left panel and drop them here to add a countdown.
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentCountdown = levelData.countdownBubbles || [];
+                        if (!currentCountdown.some((w: any) => (typeof w === 'string' ? w : w.word) === wordLabel)) {
+                          handleChange('countdownBubbles', [...currentCountdown, { word: wordLabel, countdownValue: [5, 0] }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(236, 72, 153, 0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.countdownBubbles || levelData.countdownBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here
+                      </span>
+                    ) : (
+                      levelData.countdownBubbles.map((cb: any, i: number) => {
+                        const wordLabel = typeof cb === 'string' ? cb : cb.word;
+                        const initialValue = cb.countdownValue ? cb.countdownValue[0] : 5;
+                        const minValue = cb.countdownValue ? cb.countdownValue[1] : 0;
+                        return (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(236, 72, 153, 0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(236, 72, 153, 0.3)' }}>
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(wordLabel);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                            }}
+                          >
+                            {wordLabel}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Initial:</span>
+                            <input 
+                              type="number" 
+                              value={initialValue}
+                              onChange={(e) => {
+                                const newCountdown = [...levelData.countdownBubbles];
+                                const val = parseInt(e.target.value) || 0;
+                                newCountdown[i] = { word: wordLabel, countdownValue: [val, minValue] };
+                                handleChange('countdownBubbles', newCountdown);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Min:</span>
+                            <input 
+                              type="number" 
+                              value={minValue}
+                              onChange={(e) => {
+                                const newCountdown = [...levelData.countdownBubbles];
+                                const val = parseInt(e.target.value) || 0;
+                                newCountdown[i] = { word: wordLabel, countdownValue: [initialValue, val] };
+                                handleChange('countdownBubbles', newCountdown);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('countdownBubbles', levelData.countdownBubbles.filter((w: any) => (typeof w === 'string' ? w : w.word) !== wordLabel));
                             }}
                             style={{ 
                               background: 'transparent', border: 'none', 
