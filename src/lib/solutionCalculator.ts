@@ -21,6 +21,8 @@ export interface BoardBubbleState {
   countdownValue?: [number, number];
   isLinkedMain?: boolean;
   isLinkedChunk?: boolean;
+  isCrackBubble?: boolean;
+  crackCountRemaining?: number;
 }
 
 export interface MergeStep {
@@ -66,9 +68,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   if (levelData?.allWordEntries) {
     levelData.allWordEntries.forEach((e: any) => {
       const wordName = e.parentWord ? String(e.parentWord).toLowerCase() : String(e.fullWord).toLowerCase();
-      if (e.crackBreakNum > 0) {
-        crackBreakMap[wordName] = e.crackBreakNum;
-      }
+        if (e.countdownTimer && e.countdownTimer > 0) countdownMap[wordName] = e.countdownTimer;
+        // crackBreakMap removed in favor of levelData.crackBubbles
     });
   }
 
@@ -107,7 +108,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let screwDriverIndex = -1;
     let cycleLockState: number | undefined;
     let isImmovable = false;
-    let countdownValueCalc: [number, number] | undefined;
+    let countdownValue: [number, number] | undefined;
     let isLinkedMain = false;
     let isLinkedChunk = false;
 
@@ -118,8 +119,15 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
        chainMergesLeft = breakThreshold - completedCategoriesCount;
     }
     
-    if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) {
-       crackMergesLeft = crackBreakMap[w] - completedCategoriesCount;
+    // Check crackBubbles
+    let isCrackBubble = false;
+    let crackCountRemaining = 0;
+    const crackRule = levelData?.crackBubbles?.find((c: any) => c.word.toLowerCase() === w);
+    if (crackRule) {
+       isCrackBubble = true;
+       const dropTime = wordDropMove.has(w) ? wordDropMove.get(w)! : moveCount;
+       const mergesDone = moveCount - dropTime;
+       crackCountRemaining = Math.max(0, crackRule.crackCount - mergesDone);
     }
     
     const immovableRule = levelData?.immovableBubbles?.find((i: any) => (typeof i === 'string' ? i : i.word).toLowerCase() === w);
@@ -199,7 +207,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
          }
          let currentValue = countdownRule.countdownValue[0] - mergesDone;
          if (currentValue < countdownRule.countdownValue[1]) currentValue = countdownRule.countdownValue[1];
-         countdownValueCalc = [currentValue, countdownRule.countdownValue[1]];
+         countdownValue = [currentValue, countdownRule.countdownValue[1]];
       }
       
       const linkedMainRule = levelData?.linkedBubbles?.find((l: any) => l.word.toLowerCase() === w);
@@ -235,9 +243,11 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       screwDriverIndex,
       cycleLockState,
       isImmovable,
-      countdownValue: countdownValueCalc,
+      countdownValue,
       isLinkedMain,
-      isLinkedChunk
+      isLinkedChunk,
+      isCrackBubble,
+      crackCountRemaining
     };
   };
 
@@ -279,6 +289,55 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
               boardState: board.map(bid => getBubbleState(bid)),
               moveIndex: currentMoveIndex
             });
+          }
+        }
+      });
+
+      // Check Crack Bubbles Breaking
+      levelData?.crackBubbles?.forEach((c: any) => {
+        const w = c.word.toLowerCase();
+        if (wordDropMove.has(w)) {
+          const dropTime = wordDropMove.get(w)!;
+          const mergesDone = currentMoveIndex - dropTime;
+          if (mergesDone === c.crackCount) {
+            // Find the node id for this crack bubble
+            const bubbleId = board.find(id => getBubbleState(id).label.toLowerCase() === w);
+            if (bubbleId) {
+              // Remove the crack bubble
+              board = board.filter(id => id !== bubbleId);
+              usedWords.add(w);
+              
+              // Add chunkWords to board
+              c.chunkWords.forEach((cw: string) => {
+                 // Try to find the node for this chunkWord
+                 const chunkNode = nodes.find(n => n.data.isChunk && String(n.data.label).toLowerCase() === cw.toLowerCase() && !board.includes(n.id) && !usedWords.has(cw.toLowerCase()));
+                 if (chunkNode) {
+                    board.push(chunkNode.id);
+                    droppedWords.add(chunkNode.id);
+                    wordDropMove.set(cw.toLowerCase(), currentMoveIndex);
+                 } else {
+                    // Fallback to non-chunk word
+                    const wordNode = nodes.find(n => !n.data.isCategory && String(n.data.label).toLowerCase() === cw.toLowerCase() && !board.includes(n.id) && !usedWords.has(cw.toLowerCase()));
+                    if (wordNode) {
+                       board.push(wordNode.id);
+                       droppedWords.add(wordNode.id);
+                       wordDropMove.set(cw.toLowerCase(), currentMoveIndex);
+                    }
+                 }
+              });
+
+              steps.push({
+                id: `step-${stepIdCounter++}`,
+                type: 'event',
+                left: '',
+                right: '',
+                result: '',
+                text: `⚡ Crack Bubble "${c.word}" shattered! Spawned: ${c.chunkWords.join(', ')}`,
+                isComboBonus: false,
+                boardState: board.map(bid => getBubbleState(bid)),
+                moveIndex: currentMoveIndex
+              });
+            }
           }
         }
       });
@@ -380,7 +439,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       }
     }
 
-    if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) return true;
+    const crackRule = levelData?.crackBubbles?.find((c: any) => c.word.toLowerCase() === w);
+    if (crackRule) {
+       const dropTime = wordDropMove.has(w) ? wordDropMove.get(w)! : moveCount;
+       const mergesDone = moveCount - dropTime;
+       if (mergesDone < crackRule.crackCount) return true; // Still cracking
+    }
     
     const screwLockRule = levelData?.screwLockBubbles?.find((s: any) => s.screwLockWord.toLowerCase() === w);
     if (screwLockRule) {
@@ -727,12 +791,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
             const dropCount = isSubCategory ? 3 : 4;
             if (doDrops(dropCount)) progress = true;
-
-            Object.keys(crackBreakMap).forEach(w => {
-              if (crackBreakMap[w] === completedCategoriesCount) {
-                addStep('event', '', '', '', `🧊 Ice broken on "${w}" (${completedCategoriesCount} categories broken)`);
-              }
-            });
             
             levelData?.keyLockBubbles?.forEach((kl: any) => {
               if (usedWords.has(kl.keyWord.toLowerCase())) {
