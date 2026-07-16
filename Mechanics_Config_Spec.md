@@ -181,3 +181,93 @@ Cấu trúc:
 ```
 
 - `word`: Từ sẽ bị hiển thị ngược chữ trên quả bóng (ví dụ: `Water` -> `retaW`).
+
+## 8. Cycle Lock
+
+**Trường áp dụng:** `cycleLockBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"cycleLockBubbles": [
+  {
+    "cycleLockWord": "Cycle",
+    "startingPosition": 0
+  }
+]
+```
+
+- `startingPosition`: Vị trí ban đầu của từ khi bắt đầu level (0 = không bị khoá khởi đầu, 1 = bị khoá khởi đầu)
+
+**Luật chơi:** Các từ bị Cycle Lock là 1 sẽ không thể merge và khi sang trạng thái 0 thì có thể merge. Số lần hit (hoặc ghép) sẽ chuyển khoá từ 0 sang 1 và ngược lại.
+
+## 9. Immovable Bubbles
+
+**Trường áp dụng:** `immovableBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"immovableBubbles": ["Immovable", "Unmovable"]
+```
+
+**Luật chơi:** Quả bóng không di chuyển được, chỉ bóng khác kéo vào merge, thay visual của bóng. Bóng merge vào cũng không thể di chuyển. Quan trọng, không thay đổi thuật toán giải gì khác
+
+**Chú ý:** Khi generate level, 2 từ cùng category sẽ không cùng có cơ chế Immovable. Nếu có, sẽ không thể merge hoàn thành được và gây lỗi logic game.
+
+## 10. Countdown Bubbles
+
+**Trường áp dụng:** `countdownBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"countdownBubbles": [
+  {
+    "word": "Countdown",
+    "countdownValue": [5,-3]
+  }
+```
+
+**Luật chơi:** Có một số đếm ngược phía bên phải của quả bóng. Mỗi lần hit (Hoặc ghép) countdown sẽ trừ đi 1 và trừ tối đa về min trong config. Config "countdownValue" là mảng chứa giá trị ban đầu và giá trị tối thiểu. Tới khi merge quả bóng này, cộng thêm số lượt move bằng số điểm countdown
+
+**Chú ý:** Không thể xuất hiện cùng lúc với các cơ chế khác như Frozen, Burst, Screw Lock, Cycle Lock. Nếu xuất hiện cùng lúc thì sẽ bị lỗi hiển thị.
+
+## 11. Linked Bubbles
+
+**Trường áp dụng:** `linkedBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"linkedBubbles": [
+  {
+    "word": "Friday",
+    "linkedChunks": ["Go", "Hor"]
+  }
+]
+```
+
+**Luật chơi:**
+1. Có một từ chính (ví dụ: `Friday`) bị linked với 1 hoặc nhiều chunk (ví dụ: `Go`, `Hor`). 
+2. Từ chính (`Friday`) bị khoá cứng: không thể di chuyển, không thể tương tác hay merge vào từ khác.
+3. Các bóng Chunk bị liên kết (`Go`, `Hor`) cũng bị khoá chiều kéo đi: không thể kéo chúng đi merge với từ khác (không làm source).
+4. Chỉ có thể dùng bóng khác kéo vào các Chunk liên kết này (chúng chỉ làm target). Khi ghép thành công (ví dụ kéo `At` vào `Go` để thành `Goat`), liên kết đó sẽ bị tháo gỡ.
+5. Khi **tất cả** các chunk liên kết đều bị tháo gỡ (đã ghép thành từ hoàn chỉnh), từ chính (`Friday`) sẽ trở lại trạng thái bình thường, có thể tương tác/merge.
+
+**Chú ý:** 
+- Các phần tử trong mảng `linkedChunks` chỉ chứa các mảnh từ (chunk), không dùng cho từ hoàn chỉnh.
+- **Cảnh báo Deadlock (Lỗi thiết kế màn chơi):** Tuyệt đối KHÔNG đưa toàn bộ các mảnh cắt ra của cùng một từ (ví dụ: cả `"Hor"` và `"Se"`) vào chung mảng `linkedChunks`. Vì các mảnh trong `linkedChunks` không thể kéo đi (bị khoá vai trò source), người chơi sẽ không thể kéo mảnh này vào mảnh kia để ghép thành từ hoàn chỉnh, dẫn đến màn chơi bị **deadlock** (bế tắc không thể giải).
+
+## 12. Crack Bubbles
+
+**Trường áp dụng:** `crackBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"crackBubbles": [
+  {
+    "word": "Cracked",
+    "crackCount": 3,
+    "chunkWords": ["Cra", "cked"]
+  }
+]
+```
+
+**Luật chơi:** Quả bóng đang bị nứt. Mỗi lần hit (hoặc ghép) sẽ làm giảm crackCount đi 1. Khi crackCount = 0, quả bóng sẽ bị vỡ ra và spawn ra các chunkWords tương ứng. Các chunkWords này có thể merge được.

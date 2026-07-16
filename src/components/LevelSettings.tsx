@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -34,6 +34,1144 @@ function Toggle({ checked, onChange }: { checked: boolean, onChange: (v: boolean
 
 export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFocusWord, onCalculateSolution, levelName }: LevelSettingsProps) {
   const [forceOpen, setForceOpen] = useState<Record<string, boolean>>({});
+
+  const [sortedMechanicIds, setSortedMechanicIds] = useState<string[]>([]);
+  
+  const mechanicsConfig = [
+    {
+      id: 'chain',
+      isActive: () => levelData.useBubbleSeparator === 1,
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Link size={16} color="#818cf8" />
+                    Mechanic: Chain
+                  </h3>
+                  <Toggle 
+                    checked={levelData.useBubbleSeparator === 1}
+                    onChange={(checked) => handleChange('useBubbleSeparator', checked ? 1 : 0)}
+                  />
+                </div>
+        
+                {levelData.useBubbleSeparator === 1 && (
+                  <div style={{ marginTop: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Break Threshold:</span>
+                        <input 
+                          type="number" 
+                          value={levelData.bubbleSeparatorData?.breakThreshold || 3}
+                          onChange={(e) => handleDeepChange('bubbleSeparatorData', 'breakThreshold', parseInt(e.target.value) || 3)}
+                          style={{ width: '50px', padding: '4px 8px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none' }}
+                        />
+                      </div>
+                      
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                        Linked Words (Drag & Drop from left panel):
+                      </div>
+                      <div 
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                          if (wordLabel) {
+                            const currentLinkedWords = levelData.bubbleSeparatorData?.linkedWords || [];
+                            if (!currentLinkedWords.includes(wordLabel)) {
+                              handleDeepChange('bubbleSeparatorData', 'linkedWords', [...currentLinkedWords, wordLabel]);
+                            }
+                          }
+                        }}
+                        style={{ 
+                          minHeight: '80px', padding: '8px', border: '1px dashed rgba(99,102,241,0.5)', 
+                          borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexWrap: 'wrap', gap: '6px', alignContent: 'flex-start'
+                        }}
+                      >
+                        {(!levelData.bubbleSeparatorData?.linkedWords || levelData.bubbleSeparatorData.linkedWords.length === 0) ? (
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                            Drop words here
+                          </span>
+                        ) : (
+                          levelData.bubbleSeparatorData.linkedWords.map((word: string, i: number) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                              <span 
+                                onClick={() => {
+                                  if (onFocusWord) onFocusWord(word);
+                                }}
+                                style={{ 
+                                  fontSize: '13px', fontWeight: 600, background: 'rgba(99,102,241,0.25)', color: 'white', 
+                                  padding: '4px 10px', borderRadius: '6px 0 0 6px', display: 'flex', alignItems: 'center', gap: '4px',
+                                  cursor: 'pointer', transition: 'all 0.2s', border: '1px solid rgba(99,102,241,0.3)', borderRight: 'none'
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(99,102,241,0.4)'}
+                                onMouseOut={(e) => e.currentTarget.style.background = 'rgba(99,102,241,0.25)'}
+                              >
+                                {word}
+                              </span>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeepChange('bubbleSeparatorData', 'linkedWords', levelData.bubbleSeparatorData.linkedWords.filter((w: string) => w !== word));
+                                }}
+                                style={{ 
+                                  background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.3)', 
+                                  color: '#fca5a5', cursor: 'pointer', padding: '4px 8px', fontSize: '14px', lineHeight: 1,
+                                  borderRadius: '0 6px 6px 0', transition: 'all 0.2s'
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.4)'}
+                                onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                  </div>
+                )}
+              </div>
+        
+              
+      )
+    },
+    {
+      id: 'frozen',
+      isActive: () => forceOpen.frozen || (levelData.frozenBubbles && levelData.frozenBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Snowflake size={16} color="#38bdf8" />
+                    Mechanic: Frozen Bubbles
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.frozen || (levelData.frozenBubbles && levelData.frozenBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, frozen: checked }));
+                      handleChange('frozenBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.frozen || (levelData.frozenBubbles && levelData.frozenBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Frozen Words (Drag & Drop from left panel):
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentFrozen = levelData.frozenBubbles || [];
+                        if (!currentFrozen.some((f: any) => f.word === wordLabel)) {
+                          handleChange('frozenBubbles', [...currentFrozen, { word: wordLabel, mergesNeeded: 5 }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(56,189,248,0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.frozenBubbles || levelData.frozenBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here
+                      </span>
+                    ) : (
+                      levelData.frozenBubbles.map((frozenItem: any, i: number) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(56,189,248,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(56,189,248,0.3)' }}>
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(frozenItem.word);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                            }}
+                          >
+                            {frozenItem.word}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Merges:</span>
+                            <input 
+                              type="number" 
+                              value={frozenItem.mergesNeeded}
+                              onChange={(e) => {
+                                const newFrozen = [...levelData.frozenBubbles];
+                                newFrozen[i].mergesNeeded = parseInt(e.target.value) || 1;
+                                handleChange('frozenBubbles', newFrozen);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('frozenBubbles', levelData.frozenBubbles.filter((f: any) => f.word !== frozenItem.word));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+        
+              
+      )
+    },
+    {
+      id: 'burst',
+      isActive: () => forceOpen.burst || (levelData.burstBubbles && levelData.burstBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Bomb size={16} color="#f97316" />
+                    Mechanic: Burst Bubbles (Bombs)
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.burst || (levelData.burstBubbles && levelData.burstBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, burst: checked }));
+                      handleChange('burstBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.burst || (levelData.burstBubbles && levelData.burstBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Bomb Words (Drag & Drop from left panel):
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentBurst = levelData.burstBubbles || [];
+                        if (!currentBurst.some((b: any) => b.word === wordLabel)) {
+                          handleChange('burstBubbles', [...currentBurst, { word: wordLabel, movesRemaining: 6 }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(249,115,22,0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.burstBubbles || levelData.burstBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here
+                      </span>
+                    ) : (
+                      levelData.burstBubbles.map((burstItem: any, i: number) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(249,115,22,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(249,115,22,0.3)' }}>
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(burstItem.word);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                            }}
+                          >
+                            {burstItem.word}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Moves:</span>
+                            <input 
+                              type="number" 
+                              value={burstItem.movesRemaining}
+                              onChange={(e) => {
+                                const newBurst = [...levelData.burstBubbles];
+                                newBurst[i].movesRemaining = parseInt(e.target.value) || 1;
+                                handleChange('burstBubbles', newBurst);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('burstBubbles', levelData.burstBubbles.filter((b: any) => b.word !== burstItem.word));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+        
+              
+      )
+    },
+    {
+      id: 'backward',
+      isActive: () => forceOpen.backward || (levelData.backwardBubbles && levelData.backwardBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ArrowLeftRight size={16} color="#a855f7" />
+                    Mechanic: Từ Ngược (Backward)
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.backward || (levelData.backwardBubbles && levelData.backwardBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, backward: checked }));
+                      handleChange('backwardBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.backward || (levelData.backwardBubbles && levelData.backwardBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Backward Words (Drag & Drop from left panel):
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentBackward = levelData.backwardBubbles || [];
+                        if (!currentBackward.some((b: any) => b.word === wordLabel)) {
+                          handleChange('backwardBubbles', [...currentBackward, { word: wordLabel }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(168,85,247,0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.backwardBubbles || levelData.backwardBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here
+                      </span>
+                    ) : (
+                      levelData.backwardBubbles.map((bwItem: any, i: number) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(168,85,247,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(168,85,247,0.3)' }}>
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(bwItem.word);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                            }}
+                          >
+                            {bwItem.word}
+                          </span>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('backwardBubbles', levelData.backwardBubbles.filter((b: any) => b.word !== bwItem.word));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#d8b4fe', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+        
+              
+      )
+    },
+    {
+      id: 'keyLock',
+      isActive: () => forceOpen.keyLock || (levelData.keyLockBubbles && levelData.keyLockBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Lock size={16} color="#eab308" />
+                    Mechanic: Locks & Keys
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.keyLock || (levelData.keyLockBubbles && levelData.keyLockBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, keyLock: checked }));
+                      handleChange('keyLockBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.keyLock || (levelData.keyLockBubbles && levelData.keyLockBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Lock Words (Drag & Drop from left panel):
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentLocks = levelData.keyLockBubbles || [];
+                        if (!currentLocks.some((l: any) => l.lockWord === wordLabel)) {
+                          handleChange('keyLockBubbles', [...currentLocks, { lockWord: wordLabel, keyWord: '' }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(234,179,8,0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.keyLockBubbles || levelData.keyLockBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here to add Locks
+                      </span>
+                    ) : (
+                      levelData.keyLockBubbles.map((lockItem: any, i: number) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(234,179,8,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(234,179,8,0.3)' }}>
+                          <Lock size={14} color={lockKeyColors[i % lockKeyColors.length]} />
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(lockItem.lockWord);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis'
+                            }}
+                            title={lockItem.lockWord}
+                          >
+                            {lockItem.lockWord}
+                          </span>
+                          
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
+                            <Key size={14} color={lockKeyColors[i % lockKeyColors.length]} />
+                            <input 
+                              type="text" 
+                              placeholder="Key Word..."
+                              value={lockItem.keyWord}
+                              onChange={(e) => {
+                                const newLocks = [...levelData.keyLockBubbles];
+                                newLocks[i].keyWord = e.target.value;
+                                handleChange('keyLockBubbles', newLocks);
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                                if (wordLabel) {
+                                  const newLocks = [...levelData.keyLockBubbles];
+                                  newLocks[i].keyWord = wordLabel;
+                                  handleChange('keyLockBubbles', newLocks);
+                                }
+                              }}
+                              style={{ width: '100%', minWidth: '60px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                              title="Type key word or drop a word here"
+                            />
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('keyLockBubbles', levelData.keyLockBubbles.filter((l: any) => l.lockWord !== lockItem.lockWord));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+        
+              
+      )
+    },
+    {
+      id: 'screwLock',
+      isActive: () => forceOpen.screwLock || (levelData.screwLockBubbles && levelData.screwLockBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Wrench size={16} color="#f97316" />
+                    Mechanic: Screw Lock
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.screwLock || (levelData.screwLockBubbles && levelData.screwLockBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, screwLock: checked }));
+                      handleChange('screwLockBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.screwLock || (levelData.screwLockBubbles && levelData.screwLockBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Screw Lock Words (Drag & Drop from left panel):
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentScrews = levelData.screwLockBubbles || [];
+                        if (!currentScrews.some((s: any) => s.screwLockWord === wordLabel)) {
+                          handleChange('screwLockBubbles', [...currentScrews, { screwLockWord: wordLabel, screwDriverWords: [], id: currentScrews.length, screwCount: 0 }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(249,115,22,0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.screwLockBubbles || levelData.screwLockBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here to add Screw Locks
+                      </span>
+                    ) : (
+                      levelData.screwLockBubbles.map((screwItem: any, i: number) => (
+                        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: 'rgba(249,115,22,0.1)', padding: '8px', borderRadius: '6px', border: '1px solid rgba(249,115,22,0.3)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Wrench size={14} color={lockKeyColors[i % lockKeyColors.length]} />
+                              <span 
+                                onClick={() => {
+                                  if (onFocusWord) onFocusWord(screwItem.screwLockWord);
+                                }}
+                                style={{ 
+                                  fontSize: '13px', fontWeight: 600, color: 'white', 
+                                  cursor: 'pointer', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis'
+                                }}
+                                title={screwItem.screwLockWord}
+                              >
+                                {screwItem.screwLockWord}
+                              </span>
+                            </div>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleChange('screwLockBubbles', levelData.screwLockBubbles.filter((s: any) => s.screwLockWord !== screwItem.screwLockWord));
+                              }}
+                              style={{ 
+                                background: 'transparent', border: 'none', 
+                                color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                              }}
+                            >
+                              &times;
+                            </button>
+                          </div>
+                          <div 
+                            style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                              if (wordLabel && !screwItem.screwDriverWords.includes(wordLabel)) {
+                                const newScrews = [...levelData.screwLockBubbles];
+                                newScrews[i].screwDriverWords.push(wordLabel);
+                                newScrews[i].screwCount = newScrews[i].screwDriverWords.length;
+                                handleChange('screwLockBubbles', newScrews);
+                              }
+                            }}
+                          >
+                            Driver Words: (Drop here)
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px', minHeight: '20px', padding: '4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px', border: '1px dashed rgba(255,255,255,0.2)' }}>
+                              {screwItem.screwDriverWords.map((driver: string, dIdx: number) => (
+                                <div key={dIdx} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', color: 'white' }}>
+                                  <PenTool size={10} color={lockKeyColors[i % lockKeyColors.length]} />
+                                  <span
+                                    onClick={() => {
+                                      if (onFocusWord) onFocusWord(driver);
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                  >
+                                    {driver}
+                                  </span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const newScrews = [...levelData.screwLockBubbles];
+                                      newScrews[i].screwDriverWords = newScrews[i].screwDriverWords.filter((d: string) => d !== driver);
+                                      newScrews[i].screwCount = newScrews[i].screwDriverWords.length;
+                                      handleChange('screwLockBubbles', newScrews);
+                                    }}
+                                    style={{ background: 'transparent', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: 0, marginLeft: '2px', fontSize: '12px' }}
+                                  >&times;</button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+        
+              
+      )
+    },
+    {
+      id: 'cycleLock',
+      isActive: () => forceOpen.cycleLock || (levelData.cycleLockBubbles && levelData.cycleLockBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <RefreshCw size={16} color="#14b8a6" />
+                    Mechanic: Cycle Lock
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.cycleLock || (levelData.cycleLockBubbles && levelData.cycleLockBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, cycleLock: checked }));
+                      handleChange('cycleLockBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                
+                {(forceOpen.cycleLock || (levelData.cycleLockBubbles && levelData.cycleLockBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                      Cycle Lock Words (Drag & Drop from left panel):
+                    </div>
+                    
+                    <div 
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                        if (wordLabel) {
+                          const currentCycleLocks = levelData.cycleLockBubbles || [];
+                          if (!currentCycleLocks.some((c: any) => c.cycleLockWord === wordLabel)) {
+                            handleChange('cycleLockBubbles', [...currentCycleLocks, { cycleLockWord: wordLabel, startingPosition: 0 }]);
+                          }
+                        }
+                      }}
+                      style={{ 
+                        minHeight: '60px', padding: '8px', border: '1px dashed rgba(20,184,166,0.5)', 
+                        borderRadius: '6px', background: 'rgba(20,184,166,0.05)', display: 'flex', flexDirection: 'column', gap: '8px'
+                      }}
+                    >
+                      {(!levelData.cycleLockBubbles || levelData.cycleLockBubbles.length === 0) ? (
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '44px' }}>
+                          Drop words here to add Cycle Locks
+                        </span>
+                      ) : (
+                        levelData.cycleLockBubbles.map((cycleLock: any, i: number) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.2)', padding: '6px 12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <RefreshCw size={14} color="#14b8a6" />
+                              <span 
+                                onClick={() => {
+                                  if (onFocusWord) onFocusWord(cycleLock.cycleLockWord);
+                                }}
+                                style={{ fontSize: '13px', fontWeight: 600, color: 'white', cursor: 'pointer' }}
+                                title={cycleLock.cycleLockWord}
+                              >
+                                {cycleLock.cycleLockWord}
+                              </span>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                                <input 
+                                  type="checkbox" 
+                                  checked={cycleLock.startingPosition === 1}
+                                  onChange={(e) => {
+                                    const newCycleLocks = [...levelData.cycleLockBubbles];
+                                    newCycleLocks[i].startingPosition = e.target.checked ? 1 : 0;
+                                    handleChange('cycleLockBubbles', newCycleLocks);
+                                  }}
+                                  style={{ accentColor: '#14b8a6', cursor: 'pointer' }}
+                                />
+                                Locked Init (1)
+                              </label>
+                              <button
+                                onClick={() => {
+                                  handleChange('cycleLockBubbles', levelData.cycleLockBubbles.filter((c: any) => c.cycleLockWord !== cycleLock.cycleLockWord));
+                                }}
+                                style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                                title="Remove"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+        
+              
+      )
+    },
+    {
+      id: 'cryptic',
+      isActive: () => forceOpen.cryptic || (levelData.crypticBubbles && levelData.crypticBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Eye size={16} color="#c084fc" />
+                    Mechanic: Cryptic Bubbles
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.cryptic || (levelData.crypticBubbles && levelData.crypticBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, cryptic: checked }));
+                      handleChange('crypticBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.cryptic || (levelData.crypticBubbles && levelData.crypticBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Cryptic Words (Drag & Drop from left panel):
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentCryptic = levelData.crypticBubbles || [];
+                        if (!currentCryptic.some((c: any) => c.word === wordLabel)) {
+                          handleChange('crypticBubbles', [...currentCryptic, { word: wordLabel, revealAtMerge: new Array(wordLabel.length).fill(0) }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(192,132,252,0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.crypticBubbles || levelData.crypticBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here to add Cryptic Bubbles
+                      </span>
+                    ) : (
+                      levelData.crypticBubbles.map((crypticItem: any, i: number) => (
+                        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(192,132,252,0.15)', padding: '8px', borderRadius: '6px', border: '1px solid rgba(192,132,252,0.3)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <span 
+                              onClick={() => {
+                                if (onFocusWord) onFocusWord(crypticItem.word);
+                              }}
+                              style={{ 
+                                fontSize: '14px', fontWeight: 600, color: 'white', 
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {crypticItem.word}
+                            </span>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleChange('crypticBubbles', levelData.crypticBubbles.filter((c: any) => c.word !== crypticItem.word));
+                              }}
+                              style={{ 
+                                background: 'transparent', border: 'none', 
+                                color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1
+                              }}
+                            >
+                              &times;
+                            </button>
+                          </div>
+                          
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                            {crypticItem.revealAtMerge && crypticItem.revealAtMerge.map((val: number, charIdx: number) => (
+                              <div key={charIdx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                                <span style={{ fontSize: '12px', color: 'var(--text-main)' }}>{crypticItem.word[charIdx]}</span>
+                                <input 
+                                  type="number" 
+                                  min="0"
+                                  value={val}
+                                  onChange={(e) => {
+                                    const newCryptic = [...levelData.crypticBubbles];
+                                    newCryptic[i].revealAtMerge[charIdx] = parseInt(e.target.value) || 0;
+                                    handleChange('crypticBubbles', newCryptic);
+                                  }}
+                                  style={{ width: '32px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px', textAlign: 'center' }}
+                                  title={`Reveal at merge for letter ${crypticItem.word[charIdx]}`}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+        
+              
+      )
+    },
+    {
+      id: 'immovable',
+      isActive: () => forceOpen.immovable || (levelData.immovableBubbles && levelData.immovableBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Pin size={16} color="#9ca3af" />
+                    Mechanic: Immovable Bubbles
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.immovable || (levelData.immovableBubbles && levelData.immovableBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, immovable: checked }));
+                      handleChange('immovableBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.immovable || (levelData.immovableBubbles && levelData.immovableBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Immovable Words (Drag & Drop from left panel):
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentImmovable = levelData.immovableBubbles || [];
+                        if (!currentImmovable.some((f: any) => (typeof f === 'string' ? f : f.word) === wordLabel)) {
+                          handleChange('immovableBubbles', [...currentImmovable, { word: wordLabel }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(156,163,175,0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.immovableBubbles || levelData.immovableBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here
+                      </span>
+                    ) : (
+                      levelData.immovableBubbles.map((ib: any, i: number) => {
+                        const wordLabel = typeof ib === 'string' ? ib : ib.word;
+                        return (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(156,163,175,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(156,163,175,0.3)' }}>
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(wordLabel);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                            }}
+                          >
+                            {wordLabel}
+                          </span>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('immovableBubbles', levelData.immovableBubbles.filter((w: any) => (typeof w === 'string' ? w : w.word) !== wordLabel));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      )})
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+      )
+    },
+    {
+      id: 'countdown',
+      isActive: () => forceOpen.countdown || (levelData.countdownBubbles && levelData.countdownBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Timer size={16} color="#ec4899" />
+                    Mechanic: Countdown Bubbles
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.countdown || (levelData.countdownBubbles && levelData.countdownBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, countdown: checked }));
+                      handleChange('countdownBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                {(forceOpen.countdown || (levelData.countdownBubbles && levelData.countdownBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                    Drag words from the left panel and drop them here to add a countdown.
+                  </div>
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentCountdown = levelData.countdownBubbles || [];
+                        if (!currentCountdown.some((w: any) => (typeof w === 'string' ? w : w.word) === wordLabel)) {
+                          handleChange('countdownBubbles', [...currentCountdown, { word: wordLabel, countdownValue: [5, 0] }]);
+                        }
+                      }
+                    }}
+                    style={{ 
+                      minHeight: '80px', padding: '8px', border: '1px dashed rgba(236, 72, 153, 0.5)', 
+                      borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                    }}
+                  >
+                    {(!levelData.countdownBubbles || levelData.countdownBubbles.length === 0) ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                        Drop words here
+                      </span>
+                    ) : (
+                      levelData.countdownBubbles.map((cb: any, i: number) => {
+                        const wordLabel = typeof cb === 'string' ? cb : cb.word;
+                        const initialValue = cb.countdownValue ? cb.countdownValue[0] : 5;
+                        const minValue = cb.countdownValue ? cb.countdownValue[1] : 0;
+                        return (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(236, 72, 153, 0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(236, 72, 153, 0.3)' }}>
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(wordLabel);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                            }}
+                          >
+                            {wordLabel}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Initial:</span>
+                            <input 
+                              type="number" 
+                              value={initialValue}
+                              onChange={(e) => {
+                                const newCountdown = [...levelData.countdownBubbles];
+                                const val = parseInt(e.target.value) || 0;
+                                newCountdown[i] = { word: wordLabel, countdownValue: [val, minValue] };
+                                handleChange('countdownBubbles', newCountdown);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Min:</span>
+                            <input 
+                              type="number" 
+                              value={minValue}
+                              onChange={(e) => {
+                                const newCountdown = [...levelData.countdownBubbles];
+                                const val = parseInt(e.target.value) || 0;
+                                newCountdown[i] = { word: wordLabel, countdownValue: [initialValue, val] };
+                                handleChange('countdownBubbles', newCountdown);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('countdownBubbles', levelData.countdownBubbles.filter((w: any) => (typeof w === 'string' ? w : w.word) !== wordLabel));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      )})
+                    )}
+                  </div>
+                  </div>
+                )}
+              </div>
+      )
+    },
+    {
+      id: 'linked',
+      isActive: () => forceOpen.linked || (levelData.linkedBubbles && levelData.linkedBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Magnet size={16} color="#0ea5e9" />
+              Mechanic: Linked Bubbles
+            </h3>
+            <Toggle 
+              checked={forceOpen.linked || (levelData.linkedBubbles && levelData.linkedBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, linked: checked }));
+                handleChange('linkedBubbles', checked ? [] : undefined);
+              }}
+            />
+          </div>
+          {(forceOpen.linked || (levelData.linkedBubbles && levelData.linkedBubbles.length > 0)) && (
+            <div style={{ marginTop: '16px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+              Drag a word here to act as the Main Word (locked), then drag chunks into its linked list.
+            </div>
+            <div 
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                if (wordLabel) {
+                  const currentLinked = levelData.linkedBubbles || [];
+                  if (!currentLinked.some((w: any) => w.word === wordLabel)) {
+                    handleChange('linkedBubbles', [...currentLinked, { word: wordLabel, linkedChunks: [] }]);
+                  }
+                }
+              }}
+              style={{ 
+                minHeight: '80px', padding: '8px', border: '1px dashed rgba(14, 165, 233, 0.5)', 
+                borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+              }}
+            >
+              {(!levelData.linkedBubbles || levelData.linkedBubbles.length === 0) ? (
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  Drop Main Word here
+                </span>
+              ) : (
+                levelData.linkedBubbles.map((lb: any, i: number) => {
+                  const wordLabel = lb.word;
+                  return (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(14, 165, 233, 0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(14, 165, 233, 0.3)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Magnet size={14} color="#0ea5e9" />
+                      <span 
+                        onClick={() => {
+                          if (onFocusWord) onFocusWord(wordLabel);
+                        }}
+                        style={{ 
+                          fontSize: '13px', fontWeight: 600, color: 'white', 
+                          cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                        }}
+                      >
+                        {wordLabel}
+                      </span>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleChange('linkedBubbles', levelData.linkedBubbles.filter((w: any) => w.word !== wordLabel));
+                        }}
+                        style={{ 
+                          background: 'transparent', border: 'none', 
+                          color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1
+                        }}
+                      >
+                        &times;
+                      </button>
+                    </div>
+                    
+                    <div 
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const chunkLabel = e.dataTransfer.getData('application/reactflow-node');
+                        if (chunkLabel && chunkLabel !== wordLabel) {
+                          const newLinked = [...levelData.linkedBubbles];
+                          if (!newLinked[i].linkedChunks) newLinked[i].linkedChunks = [];
+                          if (!newLinked[i].linkedChunks.includes(chunkLabel)) {
+                            newLinked[i].linkedChunks.push(chunkLabel);
+                            handleChange('linkedBubbles', newLinked);
+                          }
+                        }
+                      }}
+                      style={{ minHeight: '40px', padding: '4px', border: '1px dashed rgba(14, 165, 233, 0.4)', borderRadius: '4px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexWrap: 'wrap', gap: '4px' }}
+                    >
+                       {(!lb.linkedChunks || lb.linkedChunks.length === 0) ? (
+                          <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontStyle: 'italic', padding: '4px' }}>Drop Linked Chunks here</span>
+                       ) : (
+                          lb.linkedChunks.map((chunk: string, cIdx: number) => (
+                             <div key={cIdx} style={{ display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.4)', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--panel-border)' }}>
+                               <span 
+                                 onClick={(e) => { e.stopPropagation(); if(onFocusWord) onFocusWord(chunk); }}
+                                 style={{ fontSize: '11px', color: '#e2e8f0', cursor: 'pointer', marginRight: '4px' }}
+                               >
+                                 {chunk}
+                               </span>
+                               <button 
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   const newLinked = [...levelData.linkedBubbles];
+                                   newLinked[i].linkedChunks = newLinked[i].linkedChunks.filter((c: string) => c !== chunk);
+                                   handleChange('linkedBubbles', newLinked);
+                                 }}
+                                 style={{ background: 'transparent', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: '0', fontSize: '14px', lineHeight: 1 }}
+                               >&times;</button>
+                             </div>
+                          ))
+                       )}
+                    </div>
+                  </div>
+                )})
+              )}
+            </div>
+            </div>
+          )}
+        </div>
+      )
+    }
+  ];
+
+  useEffect(() => {
+    if (isOpen && levelData) {
+      const sorted = [...mechanicsConfig].sort((a, b) => {
+        const aActive = a.isActive() ? 1 : 0;
+        const bActive = b.isActive() ? 1 : 0;
+        return bActive - aActive;
+      });
+      setSortedMechanicIds(sorted.map(m => m.id));
+    }
+  }, [isOpen, levelName]); // Do not include levelData/forceOpen to avoid live jumping
+
+
 
   useEffect(() => {
     setForceOpen({});
@@ -104,661 +1242,14 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
 
 
 
-      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Link size={16} color="#818cf8" />
-            Mechanic: Chain
-          </h3>
-          <Toggle 
-            checked={levelData.useBubbleSeparator === 1}
-            onChange={(checked) => handleChange('useBubbleSeparator', checked ? 1 : 0)}
-          />
-        </div>
-
-        {levelData.useBubbleSeparator === 1 && (
-          <div style={{ marginTop: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Break Threshold:</span>
-                <input 
-                  type="number" 
-                  value={levelData.bubbleSeparatorData?.breakThreshold || 3}
-                  onChange={(e) => handleDeepChange('bubbleSeparatorData', 'breakThreshold', parseInt(e.target.value) || 3)}
-                  style={{ width: '50px', padding: '4px 8px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none' }}
-                />
-              </div>
-              
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                Linked Words (Drag & Drop from left panel):
-              </div>
-              <div 
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-                  if (wordLabel) {
-                    const currentLinkedWords = levelData.bubbleSeparatorData?.linkedWords || [];
-                    if (!currentLinkedWords.includes(wordLabel)) {
-                      handleDeepChange('bubbleSeparatorData', 'linkedWords', [...currentLinkedWords, wordLabel]);
-                    }
-                  }
-                }}
-                style={{ 
-                  minHeight: '80px', padding: '8px', border: '1px dashed rgba(99,102,241,0.5)', 
-                  borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexWrap: 'wrap', gap: '6px', alignContent: 'flex-start'
-                }}
-              >
-                {(!levelData.bubbleSeparatorData?.linkedWords || levelData.bubbleSeparatorData.linkedWords.length === 0) ? (
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                    Drop words here
-                  </span>
-                ) : (
-                  levelData.bubbleSeparatorData.linkedWords.map((word: string, i: number) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
-                      <span 
-                        onClick={() => {
-                          if (onFocusWord) onFocusWord(word);
-                        }}
-                        style={{ 
-                          fontSize: '13px', fontWeight: 600, background: 'rgba(99,102,241,0.25)', color: 'white', 
-                          padding: '4px 10px', borderRadius: '6px 0 0 6px', display: 'flex', alignItems: 'center', gap: '4px',
-                          cursor: 'pointer', transition: 'all 0.2s', border: '1px solid rgba(99,102,241,0.3)', borderRight: 'none'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(99,102,241,0.4)'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'rgba(99,102,241,0.25)'}
-                      >
-                        {word}
-                      </span>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeepChange('bubbleSeparatorData', 'linkedWords', levelData.bubbleSeparatorData.linkedWords.filter((w: string) => w !== word));
-                        }}
-                        style={{ 
-                          background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.3)', 
-                          color: '#fca5a5', cursor: 'pointer', padding: '4px 8px', fontSize: '14px', lineHeight: 1,
-                          borderRadius: '0 6px 6px 0', transition: 'all 0.2s'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.4)'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'}
-                      >
-                        &times;
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-          </div>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Snowflake size={16} color="#38bdf8" />
-            Mechanic: Frozen Bubbles
-          </h3>
-          <Toggle 
-            checked={forceOpen.frozen || (levelData.frozenBubbles && levelData.frozenBubbles.length > 0)}
-            onChange={(checked) => {
-              setForceOpen(prev => ({ ...prev, frozen: checked }));
-              handleChange('frozenBubbles', checked ? [] : undefined);
-            }}
-          />
-        </div>
-        {(forceOpen.frozen || (levelData.frozenBubbles && levelData.frozenBubbles.length > 0)) && (
-          <div style={{ marginTop: '16px' }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Frozen Words (Drag & Drop from left panel):
-          </div>
-          <div 
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-              if (wordLabel) {
-                const currentFrozen = levelData.frozenBubbles || [];
-                if (!currentFrozen.some((f: any) => f.word === wordLabel)) {
-                  handleChange('frozenBubbles', [...currentFrozen, { word: wordLabel, mergesNeeded: 5 }]);
-                }
-              }
-            }}
-            style={{ 
-              minHeight: '80px', padding: '8px', border: '1px dashed rgba(56,189,248,0.5)', 
-              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
-            }}
-          >
-            {(!levelData.frozenBubbles || levelData.frozenBubbles.length === 0) ? (
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                Drop words here
-              </span>
-            ) : (
-              levelData.frozenBubbles.map((frozenItem: any, i: number) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(56,189,248,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(56,189,248,0.3)' }}>
-                  <span 
-                    onClick={() => {
-                      if (onFocusWord) onFocusWord(frozenItem.word);
-                    }}
-                    style={{ 
-                      fontSize: '13px', fontWeight: 600, color: 'white', 
-                      cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {frozenItem.word}
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Merges:</span>
-                    <input 
-                      type="number" 
-                      value={frozenItem.mergesNeeded}
-                      onChange={(e) => {
-                        const newFrozen = [...levelData.frozenBubbles];
-                        newFrozen[i].mergesNeeded = parseInt(e.target.value) || 1;
-                        handleChange('frozenBubbles', newFrozen);
-                      }}
-                      style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
-                    />
-                  </div>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleChange('frozenBubbles', levelData.frozenBubbles.filter((f: any) => f.word !== frozenItem.word));
-                    }}
-                    style={{ 
-                      background: 'transparent', border: 'none', 
-                      color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
-                    }}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-          </div>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Bomb size={16} color="#f97316" />
-            Mechanic: Burst Bubbles (Bombs)
-          </h3>
-          <Toggle 
-            checked={forceOpen.burst || (levelData.burstBubbles && levelData.burstBubbles.length > 0)}
-            onChange={(checked) => {
-              setForceOpen(prev => ({ ...prev, burst: checked }));
-              handleChange('burstBubbles', checked ? [] : undefined);
-            }}
-          />
-        </div>
-        {(forceOpen.burst || (levelData.burstBubbles && levelData.burstBubbles.length > 0)) && (
-          <div style={{ marginTop: '16px' }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Bomb Words (Drag & Drop from left panel):
-          </div>
-          <div 
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-              if (wordLabel) {
-                const currentBurst = levelData.burstBubbles || [];
-                if (!currentBurst.some((b: any) => b.word === wordLabel)) {
-                  handleChange('burstBubbles', [...currentBurst, { word: wordLabel, movesRemaining: 6 }]);
-                }
-              }
-            }}
-            style={{ 
-              minHeight: '80px', padding: '8px', border: '1px dashed rgba(249,115,22,0.5)', 
-              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
-            }}
-          >
-            {(!levelData.burstBubbles || levelData.burstBubbles.length === 0) ? (
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                Drop words here
-              </span>
-            ) : (
-              levelData.burstBubbles.map((burstItem: any, i: number) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(249,115,22,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(249,115,22,0.3)' }}>
-                  <span 
-                    onClick={() => {
-                      if (onFocusWord) onFocusWord(burstItem.word);
-                    }}
-                    style={{ 
-                      fontSize: '13px', fontWeight: 600, color: 'white', 
-                      cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {burstItem.word}
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Moves:</span>
-                    <input 
-                      type="number" 
-                      value={burstItem.movesRemaining}
-                      onChange={(e) => {
-                        const newBurst = [...levelData.burstBubbles];
-                        newBurst[i].movesRemaining = parseInt(e.target.value) || 1;
-                        handleChange('burstBubbles', newBurst);
-                      }}
-                      style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
-                    />
-                  </div>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleChange('burstBubbles', levelData.burstBubbles.filter((b: any) => b.word !== burstItem.word));
-                    }}
-                    style={{ 
-                      background: 'transparent', border: 'none', 
-                      color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
-                    }}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-          </div>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ArrowLeftRight size={16} color="#a855f7" />
-            Mechanic: Từ Ngược (Backward)
-          </h3>
-          <Toggle 
-            checked={forceOpen.backward || (levelData.backwardBubbles && levelData.backwardBubbles.length > 0)}
-            onChange={(checked) => {
-              setForceOpen(prev => ({ ...prev, backward: checked }));
-              handleChange('backwardBubbles', checked ? [] : undefined);
-            }}
-          />
-        </div>
-        {(forceOpen.backward || (levelData.backwardBubbles && levelData.backwardBubbles.length > 0)) && (
-          <div style={{ marginTop: '16px' }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Backward Words (Drag & Drop from left panel):
-          </div>
-          <div 
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-              if (wordLabel) {
-                const currentBackward = levelData.backwardBubbles || [];
-                if (!currentBackward.some((b: any) => b.word === wordLabel)) {
-                  handleChange('backwardBubbles', [...currentBackward, { word: wordLabel }]);
-                }
-              }
-            }}
-            style={{ 
-              minHeight: '80px', padding: '8px', border: '1px dashed rgba(168,85,247,0.5)', 
-              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
-            }}
-          >
-            {(!levelData.backwardBubbles || levelData.backwardBubbles.length === 0) ? (
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                Drop words here
-              </span>
-            ) : (
-              levelData.backwardBubbles.map((bwItem: any, i: number) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(168,85,247,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(168,85,247,0.3)' }}>
-                  <span 
-                    onClick={() => {
-                      if (onFocusWord) onFocusWord(bwItem.word);
-                    }}
-                    style={{ 
-                      fontSize: '13px', fontWeight: 600, color: 'white', 
-                      cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {bwItem.word}
-                  </span>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleChange('backwardBubbles', levelData.backwardBubbles.filter((b: any) => b.word !== bwItem.word));
-                    }}
-                    style={{ 
-                      background: 'transparent', border: 'none', 
-                      color: '#d8b4fe', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
-                    }}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-          </div>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Lock size={16} color="#eab308" />
-            Mechanic: Locks & Keys
-          </h3>
-          <Toggle 
-            checked={forceOpen.keyLock || (levelData.keyLockBubbles && levelData.keyLockBubbles.length > 0)}
-            onChange={(checked) => {
-              setForceOpen(prev => ({ ...prev, keyLock: checked }));
-              handleChange('keyLockBubbles', checked ? [] : undefined);
-            }}
-          />
-        </div>
-        {(forceOpen.keyLock || (levelData.keyLockBubbles && levelData.keyLockBubbles.length > 0)) && (
-          <div style={{ marginTop: '16px' }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Lock Words (Drag & Drop from left panel):
-          </div>
-          <div 
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-              if (wordLabel) {
-                const currentLocks = levelData.keyLockBubbles || [];
-                if (!currentLocks.some((l: any) => l.lockWord === wordLabel)) {
-                  handleChange('keyLockBubbles', [...currentLocks, { lockWord: wordLabel, keyWord: '' }]);
-                }
-              }
-            }}
-            style={{ 
-              minHeight: '80px', padding: '8px', border: '1px dashed rgba(234,179,8,0.5)', 
-              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
-            }}
-          >
-            {(!levelData.keyLockBubbles || levelData.keyLockBubbles.length === 0) ? (
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                Drop words here to add Locks
-              </span>
-            ) : (
-              levelData.keyLockBubbles.map((lockItem: any, i: number) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(234,179,8,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(234,179,8,0.3)' }}>
-                  <Lock size={14} color={lockKeyColors[i % lockKeyColors.length]} />
-                  <span 
-                    onClick={() => {
-                      if (onFocusWord) onFocusWord(lockItem.lockWord);
-                    }}
-                    style={{ 
-                      fontSize: '13px', fontWeight: 600, color: 'white', 
-                      cursor: 'pointer', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis'
-                    }}
-                    title={lockItem.lockWord}
-                  >
-                    {lockItem.lockWord}
-                  </span>
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1 }}>
-                    <Key size={14} color={lockKeyColors[i % lockKeyColors.length]} />
-                    <input 
-                      type="text" 
-                      placeholder="Key Word..."
-                      value={lockItem.keyWord}
-                      onChange={(e) => {
-                        const newLocks = [...levelData.keyLockBubbles];
-                        newLocks[i].keyWord = e.target.value;
-                        handleChange('keyLockBubbles', newLocks);
-                      }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-                        if (wordLabel) {
-                          const newLocks = [...levelData.keyLockBubbles];
-                          newLocks[i].keyWord = wordLabel;
-                          handleChange('keyLockBubbles', newLocks);
-                        }
-                      }}
-                      style={{ width: '100%', minWidth: '60px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
-                      title="Type key word or drop a word here"
-                    />
-                  </div>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleChange('keyLockBubbles', levelData.keyLockBubbles.filter((l: any) => l.lockWord !== lockItem.lockWord));
-                    }}
-                    style={{ 
-                      background: 'transparent', border: 'none', 
-                      color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
-                    }}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-          </div>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Wrench size={16} color="#f97316" />
-            Mechanic: Screw Lock
-          </h3>
-          <Toggle 
-            checked={forceOpen.screwLock || (levelData.screwLockBubbles && levelData.screwLockBubbles.length > 0)}
-            onChange={(checked) => {
-              setForceOpen(prev => ({ ...prev, screwLock: checked }));
-              handleChange('screwLockBubbles', checked ? [] : undefined);
-            }}
-          />
-        </div>
-        {(forceOpen.screwLock || (levelData.screwLockBubbles && levelData.screwLockBubbles.length > 0)) && (
-          <div style={{ marginTop: '16px' }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Screw Lock Words (Drag & Drop from left panel):
-          </div>
-          <div 
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-              if (wordLabel) {
-                const currentScrews = levelData.screwLockBubbles || [];
-                if (!currentScrews.some((s: any) => s.screwLockWord === wordLabel)) {
-                  handleChange('screwLockBubbles', [...currentScrews, { screwLockWord: wordLabel, screwDriverWords: [], id: currentScrews.length, screwCount: 0 }]);
-                }
-              }
-            }}
-            style={{ 
-              minHeight: '80px', padding: '8px', border: '1px dashed rgba(249,115,22,0.5)', 
-              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
-            }}
-          >
-            {(!levelData.screwLockBubbles || levelData.screwLockBubbles.length === 0) ? (
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                Drop words here to add Screw Locks
-              </span>
-            ) : (
-              levelData.screwLockBubbles.map((screwItem: any, i: number) => (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: 'rgba(249,115,22,0.1)', padding: '8px', borderRadius: '6px', border: '1px solid rgba(249,115,22,0.3)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Wrench size={14} color={lockKeyColors[i % lockKeyColors.length]} />
-                      <span 
-                        onClick={() => {
-                          if (onFocusWord) onFocusWord(screwItem.screwLockWord);
-                        }}
-                        style={{ 
-                          fontSize: '13px', fontWeight: 600, color: 'white', 
-                          cursor: 'pointer', maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis'
-                        }}
-                        title={screwItem.screwLockWord}
-                      >
-                        {screwItem.screwLockWord}
-                      </span>
-                    </div>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleChange('screwLockBubbles', levelData.screwLockBubbles.filter((s: any) => s.screwLockWord !== screwItem.screwLockWord));
-                      }}
-                      style={{ 
-                        background: 'transparent', border: 'none', 
-                        color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
-                      }}
-                    >
-                      &times;
-                    </button>
-                  </div>
-                  <div 
-                    style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-                      if (wordLabel && !screwItem.screwDriverWords.includes(wordLabel)) {
-                        const newScrews = [...levelData.screwLockBubbles];
-                        newScrews[i].screwDriverWords.push(wordLabel);
-                        newScrews[i].screwCount = newScrews[i].screwDriverWords.length;
-                        handleChange('screwLockBubbles', newScrews);
-                      }
-                    }}
-                  >
-                    Driver Words: (Drop here)
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px', minHeight: '20px', padding: '4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px', border: '1px dashed rgba(255,255,255,0.2)' }}>
-                      {screwItem.screwDriverWords.map((driver: string, dIdx: number) => (
-                        <div key={dIdx} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', color: 'white' }}>
-                          <PenTool size={10} color={lockKeyColors[i % lockKeyColors.length]} />
-                          <span
-                            onClick={() => {
-                              if (onFocusWord) onFocusWord(driver);
-                            }}
-                            style={{ cursor: 'pointer' }}
-                          >
-                            {driver}
-                          </span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const newScrews = [...levelData.screwLockBubbles];
-                              newScrews[i].screwDriverWords = newScrews[i].screwDriverWords.filter((d: string) => d !== driver);
-                              newScrews[i].screwCount = newScrews[i].screwDriverWords.length;
-                              handleChange('screwLockBubbles', newScrews);
-                            }}
-                            style={{ background: 'transparent', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: 0, marginLeft: '2px', fontSize: '12px' }}
-                          >&times;</button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-          </div>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Eye size={16} color="#c084fc" />
-            Mechanic: Cryptic Bubbles
-          </h3>
-          <Toggle 
-            checked={forceOpen.cryptic || (levelData.crypticBubbles && levelData.crypticBubbles.length > 0)}
-            onChange={(checked) => {
-              setForceOpen(prev => ({ ...prev, cryptic: checked }));
-              handleChange('crypticBubbles', checked ? [] : undefined);
-            }}
-          />
-        </div>
-        {(forceOpen.cryptic || (levelData.crypticBubbles && levelData.crypticBubbles.length > 0)) && (
-          <div style={{ marginTop: '16px' }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Cryptic Words (Drag & Drop from left panel):
-          </div>
-          <div 
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const wordLabel = e.dataTransfer.getData('application/reactflow-node');
-              if (wordLabel) {
-                const currentCryptic = levelData.crypticBubbles || [];
-                if (!currentCryptic.some((c: any) => c.word === wordLabel)) {
-                  handleChange('crypticBubbles', [...currentCryptic, { word: wordLabel, revealAtMerge: new Array(wordLabel.length).fill(0) }]);
-                }
-              }
-            }}
-            style={{ 
-              minHeight: '80px', padding: '8px', border: '1px dashed rgba(192,132,252,0.5)', 
-              borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
-            }}
-          >
-            {(!levelData.crypticBubbles || levelData.crypticBubbles.length === 0) ? (
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                Drop words here to add Cryptic Bubbles
-              </span>
-            ) : (
-              levelData.crypticBubbles.map((crypticItem: any, i: number) => (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(192,132,252,0.15)', padding: '8px', borderRadius: '6px', border: '1px solid rgba(192,132,252,0.3)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span 
-                      onClick={() => {
-                        if (onFocusWord) onFocusWord(crypticItem.word);
-                      }}
-                      style={{ 
-                        fontSize: '14px', fontWeight: 600, color: 'white', 
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {crypticItem.word}
-                    </span>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleChange('crypticBubbles', levelData.crypticBubbles.filter((c: any) => c.word !== crypticItem.word));
-                      }}
-                      style={{ 
-                        background: 'transparent', border: 'none', 
-                        color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1
-                      }}
-                    >
-                      &times;
-                    </button>
-                  </div>
-                  
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                    {crypticItem.revealAtMerge && crypticItem.revealAtMerge.map((val: number, charIdx: number) => (
-                      <div key={charIdx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-                        <span style={{ fontSize: '12px', color: 'var(--text-main)' }}>{crypticItem.word[charIdx]}</span>
-                        <input 
-                          type="number" 
-                          min="0"
-                          value={val}
-                          onChange={(e) => {
-                            const newCryptic = [...levelData.crypticBubbles];
-                            newCryptic[i].revealAtMerge[charIdx] = parseInt(e.target.value) || 0;
-                            handleChange('crypticBubbles', newCryptic);
-                          }}
-                          style={{ width: '32px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px', textAlign: 'center' }}
-                          title={`Reveal at merge for letter ${crypticItem.word[charIdx]}`}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-          </div>
-        )}
-      </div>
+      
+        {sortedMechanicIds.length > 0 
+          ? sortedMechanicIds.map(id => {
+              const mechanic = mechanicsConfig.find(m => m.id === id);
+              return mechanic ? <div key={id}>{mechanic.render()}</div> : null;
+            })
+          : mechanicsConfig.map(m => <div key={m.id}>{m.render()}</div>) // Fallback if effect hasn't run yet
+        }
       </div>
     </div>
   );

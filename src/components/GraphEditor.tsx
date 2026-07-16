@@ -28,9 +28,10 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer, Magnet } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
+import pluralize from 'pluralize';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -95,6 +96,43 @@ const isNodeCryptic = (node: Node, crypticBubblesList: any[], edges: Edge[], nod
   return false;
 };
 
+const isNodeLinkedMain = (node: Node, linkedBubblesList: any[], edges: Edge[], nodes: Node[]) => {
+  if (!linkedBubblesList || linkedBubblesList.length === 0) return false;
+  const label = String(node.data.label).toLowerCase();
+  
+  if (linkedBubblesList.some((lb: any) => lb.word.toLowerCase() === label)) return true;
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode && linkedBubblesList.some((lb: any) => lb.word.toLowerCase() === String(parentNode.data.label).toLowerCase())) {
+        return true;
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(n => n.id === e.target))
+      .filter(n => n !== undefined)
+      .map(n => String(n!.data.label).toLowerCase());
+    
+    if (chunkLabels.some(cLabel => linkedBubblesList.some((lb: any) => lb.word.toLowerCase() === cLabel))) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const isNodeLinkedChunk = (node: Node, linkedBubblesList: any[]) => {
+  if (!linkedBubblesList || linkedBubblesList.length === 0) return false;
+  const label = String(node.data.label).toLowerCase();
+  
+  return linkedBubblesList.some((lb: any) => 
+    lb.linkedChunks && lb.linkedChunks.some((c: string) => c.toLowerCase() === label)
+  );
+};
+
 const isNodeFrozen = (node: Node, frozenBubblesList: any[], edges: Edge[], nodes: Node[]) => {
   if (!frozenBubblesList || frozenBubblesList.length === 0) return false;
   const label = String(node.data.label).toLowerCase();
@@ -120,6 +158,64 @@ const isNodeFrozen = (node: Node, frozenBubblesList: any[], edges: Edge[], nodes
     }
   }
   return false;
+};
+
+const isNodeImmovable = (node: Node, immovableBubblesList: any[], edges: Edge[], nodes: Node[]) => {
+  if (!immovableBubblesList || immovableBubblesList.length === 0) return false;
+  const label = String(node.data.label).toLowerCase();
+  
+  if (immovableBubblesList.some((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === label)) return true;
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode && immovableBubblesList.some((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === String(parentNode.data.label).toLowerCase())) {
+        return true;
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    if (chunkLabels.some(cLabel => immovableBubblesList.some((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === cLabel))) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const isNodeCountdown = (node: Node, countdownBubblesList: any[], edges: Edge[], nodes: Node[]) => {
+  if (!countdownBubblesList || countdownBubblesList.length === 0) return { isCountdown: false };
+  const label = String(node.data.label).toLowerCase();
+  
+  const found = countdownBubblesList.find((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === label);
+  if (found) return { isCountdown: true, value: found.countdownValue };
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode) {
+        const foundParent = countdownBubblesList.find((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === String(parentNode.data.label).toLowerCase());
+        if (foundParent) return { isCountdown: true, value: foundParent.countdownValue };
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    
+    for (const cLabel of chunkLabels) {
+      const foundChunk = countdownBubblesList.find((w: any) => (typeof w === 'string' ? w : w.word).toLowerCase() === cLabel);
+      if (foundChunk) return { isCountdown: true, value: foundChunk.countdownValue };
+    }
+  }
+  return { isCountdown: false };
 };
 
 const isNodeBackward = (node: Node, backwardBubblesList: any[], edges: Edge[], nodes: Node[]) => {
@@ -283,6 +379,37 @@ export const isNodeScrewLock = (node: Node, screws: any[], edges: Edge[], nodes:
   return -1;
 };
 
+export const isNodeCycleLock = (node: Node, cycleLocks: any[], edges: Edge[], nodes: Node[]) => {
+  if (!cycleLocks || cycleLocks.length === 0) return null;
+  const label = String(node.data.label).toLowerCase();
+  
+  let cycleLock = cycleLocks.find((c: any) => c.cycleLockWord.toLowerCase() === label);
+  if (cycleLock) return cycleLock;
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode) {
+        cycleLock = cycleLocks.find((c: any) => c.cycleLockWord.toLowerCase() === String(parentNode.data.label).toLowerCase());
+        if (cycleLock) return cycleLock;
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+      
+    for (const cLabel of chunkLabels) {
+      cycleLock = cycleLocks.find((c: any) => c.cycleLockWord.toLowerCase() === cLabel);
+      if (cycleLock) return cycleLock;
+    }
+  }
+  return null;
+};
+
 export const isNodeScrewDriver = (node: Node, screws: any[], edges: Edge[], nodes: Node[]) => {
   if (!screws || screws.length === 0) return -1;
   const label = String(node.data.label).toLowerCase();
@@ -342,10 +469,66 @@ export default function GraphEditor() {
   const [wordIndexSearchQuery, setWordIndexSearchQuery] = useState('');
   const [sortLinksFirst, setSortLinksFirst] = useState(false);
   const spawnQueueIds = useMemo(() => {
-    return nodes.filter(n => typeof n.data.globalIndex === 'number')
+    const baseList = nodes.filter(n => typeof n.data.globalIndex === 'number')
                 .sort((a, b) => (a.data.globalIndex as number) - (b.data.globalIndex as number))
                 .map(n => n.id);
-  }, [nodes]);
+                
+    if (!rawLevelData?.linkedBubbles || rawLevelData.linkedBubbles.length === 0) {
+      return baseList;
+    }
+    
+    const sortedList: string[] = [];
+    const processedChunks = new Set<string>();
+    
+    const chunkToMain = new Map<string, string>();
+    rawLevelData.linkedBubbles.forEach((lb: any) => {
+      const mainNodes = nodes.filter(n => String(n.data.label).toLowerCase() === lb.word.toLowerCase());
+      if (mainNodes.length > 0) {
+         lb.linkedChunks?.forEach((cLabel: string) => {
+             const chunkNodes = nodes.filter(n => String(n.data.label).toLowerCase() === cLabel.toLowerCase() && n.data.isChunk);
+             chunkNodes.forEach(cn => {
+                chunkToMain.set(cn.id, mainNodes[0].id);
+             });
+         });
+      }
+    });
+
+    baseList.forEach(id => {
+       if (processedChunks.has(id)) return;
+       
+       if (chunkToMain.has(id)) {
+          // Skip for now, will be pulled when main word drops
+       } else {
+          sortedList.push(id);
+          const node = nodes.find(n => n.id === id);
+          if (node) {
+             const label = String(node.data.label).toLowerCase();
+             const linkedRule = rawLevelData.linkedBubbles.find((lb: any) => lb.word.toLowerCase() === label);
+             if (linkedRule) {
+                 linkedRule.linkedChunks?.forEach((cLabel: string) => {
+                     const chunkNodes = nodes.filter(n => String(n.data.label).toLowerCase() === cLabel.toLowerCase() && n.data.isChunk && baseList.includes(n.id));
+                     chunkNodes.forEach(cn => {
+                         if (!processedChunks.has(cn.id)) {
+                             sortedList.push(cn.id);
+                             processedChunks.add(cn.id);
+                         }
+                     });
+                 });
+             }
+          }
+       }
+    });
+    
+    // Catch orphaned chunks (if main word is missing from queue for some reason)
+    baseList.forEach(id => {
+       if (chunkToMain.has(id) && !processedChunks.has(id)) {
+           sortedList.push(id);
+           processedChunks.add(id);
+       }
+    });
+
+    return sortedList;
+  }, [nodes, rawLevelData]);
 
   const duplicateQueueWordsSet = useMemo(() => {
     const words: string[] = [];
@@ -1669,6 +1852,20 @@ export default function GraphEditor() {
             }));
           }
 
+          // 5.5 Immovable Bubbles
+          if (updatedRawLevelData.immovableBubbles) {
+            updatedRawLevelData.immovableBubbles = updatedRawLevelData.immovableBubbles.map((ib: any) => 
+              (typeof ib === 'string' ? ib : ib.word).toLowerCase() === oldLabel ? newLabel : ib
+            );
+          }
+
+          // 5.6 Countdown Bubbles
+          if (updatedRawLevelData.countdownBubbles) {
+            updatedRawLevelData.countdownBubbles = updatedRawLevelData.countdownBubbles.map((cb: any) => 
+              (typeof cb === 'string' ? cb : cb.word).toLowerCase() === oldLabel ? { ...cb, word: newLabel } : cb
+            );
+          }
+
           // 6. Screw Lock
           if (updatedRawLevelData.screwLockBubbles) {
             updatedRawLevelData.screwLockBubbles = updatedRawLevelData.screwLockBubbles.map((sl: any) => ({
@@ -1693,6 +1890,15 @@ export default function GraphEditor() {
               }
               return cb;
             });
+          }
+
+          // 8. Linked Bubbles
+          if (updatedRawLevelData.linkedBubbles) {
+            updatedRawLevelData.linkedBubbles = updatedRawLevelData.linkedBubbles.map((lb: any) => ({
+              ...lb,
+              word: lb.word.toLowerCase() === oldLabel ? newLabel : lb.word,
+              linkedChunks: lb.linkedChunks ? lb.linkedChunks.map((chunk: string) => chunk.toLowerCase() === oldLabel ? newLabel : chunk) : []
+            }));
           }
         }
       });
@@ -2379,6 +2585,20 @@ export default function GraphEditor() {
               );
             }
 
+            // 3.5 Immovable Bubbles
+            if (clonedRawData.immovableBubbles) {
+              clonedRawData.immovableBubbles = clonedRawData.immovableBubbles.map((ib: any) => 
+                (typeof ib === 'string' ? ib : ib.word).toLowerCase() === oldLabel ? w.word : ib
+              );
+            }
+
+            // 3.6 Countdown Bubbles
+            if (clonedRawData.countdownBubbles) {
+              clonedRawData.countdownBubbles = clonedRawData.countdownBubbles.map((cb: any) => 
+                (typeof cb === 'string' ? cb : cb.word).toLowerCase() === oldLabel ? { ...cb, word: w.word } : cb
+              );
+            }
+
             // 4. Backward Bubbles
             if (clonedRawData.backwardBubbles) {
               clonedRawData.backwardBubbles = clonedRawData.backwardBubbles.map((bw: any) => 
@@ -2418,6 +2638,14 @@ export default function GraphEditor() {
                 }
                 return cb;
               });
+            }
+
+            // 8. Cycle Lock Bubbles
+            if (clonedRawData.cycleLockBubbles) {
+              clonedRawData.cycleLockBubbles = clonedRawData.cycleLockBubbles.map((cl: any) => ({
+                ...cl,
+                cycleLockWord: cl.cycleLockWord.toLowerCase() === oldLabel ? w.word : cl.cycleLockWord
+              }));
             }
           }
         });
@@ -2579,6 +2807,7 @@ export default function GraphEditor() {
     
     const catNodes = nodes.filter(n => n.data.isCategory);
     let addedCount = 0;
+    let updatedCount = 0;
     let addedItemsMsg = '';
     
     catNodes.forEach(catNode => {
@@ -2595,19 +2824,35 @@ export default function GraphEditor() {
       const wordNodes = connectedEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && !n.data.isCategory && !n.data.isChunk);
       
       let catAddedItems: string[] = [];
+      let catUpdatedItems: string[] = [];
 
       wordNodes.forEach(wordNode => {
         if (!wordNode) return;
-        const wordStr = String(wordNode.data.label).toLowerCase();
-        const existingWord = dictCat.words.find((w: any) => w.word.toLowerCase() === wordStr);
-        if (!existingWord) {
+        const rawWord = String(wordNode.data.label).trim();
+        const wordStr = rawWord.toLowerCase();
+        const wordSingular = pluralize.singular(wordStr);
+        
+        const existingWordIndex = dictCat.words.findIndex((w: any) => {
+          const existingStr = w.word.toLowerCase().trim();
+          return existingStr === wordStr || pluralize.singular(existingStr) === wordSingular;
+        });
+
+        if (existingWordIndex === -1) {
           dictCat.words.push({
-            word: wordStr,
+            word: rawWord,
             icon: wordNode.data.icon || null,
             popularity: 50
           });
           addedCount++;
-          catAddedItems.push(`  + ${wordStr} (Word)`);
+          catAddedItems.push(`  + ${rawWord} (Word)`);
+        } else {
+          const existingWordObj = dictCat.words[existingWordIndex];
+          if (existingWordObj.word !== rawWord) {
+            const oldWord = existingWordObj.word;
+            existingWordObj.word = rawWord;
+            updatedCount++;
+            catUpdatedItems.push(`  ~ ${oldWord} -> ${rawWord}`);
+          }
         }
       });
 
@@ -2615,30 +2860,47 @@ export default function GraphEditor() {
       const subcatNodes = connectedEdges.map(e => nodes.find(n => n.id === e.target)).filter(n => n && n.data.isCategory);
       subcatNodes.forEach(subcatNode => {
         if (!subcatNode) return;
-        const subcatStr = String(subcatNode.data.label).toLowerCase();
+        const rawSubcat = String(subcatNode.data.label).trim();
+        const subcatStr = rawSubcat.toLowerCase();
+        const subcatSingular = pluralize.singular(subcatStr);
+        
         if (!dictCat.subcategories) dictCat.subcategories = [];
-        if (!dictCat.subcategories.includes(subcatStr)) {
-          dictCat.subcategories.push(subcatStr);
+        const existingIdx = dictCat.subcategories.findIndex((s: string) => {
+          const existingStr = s.toLowerCase().trim();
+          return existingStr === subcatStr || pluralize.singular(existingStr) === subcatSingular;
+        });
+
+        if (existingIdx === -1) {
+          dictCat.subcategories.push(rawSubcat);
           addedCount++;
-          catAddedItems.push(`  + ${subcatStr} (Subcategory)`);
+          catAddedItems.push(`  + ${rawSubcat} (Subcategory)`);
+        } else {
+          const oldSubcat = dictCat.subcategories[existingIdx];
+          if (oldSubcat !== rawSubcat) {
+            dictCat.subcategories[existingIdx] = rawSubcat;
+            updatedCount++;
+            catUpdatedItems.push(`  ~ ${oldSubcat} -> ${rawSubcat} (Subcategory)`);
+          }
         }
       });
 
-      if (catAddedItems.length > 0) {
-        addedItemsMsg += `\n[${catName}]${isNewCat ? ' (New Category)' : ''}\n` + catAddedItems.join('\n') + '\n';
+      if (catAddedItems.length > 0 || catUpdatedItems.length > 0) {
+        addedItemsMsg += `\n[${catName}]${isNewCat ? ' (New Category)' : ''}\n`;
+        if (catAddedItems.length > 0) addedItemsMsg += catAddedItems.join('\n') + '\n';
+        if (catUpdatedItems.length > 0) addedItemsMsg += catUpdatedItems.join('\n') + '\n';
       } else if (isNewCat) {
         addedItemsMsg += `\n[${catName}] (New Category - Empty)\n`;
       }
     });
 
-    if (addedCount === 0 && addedItemsMsg === '') {
-      alert('Không tìm thấy từ mới nào chưa có trong Dictionary để cập nhật!');
+    if (addedCount === 0 && updatedCount === 0 && addedItemsMsg === '') {
+      alert('Không tìm thấy từ mới hay từ cập nhật nào để lưu vào Dictionary!');
       return;
     }
 
     const success = await updateGlobalDictionary(updatedDict);
     if (success) {
-      alert(`Đã cập nhật Global Dictionary thành công! Đã thêm ${addedCount} mục mới:\n${addedItemsMsg}`);
+      alert(`Đã cập nhật Global Dictionary thành công! Đã thêm ${addedCount} mục, cập nhật ${updatedCount} mục:\n${addedItemsMsg}`);
       setGlobalDict(updatedDict);
     } else {
       alert('Lỗi khi cập nhật Global Dictionary.');
@@ -3027,10 +3289,17 @@ export default function GraphEditor() {
                   const burstState = isNodeBurst(node, rawLevelData?.burstBubbles || [], edges, nodes);
                   const isBurst = burstState.isBurst;
                   const burstMovesRemaining = burstState.movesRemaining;
+                  const isImmovable = isNodeImmovable(node, rawLevelData?.immovableBubbles || [], edges, nodes);
                   const lockIndex = isNodeLock(node, rawLevelData?.keyLockBubbles || [], edges, nodes);
                   const keyIndex = isNodeKey(node, rawLevelData?.keyLockBubbles || [], edges, nodes);
                   const screwLockIndex = isNodeScrewLock(node, rawLevelData?.screwLockBubbles || [], edges, nodes);
                   const screwDriverIndex = isNodeScrewDriver(node, rawLevelData?.screwLockBubbles || [], edges, nodes);
+                  const isCycleLock = isNodeCycleLock(node, rawLevelData?.cycleLockBubbles || [], edges, nodes) !== null;
+                  const countdownState = isNodeCountdown(node, rawLevelData?.countdownBubbles || [], edges, nodes);
+                  const isCountdown = countdownState.isCountdown;
+                  const countdownValue = countdownState.value;
+                  const isLinkedMain = isNodeLinkedMain(node, rawLevelData?.linkedBubbles || [], edges, nodes);
+                  const isLinkedChunk = isNodeLinkedChunk(node, rawLevelData?.linkedBubbles || []);
                   
                   let parentLabel: string | null = null;
                   if (isChunk) {
@@ -3081,12 +3350,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))))))),
+                              : (isLinkedMain ? 'rgba(14, 165, 233, 0.15)' : (isLinkedChunk ? 'rgba(14, 165, 233, 0.05)' : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isImmovable ? 'rgba(107, 114, 128, 0.15)' : (isCountdown ? 'rgba(236, 72, 153, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))))))))))))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))))))),
+                              : (isLinkedMain ? '1px solid rgba(14, 165, 233, 0.4)' : (isLinkedChunk ? '1px dashed rgba(14, 165, 233, 0.4)' : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isImmovable ? '1px solid rgba(107, 114, 128, 0.4)' : (isCountdown ? '1px solid rgba(236, 72, 153, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.6)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))))))))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -3109,6 +3378,9 @@ export default function GraphEditor() {
                           {isCryptic && (
                             <Eye size={12} color="#c084fc" />
                           )}
+                          {isImmovable && (
+                            <Pin size={12} color="#9ca3af" />
+                          )}
                           {isFrozen && (
                             <Snowflake size={12} color="#38bdf8" />
                           )}
@@ -3123,6 +3395,15 @@ export default function GraphEditor() {
                           )}
                           {screwDriverIndex !== -1 && (
                             <PenTool size={12} color={lockKeyColors[screwDriverIndex % lockKeyColors.length]} />
+                          )}
+                          {isCycleLock && (
+                            <RefreshCw size={12} color="#14b8a6" />
+                          )}
+                          {isCountdown && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#ec4899' }}>
+                              <Timer size={12} />
+                              <span style={{ fontSize: '10px' }}>{countdownValue?.[0]}</span>
+                            </div>
                           )}
                         </span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -3140,9 +3421,12 @@ export default function GraphEditor() {
                           {lockIndex !== -1 && <Lock size={14} color={selectedNodeId === nodeId ? "white" : lockKeyColors[lockIndex % lockKeyColors.length]} />}
                           {screwLockIndex !== -1 && <Wrench size={14} color={selectedNodeId === nodeId ? "white" : lockKeyColors[screwLockIndex % lockKeyColors.length]} />}
                           {screwDriverIndex !== -1 && <PenTool size={14} color={selectedNodeId === nodeId ? "white" : lockKeyColors[screwDriverIndex % lockKeyColors.length]} />}
+                          {isLinkedMain && <Magnet size={14} color={selectedNodeId === nodeId ? "white" : "#0ea5e9"} />}
+                          {isLinkedChunk && <Magnet size={14} color={selectedNodeId === nodeId ? "white" : "#bae6fd"} />}
                           {isChained && <Link size={14} color={selectedNodeId === nodeId ? "white" : "#818cf8"} />}
                           {isCryptic && <Eye size={14} color={selectedNodeId === nodeId ? "white" : "#c084fc"} />}
                           {isFrozen && <Snowflake size={14} color={selectedNodeId === nodeId ? "white" : "#38bdf8"} />}
+                          {isCycleLock && <RefreshCw size={14} color={selectedNodeId === nodeId ? "white" : "#14b8a6"} />}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
                             {isChunk ? 'Chunk' : 'Word'}
                           </span>
@@ -3266,7 +3550,10 @@ export default function GraphEditor() {
           data: {
             ...n.data,
             isChained: rawLevelData?.useBubbleSeparator === 1 && isNodeChained(n, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes),
+            isLinkedMain: isNodeLinkedMain(n, rawLevelData?.linkedBubbles || [], edges, nodes),
+            isLinkedChunk: isNodeLinkedChunk(n, rawLevelData?.linkedBubbles || []),
             isFrozen: isNodeFrozen(n, rawLevelData?.frozenBubbles || [], edges, nodes),
+            isImmovable: isNodeImmovable(n, rawLevelData?.immovableBubbles || [], edges, nodes),
             isBackward: isNodeBackward(n, rawLevelData?.backwardBubbles || [], edges, nodes),
             isCryptic: isNodeCryptic(n, rawLevelData?.crypticBubbles || [], edges, nodes),
             isBurst: isNodeBurst(n, rawLevelData?.burstBubbles || [], edges, nodes).isBurst,
@@ -3276,6 +3563,9 @@ export default function GraphEditor() {
             screwLockIndex: isNodeScrewLock(n, rawLevelData?.screwLockBubbles || [], edges, nodes),
             screwDriverIndex: isNodeScrewDriver(n, rawLevelData?.screwLockBubbles || [], edges, nodes),
             screwCount: rawLevelData?.screwLockBubbles ? (rawLevelData.screwLockBubbles[isNodeScrewLock(n, rawLevelData.screwLockBubbles, edges, nodes)]?.screwCount || 0) : 0,
+            isCycleLock: isNodeCycleLock(n, rawLevelData?.cycleLockBubbles || [], edges, nodes) !== null,
+            isCountdown: isNodeCountdown(n, rawLevelData?.countdownBubbles || [], edges, nodes).isCountdown,
+            countdownValue: isNodeCountdown(n, rawLevelData?.countdownBubbles || [], edges, nodes).value,
             dropIndex: spawnQueueIds.indexOf(n.id) !== -1 ? spawnQueueIds.indexOf(n.id) + 1 : undefined
           }
         }))}
