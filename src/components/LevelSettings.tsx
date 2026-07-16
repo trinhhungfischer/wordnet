@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -1030,6 +1030,132 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                   </div>
                 )}
               </div>
+      )
+    },
+    {
+      id: 'linked',
+      isActive: () => forceOpen.linked || (levelData.linkedBubbles && levelData.linkedBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Magnet size={16} color="#0ea5e9" />
+              Mechanic: Linked Bubbles
+            </h3>
+            <Toggle 
+              checked={forceOpen.linked || (levelData.linkedBubbles && levelData.linkedBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, linked: checked }));
+                handleChange('linkedBubbles', checked ? [] : undefined);
+              }}
+            />
+          </div>
+          {(forceOpen.linked || (levelData.linkedBubbles && levelData.linkedBubbles.length > 0)) && (
+            <div style={{ marginTop: '16px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+              Drag a word here to act as the Main Word (locked), then drag chunks into its linked list.
+            </div>
+            <div 
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                if (wordLabel) {
+                  const currentLinked = levelData.linkedBubbles || [];
+                  if (!currentLinked.some((w: any) => w.word === wordLabel)) {
+                    handleChange('linkedBubbles', [...currentLinked, { word: wordLabel, linkedChunks: [] }]);
+                  }
+                }
+              }}
+              style={{ 
+                minHeight: '80px', padding: '8px', border: '1px dashed rgba(14, 165, 233, 0.5)', 
+                borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+              }}
+            >
+              {(!levelData.linkedBubbles || levelData.linkedBubbles.length === 0) ? (
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                  Drop Main Word here
+                </span>
+              ) : (
+                levelData.linkedBubbles.map((lb: any, i: number) => {
+                  const wordLabel = lb.word;
+                  return (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(14, 165, 233, 0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(14, 165, 233, 0.3)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Magnet size={14} color="#0ea5e9" />
+                      <span 
+                        onClick={() => {
+                          if (onFocusWord) onFocusWord(wordLabel);
+                        }}
+                        style={{ 
+                          fontSize: '13px', fontWeight: 600, color: 'white', 
+                          cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                        }}
+                      >
+                        {wordLabel}
+                      </span>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleChange('linkedBubbles', levelData.linkedBubbles.filter((w: any) => w.word !== wordLabel));
+                        }}
+                        style={{ 
+                          background: 'transparent', border: 'none', 
+                          color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1
+                        }}
+                      >
+                        &times;
+                      </button>
+                    </div>
+                    
+                    <div 
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const chunkLabel = e.dataTransfer.getData('application/reactflow-node');
+                        if (chunkLabel && chunkLabel !== wordLabel) {
+                          const newLinked = [...levelData.linkedBubbles];
+                          if (!newLinked[i].linkedChunks) newLinked[i].linkedChunks = [];
+                          if (!newLinked[i].linkedChunks.includes(chunkLabel)) {
+                            newLinked[i].linkedChunks.push(chunkLabel);
+                            handleChange('linkedBubbles', newLinked);
+                          }
+                        }
+                      }}
+                      style={{ minHeight: '40px', padding: '4px', border: '1px dashed rgba(14, 165, 233, 0.4)', borderRadius: '4px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexWrap: 'wrap', gap: '4px' }}
+                    >
+                       {(!lb.linkedChunks || lb.linkedChunks.length === 0) ? (
+                          <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontStyle: 'italic', padding: '4px' }}>Drop Linked Chunks here</span>
+                       ) : (
+                          lb.linkedChunks.map((chunk: string, cIdx: number) => (
+                             <div key={cIdx} style={{ display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.4)', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--panel-border)' }}>
+                               <span 
+                                 onClick={(e) => { e.stopPropagation(); if(onFocusWord) onFocusWord(chunk); }}
+                                 style={{ fontSize: '11px', color: '#e2e8f0', cursor: 'pointer', marginRight: '4px' }}
+                               >
+                                 {chunk}
+                               </span>
+                               <button 
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   const newLinked = [...levelData.linkedBubbles];
+                                   newLinked[i].linkedChunks = newLinked[i].linkedChunks.filter((c: string) => c !== chunk);
+                                   handleChange('linkedBubbles', newLinked);
+                                 }}
+                                 style={{ background: 'transparent', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: '0', fontSize: '14px', lineHeight: 1 }}
+                               >&times;</button>
+                             </div>
+                          ))
+                       )}
+                    </div>
+                  </div>
+                )})
+              )}
+            </div>
+            </div>
+          )}
+        </div>
       )
     }
   ];

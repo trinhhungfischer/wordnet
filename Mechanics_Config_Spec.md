@@ -232,22 +232,28 @@ Cấu trúc:
 
 ## 11. Linked Bubbles
 
-"**Trường áp dụng:** `linkedBubbles` (Mảng)
+**Trường áp dụng:** `linkedBubbles` (Mảng)
 Cấu trúc:
 
 ```json
 "linkedBubbles": [
   {
-    "word": "Linked",
-    "linkedChunks": ["LinkedChunk1", "LinkedChunk2"]
+    "word": "Friday",
+    "linkedChunks": ["Go", "Hor"]
   }
 ]
-
 ```
 
-**Luật chơi:** Có 1 quả bóng bị linked với 1-2 chunk. Chỉ khi 2 chunk linked bị mất thì bóng kia mới được spawn ra và merge được - Quả bóng Chunk bị dính vào sẽ không thể kéo merge được. Chỉ có Chunk khác kéo vào thì nó sẽ tháo linked ra
+**Luật chơi:**
+1. Có một từ chính (ví dụ: `Friday`) bị linked với 1 hoặc nhiều chunk (ví dụ: `Go`, `Hor`). 
+2. Từ chính (`Friday`) bị khoá cứng: không thể di chuyển, không thể tương tác hay merge vào từ khác.
+3. Các bóng Chunk bị liên kết (`Go`, `Hor`) cũng bị khoá chiều kéo đi: không thể kéo chúng đi merge với từ khác (không làm source).
+4. Chỉ có thể dùng bóng khác kéo vào các Chunk liên kết này (chúng chỉ làm target). Khi ghép thành công (ví dụ kéo `At` vào `Go` để thành `Goat`), liên kết đó sẽ bị tháo gỡ.
+5. Khi **tất cả** các chunk liên kết đều bị tháo gỡ (đã ghép thành từ hoàn chỉnh), từ chính (`Friday`) sẽ trở lại trạng thái bình thường, có thể tương tác/merge.
 
-**Chú ý:** Chỉ có chunk ở linkedChunks thôi, không có từ hoàn chỉnh.
+**Chú ý:** 
+- Các phần tử trong mảng `linkedChunks` chỉ chứa các mảnh từ (chunk), không dùng cho từ hoàn chỉnh.
+- **Cảnh báo Deadlock (Lỗi thiết kế màn chơi):** Tuyệt đối KHÔNG đưa toàn bộ các mảnh cắt ra của cùng một từ (ví dụ: cả `"Hor"` và `"Se"`) vào chung mảng `linkedChunks`. Vì các mảnh trong `linkedChunks` không thể kéo đi (bị khoá vai trò source), người chơi sẽ không thể kéo mảnh này vào mảnh kia để ghép thành từ hoàn chỉnh, dẫn đến màn chơi bị **deadlock** (bế tắc không thể giải).
 
 ## 12. Crack Bubbles
 

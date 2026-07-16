@@ -19,6 +19,8 @@ export interface BoardBubbleState {
   cycleLockState?: number;
   isImmovable?: boolean;
   countdownValue?: [number, number];
+  isLinkedMain?: boolean;
+  isLinkedChunk?: boolean;
 }
 
 export interface MergeStep {
@@ -106,6 +108,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let cycleLockState: number | undefined;
     let isImmovable = false;
     let countdownValueCalc: [number, number] | undefined;
+    let isLinkedMain = false;
+    let isLinkedChunk = false;
 
     const w = displayLabel.toLowerCase();
     
@@ -197,6 +201,18 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
          if (currentValue < countdownRule.countdownValue[1]) currentValue = countdownRule.countdownValue[1];
          countdownValueCalc = [currentValue, countdownRule.countdownValue[1]];
       }
+      
+      const linkedMainRule = levelData?.linkedBubbles?.find((l: any) => l.word.toLowerCase() === w);
+      if (linkedMainRule) {
+         isLinkedMain = linkedMainRule.linkedChunks?.some((c: string) => !usedWords.has(c.toLowerCase()));
+      }
+      
+      const linkedChunkRule = levelData?.linkedBubbles?.find((l: any) => 
+         l.linkedChunks?.some((c: string) => c.toLowerCase() === w)
+      );
+      if (linkedChunkRule) {
+         isLinkedChunk = true;
+      }
     }
 
     if (dynamicImmovable.has(bid)) {
@@ -219,7 +235,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       screwDriverIndex,
       cycleLockState,
       isImmovable,
-      countdownValue: countdownValueCalc
+      countdownValue: countdownValueCalc,
+      isLinkedMain,
+      isLinkedChunk
     };
   };
 
@@ -395,20 +413,47 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   const resolvedWords = new Set<string>(); // Word IDs that have been merged from chunks
   const resolvedCategories = new Set<string>(); // Cat IDs that have been completed
 
+  const getEffectiveBoardLength = () => {
+    let effectiveLen = 0;
+    for (const bId of board) {
+      const n = nodes.find(node => node.id === bId);
+      let isLC = false;
+      if (n?.data.isChunk) {
+         const cLabel = String(n.data.label).toLowerCase();
+         isLC = levelData?.linkedBubbles?.some((lb: any) => lb.linkedChunks?.some((c: string) => c.toLowerCase() === cLabel)) || false;
+      }
+      if (!isLC) effectiveLen++;
+    }
+    return effectiveLen;
+  };
+
   addStep('event', '', '', '', '🎮 Game Start');
 
   const doDrops = (count: number) => {
     const newlyDropped: string[] = [];
     let dropped = 0;
-    while (dropped < count && board.length < maxBubbles && queueIndex < spawnQueueIds.length) {
+    while (queueIndex < spawnQueueIds.length) {
       const nextId = spawnQueueIds[queueIndex];
+      const node = nodes.find(n => n.id === nextId);
+      
+      let isLinkedChunk = false;
+      if (node?.data.isChunk) {
+         const cLabel = String(node.data.label).toLowerCase();
+         isLinkedChunk = levelData?.linkedBubbles?.some((lb: any) => lb.linkedChunks?.some((c: string) => c.toLowerCase() === cLabel)) || false;
+      }
+      
+      if (dropped >= count && !isLinkedChunk) break;
+      if (getEffectiveBoardLength() >= maxBubbles && !isLinkedChunk) break;
+
       board.push(nextId);
       droppedWords.add(nextId);
       newlyDropped.push(nextId);
       queueIndex++;
-      dropped++;
       
-      const node = nodes.find(n => n.id === nextId);
+      if (!isLinkedChunk) {
+          dropped++;
+      }
+      
       if (node?.data.isChunk) {
          const parentEdge = edges.find(e => e.target === nextId);
          if (parentEdge) {
@@ -451,6 +496,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       // Try Chunk -> Word Merge
       for (const [wordId, chunkIds] of wordToChunks.entries()) {
         if (!resolvedWords.has(wordId) && chunkIds.every(cid => board.includes(cid))) {
+          if (chunkIds.every(cid => getBubbleState(cid).isImmovable || getBubbleState(cid).isLinkedChunk)) {
+             continue; // Deadlock: no chunk can act as the drag source
+          }
           let score = 10;
 
           const wordLabel = String(nodes.find(n => n.id === wordId)?.data.label).toLowerCase();
@@ -518,8 +566,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
           const availablePieces = piecesOnBoard.filter(pid => {
              if (pid.startsWith('temp_')) return true;
-             const label = getBubbleState(pid).label;
-             return !isWordIceOrCrackLocked(label);
+             const state = getBubbleState(pid);
+             if (state.isLinkedMain) return false;
+             return !isWordIceOrCrackLocked(state.label);
           });
 
           if (availablePieces.length >= 2) {
@@ -542,8 +591,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                       let p1 = availablePieces[i];
                       let p2 = availablePieces[j];
 
-                      // Immovable logic: 2 immovable bubbles cannot merge with each other
-                      if (getBubbleState(p1).isImmovable && getBubbleState(p2).isImmovable) {
+                      // Immovable & LinkedChunk logic: if both cannot be dragged, they can't merge
+                      const state1 = getBubbleState(p1);
+                      const state2 = getBubbleState(p2);
+                      const p1SourceLocked = state1.isImmovable || state1.isLinkedChunk;
+                      const p2SourceLocked = state2.isImmovable || state2.isLinkedChunk;
+                      if (p1SourceLocked && p2SourceLocked) {
                          continue;
                       }
                       
@@ -706,7 +759,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   // Deadlock Check
   if (resolvedCategories.size < catNodes.length) {
     const remainingCats = catNodes.length - resolvedCategories.size;
-    addStep('event', '', '', '', `⚠️ DEADLOCK! Board full (${board.length}/${maxBubbles}) with no valid merges. Cannot solve the remaining ${remainingCats} categories. Please adjust the Drop Order or increase max Bubbles!`);
+    addStep('event', '', '', '', `⚠️ DEADLOCK! Board full (${getEffectiveBoardLength()}/${maxBubbles}) with no valid merges. Cannot solve the remaining ${remainingCats} categories. Please adjust the Drop Order or increase max Bubbles!`);
   } else if (board.length > 0) {
     // If categories are solved but junk remains
     const junkCount = board.length;
@@ -803,6 +856,10 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, reco
   }
   if (levelData?.countdownBubbles?.length > 0) {
     factors.push(`${levelData.countdownBubbles.length} Countdown bubbles`);
+  }
+  if (levelData?.linkedBubbles?.length > 0) {
+    factors.push(`${levelData.linkedBubbles.length} Linked main words`);
+    score += levelData.linkedBubbles.length * 3;
   }
 
   // Determine Label
