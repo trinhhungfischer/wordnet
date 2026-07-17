@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { exec } from 'child_process'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -94,6 +95,103 @@ const levelsApiPlugin = () => ({
           }
         });
         return;
+      }
+
+      // 2.5 POST /api/browse-directory
+      if (url.pathname === '/api/browse-directory' && req.method === 'POST') {
+        const psScript = `Add-Type -AssemblyName System.Windows.Forms
+$f = New-Object System.Windows.Forms.FolderBrowserDialog
+$f.ShowNewFolderButton = $true
+$f.Description = "Select Levels Directory"
+$form = New-Object System.Windows.Forms.Form
+$form.TopMost = $true
+if ($f.ShowDialog($form) -eq [System.Windows.Forms.DialogResult]::OK) {
+    Write-Output $f.SelectedPath
+}`;
+        const tempScriptPath = path.resolve(__dirname, 'levels_browse_temp.ps1');
+        try {
+          fs.writeFileSync(tempScriptPath, psScript, 'utf-8');
+          exec(`powershell -NoProfile -ExecutionPolicy Bypass -File "${tempScriptPath}"`, (error: any, stdout: string) => {
+            try {
+              if (fs.existsSync(tempScriptPath)) {
+                fs.unlinkSync(tempScriptPath);
+              }
+            } catch (e) {}
+
+            if (error) {
+              console.error('Directory browser error:', error);
+              res.statusCode = 500;
+              return sendJson({ success: false, error: 'Failed to open directory browser' });
+            }
+            const selectedPath = stdout.trim();
+            if (selectedPath) {
+              return sendJson({ success: true, selectedPath });
+            } else {
+              return sendJson({ success: false, cancelled: true });
+            }
+          });
+        } catch (e) {
+          console.error('Failed to create temp script:', e);
+          res.statusCode = 500;
+          return sendJson({ success: false, error: 'Failed to initialize directory browser' });
+        }
+        return;
+      }
+
+      // 2.6 GET /api/list-subdirectories
+      if (url.pathname === '/api/list-subdirectories' && req.method === 'GET') {
+        let dirPath = url.searchParams.get('path') || '';
+        
+        // Handle drive selection list
+        if (dirPath === 'DRIVES') {
+          const drives = [];
+          for (let i = 65; i <= 90; i++) {
+            const drive = String.fromCharCode(i) + ':/';
+            try {
+              if (fs.existsSync(drive)) {
+                drives.push({ name: drive, path: drive });
+              }
+            } catch (e) {}
+          }
+          return sendJson({
+            success: true,
+            currentPath: 'DRIVES',
+            parentPath: null,
+            subdirectories: drives
+          });
+        }
+
+        if (!dirPath) {
+          dirPath = __dirname;
+        }
+
+        const resolvedPath = path.resolve(dirPath).replace(/\\/g, '/');
+        
+        // If we are at root of a drive (e.g. "C:/"), parent should be "DRIVES"
+        const isDriveRoot = /^[A-Z]:\/$/i.test(resolvedPath) || /^[A-Z]:$/i.test(resolvedPath);
+        const parentPath = isDriveRoot ? 'DRIVES' : path.dirname(resolvedPath).replace(/\\/g, '/');
+
+        try {
+          const entries = fs.readdirSync(resolvedPath, { withFileTypes: true });
+          const subdirs = entries
+            .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
+            .map(entry => ({
+              name: entry.name,
+              path: path.join(resolvedPath, entry.name).replace(/\\/g, '/')
+            }));
+
+          subdirs.sort((a, b) => a.name.localeCompare(b.name));
+
+          return sendJson({
+            success: true,
+            currentPath: resolvedPath,
+            parentPath,
+            subdirectories: subdirs
+          });
+        } catch (e) {
+          res.statusCode = 500;
+          return sendJson({ success: false, error: 'Permission denied or directory not found' });
+        }
       }
 
       // 3. GET /api/levels-list
