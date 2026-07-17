@@ -58,6 +58,34 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
     combined: true
   });
 
+  // Directory browser states
+  const [isBrowserOpen, setIsBrowserOpen] = useState(false);
+  const [browserPath, setBrowserPath] = useState('');
+  const [browserDirs, setBrowserDirs] = useState<{ name: string; path: string }[]>([]);
+  const [browserParent, setBrowserParent] = useState<string | null>(null);
+  const [browserError, setBrowserError] = useState('');
+
+  const loadBrowserDir = async (pathStr: string) => {
+    setBrowserError('');
+    try {
+      const res = await fetch(`/api/list-subdirectories?path=${encodeURIComponent(pathStr)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setBrowserPath(data.currentPath);
+          setBrowserParent(data.parentPath);
+          setBrowserDirs(data.subdirectories);
+        } else {
+          setBrowserError(data.error || 'Failed to read directory');
+        }
+      } else {
+        setBrowserError('Failed to connect to backend server');
+      }
+    } catch (e) {
+      setBrowserError('Network error');
+    }
+  };
+
   // Load levels configuration and first 20 levels by default on open
   useEffect(() => {
     if (!isOpen) return;
@@ -501,6 +529,22 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
               onFocus={e => e.currentTarget.style.borderColor = 'var(--accent)'}
               onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
             />
+            <button
+              onClick={() => {
+                setIsBrowserOpen(true);
+                loadBrowserDir(levelsDirInput || '');
+              }}
+              style={{
+                marginLeft: '8px',
+                padding: '6px 12px', borderRadius: '6px', background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontWeight: 500,
+                fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+            >
+              Browse...
+            </button>
           </div>
           <button
             onClick={async () => {
@@ -1183,6 +1227,123 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
           </button>
         </div>
       </div>
+
+      {isBrowserOpen && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1100
+        }}>
+          <div className="glass-panel" style={{
+            width: '500px', height: '450px', borderRadius: '16px',
+            display: 'flex', flexDirection: 'column', padding: '20px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.08)',
+            background: '#1e293b'
+          }}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ fontWeight: 600, fontSize: '15px', color: 'white' }}>Select Levels Directory</div>
+              <button 
+                onClick={() => setIsBrowserOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Path Breadcrumb & Navigation */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
+              <button
+                disabled={!browserParent}
+                onClick={() => browserParent && loadBrowserDir(browserParent)}
+                style={{
+                  padding: '4px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)', color: browserParent ? 'white' : 'rgba(255,255,255,0.2)',
+                  fontSize: '11px', cursor: browserParent ? 'pointer' : 'default'
+                }}
+              >
+                ⬆ Up
+              </button>
+              <div style={{
+                flex: 1, background: 'rgba(0,0,0,0.2)', padding: '6px 10px', borderRadius: '6px',
+                fontSize: '12px', color: '#60a5fa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                border: '1px solid rgba(255,255,255,0.05)'
+              }}>
+                {browserPath || 'Loading...'}
+              </div>
+            </div>
+
+            {/* Subdirectories List */}
+            <div style={{
+              flex: 1, background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.05)',
+              borderRadius: '8px', overflowY: 'auto', padding: '6px', marginBottom: '16px',
+              display: 'flex', flexDirection: 'column', gap: '2px'
+            }}>
+              {browserError ? (
+                <div style={{ color: '#fb7185', fontSize: '12px', padding: '12px', textAlign: 'center' }}>
+                  {browserError}
+                </div>
+              ) : browserDirs.length === 0 ? (
+                <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '11px', padding: '12px', textAlign: 'center', fontStyle: 'italic' }}>
+                  No subdirectories found
+                </div>
+              ) : (
+                browserDirs.map((dir, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => loadBrowserDir(dir.path)}
+                    style={{
+                      padding: '8px 12px', borderRadius: '6px', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.85)',
+                      fontSize: '12px', transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                      e.currentTarget.style.color = 'white';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = 'rgba(255,255,255,0.85)';
+                    }}
+                  >
+                    <span style={{ fontSize: '14px' }}>📁</span>
+                    <span>{dir.name}</span>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Footer Buttons */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                onClick={() => setIsBrowserOpen(false)}
+                style={{
+                  padding: '6px 14px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)',
+                  fontSize: '13px', cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                disabled={browserPath === 'DRIVES'}
+                onClick={() => {
+                  setLevelsDirInput(browserPath);
+                  setIsBrowserOpen(false);
+                }}
+                style={{
+                  padding: '6px 16px', borderRadius: '6px', background: 'var(--accent)',
+                  color: 'white', border: 'none', fontWeight: 600, fontSize: '13px',
+                  cursor: browserPath === 'DRIVES' ? 'default' : 'pointer', opacity: browserPath === 'DRIVES' ? 0.5 : 1
+                }}
+              >
+                Select Folder
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
