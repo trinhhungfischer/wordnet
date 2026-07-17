@@ -41,6 +41,24 @@ export interface SolutionResult {
     factors: string[];
     color: string;
   };
+  vocabDifficulty: {
+    score: number;
+    label: string;
+    factors: string[];
+    color: string;
+  };
+  moveDifficulty: {
+    score: number;
+    label: string;
+    factors: string[];
+    color: string;
+  };
+  learningDifficulty: {
+    score: number;
+    label: string;
+    factors: string[];
+    color: string;
+  };
 }
 
 export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, spawnQueueIds: string[] = []): SolutionResult {
@@ -602,20 +620,21 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   }
 
   const recommendedMoveLimit = Math.max(1, moveCount - bonusTurns + bombPenalties);
-  const difficulty = calculateDifficulty(nodes, edges, levelData, recommendedMoveLimit, steps);
+  const { difficulty, vocabDifficulty, moveDifficulty, learningDifficulty } = calculateDifficulty(nodes, edges, levelData, recommendedMoveLimit, steps);
 
   return {
     steps,
     totalMoves: moveCount,
     bonusTurns,
     recommendedMoveLimit,
-    difficulty
+    difficulty,
+    vocabDifficulty,
+    moveDifficulty,
+    learningDifficulty
   };
 }
 
 function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, recommendedMoveLimit: number, steps: any[]) {
-  const factors: string[] = [];
-
   // Compute Peak Congestion & Congestion Turns
   let peakCongestion = 0;
   let congestionTurns = 0;
@@ -631,72 +650,226 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, reco
   const configMoveLimit = levelData?.moveLimit || 0;
   const moveTightness = configMoveLimit - recommendedMoveLimit;
 
-  // Rarity calculation
-  let rarityScore = 0;
+  // 1. Vocabulary Difficulty calculation
   const wordNodes = nodes.filter(n => !n.data.isCategory && !n.data.isChunk);
-  if (wordNodes.length > 0) {
-    let ultraRare = 0; let veryRare = 0; let rare = 0; let common = 0;
-    wordNodes.forEach(wn => {
-      const wLabel = String(wn.data.label).toLowerCase();
-      let foundPop: number | null = null;
-      for (const cat of globalDict) {
-        const match = cat.words.find((w: any) => w.word.toLowerCase() === wLabel);
-        if (match && match.popularity) {
-          foundPop = match.popularity;
-          break;
+  let ultraRare = 0; let veryRare = 0; let rare = 0; let common = 0;
+  wordNodes.forEach(wn => {
+    const wLabel = String(wn.data.label).toLowerCase();
+    let foundPop: number | null = null;
+    for (const cat of globalDict) {
+      const match = cat.words.find((w: any) => w.word.toLowerCase() === wLabel);
+      if (match && match.popularity !== undefined) {
+        foundPop = match.popularity;
+        break;
+      }
+    }
+    if (foundPop !== null) {
+      if (foundPop < 15) ultraRare++;
+      else if (foundPop < 30) veryRare++;
+      else if (foundPop < 50) rare++;
+      else if (foundPop > 80) common++;
+    }
+  });
+
+  let rawRarityScore = (ultraRare * 6.0) + (veryRare * 3.0) + (rare * 0.5);
+  const totalWords = wordNodes.length;
+  const wordsNotDropped = Math.max(0, totalWords - maxBubbles);
+  const rarityDensity = totalWords > 0 ? (ultraRare + veryRare + rare) / totalWords : 0;
+  
+  // Option 2: Density Multiplier
+  const densityMultiplier = 1 + rarityDensity * 2;
+  let finalRarityScore = rawRarityScore * densityMultiplier;
+  
+  if (totalWords > 0 && common > totalWords * 0.7) {
+    finalRarityScore = Math.max(0, finalRarityScore - 10);
+  }
+
+  // Calculate Vocab Score
+  const rawVocabScore = (wordsNotDropped * 1.0) + (finalRarityScore * 1.2);
+  const vocabScore = Math.round(Math.max(0, Math.min(100, rawVocabScore)));
+  
+  const vocabFactors: string[] = [];
+  vocabFactors.push(`Total Words: ${totalWords}`);
+  vocabFactors.push(`Words in Queue (not dropped): ${wordsNotDropped}`);
+  if (ultraRare > 0) vocabFactors.push(`${ultraRare} Ultra Rare words`);
+  if (veryRare > 0) vocabFactors.push(`${veryRare} Very Rare words`);
+  if (rare > 0) vocabFactors.push(`${rare} Rare words`);
+  vocabFactors.push(`Rarity Density: ${Math.round(rarityDensity * 100)}%`);
+  vocabFactors.push(`Density Multiplier: ${densityMultiplier.toFixed(2)}x`);
+
+  const vocabLabel = getDifficultyLabel(vocabScore);
+  const vocabColor = getDifficultyColor(vocabScore);
+
+  // 2. Puzzle / Move Difficulty calculation
+  let moveScore = 0;
+  let moveLabel = 'Easy';
+  let moveColor = '#22c55e'; // green-500
+  const moveFactors: string[] = [];
+
+  if (configMoveLimit <= 0) {
+    moveScore = 0;
+    moveLabel = 'Infinite';
+    moveColor = '#22c55e';
+    moveFactors.push(`Infinite moves enabled (${configMoveLimit})`);
+  } else {
+    const rawMoveScore = 30 + (peakCongestion * 2.5) + (congestionTurns * 1.5) - (moveTightness * 3.0);
+    moveScore = Math.round(Math.max(0, Math.min(100, rawMoveScore)));
+    moveLabel = getDifficultyLabel(moveScore);
+    moveColor = getDifficultyColor(moveScore);
+    moveFactors.push(`Peak Congestion: ${peakCongestion}`);
+    moveFactors.push(`Congestion Turns: ${congestionTurns}`);
+    moveFactors.push(`Move Tightness (Buffer): ${moveTightness}`);
+  }
+
+  // 3. New Combined Difficulty
+  const nestedCount = nodes.filter(n => n.data.isCategory && !n.data.isRoot).length;
+  let nestedPenalty = 0;
+  if (nestedCount === 1) nestedPenalty = 5;
+  else if (nestedCount === 2) nestedPenalty = 10;
+  else if (nestedCount === 3) nestedPenalty = 20;
+  else if (nestedCount === 4) nestedPenalty = 40;
+  else if (nestedCount > 4) nestedPenalty = 40 + (nestedCount - 4) * 10;
+  
+  let bufferPenalty = 0;
+  if (configMoveLimit > 0) {
+    const moveBuffer = configMoveLimit - recommendedMoveLimit;
+    if (moveBuffer < 10) {
+      bufferPenalty = (10 - moveBuffer) * 8;
+    } else if (moveBuffer > 15) {
+      bufferPenalty = -Math.min(25, (moveBuffer - 15) * 2.0);
+    }
+  }
+
+  // User Education / Mechanic Unfamiliarity Penalty
+  let levelNumber = 0;
+  if (levelData?.m_Name) {
+    const match = levelData.m_Name.match(/\d+/);
+    if (match) {
+      levelNumber = parseInt(match[0]) + 1; // Convert 0-indexed to 1-indexed
+    }
+  }
+
+  const INTRO_LEVELS: Record<string, number> = {
+    nested: 5,
+    separator: 20,
+    frozen: 30,
+    keyLock: 50,
+    burst: 81,
+    screwLock: 161,
+  };
+
+  const activeMechanics: string[] = [];
+  if (nestedCount > 0) activeMechanics.push('nested');
+  if (levelData?.useBubbleSeparator > 0) activeMechanics.push('separator');
+  if (levelData?.frozenBubbles && levelData.frozenBubbles.length > 0) activeMechanics.push('frozen');
+  if (levelData?.keyLockBubbles && levelData.keyLockBubbles.length > 0) activeMechanics.push('keyLock');
+  if (levelData?.burstBubbles && levelData.burstBubbles.length > 0) activeMechanics.push('burst');
+  if (levelData?.screwLockBubbles && levelData.screwLockBubbles.length > 0) activeMechanics.push('screwLock');
+
+  let mechanicUnfamiliarityScore = 0;
+  const learningFactors: string[] = [];
+
+  if (levelNumber > 0) {
+    activeMechanics.forEach(mech => {
+      const introLevel = INTRO_LEVELS[mech];
+      if (introLevel) {
+        const dist = levelNumber - introLevel;
+        if (dist <= 2) {
+          let penalty = 0;
+          let desc = '';
+          if (dist <= 0) {
+            penalty = 20;
+            desc = `New mechanic: ${mech} (+20)`;
+          } else if (dist === 1) {
+            penalty = 12;
+            desc = `2nd encounter: ${mech} (+12)`;
+          } else if (dist === 2) {
+            penalty = 6;
+            desc = `3rd encounter: ${mech} (+6)`;
+          }
+          mechanicUnfamiliarityScore += penalty;
+          if (penalty > 0) {
+            learningFactors.push(desc);
+          }
         }
       }
-      if (foundPop !== null) {
-        if (foundPop < 15) ultraRare++;
-        else if (foundPop < 30) veryRare++;
-        else if (foundPop < 50) rare++;
-        else if (foundPop > 80) common++;
-      }
     });
-    rarityScore = (ultraRare * 8) + (veryRare * 4) + (rare * 2);
-    if (common > wordNodes.length * 0.7) rarityScore -= 10;
-    
-    if (ultraRare > 0) factors.push(`${ultraRare} Ultra Rare words`);
-    if (veryRare > 0) factors.push(`${veryRare} Very Rare words`);
-    if (rare > 0) factors.push(`${rare} Rare words`);
+  }
+  mechanicUnfamiliarityScore = Math.min(30, mechanicUnfamiliarityScore);
+  if (mechanicUnfamiliarityScore > 0) {
+    learningFactors.unshift(`Mechanic unfamiliarity penalty: +${mechanicUnfamiliarityScore}`);
   }
 
-  // Calculate new Finetuned Score
-  const nodesPts = nodes.length * 9.4;
-  const congPts = peakCongestion * 4.7;
-  const rarityPts = rarityScore * 0.9;
-  const movePts = moveTightness * 2.1;
-  const turnsPts = congestionTurns * 1.6;
-
-  let rawScore = nodesPts + congPts + rarityPts - movePts - turnsPts - 358.1;
-  let score = rawScore / 4.8;
-  score = Math.max(0, Math.round(score * 10) / 10);
-
-  factors.push(`Nodes (${nodes.length}): +${(nodesPts / 4.8).toFixed(1)}`);
-  factors.push(`Peak Congestion (${peakCongestion}): +${(congPts / 4.8).toFixed(1)}`);
-  if (rarityScore !== 0) factors.push(`Rarity Score (${rarityScore}): +${(rarityPts / 4.8).toFixed(1)}`);
-  factors.push(`Move Tightness (${moveTightness}): -${(movePts / 4.8).toFixed(1)}`);
-  if (congestionTurns > 0) factors.push(`Congestion Turns (${congestionTurns}): -${(turnsPts / 4.8).toFixed(1)}`);
-  factors.push(`Base Offset: -74.6`);
-
-  // Determine Label
-  let label = 'Easy';
-  let color = '#22c55e'; // green-500
-  if (score > 67) {
-    label = 'Expert';
-    color = '#ef4444'; // red-500
-  } else if (score > 58) {
-    label = 'Hard';
-    color = '#f97316'; // orange-500
-  } else if (score > 35) {
-    label = 'Medium';
-    color = '#eab308'; // yellow-500
+  // Progression Offset: 10 levels first default +15, then decreases by 5 every 10 levels
+  const progressionOffset = levelNumber > 0 ? Math.max(0, 15 - Math.floor((levelNumber - 1) / 10) * 5) : 0;
+  if (progressionOffset > 0) {
+    learningFactors.push(`Progression stage offset (L${levelNumber}): +${progressionOffset}`);
   }
+
+  const learningScore = Math.min(100, mechanicUnfamiliarityScore + progressionOffset);
+  const learningLabel = getLearningLabel(learningScore);
+  const learningColor = getLearningColor(learningScore);
+
+  let proposedScore = (vocabScore * 0.35) + (moveScore * 0.65) + nestedPenalty + bufferPenalty + learningScore;
+  if (configMoveLimit <= 0) {
+    proposedScore = 0; // Infinite/Tutorial levels are always Easy (0.0)
+  }
+  proposedScore = Math.max(0, proposedScore);
+  const score = Math.round(proposedScore * 10) / 10;
+
+  const factors: string[] = [];
+  factors.push(`Base Vocab Component (35%): ${(vocabScore * 0.35).toFixed(1)}`);
+  factors.push(`Base Move Component (65%): ${(moveScore * 0.65).toFixed(1)}`);
+  if (nestedCount > 0) {
+    factors.push(`Nested Categories Penalty (${nestedCount}): +${nestedPenalty.toFixed(1)}`);
+  }
+  if (configMoveLimit > 0) {
+    const moveBuffer = configMoveLimit - recommendedMoveLimit;
+    if (bufferPenalty > 0) {
+      factors.push(`Tight Move Buffer Penalty (Buffer: ${moveBuffer}): +${bufferPenalty.toFixed(1)}`);
+    } else if (bufferPenalty < 0) {
+      factors.push(`Generous Move Buffer Reward (Buffer: ${moveBuffer}): -${Math.abs(bufferPenalty).toFixed(1)}`);
+    }
+  }
+  if (learningScore > 0) {
+    factors.push(`Learning Penalty: +${learningScore.toFixed(1)}`);
+  }
+
+  const label = getDifficultyLabel(score);
+  const color = getDifficultyColor(score);
 
   return {
-    score,
-    label,
-    factors,
-    color
+    difficulty: { score, label, factors, color },
+    vocabDifficulty: { score: vocabScore, label: vocabLabel, factors: vocabFactors, color: vocabColor },
+    moveDifficulty: { score: moveScore, label: moveLabel, factors: moveFactors, color: moveColor },
+    learningDifficulty: { score: learningScore, label: learningLabel, factors: learningFactors, color: learningColor }
   };
+}
+
+function getDifficultyLabel(score: number): string {
+  if (score > 67) return 'Expert';
+  if (score > 58) return 'Hard';
+  if (score > 35) return 'Medium';
+  return 'Easy';
+}
+
+function getDifficultyColor(score: number): string {
+  if (score > 67) return '#ef4444'; // red-500
+  if (score > 58) return '#f97316'; // orange-500
+  if (score > 35) return '#eab308'; // yellow-500
+  return '#22c55e'; // green-500
+}
+
+function getLearningLabel(score: number): string {
+  if (score >= 35) return 'Steep';
+  if (score >= 20) return 'Moderate';
+  if (score >= 5) return 'Intuitive';
+  return 'Familiar';
+}
+
+function getLearningColor(score: number): string {
+  if (score >= 35) return '#ef4444'; // red-500
+  if (score >= 20) return '#f97316'; // orange-500
+  if (score >= 5) return '#eab308'; // yellow-500
+  return '#22c55e'; // green-500
 }

@@ -28,7 +28,8 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud } from 'lucide-react';
+import LevelsDashboardModal from './LevelsDashboardModal';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Layers } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 
@@ -326,7 +327,6 @@ export default function GraphEditor() {
   const [misleadingWords, setMisleadingWords] = useState<string[]>([]);
   
   const [levels, setLevels] = useState<string[]>([]);
-  const [isRealLevels, setIsRealLevels] = useState<boolean>(false);
   const [selectedLevelName, setSelectedLevelName] = useState<string>('');
   
   const [rawLevelData, setRawLevelData] = useState<any>(null);
@@ -335,6 +335,7 @@ export default function GraphEditor() {
   const [isDictOpen, setIsDictOpen] = useState(false);
   const [isSolutionModalOpen, setIsSolutionModalOpen] = useState(false);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -483,14 +484,23 @@ export default function GraphEditor() {
     };
     window.addEventListener('keydown', handleNavKeys);
     return () => window.removeEventListener('keydown', handleNavKeys);
-  }, [selectedLevelName, levels, isRealLevels]);
+  }, [selectedLevelName, levels]);
+
+  const fetchLevelsList = async () => {
+    try {
+      const res = await fetch('/api/levels-list');
+      if (res.ok) {
+        const data = await res.json();
+        setLevels(data.levels || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch levels list:", err);
+    }
+  };
 
   useEffect(() => {
-    fetch(isRealLevels ? '/real_levels/index.json' : '/levels/index.json')
-      .then(res => res.json())
-      .then(data => setLevels(data))
-      .catch(console.error);
-  }, [isRealLevels]);
+    fetchLevelsList();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -872,11 +882,10 @@ export default function GraphEditor() {
       setSelectedNodeId(null);
   };
 
-  const loadLevel = async (levelName: string, forceRealLevels?: boolean) => {
+  const loadLevel = async (levelName: string) => {
     if (!levelName) return false;
-    const realLevelsFlag = forceRealLevels !== undefined ? forceRealLevels : isRealLevels;
     try {
-      const res = await fetch(realLevelsFlag ? `/real_levels/${levelName}.json` : `/levels/${levelName}.json`);
+      const res = await fetch(`/api/load-level?name=${encodeURIComponent(levelName)}`);
       if (!res.ok) throw new Error("Not found");
       const data = await res.json();
       loadDataIntoGraph(data, levelName);
@@ -1060,6 +1069,23 @@ export default function GraphEditor() {
     const jsonStr = JSON.stringify(newData, null, 2);
     const fileName = selectedLevelName ? `${selectedLevelName}.json` : "level_config.json";
     
+    // Try to save directly to disk via local API
+    try {
+      const saveRes = await fetch('/api/save-level', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: selectedLevelName || "level_config", data: newData })
+      });
+      if (saveRes.ok) {
+        alert(`Đã lưu level "${selectedLevelName || "level_config"}" trực tiếp vào thư mục cấu hình thành công!`);
+        setRawLevelData(newData);
+        fetchLevelsList();
+        return;
+      }
+    } catch (err) {
+      console.warn("Failed to save directly to levels folder via API, falling back to browser download:", err);
+    }
+
     if ('showSaveFilePicker' in window) {
       try {
         const fileHandle = await (window as any).showSaveFilePicker({
@@ -2659,36 +2685,6 @@ export default function GraphEditor() {
           <div style={{ fontWeight: 700, fontSize: '20px', letterSpacing: '1px' }}>
             WordNet Builder
           </div>
-          <div 
-            onClick={async () => {
-              const newIsReal = !isRealLevels;
-              setIsRealLevels(newIsReal);
-              if (selectedLevelName) {
-                const success = await loadLevel(selectedLevelName, newIsReal);
-                if (!success) {
-                  setSelectedLevelName('');
-                }
-              }
-            }}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
-              background: 'rgba(0,0,0,0.2)', padding: '4px 12px 4px 6px', borderRadius: '20px',
-              border: '1px solid var(--panel-border)'
-            }}
-          >
-            <div style={{
-              width: '32px', height: '18px', borderRadius: '10px',
-              background: isRealLevels ? 'var(--accent)' : 'rgba(255,255,255,0.2)',
-              position: 'relative', transition: '0.2s'
-            }}>
-              <div style={{
-                width: '14px', height: '14px', borderRadius: '50%', background: 'white',
-                position: 'absolute', top: '2px', left: isRealLevels ? '16px' : '2px',
-                transition: '0.2s'
-              }} />
-            </div>
-            <span style={{ fontSize: '13px', fontWeight: 500, color: 'white' }}>Real Levels</span>
-          </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <button
@@ -2839,6 +2835,12 @@ export default function GraphEditor() {
               style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--accent)', background: 'rgba(56, 189, 248, 0.1)', color: 'var(--accent)', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <BookOpen size={14} /> Dictionary
+            </button>
+            <button 
+              onClick={() => setIsDashboardOpen(true)}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #10b981', background: 'rgba(16, 185, 129, 0.1)', color: '#34d399', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              <Layers size={14} /> Dashboard
             </button>
           </div>
 
@@ -3453,6 +3455,15 @@ export default function GraphEditor() {
         edges={edges}
         levelData={rawLevelData}
         spawnQueueIds={spawnQueueIds}
+      />
+
+      <LevelsDashboardModal
+        isOpen={isDashboardOpen}
+        onClose={() => setIsDashboardOpen(false)}
+        levels={levels}
+        loadLevel={loadLevel}
+        globalDict={globalDict}
+        onRefreshLevels={fetchLevelsList}
       />
 
       <Sidebar 

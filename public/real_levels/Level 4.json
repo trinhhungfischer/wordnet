@@ -68,7 +68,7 @@
       "words": [
         {
           "fullWord": "Bank",
-          "icon": "bank",
+          "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
           "IsLinked": 0,
@@ -101,12 +101,12 @@
       ]
     },
     {
-      "category": "Bank",
-      "parentCategory": "City buildings",
-      "icon": "bank",
+      "category": "Hospital",
+      "parentCategory": null,
+      "icon": null,
       "words": [
         {
-          "fullWord": "Account",
+          "fullWord": "Pill",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -114,7 +114,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Deposit",
+          "fullWord": "Bandage",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -122,7 +122,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Funds",
+          "fullWord": "Doctor",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -130,7 +130,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Loan",
+          "fullWord": "Nurse",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -179,84 +179,6 @@
       ]
     },
     {
-      "category": "Flying objects",
-      "parentCategory": null,
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "Balloon",
-          "icon": "balloon",
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Drone",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Kite",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Glider",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Balloon",
-      "parentCategory": "Flying objects",
-      "icon": "balloon",
-      "words": [
-        {
-          "fullWord": "Air",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Festival",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Float",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Helium",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
       "category": "Orchestra",
       "parentCategory": null,
       "icon": null,
@@ -296,12 +218,12 @@
       ]
     },
     {
-      "category": "Drinks",
+      "category": "Clothing",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Cappuccino",
+          "fullWord": "Dress",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -309,7 +231,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Coffee",
+          "fullWord": "Skirt",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -317,7 +239,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Espresso",
+          "fullWord": "Shirt",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -325,7 +247,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Juice",
+          "fullWord": "Coat",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -372,49 +294,10 @@
           "linkedChunkWords": []
         }
       ]
-    },
-    {
-      "category": "Agriculture",
-      "parentCategory": null,
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "Fertilizer",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Harvest",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Irrigation",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Plow",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
     }
   ],
-  "maxBubblesInScene": 24,
-  "moveLimit": 45,
+  "maxBubblesInScene": 20,
+  "moveLimit": 34,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -455,7 +338,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Hospital",
+      "fullWord": "Bank",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -482,7 +365,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Glider",
+      "fullWord": "Pill",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -491,7 +374,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Drone",
+      "fullWord": "Bandage",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -500,7 +383,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Kite",
+      "fullWord": "Doctor",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -509,52 +392,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Helium",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Festival",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Account",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Deposit",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Funds",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Loan",
+      "fullWord": "Nurse",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -599,7 +437,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Cappuccino",
+      "fullWord": "Dress",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -608,7 +446,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Coffee",
+      "fullWord": "Skirt",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -617,16 +455,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Espresso",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Air",
+      "fullWord": "Shirt",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -644,16 +473,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Float",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Juice",
+      "fullWord": "Coat",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -689,34 +509,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Harvest",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Plow",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Sour",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Fertilizer",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -735,15 +528,6 @@
     },
     {
       "fullWord": "Breakfast",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Irrigation",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
