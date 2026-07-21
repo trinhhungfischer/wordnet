@@ -776,13 +776,14 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           progress = true;
 
           const undroppedCount = originalWordIds.filter((id: string) => !droppedWords.has(id)).length;
-          if (undroppedCount === 0 && piecesOnBoard.length === 2 && originalWordIds.length === 4) {
+          if (undroppedCount === 0 && piecesOnBoard.length === 2) {
             board = board.filter(id => id !== mergedId);
             const isSubCategory = edges.some(e => e.target === catId && catNodes.some(n => n.id === e.source));
             if (isSubCategory) {
               board.push(catId);
               droppedWords.add(catId);
             }
+            console.log("ADDING " + catId + " to resolvedCategories!");
             resolvedCategories.add(catId);
             completedCategoriesCount++;
 
@@ -817,6 +818,11 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   // Deadlock Check
   if (resolvedCategories.size < catNodes.length) {
     const remainingCats = catNodes.length - resolvedCategories.size;
+    const boardLabels = board.map(id => {
+      const n = nodes.find(n => n.id === id);
+      return n ? n.data.label : id;
+    });
+    console.log(`DEADLOCK. Board contents:`, boardLabels);
     addStep('event', '', '', '', `⚠️ DEADLOCK! Board full (${getEffectiveBoardLength()}/${maxBubbles}) with no valid merges. Cannot solve the remaining ${remainingCats} categories. Please adjust the Drop Order or increase max Bubbles!`);
   } else if (board.length > 0) {
     // If categories are solved but junk remains

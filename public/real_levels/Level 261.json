@@ -184,6 +184,14 @@
       "icon": null,
       "words": [
         {
+          "fullWord": "news",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
           "fullWord": "rope",
           "icon": null,
           "IsCracked": 0,
@@ -201,14 +209,6 @@
         },
         {
           "fullWord": "chain",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "news",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -296,7 +296,7 @@
       ]
     },
     {
-      "category": "Sending Letter",
+      "category": "Sending letter",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -335,7 +335,7 @@
       ]
     },
     {
-      "category": "Words for Smooth",
+      "category": "Words for smooth",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -453,7 +453,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 21,
+  "moveLimit": 48,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -474,6 +474,24 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
+    },
+    {
+      "fullWord": "Ment",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Element"
+    },
+    {
+      "fullWord": "Jes",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Jester"
     },
     {
       "fullWord": "Super ",
@@ -531,15 +549,6 @@
     },
     {
       "fullWord": "Ele",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Element"
-    },
-    {
-      "fullWord": "Ment",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -674,87 +683,6 @@
       "parentWord": "Flash"
     },
     {
-      "fullWord": "Ash",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Flash"
-    },
-    {
-      "fullWord": "Rope",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Har",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Harbor"
-    },
-    {
-      "fullWord": "Bor",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Harbor"
-    },
-    {
-      "fullWord": "Chain",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Scribe",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Blacksmith",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Jes",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Jester"
-    },
-    {
-      "fullWord": "Ter",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Jester"
-    },
-    {
       "fullWord": "Knight",
       "icon": null,
       "IsCracked": 0,
@@ -764,61 +692,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Envelope",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Stamp",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mailbox",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Address",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Velvety",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Sleek",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Silky",
+      "fullWord": "Assume",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -836,40 +710,13 @@
       "parentWord": null
     },
     {
-      "fullWord": "Wire tool",
+      "fullWord": "Silky",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
-    },
-    {
-      "fullWord": "Wheel",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Clay",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Needle ",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Needle tool"
     },
     {
       "fullWord": "Tool",
@@ -890,16 +737,34 @@
       "parentWord": "Estimate"
     },
     {
-      "fullWord": "Mate",
+      "fullWord": "Wheel",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Estimate"
+      "parentWord": null
     },
     {
-      "fullWord": "Assume",
+      "fullWord": "Wire tool",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Mailbox",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Chain",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -917,7 +782,142 @@
       "parentWord": null
     },
     {
+      "fullWord": "Stamp",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Sleek",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Rope",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Velvety",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Scribe",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Ash",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Flash"
+    },
+    {
       "fullWord": "Surmise",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Mate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Estimate"
+    },
+    {
+      "fullWord": "Address",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Ter",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Jester"
+    },
+    {
+      "fullWord": "Blacksmith",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Bor",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Harbor"
+    },
+    {
+      "fullWord": "Needle ",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Needle tool"
+    },
+    {
+      "fullWord": "Har",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Harbor"
+    },
+    {
+      "fullWord": "Clay",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Envelope",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -961,14 +961,8 @@
     {
       "word": "Strength",
       "linkedChunks": [
-        "Super ",
-        "Ment"
-      ]
-    },
-    {
-      "word": "Dodgeball",
-      "linkedChunks": [
-        "Bor"
+        "Ment",
+        "jes"
       ]
     }
   ]

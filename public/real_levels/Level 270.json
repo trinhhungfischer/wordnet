@@ -23,10 +23,18 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Science Fiction",
+      "category": "Science fiction",
       "parentCategory": null,
       "icon": null,
       "words": [
+        {
+          "fullWord": "spaceship",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
         {
           "fullWord": "cyborg",
           "icon": null,
@@ -37,14 +45,6 @@
         },
         {
           "fullWord": "utopia",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "spaceship",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -63,7 +63,7 @@
     },
     {
       "category": "Spaceship",
-      "parentCategory": "Science Fiction",
+      "parentCategory": "Science fiction",
       "icon": null,
       "words": [
         {
@@ -106,14 +106,6 @@
       "icon": null,
       "words": [
         {
-          "fullWord": "gong",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
           "fullWord": "drum",
           "icon": null,
           "IsCracked": 0,
@@ -122,7 +114,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "triangle",
+          "fullWord": "drums",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -130,7 +122,15 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "drums",
+          "fullWord": "gong",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "triangle",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -257,7 +257,7 @@
       ]
     },
     {
-      "category": "Parts of a Theater",
+      "category": "Parts of a theater",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -374,7 +374,7 @@
       ]
     },
     {
-      "category": "Flying Insects",
+      "category": "Flying insects",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -453,7 +453,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 32,
+  "moveLimit": 38,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -674,7 +674,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Proscenium",
+      "fullWord": "Dragonfly",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -683,7 +683,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Bench",
+      "fullWord": "Mosquito",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -692,7 +692,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Grass",
+      "fullWord": "Velcro",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -710,7 +710,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Blanket",
+      "fullWord": "Firefly",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -737,7 +737,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Inflation",
+      "fullWord": "Grass",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -746,52 +746,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "GDP",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Firefly",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Dragonfly",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mosquito",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Gnat",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Panel",
+      "fullWord": "Bench",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -809,6 +764,33 @@
       "parentWord": null
     },
     {
+      "fullWord": "Proscenium",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Gnat",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Gdp",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Magnet",
       "icon": null,
       "IsCracked": 0,
@@ -818,7 +800,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Velcro",
+      "fullWord": "Blanket",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Inflation",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Panel",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,

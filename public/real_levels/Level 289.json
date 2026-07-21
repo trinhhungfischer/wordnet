@@ -101,10 +101,18 @@
       ]
     },
     {
-      "category": "Wellness Activities",
+      "category": "Wellness activities",
       "parentCategory": null,
       "icon": null,
       "words": [
+        {
+          "fullWord": "gym",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
         {
           "fullWord": "reading",
           "icon": null,
@@ -128,20 +136,12 @@
           "crackBreakNum": 0,
           "IsLinked": 0,
           "linkedChunkWords": []
-        },
-        {
-          "fullWord": "gym",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
         }
       ]
     },
     {
       "category": "Gym",
-      "parentCategory": "Wellness Activities",
+      "parentCategory": "Wellness activities",
       "icon": null,
       "words": [
         {
@@ -184,6 +184,14 @@
       "icon": null,
       "words": [
         {
+          "fullWord": "pottery",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
           "fullWord": "weaving",
           "icon": null,
           "IsCracked": 0,
@@ -201,14 +209,6 @@
         },
         {
           "fullWord": "woodcarving",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "pottery",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -453,19 +453,10 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 16,
+  "moveLimit": 46,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
-    {
-      "fullWord": "Celeb",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Celebration"
-    },
     {
       "fullWord": "Ration",
       "icon": null,
@@ -501,6 +492,24 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
+    },
+    {
+      "fullWord": "Celeb",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Celebration"
+    },
+    {
+      "fullWord": "Aze",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Glaze"
     },
     {
       "fullWord": "Thr",
@@ -575,6 +584,24 @@
       "parentWord": null
     },
     {
+      "fullWord": "Der",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Powder"
+    },
+    {
+      "fullWord": "So",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Soar"
+    },
+    {
       "fullWord": "Mat",
       "icon": null,
       "IsCracked": 0,
@@ -629,15 +656,6 @@
       "parentWord": "Glaze"
     },
     {
-      "fullWord": "Aze",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Glaze"
-    },
-    {
       "fullWord": "Jug",
       "icon": null,
       "IsCracked": 0,
@@ -674,79 +692,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Woodcarving",
+      "fullWord": "Ari",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": null
+      "parentWord": "Arising"
     },
     {
-      "fullWord": "Carve",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Goofy",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Indy",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Pow",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Powder"
-    },
-    {
-      "fullWord": "Der",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Powder"
-    },
-    {
-      "fullWord": "Speech",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Candle",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Ring",
+      "fullWord": "Hover",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -764,6 +719,15 @@
       "parentWord": null
     },
     {
+      "fullWord": "Shell",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Glide",
       "icon": null,
       "IsCracked": 0,
@@ -773,25 +737,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "So",
+      "fullWord": "Pow",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Soar"
+      "parentWord": "Powder"
     },
     {
-      "fullWord": "Ar",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Soar"
-    },
-    {
-      "fullWord": "Hover",
+      "fullWord": "Indy",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -800,22 +755,13 @@
       "parentWord": null
     },
     {
-      "fullWord": "Drift",
+      "fullWord": "Speech",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
-    },
-    {
-      "fullWord": "Ari",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Arising"
     },
     {
       "fullWord": "Sing",
@@ -825,6 +771,33 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": "Arising"
+    },
+    {
+      "fullWord": "Pearl",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Candle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Woodcarving",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
     },
     {
       "fullWord": "Nascent",
@@ -845,6 +818,33 @@
       "parentWord": null
     },
     {
+      "fullWord": "Shuck",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Drift",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Carve",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Dawning",
       "icon": null,
       "IsCracked": 0,
@@ -854,13 +854,13 @@
       "parentWord": null
     },
     {
-      "fullWord": "Shuck",
+      "fullWord": "Ar",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": null
+      "parentWord": "Soar"
     },
     {
       "fullWord": "Bivalve",
@@ -872,7 +872,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pearl",
+      "fullWord": "Ring",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -881,7 +881,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Shell",
+      "fullWord": "Goofy",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -928,7 +928,8 @@
     {
       "word": "Weights",
       "linkedChunks": [
-        "Der"
+        "Der",
+        "so"
       ]
     }
   ]

@@ -28,7 +28,7 @@
       "icon": null,
       "words": [
         {
-          "fullWord": "canoe",
+          "fullWord": "ships",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -36,7 +36,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "ships",
+          "fullWord": "canoe",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -257,10 +257,18 @@
       ]
     },
     {
-      "category": "Body Parts",
+      "category": "Body parts",
       "parentCategory": null,
       "icon": null,
       "words": [
+        {
+          "fullWord": "eye",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
         {
           "fullWord": "kidney",
           "icon": null,
@@ -284,20 +292,12 @@
           "crackBreakNum": 0,
           "IsLinked": 0,
           "linkedChunkWords": []
-        },
-        {
-          "fullWord": "eye",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
         }
       ]
     },
     {
       "category": "Eye",
-      "parentCategory": "Body Parts",
+      "parentCategory": "Body parts",
       "icon": null,
       "words": [
         {
@@ -453,7 +453,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 32,
+  "moveLimit": 40,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -512,7 +512,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Jet Ski",
+      "fullWord": "Jet ski",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -602,7 +602,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Magic Spell",
+      "fullWord": "Magic spell",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -674,7 +674,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Retina",
+      "fullWord": "Earth",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -683,25 +683,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Cornea",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Kidney",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Tongue",
+      "fullWord": "Venus",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -711,6 +693,15 @@
     },
     {
       "fullWord": "Fingers",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Tongue",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -737,61 +728,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Elkhorn",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Staghorn",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Earth",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mars",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mercury",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Venus",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Empress",
+      "fullWord": "Kidney",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -818,7 +755,70 @@
       "parentWord": null
     },
     {
+      "fullWord": "Elkhorn",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Mercury",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Retina",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Mars",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Empress",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Staghorn",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Queen",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Cornea",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
