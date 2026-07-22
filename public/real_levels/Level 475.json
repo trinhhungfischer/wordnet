@@ -1211,15 +1211,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Dock",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Burdock"
-    },
-    {
       "fullWord": "Dining",
       "icon": null,
       "IsCracked": 0,
@@ -1236,6 +1227,15 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": "Catapult"
+    },
+    {
+      "fullWord": "Dock",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Burdock"
     },
     {
       "fullWord": "Astrolabe",
@@ -1265,19 +1265,12 @@
     {
       "word": "Dining",
       "linkedChunks": [
-        "Cata"
-      ]
-    },
-    {
-      "word": "Cat eye nails",
-      "linkedChunks": [
-        "Dock"
+        "Cata",
+        "dock"
       ]
     }
   ],
   "immovableBubbles": [
-    {
-      "word": "presents"
-    }
+    "presents"
   ]
 }

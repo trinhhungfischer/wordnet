@@ -1078,7 +1078,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                       if (wordLabel) {
                         const currentImmovable = levelData.immovableBubbles || [];
                         if (!currentImmovable.some((f: any) => (typeof f === 'string' ? f : f.word) === wordLabel)) {
-                          handleChange('immovableBubbles', [...currentImmovable, { word: wordLabel }]);
+                          handleChange('immovableBubbles', [...currentImmovable, wordLabel]);
                         }
                       }
                     }}
