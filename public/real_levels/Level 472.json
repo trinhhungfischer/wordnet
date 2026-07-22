@@ -28,6 +28,14 @@
       "icon": null,
       "words": [
         {
+          "fullWord": "jewelry",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
           "fullWord": "chest",
           "icon": null,
           "IsCracked": 0,
@@ -45,14 +53,6 @@
         },
         {
           "fullWord": "rainbow",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "jewelry",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -140,7 +140,7 @@
       ]
     },
     {
-      "category": "Stages of Life",
+      "category": "Stages of life",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -218,7 +218,7 @@
       ]
     },
     {
-      "category": "Feelings & Emotions",
+      "category": "Feelings & emotions",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -301,7 +301,7 @@
       "icon": null,
       "words": [
         {
-          "fullWord": "favor",
+          "fullWord": "heart",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -309,7 +309,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "heart",
+          "fullWord": "favor",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 30,
+  "moveLimit": 40,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -635,43 +635,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Amazon",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Carnival",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Samba",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Beat",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Chamber",
+      "fullWord": "Antigone",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -698,43 +662,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Fa",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Favor"
-    },
-    {
-      "fullWord": "Vor",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Favor"
-    },
-    {
       "fullWord": "Favorite",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Enjoy",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Antigone",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -752,7 +680,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Oedipus",
+      "fullWord": "Beat",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Vor",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Favor"
+    },
+    {
+      "fullWord": "Samba",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -762,6 +708,60 @@
     },
     {
       "fullWord": "Electra",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Amazon",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Carnival",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Fa",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Favor"
+    },
+    {
+      "fullWord": "Chamber",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Oedipus",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Enjoy",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,

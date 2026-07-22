@@ -23,7 +23,7 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Animal Homes",
+      "category": "Animal homes",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -296,7 +296,7 @@
       ]
     },
     {
-      "category": "Shades Of Red",
+      "category": "Shades of red",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 29,
+  "moveLimit": 36,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -644,34 +644,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Envelope",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Stamp",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mailman",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Scarlet",
+      "fullWord": "Ruby",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -689,16 +662,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Ruby",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Maroon",
+      "fullWord": "Mailman",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -725,6 +689,15 @@
       "parentWord": null
     },
     {
+      "fullWord": "Wicket",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Engagement",
       "icon": null,
       "IsCracked": 0,
@@ -734,7 +707,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Clarity",
+      "fullWord": "Stamp",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Maroon",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -752,6 +734,15 @@
       "parentWord": null
     },
     {
+      "fullWord": "Bowler",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Meadow",
       "icon": null,
       "IsCracked": 0,
@@ -761,7 +752,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Wicket",
+      "fullWord": "Envelope",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -770,7 +761,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Bowler",
+      "fullWord": "Scarlet",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Clarity",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -806,5 +806,31 @@
   ],
   "backwardBubbles": [],
   "crackedBubbles": [],
-  "linkedBubbles": []
+  "linkedBubbles": [],
+  "cycleLockBubbles": [
+    {
+      "cycleLockWord": "nest",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "scoreboard",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "elf",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "duster",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "brilliant",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "wicket",
+      "startingPosition": 0
+    }
+  ]
 }

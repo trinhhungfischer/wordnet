@@ -179,7 +179,7 @@
       ]
     },
     {
-      "category": "Travel Activities",
+      "category": "Travel activities",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 33,
+  "moveLimit": 40,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -635,13 +635,22 @@
       "parentWord": null
     },
     {
-      "fullWord": "Envelope",
+      "fullWord": "Blanket",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
+    },
+    {
+      "fullWord": "Breas",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Breastplate"
     },
     {
       "fullWord": "Ice cream",
@@ -671,33 +680,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Paparazzi",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Camera",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Helmet",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Shield",
       "icon": null,
       "IsCracked": 0,
@@ -705,69 +687,6 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
-    },
-    {
-      "fullWord": "Gauntlet",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Breas",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Breastplate"
-    },
-    {
-      "fullWord": "Tplate",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Breastplate"
-    },
-    {
-      "fullWord": "Blanket",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Cradle",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Pillow",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Cus",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Cushion"
     },
     {
       "fullWord": "Hion",
@@ -779,7 +698,7 @@
       "parentWord": "Cushion"
     },
     {
-      "fullWord": "Chewing gum",
+      "fullWord": "Envelope",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -797,6 +716,33 @@
       "parentWord": null
     },
     {
+      "fullWord": "Gauntlet",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Chewing gum",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Helmet",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Condensed milk",
       "icon": null,
       "IsCracked": 0,
@@ -806,7 +752,61 @@
       "parentWord": null
     },
     {
+      "fullWord": "Tplate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Breastplate"
+    },
+    {
+      "fullWord": "Cradle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Gum",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Camera",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Cus",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Cushion"
+    },
+    {
+      "fullWord": "Pillow",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Paparazzi",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,

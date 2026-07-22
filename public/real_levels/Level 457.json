@@ -23,7 +23,7 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Animal Sounds",
+      "category": "Animal sounds",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -62,7 +62,7 @@
       ]
     },
     {
-      "category": "Instruments of Measure",
+      "category": "Instruments of measure",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -335,10 +335,18 @@
       ]
     },
     {
-      "category": "Carpentry Tools",
+      "category": "Carpentry tools",
       "parentCategory": null,
       "icon": null,
       "words": [
+        {
+          "fullWord": "timber",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
         {
           "fullWord": "hammer",
           "icon": null,
@@ -362,20 +370,12 @@
           "crackBreakNum": 0,
           "IsLinked": 0,
           "linkedChunkWords": []
-        },
-        {
-          "fullWord": "timber",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
         }
       ]
     },
     {
       "category": "Timber",
-      "parentCategory": "Carpentry Tools",
+      "parentCategory": "Carpentry tools",
       "icon": null,
       "words": [
         {
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 29,
+  "moveLimit": 40,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -635,42 +635,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Nugget",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Chunk",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Slice",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Piece",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Retina",
       "icon": null,
       "IsCracked": 0,
@@ -689,15 +653,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pupil",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Lens",
       "icon": null,
       "IsCracked": 0,
@@ -707,7 +662,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Cedar",
+      "fullWord": "Piece",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -716,7 +671,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pine",
+      "fullWord": "Chunk",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -725,25 +680,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Oak",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mahogany",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Hammer",
+      "fullWord": "Pupil",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -761,7 +698,70 @@
       "parentWord": null
     },
     {
+      "fullWord": "Cedar",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Plane",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Slice",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Oak",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Hammer",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Mahogany",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Nugget",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Pine",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -797,5 +797,27 @@
     }
   ],
   "crackedBubbles": [],
-  "linkedBubbles": []
+  "linkedBubbles": [],
+  "cycleLockBubbles": [
+    {
+      "cycleLockWord": "roar",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "chronometer",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "nitrogen",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "groom",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "mariachi",
+      "startingPosition": 0
+    }
+  ]
 }

@@ -101,45 +101,6 @@
       ]
     },
     {
-      "category": "Food delivery",
-      "parentCategory": null,
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "courier",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "packaging",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "app",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "driver",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
       "category": "Herb",
       "parentCategory": null,
       "icon": null,
@@ -411,10 +372,49 @@
           "linkedChunkWords": []
         }
       ]
+    },
+    {
+      "category": "Round fruits",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Apple",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Grape",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Orange",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Plum",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 32,
+  "moveLimit": 38,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -491,40 +491,40 @@
       "parentWord": null
     },
     {
-      "fullWord": "Courier",
+      "fullWord": "Apple",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Packaging",
+      "fullWord": "Grape",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "App",
+      "fullWord": "Orange",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Driver",
+      "fullWord": "Plum",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
       "fullWord": "Mint",
@@ -635,7 +635,16 @@
       "parentWord": "Whales"
     },
     {
-      "fullWord": "Manatees",
+      "fullWord": "Cr",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Crisp"
+    },
+    {
+      "fullWord": "Finish",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -644,7 +653,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Arrows",
+      "fullWord": "Par",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -662,15 +671,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Circular",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Bin",
       "icon": null,
       "IsCracked": 0,
@@ -680,34 +680,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Inven",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Inventions"
-    },
-    {
-      "fullWord": "Tions",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Inventions"
-    },
-    {
-      "fullWord": "Classifications",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Genera",
+      "fullWord": "Circular",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -725,13 +698,85 @@
       "parentWord": null
     },
     {
-      "fullWord": "Cr",
+      "fullWord": "Inven",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Crisp"
+      "parentWord": "Inventions"
+    },
+    {
+      "fullWord": "Oaky",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Manatees",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Birdie",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Bogey",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Tions",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Inventions"
+    },
+    {
+      "fullWord": "Eagle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Arrows",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Genera",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
     },
     {
       "fullWord": "Isp",
@@ -752,52 +797,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Finish",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Oaky",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Bogey",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Birdie",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Par",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Eagle",
+      "fullWord": "Classifications",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -820,5 +820,23 @@
   "screwLockBubbles": [],
   "backwardBubbles": [],
   "crackedBubbles": [],
-  "linkedBubbles": []
+  "linkedBubbles": [],
+  "crackBubbles": [
+    {
+      "word": "apple",
+      "crackCount": 3,
+      "chunkWords": [
+        "ap",
+        "ple"
+      ]
+    },
+    {
+      "word": "experiment",
+      "crackCount": 8,
+      "chunkWords": [
+        "exper",
+        "iment"
+      ]
+    }
+  ]
 }

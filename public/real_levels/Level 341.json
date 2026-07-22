@@ -62,7 +62,7 @@
       ]
     },
     {
-      "category": "Color Theory",
+      "category": "Color theory",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -102,7 +102,7 @@
     },
     {
       "category": "Hues",
-      "parentCategory": "Color Theory",
+      "parentCategory": "Color theory",
       "icon": null,
       "words": [
         {
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 31,
+  "moveLimit": 37,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -635,6 +635,15 @@
       "parentWord": null
     },
     {
+      "fullWord": "Midnight",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Cat",
       "icon": null,
       "IsCracked": 0,
@@ -662,6 +671,15 @@
       "parentWord": "Biography"
     },
     {
+      "fullWord": "Saw",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Raphy",
       "icon": null,
       "IsCracked": 0,
@@ -669,6 +687,69 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": "Biography"
+    },
+    {
+      "fullWord": "Corvid",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Tornado",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Driver",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Jackdaw",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Drill",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Caw",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Jackhammer",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
     },
     {
       "fullWord": "Best seller",
@@ -690,87 +771,6 @@
     },
     {
       "fullWord": "Campus",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Tornado",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Caw",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Jackdaw",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Corvid",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Midnight",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Drill",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Saw",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Jackhammer",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Driver",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -806,5 +806,23 @@
   "screwLockBubbles": [],
   "backwardBubbles": [],
   "crackedBubbles": [],
-  "linkedBubbles": []
+  "linkedBubbles": [],
+  "cycleLockBubbles": [
+    {
+      "cycleLockWord": "rat",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "tones",
+      "startingPosition": 1
+    },
+    {
+      "cycleLockWord": "goods",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "corvid",
+      "startingPosition": 1
+    }
+  ]
 }

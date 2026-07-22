@@ -23,7 +23,7 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Romance Steps",
+      "category": "Romance steps",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -184,6 +184,14 @@
       "icon": null,
       "words": [
         {
+          "fullWord": "textures",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
           "fullWord": "drawing",
           "icon": null,
           "IsCracked": 0,
@@ -201,14 +209,6 @@
         },
         {
           "fullWord": "photography",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "textures",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -261,14 +261,6 @@
       "parentCategory": null,
       "icon": null,
       "words": [
-        {
-          "fullWord": "earth",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
         {
           "fullWord": "earth",
           "icon": null,
@@ -414,7 +406,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 32,
+  "moveLimit": 40,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -635,43 +627,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Desert",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Atmosphere",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Core",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Ocean",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mars",
+      "fullWord": "Crane",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -689,13 +645,85 @@
       "parentWord": null
     },
     {
-      "fullWord": "Butt",
+      "fullWord": "Ten",
       "icon": null,
       "IsCracked": 1,
       "crackBreakNum": 3,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Butterfly"
+      "parentWord": "Tension"
+    },
+    {
+      "fullWord": "Core",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Conflict",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Sion",
+      "icon": null,
+      "IsCracked": 1,
+      "crackBreakNum": 3,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Tension"
+    },
+    {
+      "fullWord": "Plot",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Ing",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Acting"
+    },
+    {
+      "fullWord": "Mars",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Desert",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Act",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Acting"
     },
     {
       "fullWord": "Erfly",
@@ -707,13 +735,31 @@
       "parentWord": "Butterfly"
     },
     {
-      "fullWord": "Crane",
+      "fullWord": "Atmosphere",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
+    },
+    {
+      "fullWord": "Ocean",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Butt",
+      "icon": null,
+      "IsCracked": 1,
+      "crackBreakNum": 3,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Butterfly"
     },
     {
       "fullWord": "Lotus",
@@ -732,60 +778,6 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
-    },
-    {
-      "fullWord": "Conflict",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Act",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Acting"
-    },
-    {
-      "fullWord": "Ing",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Acting"
-    },
-    {
-      "fullWord": "Plot",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Ten",
-      "icon": null,
-      "IsCracked": 1,
-      "crackBreakNum": 3,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Tension"
-    },
-    {
-      "fullWord": "Sion",
-      "icon": null,
-      "IsCracked": 1,
-      "crackBreakNum": 3,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Tension"
     }
   ],
   "allWords": [],

@@ -23,7 +23,7 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Investment Types",
+      "category": "Investment types",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -63,7 +63,7 @@
     },
     {
       "category": "Cryptocurrency",
-      "parentCategory": "Investment Types",
+      "parentCategory": "Investment types",
       "icon": null,
       "words": [
         {
@@ -301,6 +301,14 @@
       "icon": null,
       "words": [
         {
+          "fullWord": "urban",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
           "fullWord": "rural",
           "icon": null,
           "IsCracked": 0,
@@ -310,14 +318,6 @@
         },
         {
           "fullWord": "coastal",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "urban",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 34,
+  "moveLimit": 42,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -464,7 +464,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Real Estate",
+      "fullWord": "Real estate",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -635,42 +635,6 @@
       "parentWord": "Valid"
     },
     {
-      "fullWord": "Lid",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Valid"
-    },
-    {
-      "fullWord": "Ba",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Baker"
-    },
-    {
-      "fullWord": "Ker",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Baker"
-    },
-    {
-      "fullWord": "Conductor",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Lawyer",
       "icon": null,
       "IsCracked": 0,
@@ -680,13 +644,22 @@
       "parentWord": null
     },
     {
-      "fullWord": "Musician",
+      "fullWord": "Heat",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
+    },
+    {
+      "fullWord": "Hol",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Holiday"
     },
     {
       "fullWord": "Traffic",
@@ -698,7 +671,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Roads",
+      "fullWord": "Lid",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Valid"
+    },
+    {
+      "fullWord": "Suburban",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -708,6 +690,87 @@
     },
     {
       "fullWord": "Transit",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Ba",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Baker"
+    },
+    {
+      "fullWord": "Roads",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Ker",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Baker"
+    },
+    {
+      "fullWord": "Stal",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Coastal"
+    },
+    {
+      "fullWord": "Iday",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Holiday"
+    },
+    {
+      "fullWord": "Coa",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Coastal"
+    },
+    {
+      "fullWord": "Heat ",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Heat wave"
+    },
+    {
+      "fullWord": "Wave",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Heat wave"
+    },
+    {
+      "fullWord": "Conductor",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -734,79 +797,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Coa",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Coastal"
-    },
-    {
-      "fullWord": "Stal",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Coastal"
-    },
-    {
-      "fullWord": "Suburban",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Hol",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Holiday"
-    },
-    {
-      "fullWord": "Iday",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Holiday"
-    },
-    {
-      "fullWord": "Heat ",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Heat wave"
-    },
-    {
-      "fullWord": "Wave",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Heat wave"
-    },
-    {
-      "fullWord": "Heat",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Tan",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Musician",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,

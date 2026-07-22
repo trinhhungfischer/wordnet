@@ -179,10 +179,18 @@
       ]
     },
     {
-      "category": "Black & White",
+      "category": "Black & white",
       "parentCategory": null,
       "icon": null,
       "words": [
+        {
+          "fullWord": "chess",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
         {
           "fullWord": "panda",
           "icon": null,
@@ -193,14 +201,6 @@
         },
         {
           "fullWord": "domino",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "chess",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -219,7 +219,7 @@
     },
     {
       "category": "Chess",
-      "parentCategory": "Black & White",
+      "parentCategory": "Black & white",
       "icon": null,
       "words": [
         {
@@ -335,7 +335,7 @@
       ]
     },
     {
-      "category": "Daylight Phases",
+      "category": "Daylight phases",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 32,
+  "moveLimit": 42,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -635,24 +635,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Gel",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Click",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Ink",
       "icon": null,
       "IsCracked": 0,
@@ -662,16 +644,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Fountain",
+      "fullWord": "Mony",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": null
+      "parentWord": "Antimony"
     },
     {
-      "fullWord": "Magazines",
+      "fullWord": "Dusk",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -689,16 +671,7 @@
       "parentWord": "Catalog"
     },
     {
-      "fullWord": "Alog",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Catalog"
-    },
-    {
-      "fullWord": "Biography",
+      "fullWord": "Sunrise",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -716,7 +689,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Sunset",
+      "fullWord": "Mercury",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -725,7 +698,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Sunrise",
+      "fullWord": "Biography",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -734,7 +707,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Twilight",
+      "fullWord": "Click",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -743,7 +716,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Dusk",
+      "fullWord": "Magazines",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -761,7 +734,34 @@
       "parentWord": null
     },
     {
-      "fullWord": "Mercury",
+      "fullWord": "Alog",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Catalog"
+    },
+    {
+      "fullWord": "Fountain",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Sunset",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Gel",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -779,13 +779,13 @@
       "parentWord": "Antimony"
     },
     {
-      "fullWord": "Mony",
+      "fullWord": "Twilight",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Antimony"
+      "parentWord": null
     },
     {
       "fullWord": "Salt",

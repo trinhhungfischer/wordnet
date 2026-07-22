@@ -23,7 +23,7 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Blades",
+      "category": "Guitar",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -35,37 +35,6 @@
           "IsLinked": 0,
           "linkedChunkWords": []
         },
-        {
-          "fullWord": "sword",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "chainsaw",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "scalpel",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Guitar",
-      "parentCategory": null,
-      "icon": null,
-      "words": [
         {
           "fullWord": "strings",
           "icon": null,
@@ -76,14 +45,6 @@
         },
         {
           "fullWord": "acoustic",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "axe",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -130,7 +91,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "wimbledon",
+          "fullWord": "Blade",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -223,6 +184,14 @@
       "icon": null,
       "words": [
         {
+          "fullWord": "diamond",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
           "fullWord": "bat",
           "icon": null,
           "IsCracked": 0,
@@ -240,14 +209,6 @@
         },
         {
           "fullWord": "grand slam",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "diamond",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -335,7 +296,7 @@
       ]
     },
     {
-      "category": "Attack Types",
+      "category": "Attack types",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -414,46 +375,10 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 29,
+  "moveLimit": 36,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
-    {
-      "fullWord": "Axe",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Sword",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Chainsaw",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Scalpel",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
     {
       "fullWord": "Handle",
       "icon": null,
@@ -482,13 +407,13 @@
       "parentWord": null
     },
     {
-      "fullWord": "Wimbledon",
+      "fullWord": "Blade",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
       "fullWord": "Strings",
@@ -671,52 +596,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Reef",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Plankton",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Ambush",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Blitz",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Strike",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Pounce",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -734,7 +614,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Rust",
+      "fullWord": "Ambush",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Plankton",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -744,6 +633,42 @@
     },
     {
       "fullWord": "Swift",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Reef",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Blitz",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Pounce",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Rust",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -775,5 +700,14 @@
   "screwLockBubbles": [],
   "backwardBubbles": [],
   "crackedBubbles": [],
-  "linkedBubbles": []
+  "linkedBubbles": [],
+  "countdownBubbles": [
+    {
+      "word": "kayak",
+      "countdownValue": [
+        5,
+        -3
+      ]
+    }
+  ]
 }

@@ -101,7 +101,7 @@
       ]
     },
     {
-      "category": "First Date",
+      "category": "First date",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 33,
+  "moveLimit": 38,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -635,7 +635,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Islam",
+      "fullWord": "Neuros",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Neuroscience"
+    },
+    {
+      "fullWord": "Loft",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -644,7 +653,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Scoop",
+      "fullWord": "Psychology",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -653,34 +662,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Digging",
+      "fullWord": "Cience",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mud",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "parentWord": "Neuroscience"
     },
     {
       "fullWord": "Bl",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Blade"
-    },
-    {
-      "fullWord": "Ade",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -698,7 +689,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Compost",
+      "fullWord": "Pull",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -716,7 +707,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pull",
+      "fullWord": "Islam",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -725,7 +716,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Sway",
+      "fullWord": "Mud",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Digging",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -743,24 +743,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Loft",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Linguistics",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Anthropology",
       "icon": null,
       "IsCracked": 0,
@@ -770,25 +752,43 @@
       "parentWord": null
     },
     {
-      "fullWord": "Neuros",
+      "fullWord": "Sway",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Neuroscience"
+      "parentWord": null
     },
     {
-      "fullWord": "Cience",
+      "fullWord": "Scoop",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Neuroscience"
+      "parentWord": null
     },
     {
-      "fullWord": "Psychology",
+      "fullWord": "Compost",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Ade",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Blade"
+    },
+    {
+      "fullWord": "Linguistics",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -834,5 +834,31 @@
   ],
   "backwardBubbles": [],
   "crackedBubbles": [],
-  "linkedBubbles": []
+  "linkedBubbles": [],
+  "cycleLockBubbles": [
+    {
+      "cycleLockWord": "casino",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "salt desert",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "neon",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "nerves",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "scoop",
+      "startingPosition": 0
+    },
+    {
+      "cycleLockWord": "hinduism",
+      "startingPosition": 0
+    }
+  ]
 }

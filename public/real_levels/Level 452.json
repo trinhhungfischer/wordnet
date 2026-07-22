@@ -101,7 +101,7 @@
       ]
     },
     {
-      "category": "Farm Tools",
+      "category": "Farm tools",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -140,7 +140,7 @@
       ]
     },
     {
-      "category": "Animal Kingdom",
+      "category": "Animal kingdom",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -179,7 +179,7 @@
       ]
     },
     {
-      "category": "Wild Animals",
+      "category": "Wild animals",
       "parentCategory": null,
       "icon": null,
       "words": [
@@ -414,7 +414,7 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 32,
+  "moveLimit": 40,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -635,7 +635,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Precognition",
+      "fullWord": "Pop",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -644,13 +644,22 @@
       "parentWord": null
     },
     {
-      "fullWord": "Sk",
+      "fullWord": "Mulch",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Skull"
+      "parentWord": null
+    },
+    {
+      "fullWord": "Stick",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
     },
     {
       "fullWord": "Ull",
@@ -671,16 +680,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Rib",
+      "fullWord": "Sk",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": null
+      "parentWord": "Skull"
     },
     {
-      "fullWord": "Femur",
+      "fullWord": "Toys",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -698,7 +707,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Stick",
+      "fullWord": "Clas",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Classical"
+    },
+    {
+      "fullWord": "Femur",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -707,25 +725,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Toys",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Mulch",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Compost",
+      "fullWord": "Rib",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -743,7 +743,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Soil",
+      "fullWord": "Rock",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -752,22 +752,13 @@
       "parentWord": null
     },
     {
-      "fullWord": "Clas",
+      "fullWord": "Compost",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
       "linkedChunkWords": [],
-      "parentWord": "Classical"
-    },
-    {
-      "fullWord": "Sical",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Classical"
+      "parentWord": null
     },
     {
       "fullWord": "Jazz",
@@ -779,7 +770,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pop",
+      "fullWord": "Sical",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": "Classical"
+    },
+    {
+      "fullWord": "Precognition",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -788,7 +788,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Rock",
+      "fullWord": "Soil",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -851,5 +851,23 @@
   "screwLockBubbles": [],
   "backwardBubbles": [],
   "crackedBubbles": [],
-  "linkedBubbles": []
+  "linkedBubbles": [],
+  "crackBubbles": [
+    {
+      "word": "channel",
+      "crackCount": 3,
+      "chunkWords": [
+        "chan",
+        "nel"
+      ]
+    },
+    {
+      "word": "violin",
+      "crackCount": 5,
+      "chunkWords": [
+        "vio",
+        "lin"
+      ]
+    }
+  ]
 }
