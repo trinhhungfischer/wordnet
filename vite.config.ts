@@ -194,6 +194,78 @@ if ($f.ShowDialog($form) -eq [System.Windows.Forms.DialogResult]::OK) {
         }
       }
 
+      // 2.7 GET /api/level-telemetry
+      if (url.pathname === '/api/level-telemetry' && req.method === 'GET') {
+        const start = parseInt(url.searchParams.get('start') || '1');
+        const end = parseInt(url.searchParams.get('end') || '20');
+
+        const chUrl = 'http://117.6.160.176:8123/?user=zitga_clickhouse&password=Zitga%40123';
+        const query = `
+          SELECT 
+            starts.level as level,
+            starts.total_starts as starts,
+            ends.total_wins as wins,
+            starts.total_users as users_attempted,
+            drops.users_dropped as users_dropped,
+            if(starts.total_users > 0, drops.users_dropped / starts.total_users, 0) as churn_rate
+          FROM (
+            SELECT level, count() as total_starts, count(distinct user_pseudo_id) as total_users 
+            FROM THP024.level_start 
+            WHERE level >= ${start} AND level <= ${end}
+            GROUP BY level
+          ) as starts
+          LEFT JOIN (
+            SELECT level, countIf(win = 1) as total_wins 
+            FROM THP024.level_end 
+            WHERE level >= ${start} AND level <= ${end}
+            GROUP BY level
+          ) as ends ON starts.level = ends.level
+          LEFT JOIN (
+            SELECT max_level, count() as users_dropped 
+            FROM (
+              SELECT user_pseudo_id, max(level) as max_level 
+              FROM THP024.level_start 
+              GROUP BY user_pseudo_id
+            )
+            GROUP BY max_level
+          ) as drops ON starts.level = drops.max_level
+          ORDER BY level ASC
+        `;
+
+        try {
+          const chRes = await fetch(chUrl, {
+            method: 'POST',
+            body: query + ' FORMAT JSON',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          if (chRes.ok) {
+            const data = (await chRes.json()) as any;
+            const formatted = data.data.map((item: any) => {
+              const startsCount = item.starts || 0;
+              const winsCount = item.wins || 0;
+              const failRate = startsCount > 0 ? (startsCount - winsCount) / startsCount : 0;
+              return {
+                level: item.level,
+                starts: startsCount,
+                wins: winsCount,
+                users_attempted: item.users_attempted || 0,
+                users_dropped: item.users_dropped || 0,
+                churn_rate: Math.round(item.churn_rate * 1000) / 10,
+                fail_rate: Math.round(failRate * 1000) / 10
+              };
+            });
+            return sendJson({ success: true, telemetry: formatted });
+          } else {
+            const text = await chRes.text();
+            console.error('ClickHouse HTTP query error:', chRes.status, text);
+            return sendJson({ success: false, error: 'Database query failed' });
+          }
+        } catch (e: any) {
+          console.error('ClickHouse fetch error:', e);
+          return sendJson({ success: false, error: e.message || 'Connection to database failed' });
+        }
+      }
+
       // 3. GET /api/levels-list
       if (url.pathname === '/api/levels-list' && req.method === 'GET') {
         let levelsDir = 'public/real_levels';
