@@ -28,7 +28,10 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer, Magnet, Zap } from 'lucide-react';
+import ChangelogModal from './ChangelogModal';
+import LevelSelectorModal from './LevelSelectorModal';
+import LoginModal from './LoginModal';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer, Magnet, Zap, User, UserCheck, Database } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 import pluralize from 'pluralize';
@@ -481,7 +484,8 @@ export default function GraphEditor() {
   const [misleadingWords, setMisleadingWords] = useState<string[]>([]);
   
   const [levels, setLevels] = useState<string[]>([]);
-  const [isRealLevels, setIsRealLevels] = useState<boolean>(false);
+  const [levelDir, setLevelDir] = useState<string>('real_levels');
+  const [dirHandle, setDirHandle] = useState<any>(null);
   const [selectedLevelName, setSelectedLevelName] = useState<string>('');
   
   const [rawLevelData, setRawLevelData] = useState<any>(null);
@@ -490,9 +494,24 @@ export default function GraphEditor() {
   const [isDictOpen, setIsDictOpen] = useState(false);
   const [isSolutionModalOpen, setIsSolutionModalOpen] = useState(false);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isChangelogModalOpen, setIsChangelogModalOpen] = useState(false);
+  const [isLevelSelectorOpen, setIsLevelSelectorOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('wordnet_isAdmin') === 'true');
   
+  const [stagedLevels, setStagedLevels] = useState<Record<string, any>>(() => {
+    try {
+      const stored = localStorage.getItem('wordnet_staged_levels');
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('wordnet_staged_levels', JSON.stringify(stagedLevels));
+  }, [stagedLevels]);
+
   const [copiedTreeConfig, setCopiedTreeConfig] = useState<any | null>(null);
   const [wordIndexSearchQuery, setWordIndexSearchQuery] = useState('');
   const [sortLinksFirst, setSortLinksFirst] = useState(false);
@@ -704,35 +723,17 @@ export default function GraphEditor() {
     };
     window.addEventListener('keydown', handleNavKeys);
     return () => window.removeEventListener('keydown', handleNavKeys);
-  }, [selectedLevelName, levels, isRealLevels]);
+  }, [selectedLevelName, levels, levelDir]);
 
   useEffect(() => {
-    fetch(isRealLevels ? '/real_levels/index.json' : '/levels/index.json')
+    if (dirHandle) return;
+    fetch(`/api/list-levels?dir=${levelDir}`)
       .then(res => res.json())
       .then(data => setLevels(data))
       .catch(console.error);
-  }, [isRealLevels]);
+  }, [levelDir, dirHandle]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as globalThis.Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
-  useEffect(() => {
-    if (isDropdownOpen) {
-      setTimeout(() => {
-        const selectedEl = document.getElementById(`level-option-${selectedLevelName}`);
-        if (selectedEl) {
-          selectedEl.scrollIntoView({ block: 'center' });
-        }
-      }, 50);
-    }
-  }, [isDropdownOpen, selectedLevelName]);
 
   useEffect(() => {
     fetch(`/global_dictionary.json?t=${Date.now()}`)
@@ -1106,13 +1107,20 @@ export default function GraphEditor() {
       setSelectedNodeId(null);
   };
 
-  const loadLevel = async (levelName: string, forceRealLevels?: boolean) => {
+  const loadLevel = async (levelName: string) => {
     if (!levelName) return false;
-    const realLevelsFlag = forceRealLevels !== undefined ? forceRealLevels : isRealLevels;
     try {
-      const res = await fetch(realLevelsFlag ? `/real_levels/${levelName}.json` : `/levels/${levelName}.json`);
-      if (!res.ok) throw new Error("Not found");
-      const data = await res.json();
+      let data;
+      if (dirHandle) {
+        const fileHandle = await dirHandle.getFileHandle(`${levelName}.json`);
+        const file = await fileHandle.getFile();
+        const text = await file.text();
+        data = JSON.parse(text);
+      } else {
+        const res = await fetch(`/${levelDir}/${levelName}.json`);
+        if (!res.ok) throw new Error("Not found");
+        data = await res.json();
+      }
       loadDataIntoGraph(data, levelName);
       return true;
     } catch (err) {
@@ -1139,10 +1147,10 @@ export default function GraphEditor() {
     e.target.value = '';
   };
 
-  const handleExportJson = async () => {
+  const getCleanedLevelData = () => {
     if (!rawLevelData) {
       alert("Please load a level first.");
-      return;
+      return null;
     }
     
     if (duplicateQueueWordsSet.size > 0) {
@@ -1291,8 +1299,27 @@ export default function GraphEditor() {
     newData.allWordEntries = newAllWordEntries;
     delete newData.spawnQueue;
 
+    return newData;
+  };
+
+  const handleStageLevel = () => {
+    const newData = getCleanedLevelData();
+    if (!newData) return;
+    
+    const fileName = selectedLevelName ? `${selectedLevelName.replace('.json', '')}.json` : "level_config.json";
+    setStagedLevels(prev => ({
+      ...prev,
+      [fileName]: newData
+    }));
+    alert(`Đã lưu nháp ${fileName}`);
+  };
+
+  const handleExportJson = async () => {
+    const newData = getCleanedLevelData();
+    if (!newData) return;
+
     const jsonStr = JSON.stringify(newData, null, 2);
-    const fileName = selectedLevelName ? `${selectedLevelName}.json` : "level_config.json";
+    const fileName = selectedLevelName ? `${selectedLevelName.replace('.json', '')}.json` : "level_config.json";
     
     if ('showSaveFilePicker' in window) {
       try {
@@ -1336,17 +1363,19 @@ export default function GraphEditor() {
     handleShuffleRangeRef.current = handleShuffleRange;
   });
 
-  const shortcutStateRef = useRef({ levels, selectedLevelName, loadLevel, isDropdownOpen, isManualModalOpen, isSolutionModalOpen, isDictOpen, isMagicChangeOpen, isSettingsOpen });
+  const shortcutStateRef = useRef({ levels, selectedLevelName, loadLevel, isLevelSelectorOpen, isManualModalOpen, isChangelogModalOpen, isSolutionModalOpen, isDictOpen, isMagicChangeOpen, isSettingsOpen, isLoginModalOpen });
   useEffect(() => {
-    shortcutStateRef.current = { levels, selectedLevelName, loadLevel, isDropdownOpen, isManualModalOpen, isSolutionModalOpen, isDictOpen, isMagicChangeOpen, isSettingsOpen };
+    shortcutStateRef.current = { levels, selectedLevelName, loadLevel, isLevelSelectorOpen, isManualModalOpen, isChangelogModalOpen, isSolutionModalOpen, isDictOpen, isMagicChangeOpen, isSettingsOpen, isLoginModalOpen };
   });
 
   useEffect(() => {
     const handleShortcuts = (e: KeyboardEvent) => {
       const s = shortcutStateRef.current;
       if (e.key === 'Escape') {
-        if (s.isDropdownOpen) setIsDropdownOpen(false);
+        if (s.isLoginModalOpen) setIsLoginModalOpen(false);
+        else if (s.isLevelSelectorOpen) setIsLevelSelectorOpen(false);
         else if (s.isManualModalOpen) setIsManualModalOpen(false);
+        else if (s.isChangelogModalOpen) setIsChangelogModalOpen(false);
         else if (s.isSolutionModalOpen) setIsSolutionModalOpen(false);
         else if (s.isDictOpen) setIsDictOpen(false);
         else if (s.isMagicChangeOpen) setIsMagicChangeOpen(false);
@@ -2912,6 +2941,11 @@ export default function GraphEditor() {
 
 
   const handleUpdateGlobalDict = async () => {
+    if (!isAdmin) {
+      alert('Chỉ Admin mới có quyền cập nhật từ điển!');
+      return;
+    }
+    
     let updatedDict = JSON.parse(JSON.stringify(globalDict));
     
     const catNodes = nodes.filter(n => n.data.isCategory);
@@ -2956,7 +2990,7 @@ export default function GraphEditor() {
           catAddedItems.push(`  + ${rawWord} (Word)`);
         } else {
           const existingWordObj = dictCat.words[existingWordIndex];
-          if (existingWordObj.word !== rawWord) {
+          if (existingWordObj.word.toLowerCase() !== rawWord.toLowerCase()) {
             const oldWord = existingWordObj.word;
             existingWordObj.word = rawWord;
             updatedCount++;
@@ -2985,7 +3019,7 @@ export default function GraphEditor() {
           catAddedItems.push(`  + ${rawSubcat} (Subcategory)`);
         } else {
           const oldSubcat = dictCat.subcategories[existingIdx];
-          if (oldSubcat !== rawSubcat) {
+          if (oldSubcat.toLowerCase() !== rawSubcat.toLowerCase()) {
             dictCat.subcategories[existingIdx] = rawSubcat;
             updatedCount++;
             catUpdatedItems.push(`  ~ ${oldSubcat} -> ${rawSubcat} (Subcategory)`);
@@ -3030,35 +3064,46 @@ export default function GraphEditor() {
           <div style={{ fontWeight: 700, fontSize: '20px', letterSpacing: '1px' }}>
             WordNet Builder
           </div>
-          <div 
-            onClick={async () => {
-              const newIsReal = !isRealLevels;
-              setIsRealLevels(newIsReal);
-              if (selectedLevelName) {
-                const success = await loadLevel(selectedLevelName, newIsReal);
-                if (!success) {
-                  setSelectedLevelName('');
-                }
-              }
-            }}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
-              background: 'rgba(0,0,0,0.2)', padding: '4px 12px 4px 6px', borderRadius: '20px',
-              border: '1px solid var(--panel-border)'
-            }}
-          >
-            <div style={{
-              width: '32px', height: '18px', borderRadius: '10px',
-              background: isRealLevels ? 'var(--accent)' : 'rgba(255,255,255,0.2)',
-              position: 'relative', transition: '0.2s'
-            }}>
-              <div style={{
-                width: '14px', height: '14px', borderRadius: '50%', background: 'white',
-                position: 'absolute', top: '2px', left: isRealLevels ? '16px' : '2px',
-                transition: '0.2s'
-              }} />
-            </div>
-            <span style={{ fontSize: '13px', fontWeight: 500, color: 'white' }}>Real Levels</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>Folder:</span>
+            <button 
+              onClick={async () => {
+                 if ('showDirectoryPicker' in window) {
+                   try {
+                     const handle = await (window as any).showDirectoryPicker();
+                     setDirHandle(handle);
+                     const files = [];
+                     for await (const entry of handle.values()) {
+                       if (entry.kind === 'file' && entry.name.endsWith('.json') && entry.name !== 'index.json') {
+                         files.push(entry.name.replace('.json', ''));
+                       }
+                     }
+                     files.sort((a, b) => {
+                       const numA = parseInt(a.replace(/[^0-9]/g, ''));
+                       const numB = parseInt(b.replace(/[^0-9]/g, ''));
+                       if (!isNaN(numA) && !isNaN(numB)) {
+                         return numA - numB;
+                       }
+                       return a.localeCompare(b);
+                     });
+                     setLevels(files);
+                     setSelectedLevelName('');
+                     setLevelDir(handle.name);
+                   } catch (err) {
+                     console.error(err);
+                   }
+                 } else {
+                   alert("Trình duyệt không hỗ trợ chọn thư mục (File System Access API).");
+                 }
+              }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: 'rgba(0,0,0,0.2)', border: '1px solid var(--panel-border)',
+                color: 'white', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '13px'
+              }}
+            >
+              <BookOpen size={14} /> {dirHandle ? dirHandle.name : levelDir}
+            </button>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -3079,9 +3124,9 @@ export default function GraphEditor() {
             >
               <ChevronLeft size={16} />
             </button>
-            <div ref={dropdownRef} style={{ position: 'relative' }}>
+            <div style={{ position: 'relative' }}>
               <div 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                onClick={() => setIsLevelSelectorOpen(true)}
                 style={{
                   padding: '6px 12px', borderRadius: '6px', background: 'rgba(0,0,0,0.2)',
                   border: '1px solid var(--panel-border)', color: 'white', cursor: 'pointer',
@@ -3092,51 +3137,6 @@ export default function GraphEditor() {
                 <span>{selectedLevelName || '-- Load Level --'}</span>
                 <ChevronDown size={14} style={{ opacity: 0.7 }} />
               </div>
-            {isDropdownOpen && (
-              <div style={{
-                position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0,
-                background: '#1e293b', border: '1px solid var(--panel-border)',
-                borderRadius: '6px', maxHeight: '300px', overflowY: 'auto', zIndex: 100,
-                boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
-              }}>
-                <div 
-                  id={`level-option-`}
-                  onClick={() => { loadLevel(''); setIsDropdownOpen(false); }}
-                  style={{
-                    padding: '8px 12px', fontSize: '13px', cursor: 'pointer', color: 'white',
-                    background: !selectedLevelName ? 'var(--accent)' : 'transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (selectedLevelName) e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (selectedLevelName) e.currentTarget.style.background = 'transparent';
-                  }}
-                >
-                  -- Load Level --
-                </div>
-                {levels.map(lvl => (
-                  <div 
-                    key={lvl}
-                    id={`level-option-${lvl}`}
-                    onClick={() => { loadLevel(lvl); setIsDropdownOpen(false); }}
-                    style={{
-                      padding: '8px 12px', fontSize: '13px', cursor: 'pointer', color: 'white',
-                      background: selectedLevelName === lvl ? 'var(--accent)' : 'transparent',
-                      borderTop: '1px solid rgba(255,255,255,0.05)'
-                    }}
-                    onMouseEnter={(e) => {
-                      if (selectedLevelName !== lvl) e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedLevelName !== lvl) e.currentTarget.style.background = 'transparent';
-                    }}
-                  >
-                    {lvl}
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
           <button
             onClick={() => {
@@ -3185,8 +3185,18 @@ export default function GraphEditor() {
               disabled={!rawLevelData}
               style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500, opacity: rawLevelData ? 1 : 0.5 }}
             >
-              <Save size={14} /> Save JSON
+              <Save size={14} /> {isAdmin ? 'Export Local' : 'Save JSON'}
             </button>
+            {isAdmin && (
+              <button 
+                onClick={handleStageLevel}
+                disabled={!rawLevelData}
+                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #f59e0b', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', cursor: rawLevelData ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, opacity: rawLevelData ? 1 : 0.5 }}
+                title="Lưu vào bộ nhớ tạm để tạo bản Update Log"
+              >
+                <Database size={14} /> Lưu Nháp
+              </button>
+            )}
           </div>
         </div>
         
@@ -3741,27 +3751,86 @@ export default function GraphEditor() {
           </button>
           
           <button
-            onClick={handleUpdateGlobalDict}
-            title="Update Global Dictionary"
+            onClick={() => setIsChangelogModalOpen(true)}
+            title="Changelog"
             style={{
               width: '56px',
               height: '56px',
               borderRadius: '50%',
-              background: '#8b5cf6',
+              background: 'rgba(0,0,0,0.6)',
               color: 'white',
-              border: 'none',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+              border: '2px solid rgba(255,255,255,0.2)',
+              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              backdropFilter: 'blur(10px)',
               transition: 'transform 0.2s',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <UploadCloud size={24} />
+            <History size={28} />
           </button>
+
+          <button
+            onClick={() => {
+              if (isAdmin) {
+                if (confirm('Bạn có muốn đăng xuất quyền Admin không?')) {
+                  setIsAdmin(false);
+                  localStorage.removeItem('wordnet_isAdmin');
+                }
+              } else {
+                setIsLoginModalOpen(true);
+              }
+            }}
+            title={isAdmin ? "Logout Admin" : "Login Admin"}
+            style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: isAdmin ? 'rgba(56, 189, 248, 0.2)' : 'rgba(0,0,0,0.6)',
+              color: isAdmin ? '#38bdf8' : 'white',
+              border: `2px solid ${isAdmin ? 'rgba(56, 189, 248, 0.4)' : 'rgba(255,255,255,0.2)'}`,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: isAdmin ? '0 4px 16px rgba(56, 189, 248, 0.4)' : '0 4px 12px rgba(0,0,0,0.3)',
+              backdropFilter: 'blur(10px)',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            {isAdmin ? <UserCheck size={28} /> : <User size={28} />}
+          </button>
+
+          {isAdmin && (
+            <button
+              onClick={handleUpdateGlobalDict}
+              title="Update Global Dictionary"
+              style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                background: '#8b5cf6',
+                color: 'white',
+                border: 'none',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <UploadCloud size={24} />
+            </button>
+          )}
           
           <button
             onClick={handleAddWord}
@@ -3824,6 +3893,49 @@ export default function GraphEditor() {
         onClose={() => setIsManualModalOpen(false)}
       />
 
+      <ChangelogModal
+        isOpen={isChangelogModalOpen}
+        onClose={() => setIsChangelogModalOpen(false)}
+        selectedLevelName={selectedLevelName}
+        onSelectLevel={(level) => loadLevel(level)}
+        isAdmin={isAdmin}
+        levels={levels}
+        stagedLevels={stagedLevels}
+        onSelectDraftLevel={(levelName) => {
+          if (stagedLevels[levelName]) {
+            loadDataIntoGraph(stagedLevels[levelName], levelName.replace('.json', ''));
+            setIsChangelogModalOpen(false);
+          }
+        }}
+        onClearDraft={(levelName) => {
+          setStagedLevels(prev => {
+            const next = { ...prev };
+            delete next[levelName];
+            return next;
+          });
+        }}
+        onPublishUpdate={async (note) => {
+          try {
+            const response = await fetch('/api/publish-update', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ stagedLevels, note })
+            });
+            const result = await response.json();
+            if (result.success) {
+              alert(`Cập nhật thành công phiên bản ${result.version}!`);
+              setStagedLevels({}); // Clear drafts
+              setIsChangelogModalOpen(false);
+            } else {
+              alert('Lỗi: ' + result.error);
+            }
+          } catch (e) {
+            console.error(e);
+            alert('Lỗi mạng khi publish update');
+          }
+        }}
+      />
+
       <LevelSettings 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
@@ -3880,6 +3992,23 @@ export default function GraphEditor() {
         autoCutWords={autoCutWords}
         setAutoCutWords={setAutoCutWords}
         isSettingsOpen={isSettingsOpen}
+      />
+
+      <LevelSelectorModal
+        isOpen={isLevelSelectorOpen}
+        onClose={() => setIsLevelSelectorOpen(false)}
+        levels={levels}
+        selectedLevelName={selectedLevelName}
+        onSelectLevel={(level) => loadLevel(level)}
+      />
+      
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={() => {
+          setIsAdmin(true);
+          localStorage.setItem('wordnet_isAdmin', 'true');
+        }}
       />
     </div>
   );
