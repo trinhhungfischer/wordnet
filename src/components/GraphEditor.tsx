@@ -727,10 +727,20 @@ export default function GraphEditor() {
 
   useEffect(() => {
     if (dirHandle) return;
-    fetch(`/api/list-levels?dir=${levelDir}`)
-      .then(res => res.json())
+    // Try to fetch static index first (for Vercel), fallback to API (for local dev)
+    fetch(`/levels_index.json?t=${Date.now()}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Static index not found');
+        return res.json();
+      })
       .then(data => setLevels(data))
-      .catch(console.error);
+      .catch(() => {
+        // Fallback for local development
+        fetch(`/api/list-levels?dir=${levelDir}`)
+          .then(res => res.json())
+          .then(data => setLevels(data))
+          .catch(console.error);
+      });
   }, [levelDir, dirHandle]);
 
 
