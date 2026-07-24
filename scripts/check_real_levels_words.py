@@ -202,8 +202,8 @@ def generate_report():
         })
         
     df = pd.DataFrame(records)
-    output_file = "Real_Levels_Word_Similarity_Report.xlsx"
-    df.to_excel(output_file, index=False)
+    output_file = "Real_Levels_Word_Similarity_Report.csv"
+    df.to_csv(output_file, index=False, encoding='utf-8-sig')
     print(f"Generated {output_file} successfully!")
 
 if __name__ == "__main__":

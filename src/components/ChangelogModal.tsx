@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { X, History, Calendar, CheckCircle2, Edit2, Trash2, Plus, Layers, Target } from 'lucide-react';
 import initialChangelogData from '../data/changelog.json';
 

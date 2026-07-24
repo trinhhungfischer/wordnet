@@ -140,8 +140,8 @@ def generate_report():
         })
         
     df = pd.DataFrame(records)
-    df.to_excel("Level_Report.xlsx", index=False)
-    print("Generated Level_Report.xlsx successfully!")
+    df.to_csv("Level_Report.csv", index=False, encoding='utf-8-sig')
+    print("Generated Level_Report.csv successfully!")
 
 if __name__ == "__main__":
     generate_report()

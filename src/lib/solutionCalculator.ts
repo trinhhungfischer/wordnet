@@ -58,20 +58,13 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
   let chainBroken = false;
   let completedCategoriesCount = 0;
-  let crackBreakMap: Record<string, number> = {};
   
   let bombPenalties = 0;
   const explodedBombs = new Set<string>();
   const screwEventsEmitted = new Set<string>();
   const dynamicImmovable = new Set<string>();
 
-  if (levelData?.allWordEntries) {
-    levelData.allWordEntries.forEach((e: any) => {
-      const wordName = e.parentWord ? String(e.parentWord).toLowerCase() : String(e.fullWord).toLowerCase();
-        if (e.countdownTimer && e.countdownTimer > 0) countdownMap[wordName] = e.countdownTimer;
-        // crackBreakMap removed in favor of levelData.crackBubbles
-    });
-  }
+
 
   const linkedWords = new Set((levelData?.bubbleSeparatorData?.linkedWords || []).map((w: string) => w.toLowerCase()));
 
