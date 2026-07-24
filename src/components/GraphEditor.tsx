@@ -1439,12 +1439,41 @@ export default function GraphEditor() {
   
   const handleEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
-      if (changes.some(c => c.type === 'remove')) {
+      const isRemove = changes.some(c => c.type === 'remove');
+      if (isRemove) {
         saveHistory();
       }
-      setEdges((eds) => applyEdgeChanges(changes, eds));
+      setEdges((eds) => {
+        const nextEds = applyEdgeChanges(changes, eds);
+        if (isRemove) {
+          setNodes(nds => {
+            const parentIdsToRestore = new Set<string>();
+            nds.forEach(node => {
+              if (!node.data.isChunk && node.data.globalIndex === undefined) {
+                const hasChildren = nextEds.some(e => e.source === node.id);
+                if (!hasChildren) {
+                  parentIdsToRestore.add(node.id);
+                }
+              }
+            });
+
+            if (parentIdsToRestore.size > 0) {
+              const maxGlobalIndex = nds.reduce((max, n) => Math.max(max, (n.data?.globalIndex as number) || 0), 0);
+              let nextIndex = maxGlobalIndex + 1;
+              return nds.map(n => {
+                if (parentIdsToRestore.has(n.id)) {
+                  return { ...n, data: { ...n.data, globalIndex: nextIndex++ } };
+                }
+                return n;
+              });
+            }
+            return nds;
+          });
+        }
+        return nextEds;
+      });
     },
-    [setEdges, saveHistory]
+    [setEdges, setNodes, saveHistory]
   );
 
   const onConnect = useCallback(
@@ -1544,14 +1573,12 @@ export default function GraphEditor() {
     
     setNodes((nds) => {
       let updatedNodes = [...nds];
-      if (isChunk) {
-        const parentIndex = updatedNodes.findIndex(n => n.id === parentNode.id);
-        if (parentIndex !== -1) {
-          updatedNodes[parentIndex] = {
-            ...updatedNodes[parentIndex],
-            data: { ...updatedNodes[parentIndex].data, globalIndex: undefined }
-          };
-        }
+      const parentIndex = updatedNodes.findIndex(n => n.id === parentNode.id);
+      if (parentIndex !== -1 && updatedNodes[parentIndex].data.globalIndex !== undefined) {
+        updatedNodes[parentIndex] = {
+          ...updatedNodes[parentIndex],
+          data: { ...updatedNodes[parentIndex].data, globalIndex: undefined }
+        };
       }
       return [...updatedNodes, ...newNodesToAppend];
     });
@@ -1565,16 +1592,162 @@ export default function GraphEditor() {
     
     if (selectedNodeIds.length === 0 && selectedEdgeIds.length === 0) return;
     
-    setNodes((nds) => nds.filter((n) => !selectedNodeIds.includes(n.id)));
-    setEdges((eds) => eds.filter((e) => !selectedNodeIds.includes(e.source) && !selectedNodeIds.includes(e.target) && !selectedEdgeIds.includes(e.id)));
+    const nextNodes = nodes.filter((n) => !selectedNodeIds.includes(n.id));
+    const nextEdges = edges.filter((e) => !selectedNodeIds.includes(e.source) && !selectedNodeIds.includes(e.target) && !selectedEdgeIds.includes(e.id));
+    
+    const parentIdsToRestore = new Set<string>();
+    nextNodes.forEach(node => {
+      if (!node.data.isChunk && node.data.globalIndex === undefined) {
+        const hasChildren = nextEdges.some(e => e.source === node.id);
+        if (!hasChildren) {
+          parentIdsToRestore.add(node.id);
+        }
+      }
+    });
+
+    let finalNodes = nextNodes;
+    if (parentIdsToRestore.size > 0) {
+      const maxGlobalIndex = nextNodes.reduce((max, n) => Math.max(max, (n.data?.globalIndex as number) || 0), 0);
+      let nextIndex = maxGlobalIndex + 1;
+      finalNodes = nextNodes.map(n => {
+        if (parentIdsToRestore.has(n.id)) {
+          return { ...n, data: { ...n.data, globalIndex: nextIndex++ } };
+        }
+        return n;
+      });
+    }
+
+    setNodes(finalNodes);
+    setEdges(nextEdges);
     setSelectedNodeId(null);
   };
 
   const handleRenameNode = (nodeId: string, newLabel: string) => {
     saveHistory();
+    
+    const oldNode = nodes.find(n => n.id === nodeId);
+    if (!oldNode) return;
+    const oldLabel = String(oldNode.data.label).toLowerCase();
+    const newLabelLower = newLabel.toLowerCase();
+
     setNodes((nds) => 
       nds.map(n => n.id === nodeId ? { ...n, data: { ...n.data, label: newLabel } } : n)
     );
+
+    if (rawLevelData && oldLabel !== newLabelLower) {
+      const clonedRawData = JSON.parse(JSON.stringify(rawLevelData));
+      let isChanged = false;
+
+      if (clonedRawData.bubbleSeparatorData?.linkedWords) {
+        clonedRawData.bubbleSeparatorData.linkedWords = clonedRawData.bubbleSeparatorData.linkedWords.map((lw: string) => 
+          lw.toLowerCase() === oldLabel ? newLabelLower : lw
+        );
+        isChanged = true;
+      }
+      
+      if (clonedRawData.frozenBubbles) {
+        clonedRawData.frozenBubbles = clonedRawData.frozenBubbles.map((fb: any) => 
+          fb.word.toLowerCase() === oldLabel ? { ...fb, word: newLabelLower } : fb
+        );
+        isChanged = true;
+      }
+      
+      if (clonedRawData.crackBubbles) {
+        clonedRawData.crackBubbles = clonedRawData.crackBubbles.map((cb: any) => 
+          cb.word.toLowerCase() === oldLabel ? { ...cb, word: newLabelLower } : cb
+        );
+        isChanged = true;
+      }
+
+      if (clonedRawData.burstBubbles) {
+        clonedRawData.burstBubbles = clonedRawData.burstBubbles.map((bb: any) => 
+          bb.word.toLowerCase() === oldLabel ? { ...bb, word: newLabelLower } : bb
+        );
+        isChanged = true;
+      }
+
+      if (clonedRawData.backwardBubbles) {
+        clonedRawData.backwardBubbles = clonedRawData.backwardBubbles.map((bw: any) => 
+          bw.word.toLowerCase() === oldLabel ? { ...bw, word: newLabelLower } : bw
+        );
+        isChanged = true;
+      }
+
+      if (clonedRawData.keyLockBubbles) {
+        clonedRawData.keyLockBubbles = clonedRawData.keyLockBubbles.map((kl: any) => ({
+          ...kl,
+          keyWord: kl.keyWord.toLowerCase() === oldLabel ? newLabelLower : kl.keyWord,
+          lockWord: kl.lockWord.toLowerCase() === oldLabel ? newLabelLower : kl.lockWord
+        }));
+        isChanged = true;
+      }
+
+      if (clonedRawData.immovableBubbles) {
+        clonedRawData.immovableBubbles = clonedRawData.immovableBubbles.map((ib: any) => 
+          (typeof ib === 'string' ? ib : ib.word).toLowerCase() === oldLabel ? newLabelLower : ib
+        );
+        isChanged = true;
+      }
+
+      if (clonedRawData.countdownBubbles) {
+        clonedRawData.countdownBubbles = clonedRawData.countdownBubbles.map((cb: any) => 
+          (typeof cb === 'string' ? cb : cb.word).toLowerCase() === oldLabel ? { ...cb, word: newLabelLower } : cb
+        );
+        isChanged = true;
+      }
+
+      if (clonedRawData.screwLockBubbles) {
+        clonedRawData.screwLockBubbles = clonedRawData.screwLockBubbles.map((sl: any) => ({
+          ...sl,
+          screwLockWord: sl.screwLockWord.toLowerCase() === oldLabel ? newLabelLower : sl.screwLockWord,
+          screwDriverWords: sl.screwDriverWords.map((sdw: string) => sdw.toLowerCase() === oldLabel ? newLabelLower : sdw)
+        }));
+        isChanged = true;
+      }
+
+      if (clonedRawData.crypticBubbles) {
+        clonedRawData.crypticBubbles = clonedRawData.crypticBubbles.map((cb: any) => {
+          if (cb.word.toLowerCase() === oldLabel) {
+            const newRevealAtMerge = new Array(newLabelLower.length).fill(0);
+            const oldReveal = cb.revealAtMerge || [];
+            for (let i = 0; i < Math.min(newLabelLower.length, oldReveal.length); i++) {
+              newRevealAtMerge[i] = oldReveal[i];
+            }
+            const { letters, ...rest } = cb;
+            return { ...rest, word: newLabelLower, revealAtMerge: newRevealAtMerge };
+          }
+          return cb;
+        });
+        isChanged = true;
+      }
+
+      if (clonedRawData.linkedBubbles) {
+        clonedRawData.linkedBubbles = clonedRawData.linkedBubbles.map((lb: any) => ({
+          ...lb,
+          word: lb.word.toLowerCase() === oldLabel ? newLabelLower : lb.word,
+          linkedChunks: lb.linkedChunks ? lb.linkedChunks.map((chunk: string) => chunk.toLowerCase() === oldLabel ? newLabelLower : chunk) : []
+        }));
+        isChanged = true;
+      }
+
+      if (clonedRawData.allWordEntries && Array.isArray(clonedRawData.allWordEntries)) {
+        const globalIdx = oldNode.data.globalIndex;
+        if (globalIdx !== undefined) {
+          const entryIdx = clonedRawData.allWordEntries.findIndex((e: any) => e.idx === globalIdx);
+          if (entryIdx !== -1) {
+            clonedRawData.allWordEntries[entryIdx] = {
+              ...clonedRawData.allWordEntries[entryIdx],
+              fullWord: newLabelLower.charAt(0).toUpperCase() + newLabelLower.slice(1)
+            };
+            isChanged = true;
+          }
+        }
+      }
+
+      if (isChanged) {
+        setRawLevelData(clonedRawData);
+      }
+    }
   };
 
   const handleToggleNodeIcon = (nodeId: string, currentIcon: string | null) => {
