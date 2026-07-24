@@ -16,13 +16,6 @@ export interface BoardBubbleState {
   isScrewDriver?: boolean;
   screwLockIndex?: number;
   screwDriverIndex?: number;
-  cycleLockState?: number;
-  isImmovable?: boolean;
-  countdownValue?: [number, number];
-  isLinkedMain?: boolean;
-  isLinkedChunk?: boolean;
-  isCrackBubble?: boolean;
-  crackCountRemaining?: number;
 }
 
 export interface MergeStep {
@@ -48,6 +41,24 @@ export interface SolutionResult {
     factors: string[];
     color: string;
   };
+  vocabDifficulty: {
+    score: number;
+    label: string;
+    factors: string[];
+    color: string;
+  };
+  moveDifficulty: {
+    score: number;
+    label: string;
+    factors: string[];
+    color: string;
+  };
+  learningDifficulty: {
+    score: number;
+    label: string;
+    factors: string[];
+    color: string;
+  };
 }
 
 export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, spawnQueueIds: string[] = []): SolutionResult {
@@ -58,13 +69,20 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
   let chainBroken = false;
   let completedCategoriesCount = 0;
+  let crackBreakMap: Record<string, number> = {};
   
   let bombPenalties = 0;
   const explodedBombs = new Set<string>();
   const screwEventsEmitted = new Set<string>();
-  const dynamicImmovable = new Set<string>();
 
-
+  if (levelData?.allWordEntries) {
+    levelData.allWordEntries.forEach((e: any) => {
+      const wordName = e.parentWord ? String(e.parentWord).toLowerCase() : String(e.fullWord).toLowerCase();
+      if (e.crackBreakNum > 0) {
+        crackBreakMap[wordName] = e.crackBreakNum;
+      }
+    });
+  }
 
   const linkedWords = new Set((levelData?.bubbleSeparatorData?.linkedWords || []).map((w: string) => w.toLowerCase()));
 
@@ -99,11 +117,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let isScrewDriverCheck: boolean | undefined;
     let screwLockIndex = -1;
     let screwDriverIndex = -1;
-    let cycleLockState: number | undefined;
-    let isImmovable = false;
-    let countdownValue: [number, number] | undefined;
-    let isLinkedMain = false;
-    let isLinkedChunk = false;
 
     const w = displayLabel.toLowerCase();
     
@@ -112,22 +125,10 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
        chainMergesLeft = breakThreshold - completedCategoriesCount;
     }
     
-    // Check crackBubbles
-    let isCrackBubble = false;
-    let crackCountRemaining = 0;
-    const crackRule = levelData?.crackBubbles?.find((c: any) => c.word.toLowerCase() === w);
-    if (crackRule) {
-       isCrackBubble = true;
-       const dropTime = wordDropMove.has(w) ? wordDropMove.get(w)! : moveCount;
-       const mergesDone = moveCount - dropTime;
-       crackCountRemaining = Math.max(0, crackRule.crackCount - mergesDone);
+    if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) {
+       crackMergesLeft = crackBreakMap[w] - completedCategoriesCount;
     }
     
-    const immovableRule = levelData?.immovableBubbles?.find((i: any) => (typeof i === 'string' ? i : i.word).toLowerCase() === w);
-    if (immovableRule) {
-       isImmovable = true;
-    }
-
     if (node) {
       const frozenRule = levelData?.frozenBubbles?.find((f: any) => f.word.toLowerCase() === w);
       if (frozenRule) {
@@ -178,46 +179,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       } else {
         isScrewDriverCheck = false;
       }
-      
-      const cycleLockRule = levelData?.cycleLockBubbles?.find((c: any) => c.cycleLockWord.toLowerCase() === w);
-      if (cycleLockRule) {
-         let mergesDone = moveCount;
-         if (wordDropMove?.has(w)) {
-            mergesDone = moveCount - wordDropMove.get(w)!;
-         } else {
-            mergesDone = 0;
-         }
-         cycleLockState = (cycleLockRule.startingPosition + mergesDone) % 2;
-      }
-      
-      const countdownRule = levelData?.countdownBubbles?.find((c: any) => c.word.toLowerCase() === w);
-      if (countdownRule && countdownRule.countdownValue) {
-         let mergesDone = moveCount;
-         if (wordDropMove?.has(w)) {
-            mergesDone = moveCount - wordDropMove.get(w)!;
-         } else {
-            mergesDone = 0;
-         }
-         let currentValue = countdownRule.countdownValue[0] - mergesDone;
-         if (currentValue < countdownRule.countdownValue[1]) currentValue = countdownRule.countdownValue[1];
-         countdownValue = [currentValue, countdownRule.countdownValue[1]];
-      }
-      
-      const linkedMainRule = levelData?.linkedBubbles?.find((l: any) => l.word.toLowerCase() === w);
-      if (linkedMainRule) {
-         isLinkedMain = linkedMainRule.linkedChunks?.some((c: string) => !usedWords.has(c.toLowerCase()));
-      }
-      
-      const linkedChunkRule = levelData?.linkedBubbles?.find((l: any) => 
-         l.linkedChunks?.some((c: string) => c.toLowerCase() === w)
-      );
-      if (linkedChunkRule) {
-         isLinkedChunk = true;
-      }
-    }
-
-    if (dynamicImmovable.has(bid)) {
-       isImmovable = true;
     }
 
     return {
@@ -233,14 +194,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       screwCount: screwCountCalc,
       isScrewDriver: isScrewDriverCheck,
       screwLockIndex,
-      screwDriverIndex,
-      cycleLockState,
-      isImmovable,
-      countdownValue,
-      isLinkedMain,
-      isLinkedChunk,
-      isCrackBubble,
-      crackCountRemaining
+      screwDriverIndex
     };
   };
 
@@ -282,55 +236,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
               boardState: board.map(bid => getBubbleState(bid)),
               moveIndex: currentMoveIndex
             });
-          }
-        }
-      });
-
-      // Check Crack Bubbles Breaking
-      levelData?.crackBubbles?.forEach((c: any) => {
-        const w = c.word.toLowerCase();
-        if (wordDropMove.has(w)) {
-          const dropTime = wordDropMove.get(w)!;
-          const mergesDone = currentMoveIndex - dropTime;
-          if (mergesDone === c.crackCount) {
-            // Find the node id for this crack bubble
-            const bubbleId = board.find(id => getBubbleState(id).label.toLowerCase() === w);
-            if (bubbleId) {
-              // Remove the crack bubble
-              board = board.filter(id => id !== bubbleId);
-              usedWords.add(w);
-              
-              // Add chunkWords to board
-              c.chunkWords.forEach((cw: string) => {
-                 // Try to find the node for this chunkWord
-                 const chunkNode = nodes.find(n => n.data.isChunk && String(n.data.label).toLowerCase() === cw.toLowerCase() && !board.includes(n.id) && !usedWords.has(cw.toLowerCase()));
-                 if (chunkNode) {
-                    board.push(chunkNode.id);
-                    droppedWords.add(chunkNode.id);
-                    wordDropMove.set(cw.toLowerCase(), currentMoveIndex);
-                 } else {
-                    // Fallback to non-chunk word
-                    const wordNode = nodes.find(n => !n.data.isCategory && String(n.data.label).toLowerCase() === cw.toLowerCase() && !board.includes(n.id) && !usedWords.has(cw.toLowerCase()));
-                    if (wordNode) {
-                       board.push(wordNode.id);
-                       droppedWords.add(wordNode.id);
-                       wordDropMove.set(cw.toLowerCase(), currentMoveIndex);
-                    }
-                 }
-              });
-
-              steps.push({
-                id: `step-${stepIdCounter++}`,
-                type: 'event',
-                left: '',
-                right: '',
-                result: '',
-                text: `⚡ Crack Bubble "${c.word}" shattered! Spawned: ${c.chunkWords.join(', ')}`,
-                isComboBonus: false,
-                boardState: board.map(bid => getBubbleState(bid)),
-                moveIndex: currentMoveIndex
-              });
-            }
           }
         }
       });
@@ -432,12 +337,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       }
     }
 
-    const crackRule = levelData?.crackBubbles?.find((c: any) => c.word.toLowerCase() === w);
-    if (crackRule) {
-       const dropTime = wordDropMove.has(w) ? wordDropMove.get(w)! : moveCount;
-       const mergesDone = moveCount - dropTime;
-       if (mergesDone < crackRule.crackCount) return true; // Still cracking
-    }
+    if (crackBreakMap[w] && completedCategoriesCount < crackBreakMap[w]) return true;
     
     const screwLockRule = levelData?.screwLockBubbles?.find((s: any) => s.screwLockWord.toLowerCase() === w);
     if (screwLockRule) {
@@ -452,13 +352,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
        if (mergesDone < frozenRule.mergesNeeded) return true;
     }
     
-    const cycleLockRule = levelData?.cycleLockBubbles?.find((c: any) => c.cycleLockWord.toLowerCase() === w);
-    if (cycleLockRule) {
-       const dropTime = wordDropMove.has(w) ? wordDropMove.get(w)! : moveCount;
-       const mergesDone = moveCount - dropTime;
-       if ((cycleLockRule.startingPosition + mergesDone) % 2 === 1) return true;
-    }
-    
     return false;
   };
 
@@ -470,47 +363,20 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   const resolvedWords = new Set<string>(); // Word IDs that have been merged from chunks
   const resolvedCategories = new Set<string>(); // Cat IDs that have been completed
 
-  const getEffectiveBoardLength = () => {
-    let effectiveLen = 0;
-    for (const bId of board) {
-      const n = nodes.find(node => node.id === bId);
-      let isLC = false;
-      if (n?.data.isChunk) {
-         const cLabel = String(n.data.label).toLowerCase();
-         isLC = levelData?.linkedBubbles?.some((lb: any) => lb.linkedChunks?.some((c: string) => c.toLowerCase() === cLabel)) || false;
-      }
-      if (!isLC) effectiveLen++;
-    }
-    return effectiveLen;
-  };
-
   addStep('event', '', '', '', '🎮 Game Start');
 
   const doDrops = (count: number) => {
     const newlyDropped: string[] = [];
     let dropped = 0;
-    while (queueIndex < spawnQueueIds.length) {
+    while (dropped < count && board.length < maxBubbles && queueIndex < spawnQueueIds.length) {
       const nextId = spawnQueueIds[queueIndex];
-      const node = nodes.find(n => n.id === nextId);
-      
-      let isLinkedChunk = false;
-      if (node?.data.isChunk) {
-         const cLabel = String(node.data.label).toLowerCase();
-         isLinkedChunk = levelData?.linkedBubbles?.some((lb: any) => lb.linkedChunks?.some((c: string) => c.toLowerCase() === cLabel)) || false;
-      }
-      
-      if (dropped >= count && !isLinkedChunk) break;
-      if (getEffectiveBoardLength() >= maxBubbles && !isLinkedChunk) break;
-
       board.push(nextId);
       droppedWords.add(nextId);
       newlyDropped.push(nextId);
       queueIndex++;
+      dropped++;
       
-      if (!isLinkedChunk) {
-          dropped++;
-      }
-      
+      const node = nodes.find(n => n.id === nextId);
       if (node?.data.isChunk) {
          const parentEdge = edges.find(e => e.target === nextId);
          if (parentEdge) {
@@ -553,40 +419,20 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       // Try Chunk -> Word Merge
       for (const [wordId, chunkIds] of wordToChunks.entries()) {
         if (!resolvedWords.has(wordId) && chunkIds.every(cid => board.includes(cid))) {
-          if (chunkIds.every(cid => getBubbleState(cid).isImmovable || getBubbleState(cid).isLinkedChunk)) {
-             continue; // Deadlock: no chunk can act as the drag source
-          }
           let score = 10;
-
           const wordLabel = String(nodes.find(n => n.id === wordId)?.data.label).toLowerCase();
-
-          // chunk merge Immovable propagation
-          if (chunkIds.some(cid => getBubbleState(cid).isImmovable)) {
-             dynamicImmovable.add(wordId);
-             console.log(`[Simulator] Marked ${wordId} (${wordLabel}) as Immovable due to chunk merge!`);
-          }
           const burstRule = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === wordLabel);
           if (burstRule) {
              const rem = burstRule.movesRemaining - moveCount;
              score = Math.max(score, 100 - rem * 5);
           }
-          const countdownRule = levelData?.countdownBubbles?.find((c: any) => c.word.toLowerCase() === wordLabel);
-          if (countdownRule) {
-             let currentValue = countdownRule.countdownValue[0] - (moveCount - (wordDropMove.get(wordLabel) || 0));
-             if (currentValue < countdownRule.countdownValue[1]) currentValue = countdownRule.countdownValue[1];
-             score = Math.max(score, 40 + currentValue * 5);
-          }
           // Also check chunks!
           chunkIds.forEach(cid => {
-             const cState = getBubbleState(cid);
-             const cLabel = cState.label.toLowerCase();
+             const cLabel = String(nodes.find(n => n.id === cid)?.data.label).toLowerCase();
              const cBurst = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === cLabel);
              if (cBurst) {
                  const rem = cBurst.movesRemaining - moveCount;
                  score = Math.max(score, 100 - rem * 5);
-             }
-             if (cState.countdownValue) {
-                 score = Math.max(score, 40 + cState.countdownValue[0] * 5);
              }
           });
           // Also check if this word belongs to a category that has an active bomb on the board
@@ -623,9 +469,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
           const availablePieces = piecesOnBoard.filter(pid => {
              if (pid.startsWith('temp_')) return true;
-             const state = getBubbleState(pid);
-             if (state.isLinkedMain) return false;
-             return !isWordIceOrCrackLocked(state.label);
+             const label = getBubbleState(pid).label;
+             return !isWordIceOrCrackLocked(label);
           });
 
           if (availablePieces.length >= 2) {
@@ -647,15 +492,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                    for (let j = i + 1; j < availablePieces.length; j++) {
                       let p1 = availablePieces[i];
                       let p2 = availablePieces[j];
-
-                      // Immovable & LinkedChunk logic: if both cannot be dragged, they can't merge
-                      const state1 = getBubbleState(p1);
-                      const state2 = getBubbleState(p2);
-                      const p1SourceLocked = state1.isImmovable || state1.isLinkedChunk;
-                      const p2SourceLocked = state2.isImmovable || state2.isLinkedChunk;
-                      if (p1SourceLocked && p2SourceLocked) {
-                         continue;
-                      }
                       
                       let score = 20;
                       const label1 = getBubbleState(p1).label.toLowerCase();
@@ -666,11 +502,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                       
                       if (burstRule1) score = Math.max(score, 100 - (burstRule1.movesRemaining - moveCount) * 5);
                       if (burstRule2) score = Math.max(score, 100 - (burstRule2.movesRemaining - moveCount) * 5);
-
-                      const cState1 = getBubbleState(p1);
-                      const cState2 = getBubbleState(p2);
-                      if (cState1.countdownValue) score = Math.max(score, 40 + cState1.countdownValue[0] * 5);
-                      if (cState2.countdownValue) score = Math.max(score, 40 + cState2.countdownValue[0] * 5);
 
                       possibleMerges.push({ type: 'category', catId, p1, p2, originalWordIds, piecesOnBoard, score });
                    }
@@ -688,24 +519,11 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           const { wordId, chunkIds } = bestMerge;
           board = board.filter(id => !chunkIds.includes(id)); // Remove chunks
           board.push(wordId); // Add word to board
-          
-          if (chunkIds.some((cid: string) => getBubbleState(cid).isImmovable)) {
-             dynamicImmovable.add(wordId);
-          }
-          
           droppedWords.add(wordId);
           resolvedWords.add(wordId);
           
           const chunks = chunkIds.map((cid: string) => String(nodes.find(n => n.id === cid)?.data.label));
           chunks.forEach((c: string) => usedWords.add(c.toLowerCase()));
-          
-          const chunkBonuses: { label: string, val: number }[] = [];
-          chunkIds.forEach((cid: string) => {
-             const cState = getBubbleState(cid);
-             if (cState.countdownValue) {
-                chunkBonuses.push({ label: cState.label, val: cState.countdownValue[0] });
-             }
-          });
           
           mergedSomething = true;
           progress = true;
@@ -722,11 +540,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
             
             currentString = mergedString;
           }
-          
-          chunkBonuses.forEach(b => {
-             bonusTurns += b.val;
-             addStep('event', '', '', '', `⏳ Countdown bonus from "${b.label}": +${b.val} moves`);
-          });
         } else if (bestMerge.type === 'category') {
           const { catId, p1, p2, originalWordIds, piecesOnBoard } = bestMerge;
           const label1 = getBubbleState(p1).label;
@@ -738,12 +551,6 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           if (linkedWords.has(label1.toLowerCase()) || linkedWords.has(label2.toLowerCase())) {
              linkedWords.add(mergedString.toLowerCase());
           }
-          
-          if (getBubbleState(p1).isImmovable || getBubbleState(p2).isImmovable) {
-             dynamicImmovable.add(mergedId);
-             dynamicImmovable.add(catId);
-             console.log(`[Simulator] Marked ${mergedId} and ${catId} as Immovable!`);
-          }
 
           board = board.filter(id => id !== p1 && id !== p2);
           board.push(mergedId);
@@ -751,32 +558,18 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           usedWords.add(label1.toLowerCase());
           usedWords.add(label2.toLowerCase());
 
-          const catBonuses: { label: string, val: number }[] = [];
-          [p1, p2].forEach(pid => {
-             const pState = getBubbleState(pid);
-             if (pState.countdownValue) {
-                catBonuses.push({ label: pState.label, val: pState.countdownValue[0] });
-             }
-          });
-
           addStep('category', label1, label2, mergedString);
-
-          catBonuses.forEach(b => {
-             bonusTurns += b.val;
-             addStep('event', '', '', '', `⏳ Countdown bonus from "${b.label}": +${b.val} moves`);
-          });
           mergedSomething = true;
           progress = true;
 
           const undroppedCount = originalWordIds.filter((id: string) => !droppedWords.has(id)).length;
-          if (undroppedCount === 0 && piecesOnBoard.length === 2) {
+          if (undroppedCount === 0 && piecesOnBoard.length === 2 && originalWordIds.length === 4) {
             board = board.filter(id => id !== mergedId);
             const isSubCategory = edges.some(e => e.target === catId && catNodes.some(n => n.id === e.source));
             if (isSubCategory) {
               board.push(catId);
               droppedWords.add(catId);
             }
-            console.log("ADDING " + catId + " to resolvedCategories!");
             resolvedCategories.add(catId);
             completedCategoriesCount++;
 
@@ -785,6 +578,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
 
             const dropCount = isSubCategory ? 3 : 4;
             if (doDrops(dropCount)) progress = true;
+
+            Object.keys(crackBreakMap).forEach(w => {
+              if (crackBreakMap[w] === completedCategoriesCount) {
+                addStep('event', '', '', '', `🧊 Ice broken on "${w}" (${completedCategoriesCount} categories broken)`);
+              }
+            });
             
             levelData?.keyLockBubbles?.forEach((kl: any) => {
               if (usedWords.has(kl.keyWord.toLowerCase())) {
@@ -811,12 +610,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   // Deadlock Check
   if (resolvedCategories.size < catNodes.length) {
     const remainingCats = catNodes.length - resolvedCategories.size;
-    const boardLabels = board.map(id => {
-      const n = nodes.find(n => n.id === id);
-      return n ? n.data.label : id;
-    });
-    console.log(`DEADLOCK. Board contents:`, boardLabels);
-    addStep('event', '', '', '', `⚠️ DEADLOCK! Board full (${getEffectiveBoardLength()}/${maxBubbles}) with no valid merges. Cannot solve the remaining ${remainingCats} categories. Please adjust the Drop Order or increase max Bubbles!`);
+    addStep('event', '', '', '', `⚠️ DEADLOCK! Board full (${board.length}/${maxBubbles}) with no valid merges. Cannot solve the remaining ${remainingCats} categories. Please adjust the Drop Order or increase max Bubbles!`);
   } else if (board.length > 0) {
     // If categories are solved but junk remains
     const junkCount = board.length;
@@ -826,20 +620,21 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   }
 
   const recommendedMoveLimit = Math.max(1, moveCount - bonusTurns + bombPenalties);
-  const difficulty = calculateDifficulty(nodes, edges, levelData, recommendedMoveLimit, steps);
+  const { difficulty, vocabDifficulty, moveDifficulty, learningDifficulty } = calculateDifficulty(nodes, edges, levelData, recommendedMoveLimit, steps);
 
   return {
     steps,
     totalMoves: moveCount,
     bonusTurns,
     recommendedMoveLimit,
-    difficulty
+    difficulty,
+    vocabDifficulty,
+    moveDifficulty,
+    learningDifficulty
   };
 }
 
 function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, recommendedMoveLimit: number, steps: any[]) {
-  const factors: string[] = [];
-
   // Compute Peak Congestion & Congestion Turns
   let peakCongestion = 0;
   let congestionTurns = 0;
@@ -855,88 +650,226 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, reco
   const configMoveLimit = levelData?.moveLimit || 0;
   const moveTightness = configMoveLimit - recommendedMoveLimit;
 
-  // Rarity calculation
-  let rarityScore = 0;
+  // 1. Vocabulary Difficulty calculation
   const wordNodes = nodes.filter(n => !n.data.isCategory && !n.data.isChunk);
-  if (wordNodes.length > 0) {
-    let ultraRare = 0; let veryRare = 0; let rare = 0; let common = 0;
-    wordNodes.forEach(wn => {
-      const wLabel = String(wn.data.label).toLowerCase();
-      let foundPop: number | null = null;
-      for (const cat of globalDict) {
-        const match = cat.words.find((w: any) => w.word.toLowerCase() === wLabel);
-        if (match && match.popularity) {
-          foundPop = match.popularity;
-          break;
+  let ultraRare = 0; let veryRare = 0; let rare = 0; let common = 0;
+  wordNodes.forEach(wn => {
+    const wLabel = String(wn.data.label).toLowerCase();
+    let foundPop: number | null = null;
+    for (const cat of globalDict) {
+      const match = cat.words.find((w: any) => w.word.toLowerCase() === wLabel);
+      if (match && match.popularity !== undefined) {
+        foundPop = match.popularity;
+        break;
+      }
+    }
+    if (foundPop !== null) {
+      if (foundPop < 15) ultraRare++;
+      else if (foundPop < 30) veryRare++;
+      else if (foundPop < 50) rare++;
+      else if (foundPop > 80) common++;
+    }
+  });
+
+  let rawRarityScore = (ultraRare * 6.0) + (veryRare * 3.0) + (rare * 0.5);
+  const totalWords = wordNodes.length;
+  const wordsNotDropped = Math.max(0, totalWords - maxBubbles);
+  const rarityDensity = totalWords > 0 ? (ultraRare + veryRare + rare) / totalWords : 0;
+  
+  // Option 2: Density Multiplier
+  const densityMultiplier = 1 + rarityDensity * 2;
+  let finalRarityScore = rawRarityScore * densityMultiplier;
+  
+  if (totalWords > 0 && common > totalWords * 0.7) {
+    finalRarityScore = Math.max(0, finalRarityScore - 10);
+  }
+
+  // Calculate Vocab Score
+  const rawVocabScore = (wordsNotDropped * 1.0) + (finalRarityScore * 1.2);
+  const vocabScore = Math.round(Math.max(0, Math.min(100, rawVocabScore)));
+  
+  const vocabFactors: string[] = [];
+  vocabFactors.push(`Total Words: ${totalWords}`);
+  vocabFactors.push(`Words in Queue (not dropped): ${wordsNotDropped}`);
+  if (ultraRare > 0) vocabFactors.push(`${ultraRare} Ultra Rare words`);
+  if (veryRare > 0) vocabFactors.push(`${veryRare} Very Rare words`);
+  if (rare > 0) vocabFactors.push(`${rare} Rare words`);
+  vocabFactors.push(`Rarity Density: ${Math.round(rarityDensity * 100)}%`);
+  vocabFactors.push(`Density Multiplier: ${densityMultiplier.toFixed(2)}x`);
+
+  const vocabLabel = getDifficultyLabel(vocabScore);
+  const vocabColor = getDifficultyColor(vocabScore);
+
+  // 2. Puzzle / Move Difficulty calculation
+  let moveScore = 0;
+  let moveLabel = 'Easy';
+  let moveColor = '#22c55e'; // green-500
+  const moveFactors: string[] = [];
+
+  if (configMoveLimit <= 0) {
+    moveScore = 0;
+    moveLabel = 'Infinite';
+    moveColor = '#22c55e';
+    moveFactors.push(`Infinite moves enabled (${configMoveLimit})`);
+  } else {
+    const rawMoveScore = 30 + (peakCongestion * 2.5) + (congestionTurns * 1.5) - (moveTightness * 3.0);
+    moveScore = Math.round(Math.max(0, Math.min(100, rawMoveScore)));
+    moveLabel = getDifficultyLabel(moveScore);
+    moveColor = getDifficultyColor(moveScore);
+    moveFactors.push(`Peak Congestion: ${peakCongestion}`);
+    moveFactors.push(`Congestion Turns: ${congestionTurns}`);
+    moveFactors.push(`Move Tightness (Buffer): ${moveTightness}`);
+  }
+
+  // 3. New Combined Difficulty
+  const nestedCount = nodes.filter(n => n.data.isCategory && !n.data.isRoot).length;
+  let nestedPenalty = 0;
+  if (nestedCount === 1) nestedPenalty = 5;
+  else if (nestedCount === 2) nestedPenalty = 10;
+  else if (nestedCount === 3) nestedPenalty = 20;
+  else if (nestedCount === 4) nestedPenalty = 40;
+  else if (nestedCount > 4) nestedPenalty = 40 + (nestedCount - 4) * 10;
+  
+  let bufferPenalty = 0;
+  if (configMoveLimit > 0) {
+    const moveBuffer = configMoveLimit - recommendedMoveLimit;
+    if (moveBuffer < 10) {
+      bufferPenalty = (10 - moveBuffer) * 8;
+    } else if (moveBuffer > 15) {
+      bufferPenalty = -Math.min(25, (moveBuffer - 15) * 2.0);
+    }
+  }
+
+  // User Education / Mechanic Unfamiliarity Penalty
+  let levelNumber = 0;
+  if (levelData?.m_Name) {
+    const match = levelData.m_Name.match(/\d+/);
+    if (match) {
+      levelNumber = parseInt(match[0]) + 1; // Convert 0-indexed to 1-indexed
+    }
+  }
+
+  const INTRO_LEVELS: Record<string, number> = {
+    nested: 5,
+    separator: 20,
+    frozen: 30,
+    keyLock: 50,
+    burst: 81,
+    screwLock: 161,
+  };
+
+  const activeMechanics: string[] = [];
+  if (nestedCount > 0) activeMechanics.push('nested');
+  if (levelData?.useBubbleSeparator > 0) activeMechanics.push('separator');
+  if (levelData?.frozenBubbles && levelData.frozenBubbles.length > 0) activeMechanics.push('frozen');
+  if (levelData?.keyLockBubbles && levelData.keyLockBubbles.length > 0) activeMechanics.push('keyLock');
+  if (levelData?.burstBubbles && levelData.burstBubbles.length > 0) activeMechanics.push('burst');
+  if (levelData?.screwLockBubbles && levelData.screwLockBubbles.length > 0) activeMechanics.push('screwLock');
+
+  let mechanicUnfamiliarityScore = 0;
+  const learningFactors: string[] = [];
+
+  if (levelNumber > 0) {
+    activeMechanics.forEach(mech => {
+      const introLevel = INTRO_LEVELS[mech];
+      if (introLevel) {
+        const dist = levelNumber - introLevel;
+        if (dist <= 2) {
+          let penalty = 0;
+          let desc = '';
+          if (dist <= 0) {
+            penalty = 20;
+            desc = `New mechanic: ${mech} (+20)`;
+          } else if (dist === 1) {
+            penalty = 12;
+            desc = `2nd encounter: ${mech} (+12)`;
+          } else if (dist === 2) {
+            penalty = 6;
+            desc = `3rd encounter: ${mech} (+6)`;
+          }
+          mechanicUnfamiliarityScore += penalty;
+          if (penalty > 0) {
+            learningFactors.push(desc);
+          }
         }
       }
-      if (foundPop !== null) {
-        if (foundPop < 15) ultraRare++;
-        else if (foundPop < 30) veryRare++;
-        else if (foundPop < 50) rare++;
-        else if (foundPop > 80) common++;
-      }
     });
-    rarityScore = (ultraRare * 8) + (veryRare * 4) + (rare * 2);
-    if (common > wordNodes.length * 0.7) rarityScore -= 10;
-    
-    if (ultraRare > 0) factors.push(`${ultraRare} Ultra Rare words`);
-    if (veryRare > 0) factors.push(`${veryRare} Very Rare words`);
-    if (rare > 0) factors.push(`${rare} Rare words`);
+  }
+  mechanicUnfamiliarityScore = Math.min(30, mechanicUnfamiliarityScore);
+  if (mechanicUnfamiliarityScore > 0) {
+    learningFactors.unshift(`Mechanic unfamiliarity penalty: +${mechanicUnfamiliarityScore}`);
   }
 
-  // Calculate new Finetuned Score
-  const nodesPts = nodes.length * 9.4;
-  const congPts = peakCongestion * 4.7;
-  const rarityPts = rarityScore * 0.9;
-  const movePts = moveTightness * 2.1;
-  const turnsPts = congestionTurns * 1.6;
-
-  let rawScore = nodesPts + congPts + rarityPts - movePts - turnsPts - 358.1;
-  let score = rawScore / 4.8;
-  score = Math.max(0, Math.round(score * 10) / 10);
-
-  factors.push(`Nodes (${nodes.length}): +${(nodesPts / 4.8).toFixed(1)}`);
-  factors.push(`Peak Congestion (${peakCongestion}): +${(congPts / 4.8).toFixed(1)}`);
-  if (rarityScore !== 0) factors.push(`Rarity Score (${rarityScore}): +${(rarityPts / 4.8).toFixed(1)}`);
-  factors.push(`Move Tightness (${moveTightness}): -${(movePts / 4.8).toFixed(1)}`);
-  if (congestionTurns > 0) factors.push(`Congestion Turns (${congestionTurns}): -${(turnsPts / 4.8).toFixed(1)}`);
-  factors.push(`Base Offset: -74.6`);
-  
-  if (levelData?.cycleLockBubbles?.length > 0) {
-    factors.push(`${levelData.cycleLockBubbles.length} Cycle Lock bubbles`);
-    score += levelData.cycleLockBubbles.length * 2;
-  }
-  if (levelData?.immovableBubbles?.length > 0) {
-    factors.push(`${levelData.immovableBubbles.length} Immovable bubbles`);
-    score += levelData.immovableBubbles.length * 1.5;
-  }
-  if (levelData?.countdownBubbles?.length > 0) {
-    factors.push(`${levelData.countdownBubbles.length} Countdown bubbles`);
-  }
-  if (levelData?.linkedBubbles?.length > 0) {
-    factors.push(`${levelData.linkedBubbles.length} Linked main words`);
-    score += levelData.linkedBubbles.length * 3;
+  // Progression Offset: 10 levels first default +15, then decreases by 5 every 10 levels
+  const progressionOffset = levelNumber > 0 ? Math.max(0, 15 - Math.floor((levelNumber - 1) / 10) * 5) : 0;
+  if (progressionOffset > 0) {
+    learningFactors.push(`Progression stage offset (L${levelNumber}): +${progressionOffset}`);
   }
 
-  // Determine Label
-  let label = 'Easy';
-  let color = '#22c55e'; // green-500
-  if (score > 67) {
-    label = 'Expert';
-    color = '#ef4444'; // red-500
-  } else if (score > 58) {
-    label = 'Hard';
-    color = '#f97316'; // orange-500
-  } else if (score > 35) {
-    label = 'Medium';
-    color = '#eab308'; // yellow-500
+  const learningScore = Math.min(100, mechanicUnfamiliarityScore + progressionOffset);
+  const learningLabel = getLearningLabel(learningScore);
+  const learningColor = getLearningColor(learningScore);
+
+  let proposedScore = (vocabScore * 0.35) + (moveScore * 0.65) + nestedPenalty + bufferPenalty + learningScore;
+  if (configMoveLimit <= 0) {
+    proposedScore = 0; // Infinite/Tutorial levels are always Easy (0.0)
   }
+  proposedScore = Math.max(0, proposedScore);
+  const score = Math.round(proposedScore * 10) / 10;
+
+  const factors: string[] = [];
+  factors.push(`Base Vocab Component (35%): ${(vocabScore * 0.35).toFixed(1)}`);
+  factors.push(`Base Move Component (65%): ${(moveScore * 0.65).toFixed(1)}`);
+  if (nestedCount > 0) {
+    factors.push(`Nested Categories Penalty (${nestedCount}): +${nestedPenalty.toFixed(1)}`);
+  }
+  if (configMoveLimit > 0) {
+    const moveBuffer = configMoveLimit - recommendedMoveLimit;
+    if (bufferPenalty > 0) {
+      factors.push(`Tight Move Buffer Penalty (Buffer: ${moveBuffer}): +${bufferPenalty.toFixed(1)}`);
+    } else if (bufferPenalty < 0) {
+      factors.push(`Generous Move Buffer Reward (Buffer: ${moveBuffer}): -${Math.abs(bufferPenalty).toFixed(1)}`);
+    }
+  }
+  if (learningScore > 0) {
+    factors.push(`Learning Penalty: +${learningScore.toFixed(1)}`);
+  }
+
+  const label = getDifficultyLabel(score);
+  const color = getDifficultyColor(score);
 
   return {
-    score,
-    label,
-    factors,
-    color
+    difficulty: { score, label, factors, color },
+    vocabDifficulty: { score: vocabScore, label: vocabLabel, factors: vocabFactors, color: vocabColor },
+    moveDifficulty: { score: moveScore, label: moveLabel, factors: moveFactors, color: moveColor },
+    learningDifficulty: { score: learningScore, label: learningLabel, factors: learningFactors, color: learningColor }
   };
+}
+
+function getDifficultyLabel(score: number): string {
+  if (score > 67) return 'Expert';
+  if (score > 58) return 'Hard';
+  if (score > 35) return 'Medium';
+  return 'Easy';
+}
+
+function getDifficultyColor(score: number): string {
+  if (score > 67) return '#ef4444'; // red-500
+  if (score > 58) return '#f97316'; // orange-500
+  if (score > 35) return '#eab308'; // yellow-500
+  return '#22c55e'; // green-500
+}
+
+function getLearningLabel(score: number): string {
+  if (score >= 35) return 'Steep';
+  if (score >= 20) return 'Moderate';
+  if (score >= 5) return 'Intuitive';
+  return 'Familiar';
+}
+
+function getLearningColor(score: number): string {
+  if (score >= 35) return '#ef4444'; // red-500
+  if (score >= 20) return '#f97316'; // orange-500
+  if (score >= 5) return '#eab308'; // yellow-500
+  return '#22c55e'; // green-500
 }
