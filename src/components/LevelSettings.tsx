@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Puzzle } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -34,6 +34,18 @@ function Toggle({ checked, onChange }: { checked: boolean, onChange: (v: boolean
 
 export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFocusWord, onCalculateSolution, levelName }: LevelSettingsProps) {
   const [forceOpen, setForceOpen] = useState<Record<string, boolean>>({});
+
+  const existingChunks = useMemo(() => {
+    const chunks = new Set<string>();
+    if (levelData?.allWordEntries) {
+      levelData.allWordEntries.forEach((e: any) => {
+        if (e.chunks && Array.isArray(e.chunks)) {
+          e.chunks.forEach((c: string) => chunks.add(c.toLowerCase()));
+        }
+      });
+    }
+    return chunks;
+  }, [levelData]);
 
   const [sortedMechanicIds, setSortedMechanicIds] = useState<string[]>([]);
   
@@ -225,6 +237,201 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
               </div>
         
               
+      )
+    },
+    {
+      id: 'crack',
+      isActive: () => forceOpen.crack || (levelData.crackBubbles && levelData.crackBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Zap size={16} color="#fbbf24" />
+              Mechanic: Crack Bubbles
+            </h3>
+            <Toggle 
+              checked={forceOpen.crack || (levelData.crackBubbles && levelData.crackBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, crack: checked }));
+                handleChange('crackBubbles', checked ? [] : undefined);
+              }}
+            />
+          </div>
+          {(forceOpen.crack || (levelData.crackBubbles && levelData.crackBubbles.length > 0)) && (
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                Crack Words (Drag & Drop from left panel):
+              </div>
+              <div 
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                  if (wordLabel) {
+                    const currentCracks = levelData.crackBubbles || [];
+                    if (!currentCracks.some((c: any) => c.word === wordLabel)) {
+                      let chunksToSpawn: string[] = [];
+                      if (levelData.allWordEntries) {
+                        const entry = levelData.allWordEntries.find((e: any) => String(e.fullWord).toLowerCase() === String(wordLabel).toLowerCase());
+                        if (entry && entry.chunks) {
+                          chunksToSpawn = [...entry.chunks];
+                        }
+                      }
+                      handleChange('crackBubbles', [...currentCracks, { word: wordLabel, crackCount: 3, chunkWords: chunksToSpawn }]);
+                    }
+                  }
+                }}
+                style={{ 
+                  minHeight: '80px', padding: '8px', border: '1px dashed rgba(251,191,36,0.5)', 
+                  borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                }}
+              >
+                {(!levelData.crackBubbles || levelData.crackBubbles.length === 0) ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                    Drop words here to add Crack Bubbles
+                  </span>
+                ) : (
+                  levelData.crackBubbles.map((crackItem: any, i: number) => (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: 'rgba(251,191,36,0.1)', padding: '8px', borderRadius: '6px', border: '1px solid rgba(251,191,36,0.3)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Zap 
+                            size={14} 
+                            color="#fbbf24" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(crackItem.word);
+                            }}
+                            title={`Focus on ${crackItem.word}`}
+                          />
+                          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', background: 'rgba(0,0,0,0.3)', padding: '2px 8px', borderRadius: '4px' }}>
+                            {crackItem.word && String(crackItem.word).split('').map((char: string, charIdx: number) => {
+                               const wStr = String(crackItem.word);
+                               const c1 = crackItem.chunkWords[0] || '';
+                               const c2 = crackItem.chunkWords[1] || '';
+                               const isCurrentCut = (c1 === wStr.slice(0, charIdx) && c2 === wStr.slice(charIdx));
+                               
+                               return (
+                                 <React.Fragment key={charIdx}>
+                                   {charIdx > 0 && (
+                                     <div 
+                                       onClick={() => {
+                                          const newCracks = [...levelData.crackBubbles];
+                                          newCracks[i].chunkWords[0] = wStr.slice(0, charIdx);
+                                          newCracks[i].chunkWords[1] = wStr.slice(charIdx);
+                                          handleChange('crackBubbles', newCracks);
+                                       }}
+                                       title={`Cut here: ${wStr.slice(0, charIdx)} + ${wStr.slice(charIdx)}`}
+                                       style={{
+                                          width: '12px', height: '16px', cursor: 'pointer',
+                                          background: isCurrentCut ? 'rgba(251,191,36,0.8)' : 'transparent',
+                                          borderLeft: '1px dashed rgba(255,255,255,0.1)',
+                                          borderRight: '1px dashed rgba(255,255,255,0.1)',
+                                          margin: '0 2px',
+                                          borderRadius: '2px',
+                                          transition: 'background 0.2s'
+                                       }}
+                                       onMouseEnter={(e) => {
+                                          if (!isCurrentCut) e.currentTarget.style.background = 'rgba(251,191,36,0.3)';
+                                       }}
+                                       onMouseLeave={(e) => {
+                                          if (!isCurrentCut) e.currentTarget.style.background = 'transparent';
+                                       }}
+                                     />
+                                   )}
+                                   <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'white' }}>{char}</span>
+                                 </React.Fragment>
+                               );
+                            })}
+                          </div>
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Hits:</span>
+                          <input 
+                            type="number" 
+                            value={crackItem.crackCount}
+                            onChange={(e) => {
+                              const newCracks = [...levelData.crackBubbles];
+                              newCracks[i].crackCount = parseInt(e.target.value) || 1;
+                              handleChange('crackBubbles', newCracks);
+                            }}
+                            style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                          />
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('crackBubbles', levelData.crackBubbles.filter((c: any) => c.word !== crackItem.word));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div 
+                        style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}
+                      >
+                        Chunks to spawn (Cut above or type):
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '6px', background: 'rgba(0,0,0,0.2)', padding: '8px', borderRadius: '6px', border: '1px dashed rgba(255,255,255,0.2)' }}>
+                          
+                          {/* Inputs with Duplication Check */}
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <div style={{ position: 'relative', width: '50%' }}>
+                              <input
+                                type="text"
+                                placeholder="Chunk 1"
+                                value={crackItem.chunkWords[0] || ''}
+                                onChange={(e) => {
+                                  const newCracks = [...levelData.crackBubbles];
+                                  newCracks[i].chunkWords[0] = e.target.value;
+                                  handleChange('crackBubbles', newCracks);
+                                }}
+                                style={{ 
+                                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', 
+                                  outline: 'none', color: 'white', fontSize: '12px', padding: '4px 20px 4px 8px', 
+                                  borderRadius: '4px', width: '100%', textAlign: 'center', boxSizing: 'border-box'
+                                }}
+                              />
+                              {(crackItem.chunkWords[0] && existingChunks.has(crackItem.chunkWords[0].toLowerCase())) ? (
+                                <span title="Chunk already exists in level" style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', color: '#4ade80', fontSize: '11px', fontWeight: 'bold' }}>✓</span>
+                              ) : null}
+                            </div>
+                            <span style={{ color: 'var(--text-muted)' }}>+</span>
+                            <div style={{ position: 'relative', width: '50%' }}>
+                              <input
+                                type="text"
+                                placeholder="Chunk 2"
+                                value={crackItem.chunkWords[1] || ''}
+                                onChange={(e) => {
+                                  const newCracks = [...levelData.crackBubbles];
+                                  newCracks[i].chunkWords[1] = e.target.value;
+                                  handleChange('crackBubbles', newCracks);
+                                }}
+                                style={{ 
+                                  background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', 
+                                  outline: 'none', color: 'white', fontSize: '12px', padding: '4px 20px 4px 8px', 
+                                  borderRadius: '4px', width: '100%', textAlign: 'center', boxSizing: 'border-box'
+                                }}
+                              />
+                              {(crackItem.chunkWords[1] && existingChunks.has(crackItem.chunkWords[1].toLowerCase())) ? (
+                                <span title="Chunk already exists in level" style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', color: '#4ade80', fontSize: '11px', fontWeight: 'bold' }}>✓</span>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       )
     },
     {
@@ -871,7 +1078,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                       if (wordLabel) {
                         const currentImmovable = levelData.immovableBubbles || [];
                         if (!currentImmovable.some((f: any) => (typeof f === 'string' ? f : f.word) === wordLabel)) {
-                          handleChange('immovableBubbles', [...currentImmovable, { word: wordLabel }]);
+                          handleChange('immovableBubbles', [...currentImmovable, wordLabel]);
                         }
                       }
                     }}

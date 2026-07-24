@@ -83,10 +83,10 @@ const isDuplicateRoot = (root: string, seenRoots: Set<string>) => {
 
 const getTreeSig = (catName: string, allCats: any[]): any => {
   const c = allCats.find((x: any) => x.category === catName);
-  if (!c) return { numWords: 0, subcats: [], oldWords: [], oldHasIcon: false };
+  if (!c) return { numWords: 0, subcats: [], oldWords: [], oldHasIcon: false, oldSubcatNames: [] };
   const subcats = allCats.filter((x: any) => x.parentCategory === catName);
   const subSig = subcats.map((x: any) => getTreeSig(x.category, allCats));
-  return { numWords: c.words.length, subcats: subSig, oldWords: c.words.map((w: any) => w.fullWord), oldHasIcon: !!c.icon };
+  return { numWords: c.words.length, subcats: subSig, oldWords: c.words.map((w: any) => w.fullWord), oldHasIcon: !!c.icon, oldSubcatNames: subcats.map((x: any) => x.category) };
 };
 
 const dictSigCache = new Map<string, any>();
@@ -282,9 +282,26 @@ const generateNewBranch = (
     uniqueWords.push(duplicateWords.shift());
   }
 
-  let wordsToImport = uniqueWords.slice(0, numRequired);
+  let alignedWordsToImport: any[] = new Array(numRequired);
+  let oldSubcatsLower = (reqSig.oldSubcatNames || []).map((name: string) => name.toLowerCase());
+  let forcedIdx = 0;
+  let otherIdx = 0;
+  let forcedUnique = uniqueWords.slice(0, chosenSubcategories.length);
+  let otherUnique = uniqueWords.slice(chosenSubcategories.length);
 
-  wordsToImport.forEach((w: any, index: number) => {
+  for (let i = 0; i < numRequired; i++) {
+     let oldW = reqSig.oldWords && reqSig.oldWords[i] ? reqSig.oldWords[i].toLowerCase() : "";
+     let isOldSubcat = oldSubcatsLower.includes(oldW);
+     if (isOldSubcat && forcedIdx < forcedUnique.length) {
+         alignedWordsToImport[i] = forcedUnique[forcedIdx++];
+     } else if (otherIdx < otherUnique.length) {
+         alignedWordsToImport[i] = otherUnique[otherIdx++];
+     } else {
+         alignedWordsToImport[i] = uniqueWords[0];
+     }
+  }
+
+  alignedWordsToImport.forEach((w: any, index: number) => {
     const wRoot = getRoot(w.word);
     magicChangeRoots.add(wRoot);
     
@@ -335,8 +352,7 @@ const generateNewBranch = (
       icon: null,
       IsCracked: isCracked,
       crackBreakNum: crackBreakNum,
-      IsLinked: isLinked,
-      linkedChunkWords: []
+      IsLinked: isLinked
     };
     delete wordEntry.chunks;
 
@@ -366,8 +382,7 @@ const generateNewBranch = (
             icon: null,
             IsCracked: cIsCracked,
             crackBreakNum: cCrackBreakNum,
-            IsLinked: cIsLinked,
-            linkedChunkWords: []
+            IsLinked: cIsLinked
           });
         });
       }
@@ -604,16 +619,58 @@ for (let i = startLevel; i <= endLevel; i++) {
       screwDriverWords: (sl.screwDriverWords || []).map((sdw: string) => remapWordOrChunk(sdw))
     }));
   }
-  if (levelData.crackedBubbles) {
-    levelData.crackedBubbles = levelData.crackedBubbles.map((cb: any) => typeof cb === 'string' ? remapWordOrChunk(cb) : { ...cb, word: remapWordOrChunk(cb.word) });
+  if (levelData.cycleLockBubbles) {
+    levelData.cycleLockBubbles = levelData.cycleLockBubbles.map((cl: any) => ({
+      ...cl,
+      cycleLockWord: remapWordOrChunk(cl.cycleLockWord)
+    }));
+  }
+  if (levelData.immovableBubbles) {
+    levelData.immovableBubbles = levelData.immovableBubbles.map((iw: string) => remapWordOrChunk(iw));
+  }
+  if (levelData.countdownBubbles) {
+    levelData.countdownBubbles = levelData.countdownBubbles.map((cb: any) => ({
+      ...cb,
+      word: remapWordOrChunk(cb.word)
+    }));
   }
   if (levelData.linkedBubbles) {
-    levelData.linkedBubbles = levelData.linkedBubbles.map((lb: any) => typeof lb === 'string' ? remapWordOrChunk(lb) : { ...lb, word: remapWordOrChunk(lb.word) });
+    levelData.linkedBubbles = levelData.linkedBubbles.map((lb: any) => {
+      if (typeof lb === 'string') return remapWordOrChunk(lb);
+      return {
+        ...lb,
+        word: remapWordOrChunk(lb.word),
+        linkedChunks: lb.linkedChunks ? lb.linkedChunks.map((c: string) => remapWordOrChunk(c)) : undefined
+      };
+    });
+  }
+  if (levelData.crackedBubbles) {
+    levelData.crackedBubbles = levelData.crackedBubbles.map((cb: any) => {
+      if (typeof cb === 'string') return remapWordOrChunk(cb);
+      return {
+        ...cb,
+        word: remapWordOrChunk(cb.word),
+        chunkWords: cb.chunkWords ? cb.chunkWords.map((cw: string) => remapWordOrChunk(cw)) : undefined
+      };
+    });
+  }
+  if (levelData.crackBubbles) {
+    levelData.crackBubbles = levelData.crackBubbles.map((cb: any) => {
+      if (typeof cb === 'string') return remapWordOrChunk(cb);
+      return {
+        ...cb,
+        word: remapWordOrChunk(cb.word),
+        chunkWords: cb.chunkWords ? cb.chunkWords.map((cw: string) => remapWordOrChunk(cw)) : undefined
+      };
+    });
   }
 
   // Deduplicate allWordEntries just in case
   const uniqueEntriesMap = new Map();
   levelData.allWordEntries.forEach((entry: any) => {
+    if (entry.linkedChunkWords) {
+      entry.linkedChunkWords = entry.linkedChunkWords.map((cw: string) => remapWordOrChunk(cw));
+    }
     const key = entry.parentWord ? `${String(entry.parentWord).toLowerCase()}_${String(entry.fullWord).toLowerCase()}` : `_${String(entry.fullWord).toLowerCase()}`;
     if (!uniqueEntriesMap.has(key)) {
       uniqueEntriesMap.set(key, entry);

@@ -23,12 +23,12 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Daily planner",
+      "category": "City buildings",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "schedule",
+          "fullWord": "Bank",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -36,7 +36,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "notes",
+          "fullWord": "Museum",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -44,7 +44,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "goals",
+          "fullWord": "Skyscapers",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -52,7 +52,46 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "to-do list",
+          "fullWord": "Hospital",
+          "icon": "hospital.png",
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Bank",
+      "parentCategory": "City buildings",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Account",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Deposit",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Funds",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Loan",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -62,12 +101,90 @@
       ]
     },
     {
-      "category": "Birds Of Prey",
+      "category": "Museum",
+      "parentCategory": "City buildings",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Archive",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Artifact",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Curator",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Display",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Skyscapers",
+      "parentCategory": "City buildings",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Elevator",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lobby",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Penthouse",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Rooftop",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Direction",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "falcon",
+          "fullWord": "Back",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -75,7 +192,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "hawk",
+          "fullWord": "East",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -83,7 +200,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "raven",
+          "fullWord": "Left",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -91,7 +208,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "kite",
+          "fullWord": "North",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -101,129 +218,12 @@
       ]
     },
     {
-      "category": "Falcon",
-      "parentCategory": "Birds Of Prey",
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "peregrine",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "talon",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "soar",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "kestrel",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Hawk",
-      "parentCategory": "Birds Of Prey",
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "osprey",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "buzzard",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "red-tailed",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "merlin",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Raven",
-      "parentCategory": "Birds Of Prey",
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "ebony",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "poe",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "lenore",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "edgar",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Things that fly",
+      "category": "Continents",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "bird",
+          "fullWord": "Africa",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -231,7 +231,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "plane",
+          "fullWord": "Asia",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -239,7 +239,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "rocket",
+          "fullWord": "Australia",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -247,7 +247,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "moth",
+          "fullWord": "Europe",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -257,12 +257,12 @@
       ]
     },
     {
-      "category": "Rocket",
-      "parentCategory": "Things that fly",
+      "category": "Africa",
+      "parentCategory": "Continents",
       "icon": null,
       "words": [
         {
-          "fullWord": "blast",
+          "fullWord": "Baobab",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -270,7 +270,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "thrust",
+          "fullWord": "Nile",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -278,7 +278,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "nasa",
+          "fullWord": "Sahara",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -286,7 +286,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "guidance system",
+          "fullWord": "Kente cloth",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -296,12 +296,12 @@
       ]
     },
     {
-      "category": "Plane",
-      "parentCategory": "Things that fly",
+      "category": "Asia",
+      "parentCategory": "Continents",
       "icon": null,
       "words": [
         {
-          "fullWord": "jet",
+          "fullWord": "China",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -309,7 +309,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "helicopter",
+          "fullWord": "India",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -317,7 +317,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "drone",
+          "fullWord": "Japan",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -325,7 +325,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "glider",
+          "fullWord": "Thailand",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -335,12 +335,12 @@
       ]
     },
     {
-      "category": "Bird",
-      "parentCategory": "Things that fly",
+      "category": "Australia",
+      "parentCategory": "Continents",
       "icon": null,
       "words": [
         {
-          "fullWord": "swan",
+          "fullWord": "Kangaroo",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -348,7 +348,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "crow",
+          "fullWord": "Koala",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -356,7 +356,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "feathers",
+          "fullWord": "Wallaby",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -364,7 +364,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "owl",
+          "fullWord": "Wombat",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -374,12 +374,12 @@
       ]
     },
     {
-      "category": "Sundress",
+      "category": "Months",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "belted",
+          "fullWord": "April",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -387,7 +387,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "frilly",
+          "fullWord": "August",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -395,7 +395,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "backless",
+          "fullWord": "June",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -403,7 +403,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "hemline",
+          "fullWord": "March",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -413,12 +413,12 @@
       ]
     },
     {
-      "category": "Anomaly",
+      "category": "Spatial terms",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "quirk",
+          "fullWord": "Above",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -426,7 +426,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "oddity",
+          "fullWord": "Inside",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -434,7 +434,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "rarity",
+          "fullWord": "Near",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -442,7 +442,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "defect",
+          "fullWord": "Under",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -452,12 +452,12 @@
       ]
     },
     {
-      "category": "Animal Defense",
+      "category": "Royalty and nobility",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "spine",
+          "fullWord": "Baron",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -465,7 +465,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "fang",
+          "fullWord": "Duke",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -473,7 +473,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "claw",
+          "fullWord": "King",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -481,7 +481,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "venom",
+          "fullWord": "Queen",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -492,318 +492,12 @@
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 10,
+  "moveLimit": 46,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
     {
-      "fullWord": "Schedule",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Notes",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Goals",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "To-do list",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Pere",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Peregrine"
-    },
-    {
-      "fullWord": "Grine",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Peregrine"
-    },
-    {
-      "fullWord": "Talon",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Soar",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Kestrel",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Osprey",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Buzzard",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Red-t",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Red-tailed"
-    },
-    {
-      "fullWord": "Ailed",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Red-tailed"
-    },
-    {
-      "fullWord": "Mer",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Merlin"
-    },
-    {
-      "fullWord": "Lin",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Merlin"
-    },
-    {
-      "fullWord": "Ebony",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Poe",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Lenore",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Edgar",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Kite",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Blast",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Thrust",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Nasa",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Guidance system",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Jet",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Helic",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Helicopter"
-    },
-    {
-      "fullWord": "Opter",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Helicopter"
-    },
-    {
-      "fullWord": "Drone",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Glider",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Swan",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Crow",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Feathers",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "O",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Owl"
-    },
-    {
-      "fullWord": "Wl",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Owl"
-    },
-    {
-      "fullWord": "Moth",
+      "fullWord": "August",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -812,7 +506,70 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Belted",
+      "fullWord": "North",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Queen",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Inside",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Curator",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Left",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Hospital",
+      "parentWord": null,
+      "icon": "hospital.png",
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Loan",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "King",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -821,130 +578,346 @@
       "parentWord": null
     },
     {
-      "fullWord": "Fri",
+      "fullWord": "Duke",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Frilly"
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Lly",
+      "fullWord": "Above",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": "Frilly"
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Backless",
+      "fullWord": "Bao",
+      "parentWord": "Baobab",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Hemline",
+      "fullWord": "Bab",
+      "parentWord": "Baobab",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Quirk",
+      "fullWord": "Baron",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Oddity",
+      "fullWord": "Lobby",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Rarity",
+      "fullWord": "China",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Defect",
+      "fullWord": "April",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Spine",
+      "fullWord": "East",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Fang",
+      "fullWord": "Artifact",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Claw",
+      "fullWord": "Display",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Venom",
+      "fullWord": "India",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Kente cloth",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Unt",
+      "parentWord": "Account",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Wallaby",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Elevator",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Under",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Penthouse",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Acco",
+      "parentWord": "Account",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Koala",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Near",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Funds",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Rooftop",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Sahara",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Nile",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Kangaroo",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Back",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Depo",
+      "parentWord": "Deposit",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Wombat",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Europe",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Japan",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Thailand",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "March",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Archive",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Sit",
+      "parentWord": "Deposit",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "June",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
     }
   ],
   "allWords": [],
   "frozenBubbles": [
     {
-      "word": "Schedule",
+      "word": "back",
       "mergesNeeded": 5
     },
     {
-      "word": "Kestrel",
+      "word": "curator",
       "mergesNeeded": 3
     },
     {
-      "word": "Blast",
+      "word": "koala",
       "mergesNeeded": 6
     },
     {
-      "word": "Quirk",
+      "word": "above",
       "mergesNeeded": 3
     }
   ],

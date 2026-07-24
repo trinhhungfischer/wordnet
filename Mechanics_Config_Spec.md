@@ -198,7 +198,7 @@ Cấu trúc:
 
 - `startingPosition`: Vị trí ban đầu của từ khi bắt đầu level (0 = không bị khoá khởi đầu, 1 = bị khoá khởi đầu)
 
-**Luật chơi:** Các từ bị Cycle Lock là 1 sẽ không thể merge và khi sang trạng thái 0 thì có thể merge. Số lần hit (hoặc ghép) sẽ chuyển khoá từ 0 sang 1 và ngược lại.
+**Luật chơi:** Các từ bị Cycle Lock là 1 sẽ không thể merge và khi sang trạng thái 0 thì có thể merge. Số lần hit (hoặc ghép) sẽ chuyển khoá từ 0 sang 1 và ngược lại. Khi merge vào bóng Cycle (hoặc ngược lại) thì bóng merge sẽ mất luôn Cycle Lock trở lại trạng thái bình thường.
 
 ## 9. Immovable Bubbles
 
@@ -270,4 +270,4 @@ Cấu trúc:
 ]
 ```
 
-**Luật chơi:** Quả bóng đang bị nứt. Mỗi lần hit (hoặc ghép) sẽ làm giảm crackCount đi 1. Khi crackCount = 0, quả bóng sẽ bị vỡ ra và spawn ra các chunkWords tương ứng. Các chunkWords này có thể merge được.
+**Luật chơi:** Quả bóng đang bị nứt. Mỗi lần hit (hoặc ghép) sẽ làm giảm crackCount đi 1. Khi crackCount = 0, quả bóng sẽ bị vỡ ra và spawn ra các chunkWords tương ứng. Các chunkWords này có thể merge được và tạo lại thành từ bình thường.

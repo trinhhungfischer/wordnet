@@ -28,7 +28,7 @@ import DictionaryBrowser from './DictionaryBrowser2';
 import MagicChangeModal from './MagicChangeModal';
 import SolutionModal from './SolutionModal';
 import UserManualModal from './UserManualModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer, Magnet } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer, Magnet, Zap } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 import pluralize from 'pluralize';
@@ -158,6 +158,34 @@ const isNodeFrozen = (node: Node, frozenBubblesList: any[], edges: Edge[], nodes
     }
   }
   return false;
+};
+
+const getCrackBubbleRule = (node: Node, crackBubblesList: any[], edges: Edge[], nodes: Node[]) => {
+  if (!crackBubblesList || crackBubblesList.length === 0) return null;
+  const label = String(node.data.label).toLowerCase();
+  
+  const exactRule = crackBubblesList.find((f: any) => f.word.toLowerCase() === label);
+  if (exactRule) return exactRule;
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode) {
+        const pRule = crackBubblesList.find((f: any) => f.word.toLowerCase() === String(parentNode.data.label).toLowerCase());
+        if (pRule) return pRule;
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    const cRule = crackBubblesList.find((f: any) => chunkLabels.some(cLabel => f.word.toLowerCase() === cLabel));
+    if (cRule) return cRule;
+  }
+  return null;
 };
 
 const isNodeImmovable = (node: Node, immovableBubblesList: any[], edges: Edge[], nodes: Node[]) => {
@@ -473,62 +501,72 @@ export default function GraphEditor() {
                 .sort((a, b) => (a.data.globalIndex as number) - (b.data.globalIndex as number))
                 .map(n => n.id);
                 
-    if (!rawLevelData?.linkedBubbles || rawLevelData.linkedBubbles.length === 0) {
-      return baseList;
+    let resultList = baseList;
+    if (rawLevelData?.linkedBubbles && rawLevelData.linkedBubbles.length > 0) {
+      const sortedList: string[] = [];
+      const processedChunks = new Set<string>();
+      
+      const chunkToMain = new Map<string, string>();
+      rawLevelData.linkedBubbles.forEach((lb: any) => {
+        const mainNodes = nodes.filter(n => String(n.data.label).toLowerCase() === lb.word.toLowerCase());
+        if (mainNodes.length > 0) {
+           lb.linkedChunks?.forEach((cLabel: string) => {
+               const chunkNodes = nodes.filter(n => String(n.data.label).toLowerCase() === cLabel.toLowerCase() && n.data.isChunk);
+               chunkNodes.forEach(cn => {
+                  chunkToMain.set(cn.id, mainNodes[0].id);
+               });
+           });
+        }
+      });
+
+      baseList.forEach(id => {
+         if (processedChunks.has(id)) return;
+         
+         if (chunkToMain.has(id)) {
+            // Skip for now, will be pulled when main word drops
+         } else {
+            sortedList.push(id);
+            const node = nodes.find(n => n.id === id);
+            if (node) {
+               const label = String(node.data.label).toLowerCase();
+               const linkedRule = rawLevelData.linkedBubbles.find((lb: any) => lb.word.toLowerCase() === label);
+               if (linkedRule) {
+                   linkedRule.linkedChunks?.forEach((cLabel: string) => {
+                       const chunkNodes = nodes.filter(n => String(n.data.label).toLowerCase() === cLabel.toLowerCase() && n.data.isChunk && baseList.includes(n.id));
+                       chunkNodes.forEach(cn => {
+                           if (!processedChunks.has(cn.id)) {
+                               sortedList.push(cn.id);
+                               processedChunks.add(cn.id);
+                           }
+                       });
+                   });
+               }
+            }
+         }
+      });
+      
+      // Catch orphaned chunks (if main word is missing from queue for some reason)
+      baseList.forEach(id => {
+         if (chunkToMain.has(id) && !processedChunks.has(id)) {
+             sortedList.push(id);
+             processedChunks.add(id);
+         }
+      });
+      
+      resultList = sortedList;
     }
-    
-    const sortedList: string[] = [];
-    const processedChunks = new Set<string>();
-    
-    const chunkToMain = new Map<string, string>();
-    rawLevelData.linkedBubbles.forEach((lb: any) => {
-      const mainNodes = nodes.filter(n => String(n.data.label).toLowerCase() === lb.word.toLowerCase());
-      if (mainNodes.length > 0) {
-         lb.linkedChunks?.forEach((cLabel: string) => {
-             const chunkNodes = nodes.filter(n => String(n.data.label).toLowerCase() === cLabel.toLowerCase() && n.data.isChunk);
-             chunkNodes.forEach(cn => {
-                chunkToMain.set(cn.id, mainNodes[0].id);
-             });
-         });
-      }
-    });
 
-    baseList.forEach(id => {
-       if (processedChunks.has(id)) return;
-       
-       if (chunkToMain.has(id)) {
-          // Skip for now, will be pulled when main word drops
-       } else {
-          sortedList.push(id);
-          const node = nodes.find(n => n.id === id);
-          if (node) {
-             const label = String(node.data.label).toLowerCase();
-             const linkedRule = rawLevelData.linkedBubbles.find((lb: any) => lb.word.toLowerCase() === label);
-             if (linkedRule) {
-                 linkedRule.linkedChunks?.forEach((cLabel: string) => {
-                     const chunkNodes = nodes.filter(n => String(n.data.label).toLowerCase() === cLabel.toLowerCase() && n.data.isChunk && baseList.includes(n.id));
-                     chunkNodes.forEach(cn => {
-                         if (!processedChunks.has(cn.id)) {
-                             sortedList.push(cn.id);
-                             processedChunks.add(cn.id);
-                         }
-                     });
-                 });
-             }
-          }
-       }
+    return resultList.sort((a, b) => {
+      const nodeA = nodes.find(n => n.id === a);
+      const nodeB = nodes.find(n => n.id === b);
+      if (!nodeA || !nodeB) return 0;
+      const chainedA = isNodeChained(nodeA, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+      const chainedB = isNodeChained(nodeB, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+      if (chainedA && !chainedB) return -1;
+      if (!chainedA && chainedB) return 1;
+      return 0;
     });
-    
-    // Catch orphaned chunks (if main word is missing from queue for some reason)
-    baseList.forEach(id => {
-       if (chunkToMain.has(id) && !processedChunks.has(id)) {
-           sortedList.push(id);
-           processedChunks.add(id);
-       }
-    });
-
-    return sortedList;
-  }, [nodes, rawLevelData]);
+  }, [nodes, edges, rawLevelData]);
 
   const duplicateQueueWordsSet = useMemo(() => {
     const words: string[] = [];
@@ -710,6 +748,11 @@ export default function GraphEditor() {
         if (parsed.nodes && parsed.nodes.length > 0) {
           setNodes(parsed.nodes);
           setEdges(parsed.edges);
+          if (parsed.rawLevelData && parsed.rawLevelData.immovableBubbles && Array.isArray(parsed.rawLevelData.immovableBubbles)) {
+            parsed.rawLevelData.immovableBubbles = parsed.rawLevelData.immovableBubbles.map((ib: any) => 
+              typeof ib === 'string' ? ib : ib.word
+            );
+          }
           setRawLevelData(parsed.rawLevelData);
           setSelectedLevelName(parsed.selectedLevelName);
           if (parsed.spawnQueueIds) {
@@ -840,6 +883,14 @@ export default function GraphEditor() {
 
   const loadDataIntoGraph = (data: any, levelName: string) => {
     setSelectedLevelName(levelName);
+    
+    // Sanitize immovableBubbles on load to always be strings
+    if (data.immovableBubbles && Array.isArray(data.immovableBubbles)) {
+      data.immovableBubbles = data.immovableBubbles.map((ib: any) => 
+        typeof ib === 'string' ? ib : ib.word
+      );
+    }
+    
     setRawLevelData(data);
     
     const newNodes: Node[] = [];
@@ -1277,19 +1328,63 @@ export default function GraphEditor() {
   };
 
   const handleExportJsonRef = useRef(handleExportJson);
+  const handleShuffleRangeRef = useRef<() => void>(() => {});
   useEffect(() => {
     handleExportJsonRef.current = handleExportJson;
   }, [handleExportJson]);
+  useEffect(() => {
+    handleShuffleRangeRef.current = handleShuffleRange;
+  });
+
+  const shortcutStateRef = useRef({ levels, selectedLevelName, loadLevel, isDropdownOpen, isManualModalOpen, isSolutionModalOpen, isDictOpen, isMagicChangeOpen, isSettingsOpen });
+  useEffect(() => {
+    shortcutStateRef.current = { levels, selectedLevelName, loadLevel, isDropdownOpen, isManualModalOpen, isSolutionModalOpen, isDictOpen, isMagicChangeOpen, isSettingsOpen };
+  });
 
   useEffect(() => {
-    const handleSaveShortcut = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
-        e.preventDefault();
-        handleExportJsonRef.current();
+    const handleShortcuts = (e: KeyboardEvent) => {
+      const s = shortcutStateRef.current;
+      if (e.key === 'Escape') {
+        if (s.isDropdownOpen) setIsDropdownOpen(false);
+        else if (s.isManualModalOpen) setIsManualModalOpen(false);
+        else if (s.isSolutionModalOpen) setIsSolutionModalOpen(false);
+        else if (s.isDictOpen) setIsDictOpen(false);
+        else if (s.isMagicChangeOpen) setIsMagicChangeOpen(false);
+        else if (s.isSettingsOpen) setIsSettingsOpen(false);
+        return;
+      }
+      
+      if (e.ctrlKey || e.metaKey) {
+        const key = e.key.toLowerCase();
+        if (key === 's') {
+          e.preventDefault();
+          handleExportJsonRef.current();
+        } else if (key === 'q') {
+          e.preventDefault();
+          handleShuffleRangeRef.current();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          if (s.levels.length > 0 && s.selectedLevelName) {
+            const idx = s.levels.indexOf(s.selectedLevelName);
+            if (idx < s.levels.length - 1 && idx !== -1) s.loadLevel(s.levels[idx + 1]);
+          }
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          if (s.levels.length > 0 && s.selectedLevelName) {
+            const idx = s.levels.indexOf(s.selectedLevelName);
+            if (idx > 0) s.loadLevel(s.levels[idx - 1]);
+          }
+        } else if (key === '1') {
+          e.preventDefault();
+          setIsSolutionModalOpen(true);
+        } else if (key === '2') {
+          e.preventDefault();
+          setIsDictOpen(true);
+        }
       }
     };
-    window.addEventListener('keydown', handleSaveShortcut);
-    return () => window.removeEventListener('keydown', handleSaveShortcut);
+    window.addEventListener('keydown', handleShortcuts);
+    return () => window.removeEventListener('keydown', handleShortcuts);
   }, []);
 
 
@@ -1829,6 +1924,13 @@ export default function GraphEditor() {
             );
           }
 
+          // 2.5 Crack
+          if (updatedRawLevelData.crackBubbles) {
+            updatedRawLevelData.crackBubbles = updatedRawLevelData.crackBubbles.map((cb: any) => 
+              cb.word.toLowerCase() === oldLabel ? { ...cb, word: newLabel } : cb
+            );
+          }
+
           // 3. Burst
           if (updatedRawLevelData.burstBubbles) {
             updatedRawLevelData.burstBubbles = updatedRawLevelData.burstBubbles.map((bb: any) => 
@@ -2055,7 +2157,7 @@ export default function GraphEditor() {
 
     let clonedNodes = [...nodes];
     let clonedEdges = [...edges];
-    let clonedRawData = rawLevelData ? { ...rawLevelData, allWordEntries: [...rawLevelData.allWordEntries] } : null;
+    let clonedRawData = rawLevelData ? { ...rawLevelData, allWordEntries: rawLevelData.allWordEntries ? [...rawLevelData.allWordEntries] : [] } : null;
 
     for (const root of rootNodes) {
       const sig = getTreeSig(root.id);
@@ -2575,6 +2677,13 @@ export default function GraphEditor() {
             if (clonedRawData.frozenBubbles) {
               clonedRawData.frozenBubbles = clonedRawData.frozenBubbles.map((fb: any) => 
                 fb.word.toLowerCase() === oldLabel ? { ...fb, word: w.word } : fb
+              );
+            }
+            
+            // Crack Bubbles
+            if (clonedRawData.crackBubbles) {
+              clonedRawData.crackBubbles = clonedRawData.crackBubbles.map((cb: any) => 
+                cb.word.toLowerCase() === oldLabel ? { ...cb, word: w.word } : cb
               );
             }
 
@@ -3284,6 +3393,8 @@ export default function GraphEditor() {
                   const isChunk = Boolean(node.data.isChunk);
                   const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
                   const isFrozen = isNodeFrozen(node, rawLevelData?.frozenBubbles || [], edges, nodes);
+                  const crackRule = getCrackBubbleRule(node, rawLevelData?.crackBubbles || [], edges, nodes);
+                  const isCracked = crackRule !== null;
                   const isBackward = isNodeBackward(node, rawLevelData?.backwardBubbles || [], edges, nodes);
                   const isCryptic = isNodeCryptic(node, rawLevelData?.crypticBubbles || [], edges, nodes);
                   const burstState = isNodeBurst(node, rawLevelData?.burstBubbles || [], edges, nodes);
@@ -3426,6 +3537,7 @@ export default function GraphEditor() {
                           {isChained && <Link size={14} color={selectedNodeId === nodeId ? "white" : "#818cf8"} />}
                           {isCryptic && <Eye size={14} color={selectedNodeId === nodeId ? "white" : "#c084fc"} />}
                           {isFrozen && <Snowflake size={14} color={selectedNodeId === nodeId ? "white" : "#38bdf8"} />}
+                          {isCracked && <Zap size={14} color={selectedNodeId === nodeId ? "white" : "#fbbf24"} />}
                           {isCycleLock && <RefreshCw size={14} color={selectedNodeId === nodeId ? "white" : "#14b8a6"} />}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
                             {isChunk ? 'Chunk' : 'Word'}
@@ -3553,6 +3665,8 @@ export default function GraphEditor() {
             isLinkedMain: isNodeLinkedMain(n, rawLevelData?.linkedBubbles || [], edges, nodes),
             isLinkedChunk: isNodeLinkedChunk(n, rawLevelData?.linkedBubbles || []),
             isFrozen: isNodeFrozen(n, rawLevelData?.frozenBubbles || [], edges, nodes),
+            isCrackBubble: getCrackBubbleRule(n, rawLevelData?.crackBubbles || [], edges, nodes) !== null,
+            crackCountRemaining: getCrackBubbleRule(n, rawLevelData?.crackBubbles || [], edges, nodes)?.crackCount || 0,
             isImmovable: isNodeImmovable(n, rawLevelData?.immovableBubbles || [], edges, nodes),
             isBackward: isNodeBackward(n, rawLevelData?.backwardBubbles || [], edges, nodes),
             isCryptic: isNodeCryptic(n, rawLevelData?.crypticBubbles || [], edges, nodes),
