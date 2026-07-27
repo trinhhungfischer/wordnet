@@ -98,7 +98,7 @@ const dictionaryApiPlugin = () => ({
         req.on('end', () => {
           try {
             const body = Buffer.concat(chunks).toString('utf-8')
-            const { stagedLevels, note } = JSON.parse(body)
+            const { stagedLevels, note, targetVersion } = JSON.parse(body)
             
             // 1. Write each level to public/real_levels/
             const levelNames = Object.keys(stagedLevels)
@@ -117,39 +117,68 @@ const dictionaryApiPlugin = () => ({
               changelogData = JSON.parse(fs.readFileSync(changelogPathSrc, 'utf-8'))
             }
 
-            // Calculate next version
-            let nextVersionNum = 1;
-            if (changelogData.length > 0) {
-              const lastVersion = changelogData[changelogData.length - 1].version;
-              const match = lastVersion.match(/v(\d+)/i);
-              if (match) {
-                nextVersionNum = parseInt(match[1]) + 1;
-              } else {
-                nextVersionNum = changelogData.length + 1;
-              }
-            }
-            const newVersionStr = `v${nextVersionNum}`;
-            
-            // Use simple local time format "HH:mm DD/MM/YYYY" for display
             const now = new Date();
             const dateStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`;
             
-            const levelsListStr = levelNames.map(f => f.replace('.json', '')).join(', ');
+            const newLevelNames = levelNames.map(f => f.replace(/Level\s+/i, '').replace('.json', '').trim());
+            let versionToReport = '';
+            let finalEntry = null;
 
-            const newEntry = {
-              version: newVersionStr,
-              levels: levelsListStr,
-              date: dateStr,
-              note: note || ''
-            };
+            if (targetVersion && targetVersion !== 'new') {
+              const targetIdx = changelogData.findIndex(entry => entry.version === targetVersion);
+              if (targetIdx !== -1) {
+                versionToReport = targetVersion;
+                const entry = changelogData[targetIdx];
+                const existingLevels = entry.levels.split(',').map((l: string) => l.replace(/Level\s+/i, '').trim()).filter(Boolean);
+                const combinedLevels = Array.from(new Set([...existingLevels, ...newLevelNames]));
+                // Sort by level number numerically
+                combinedLevels.sort((a, b) => {
+                  const numA = parseInt(a.replace(/[^0-9]/g, '')) || 0;
+                  const numB = parseInt(b.replace(/[^0-9]/g, '')) || 0;
+                  return numA - numB;
+                });
+                entry.levels = combinedLevels.join(', ');
+                entry.date = dateStr;
+                if (note) {
+                  entry.note = note;
+                }
+                finalEntry = entry;
+              }
+            }
 
-            changelogData.push(newEntry);
+            if (!versionToReport) {
+              // Calculate next version
+              let nextVersionNum = 1;
+              if (changelogData.length > 0) {
+                const lastVersion = changelogData[changelogData.length - 1].version;
+                const match = lastVersion.match(/v(\d+)/i);
+                if (match) {
+                  nextVersionNum = parseInt(match[1]) + 1;
+                } else {
+                  nextVersionNum = changelogData.length + 1;
+                }
+              }
+              const newVersionStr = `v${nextVersionNum}`;
+              versionToReport = newVersionStr;
+              
+              const levelsListStr = newLevelNames.join(', ');
+
+              const newEntry = {
+                version: newVersionStr,
+                levels: levelsListStr,
+                date: dateStr,
+                note: note || ''
+              };
+
+              changelogData.push(newEntry);
+              finalEntry = newEntry;
+            }
             
             fs.writeFileSync(changelogPathSrc, JSON.stringify(changelogData, null, 2), 'utf-8')
             fs.writeFileSync(changelogPathPublic, JSON.stringify(changelogData, null, 2), 'utf-8')
 
             res.setHeader('Content-Type', 'application/json')
-            res.end(JSON.stringify({ success: true, version: newVersionStr, entry: newEntry }))
+            res.end(JSON.stringify({ success: true, version: versionToReport, entry: finalEntry }))
           } catch (error) {
             console.error('Error publishing update:', error)
             res.statusCode = 500

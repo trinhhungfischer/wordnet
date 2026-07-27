@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { X, History, Calendar, CheckCircle2, Edit2, Trash2, Plus, Layers, Target } from 'lucide-react';
+import { X, History, Calendar, CheckCircle2, Edit2, Trash2, Plus, Layers, Target, Download, Upload, Package, Cloud } from 'lucide-react';
 import initialChangelogData from '../data/changelog.json';
 
 interface ChangelogEntry {
@@ -7,6 +7,7 @@ interface ChangelogEntry {
   levels: string;
   date: string;
   note: string;
+  isBuilt?: boolean;
 }
 
 interface ChangelogModalProps {
@@ -19,7 +20,7 @@ interface ChangelogModalProps {
   stagedLevels?: Record<string, any>;
   onSelectDraftLevel?: (level: string) => void;
   onClearDraft?: (level: string) => void;
-  onPublishUpdate?: (note: string) => void;
+  onPublishUpdate?: (note: string, targetVersion: string) => void;
 }
 
 const TAG_COLORS = [
@@ -134,6 +135,126 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
     }
   };
 
+  const handleExport = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(changelogData, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "changelog.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const data = JSON.parse(event.target?.result as string);
+        if (Array.isArray(data)) {
+          setChangelogData(data);
+          try {
+            await fetch('/api/update-changelog', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+            alert('Import changelog thành công!');
+          } catch (e) {
+            console.error(e);
+            alert('Lỗi khi lưu changelog lên server!');
+          }
+        } else {
+          alert('File JSON không đúng định dạng changelog (phải là mảng).');
+        }
+      } catch (err) {
+        alert('Lỗi đọc file JSON!');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  const handleGenerateUpdatePack = () => {
+    // Lấy các version CHƯA có isBuilt = true
+    const unbuiltLogs = changelogData.filter(l => !l.isBuilt);
+    
+    if (unbuiltLogs.length === 0) {
+      alert("Không có phiên bản nào mới trên Cloud chưa được update lên Build!");
+      return;
+    }
+
+    // Sort versions to process oldest to newest (e.g. v4, v5, v6...)
+    const sortedVersions = unbuiltLogs.map(l => l.version).sort((a, b) => {
+      const numA = parseInt(a.replace(/\D/g, '')) || 0;
+      const numB = parseInt(b.replace(/\D/g, '')) || 0;
+      return numA - numB;
+    });
+
+    const levelMap = new Map<number, string>(); // level number -> version string (e.g. 16 -> '6')
+
+    sortedVersions.forEach(versionStr => {
+      const log = changelogData.find(l => l.version === versionStr);
+      if (!log) return;
+      
+      const vNumStr = versionStr.replace(/\D/g, ''); // Extract '6' from 'v6'
+      
+      // Parse levels (e.g., 'Level 1, Level 2' or '1, 2')
+      const levelsStr = log.levels;
+      if (!levelsStr) return;
+      
+      const parts = levelsStr.split(',').map(s => s.trim()).filter(Boolean);
+      parts.forEach(p => {
+        const match = p.match(/\d+/);
+        if (match) {
+          const num = parseInt(match[0], 10);
+          levelMap.set(num, vNumStr); // Newer versions overwrite older ones because of the sorting
+        }
+      });
+    });
+
+    // Create the final array sorted by level number
+    const resultArr = Array.from(levelMap.entries())
+      .sort((a, b) => a[0] - b[0])
+      .map(([levelNum, verNum]) => ({
+        level: levelNum.toString(),
+        csv: `Level ${levelNum}_v${verNum}.json`,
+        ver: verNum
+      }));
+
+    const finalJson = { "0": resultArr };
+
+    // Trigger download
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(finalJson, null, 0));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `update_pack_${sortedVersions.join('_')}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const handleToggleBuildStatus = async (version: string) => {
+    const newData = changelogData.map(log => {
+      if (log.version === version) {
+        return { ...log, isBuilt: !log.isBuilt };
+      }
+      return log;
+    });
+    setChangelogData(newData);
+    try {
+      await fetch('/api/update-changelog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newData)
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Lỗi lưu trạng thái Build lên server!');
+    }
+  };
+
   const renderEditForm = () => (
     <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--panel-bg)', flex: 1, overflowY: 'auto' }}>
       <h3 style={{ margin: 0, color: 'white' }}>{editIndex >= 0 ? 'Sửa Changelog' : 'Thêm Changelog mới'}</h3>
@@ -175,6 +296,17 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
         />
       </div>
 
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+        <input 
+          type="checkbox" 
+          checked={editForm.isBuilt || false} 
+          onChange={e => setEditForm({...editForm, isBuilt: e.target.checked})}
+          id="edit-isbuilt-checkbox"
+          style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+        />
+        <label htmlFor="edit-isbuilt-checkbox" style={{ fontSize: '14px', color: 'white', cursor: 'pointer' }}>Đã update lên Build</label>
+      </div>
+
       <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
         <button onClick={handleSave} style={{ padding: '10px 16px', background: 'var(--accent)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>Lưu</button>
         <button onClick={() => setIsEditing(false)} style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Hủy</button>
@@ -207,7 +339,42 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {isAdmin && !isEditing && (
-              <button
+              <>
+                <button
+                  onClick={handleExport}
+                  title="Xuất (Download) Changelog"
+                  style={{
+                    background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)',
+                    color: '#38bdf8', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
+                    fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
+                  }}
+                >
+                  <Download size={16} /> Export
+                </button>
+                <button
+                  onClick={handleGenerateUpdatePack}
+                  title="Tạo file Update JSON từ các log chưa được đưa lên build"
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)',
+                    color: '#10b981', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
+                    fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
+                  }}
+                >
+                  <Package size={16} /> Tạo JSON
+                </button>
+                <label
+                  title="Nhập (Upload) Changelog"
+                  style={{
+                    background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)',
+                    color: '#38bdf8', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
+                    fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer',
+                    margin: 0
+                  }}
+                >
+                  <Upload size={16} /> Import
+                  <input type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} />
+                </label>
+                <button
                 onClick={() => {
                   setEditForm({ version: `v${changelogData.length + 1}`, levels: '', date: '', note: '' });
                   setEditIndex(-1);
@@ -220,7 +387,8 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                 }}
               >
                 <Plus size={16} /> Thêm Log mới
-              </button>
+                </button>
+              </>
             )}
             <button
               onClick={onClose}
@@ -321,23 +489,40 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                    <div style={{ fontWeight: 600, fontSize: '15px' }}>Version {log.version}</div>
-                    {isAdmin && !isEditing && selectedVersion === log.version && (
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); setEditForm({...log}); setEditIndex(originalIndex); setIsEditing(true); }}
-                          style={{ background: 'transparent', border: 'none', color: '#fbbf24', cursor: 'pointer', padding: '4px' }}
-                          title="Sửa"
-                        ><Edit2 size={14} /></button>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); handleDelete(originalIndex); }}
-                          style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
-                          title="Xóa"
-                        ><Trash2 size={14} /></button>
+                    <div style={{ fontWeight: 600, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      Version {log.version}
+                    </div>
+                    {!isEditing && (
+                      <div 
+                        onClick={(e) => { 
+                          if (isAdmin) {
+                            e.stopPropagation(); 
+                            handleToggleBuildStatus(log.version); 
+                          }
+                        }}
+                        style={{ cursor: isAdmin ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        title={log.isBuilt ? "Đã update lên build" + (isAdmin ? " (Click để bỏ đánh dấu)" : "") : "Mới có trên cloud" + (isAdmin ? " (Click để đánh dấu đã update)" : "")}
+                      >
+                        {log.isBuilt ? <CheckCircle2 size={16} color="#10b981" /> : <Cloud size={16} color="rgba(255,255,255,0.4)" />}
                       </div>
                     )}
                   </div>
-                  <div style={{ fontSize: '12px', opacity: 0.6, display: 'flex', justifyContent: 'space-between' }}>
+
+                  {isAdmin && !isEditing && selectedVersion === log.version && (
+                    <div style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setEditForm({...log}); setEditIndex(originalIndex); setIsEditing(true); }}
+                        style={{ background: 'transparent', border: 'none', color: '#fbbf24', cursor: 'pointer', padding: '4px' }}
+                        title="Sửa"
+                      ><Edit2 size={14} /></button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleDelete(originalIndex); }}
+                        style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
+                        title="Xóa"
+                      ><Trash2 size={14} /></button>
+                    </div>
+                  )}
+                  <div style={{ fontSize: '12px', opacity: 0.6, display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
                     <span>{lvls.length} levels modified</span>
                     <span>{log.date}</span>
                   </div>
@@ -453,18 +638,28 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                       Bản Nháp (Chưa Publish)
                     </h3>
                     <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                      <select
+                        id="draft-target-version"
+                        style={{ padding: '10px 14px', borderRadius: '6px', border: '1px solid var(--panel-border)', background: 'rgba(0,0,0,0.2)', color: 'white', minWidth: '200px' }}
+                      >
+                        <option value="new">Tạo mới ({changelogData.length > 0 ? 'v' + ((parseInt(changelogData[changelogData.length - 1].version.replace('v', '')) || 0) + 1) : 'v1'})</option>
+                        {[...changelogData].reverse().map(log => (
+                          <option key={log.version} value={log.version}>Cập nhật vào {log.version}</option>
+                        ))}
+                      </select>
                       <input 
                         type="text" 
-                        placeholder="Nhập ghi chú cho bản cập nhật này..." 
+                        placeholder="Nhập ghi chú (nếu cập nhật version cũ sẽ ghi đè ghi chú cũ)..." 
                         style={{ flex: 1, padding: '10px 14px', borderRadius: '6px', border: '1px solid var(--panel-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}
                         id="draft-note-input"
                       />
                       <button 
                         onClick={() => {
                           const note = (document.getElementById('draft-note-input') as HTMLInputElement)?.value || '';
-                          onPublishUpdate?.(note);
+                          const targetVer = (document.getElementById('draft-target-version') as HTMLSelectElement)?.value || 'new';
+                          onPublishUpdate?.(note, targetVer);
                         }}
-                        style={{ padding: '10px 20px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                        style={{ padding: '10px 20px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
                       >
                         Publish Update
                       </button>
@@ -482,6 +677,18 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                               {lvl.replace('.json', '')}
                             </button>
                             <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if(window.confirm(`Xóa bản nháp của ${lvl}?`)) {
+                                  onClearDraft?.(lvl);
+                                }
+                              }}
+                              style={{ position: 'absolute', top: -6, right: -6, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                              title="Xóa nháp"
+                            >
+                          <Edit2 size={14} /> Sửa
+                        </button>
+                        <button 
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if(window.confirm(`Xóa bản nháp của ${lvl}?`)) {

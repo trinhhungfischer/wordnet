@@ -31,7 +31,8 @@ import UserManualModal from './UserManualModal';
 import ChangelogModal from './ChangelogModal';
 import LevelSelectorModal from './LevelSelectorModal';
 import LoginModal from './LoginModal';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer, Magnet, Zap, User, UserCheck, Database } from 'lucide-react';
+import LevelsDashboardModal from './LevelsDashboardModal';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer, Magnet, Zap, User, UserCheck, Database, Layers } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 import pluralize from 'pluralize';
@@ -497,6 +498,7 @@ export default function GraphEditor() {
   const [isChangelogModalOpen, setIsChangelogModalOpen] = useState(false);
   const [isLevelSelectorOpen, setIsLevelSelectorOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('wordnet_isAdmin') === 'true');
   
   const [stagedLevels, setStagedLevels] = useState<Record<string, any>>(() => {
@@ -602,13 +604,15 @@ export default function GraphEditor() {
         const parentEdge = edges.find(e => e.target === id);
         if (parentEdge) {
           const parentNode = nodes.find(n => n.id === parentEdge.source);
-          if (parentNode && !processedParents.has(parentNode.id)) {
+          if (parentNode && !parentNode.data.isCategory && !processedParents.has(parentNode.id)) {
             processedParents.add(parentNode.id);
             words.push(String(parentNode.data.label).toLowerCase());
           }
         }
       } else {
-        words.push(String(node.data.label).toLowerCase());
+        if (!node.data.isCategory) {
+          words.push(String(node.data.label).toLowerCase());
+        }
       }
     });
 
@@ -1115,6 +1119,7 @@ export default function GraphEditor() {
       setNodes(newNodes);
       setEdges(newEdges);
       setSelectedNodeId(null);
+      setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 100);
   };
 
   const loadLevel = async (levelName: string) => {
@@ -1462,7 +1467,7 @@ export default function GraphEditor() {
               let nextIndex = maxGlobalIndex + 1;
               return nds.map(n => {
                 if (parentIdsToRestore.has(n.id)) {
-                  return { ...n, data: { ...n.data, globalIndex: nextIndex++ } };
+                  return { ...n, data: { ...n.data, isCategory: false, globalIndex: nextIndex++ } };
                 }
                 return n;
               });
@@ -1611,7 +1616,7 @@ export default function GraphEditor() {
       let nextIndex = maxGlobalIndex + 1;
       finalNodes = nextNodes.map(n => {
         if (parentIdsToRestore.has(n.id)) {
-          return { ...n, data: { ...n.data, globalIndex: nextIndex++ } };
+          return { ...n, data: { ...n.data, isCategory: false, globalIndex: nextIndex++ } };
         }
         return n;
       });
@@ -3413,6 +3418,12 @@ export default function GraphEditor() {
           >
             <Settings size={14} /> Config
           </button>
+          <button 
+            onClick={() => setIsDashboardOpen(true)}
+            style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #10b981', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}
+          >
+            <Layers size={14} /> Dashboard
+          </button>
         </div>
       </div>
 
@@ -4097,12 +4108,12 @@ export default function GraphEditor() {
             return next;
           });
         }}
-        onPublishUpdate={async (note) => {
+        onPublishUpdate={async (note, targetVersion) => {
           try {
             const response = await fetch('/api/publish-update', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ stagedLevels, note })
+              body: JSON.stringify({ stagedLevels, note, targetVersion })
             });
             const result = await response.json();
             if (result.success) {
@@ -4183,6 +4194,18 @@ export default function GraphEditor() {
         levels={levels}
         selectedLevelName={selectedLevelName}
         onSelectLevel={(level) => loadLevel(level)}
+      />
+
+      <LevelsDashboardModal
+        isOpen={isDashboardOpen}
+        onClose={() => setIsDashboardOpen(false)}
+        levels={levels}
+        loadLevel={(levelName) => {
+          setIsDashboardOpen(false);
+          loadLevel(levelName);
+        }}
+        globalDict={globalDict}
+        onRefreshLevels={() => {}}
       />
       
       <LoginModal

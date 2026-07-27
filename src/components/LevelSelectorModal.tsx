@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { X, Search } from 'lucide-react';
 
 interface LevelSelectorModalProps {
@@ -11,6 +11,15 @@ interface LevelSelectorModalProps {
 
 const LevelSelectorModal: React.FC<LevelSelectorModalProps> = ({ isOpen, onClose, levels, selectedLevelName, onSelectLevel }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const selectedRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen && selectedRef.current) {
+      setTimeout(() => {
+        selectedRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' });
+      }, 10);
+    }
+  }, [isOpen]);
 
   const filteredAndSortedLevels = useMemo(() => {
     // Filter levels
@@ -97,6 +106,7 @@ const LevelSelectorModal: React.FC<LevelSelectorModalProps> = ({ isOpen, onClose
               {filteredAndSortedLevels.map(lvl => (
                 <button
                   key={lvl}
+                  ref={lvl === selectedLevelName ? selectedRef : null}
                   onClick={() => {
                     onSelectLevel(lvl);
                     onClose();
