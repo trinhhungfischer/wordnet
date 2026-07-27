@@ -136,7 +136,11 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
   };
 
   const handleExport = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(changelogData, null, 2));
+    const dataToExport = changelogData.map(log => ({
+      ...log,
+      isBuilt: log.isBuilt || false
+    }));
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToExport, null, 2));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", "changelog.json");
@@ -340,17 +344,6 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {isAdmin && !isEditing && (
               <>
-                <button
-                  onClick={handleExport}
-                  title="Xuất (Download) Changelog"
-                  style={{
-                    background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)',
-                    color: '#38bdf8', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
-                    fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
-                  }}
-                >
-                  <Download size={16} /> Export
-                </button>
                 <label
                   title="Nhập (Upload) Changelog"
                   style={{
@@ -364,33 +357,46 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                   <input type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} />
                 </label>
                 <button
-                onClick={() => {
-                  setEditForm({ version: `v${changelogData.length + 1}`, levels: '', date: '', note: '' });
-                  setEditIndex(-1);
-                  setIsEditing(true);
-                }}
-                style={{
-                  background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)',
-                  color: '#38bdf8', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
-                  fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
-                }}
-              >
-                <Plus size={16} /> Thêm Log mới
+                  onClick={() => {
+                    setEditForm({ version: `v${changelogData.length + 1}`, levels: '', date: '', note: '' });
+                    setEditIndex(-1);
+                    setIsEditing(true);
+                  }}
+                  style={{
+                    background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)',
+                    color: '#38bdf8', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
+                    fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
+                  }}
+                >
+                  <Plus size={16} /> Thêm Log mới
                 </button>
               </>
             )}
             {!isEditing && (
-              <button
-                onClick={handleGenerateUpdatePack}
-                title="Tạo file Update JSON từ các log chưa được đưa lên build"
-                style={{
-                  background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)',
-                  color: '#10b981', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
-                  fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
-                }}
-              >
-                <Package size={16} /> Tạo JSON
-              </button>
+              <>
+                <button
+                  onClick={handleExport}
+                  title="Xuất (Download) Changelog"
+                  style={{
+                    background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)',
+                    color: '#38bdf8', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
+                    fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
+                  }}
+                >
+                  <Download size={16} /> Export
+                </button>
+                <button
+                  onClick={handleGenerateUpdatePack}
+                  title="Tạo file Update JSON từ các log chưa được đưa lên build"
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)',
+                    color: '#10b981', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
+                    fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
+                  }}
+                >
+                  <Package size={16} /> Tạo JSON
+                </button>
+              </>
             )}
             <button
               onClick={onClose}
