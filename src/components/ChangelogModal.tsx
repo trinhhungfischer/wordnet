@@ -351,17 +351,6 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                 >
                   <Download size={16} /> Export
                 </button>
-                <button
-                  onClick={handleGenerateUpdatePack}
-                  title="Tạo file Update JSON từ các log chưa được đưa lên build"
-                  style={{
-                    background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)',
-                    color: '#10b981', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
-                    fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
-                  }}
-                >
-                  <Package size={16} /> Tạo JSON
-                </button>
                 <label
                   title="Nhập (Upload) Changelog"
                   style={{
@@ -389,6 +378,19 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                 <Plus size={16} /> Thêm Log mới
                 </button>
               </>
+            )}
+            {!isEditing && (
+              <button
+                onClick={handleGenerateUpdatePack}
+                title="Tạo file Update JSON từ các log chưa được đưa lên build"
+                style={{
+                  background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)',
+                  color: '#10b981', padding: '6px 12px', borderRadius: '6px', fontSize: '13px',
+                  fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer'
+                }}
+              >
+                <Package size={16} /> Tạo JSON
+              </button>
             )}
             <button
               onClick={onClose}
