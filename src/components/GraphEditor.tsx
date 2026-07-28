@@ -3063,7 +3063,7 @@ export default function GraphEditor() {
             <input type="file" accept=".json" ref={fileInputRef} onChange={handleLoadJson} style={{ display: 'none' }} />
             <button 
               onClick={() => fileInputRef.current?.click()}
-              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <RefreshCw size={14} /> Load JSON
             </button>
@@ -3071,7 +3071,7 @@ export default function GraphEditor() {
             <button 
               onClick={handleExportJson}
               disabled={!rawLevelData}
-              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500, opacity: rawLevelData ? 1 : 0.5 }}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
             >
               <Save size={14} /> {isAdmin ? 'Export Local' : 'Save JSON'}
             </button>
@@ -3079,7 +3079,7 @@ export default function GraphEditor() {
               <button 
                 onClick={handleStageLevel}
                 disabled={!rawLevelData}
-                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #f59e0b', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', cursor: rawLevelData ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, opacity: rawLevelData ? 1 : 0.5 }}
+                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #f59e0b', background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
                 title="Lưu vào bộ nhớ tạm để tạo bản Update Log"
               >
                 <Database size={14} /> Lưu Nháp
@@ -3126,15 +3126,9 @@ export default function GraphEditor() {
           <button 
             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
             disabled={!rawLevelData}
-            style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--panel-border)', background: isSettingsOpen ? 'var(--accent)' : 'transparent', color: isSettingsOpen ? 'white' : 'var(--text-main)', cursor: rawLevelData ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500, opacity: rawLevelData ? 1 : 0.5 }}
+            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--panel-border)', background: isSettingsOpen ? 'var(--accent)' : 'transparent', color: isSettingsOpen ? 'white' : 'var(--text-main)', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
           >
             <Settings size={14} /> Config
-          </button>
-          <button 
-            onClick={() => setIsDashboardOpen(true)}
-            style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #10b981', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}
-          >
-            <Layers size={14} /> Dashboard
           </button>
         </div>
       </div>
