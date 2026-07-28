@@ -33,7 +33,7 @@ import LevelSelectorModal from './LevelSelectorModal';
 import LoginModal from './LoginModal';
 import LevelsDashboardModal from './LevelsDashboardModal';
 import AnalyticsDashboard from './AnalyticsDashboard';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, Timer, Magnet, Zap, User, UserCheck, Database, Layers, BarChart2 } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2 } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 
@@ -347,8 +347,6 @@ export default function GraphEditor() {
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('wordnet_isAdmin') === 'true');
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   
   const [stagedLevels, setStagedLevels] = useState<Record<string, any>>(() => {
     try {
@@ -1167,6 +1165,8 @@ export default function GraphEditor() {
   useEffect(() => {
     handleExportJsonRef.current = handleExportJson;
   }, [handleExportJson]);
+  const handleShuffleRangeRef = useRef<any>(null);
+
   useEffect(() => {
     handleShuffleRangeRef.current = handleShuffleRange;
   });
@@ -1219,10 +1219,9 @@ export default function GraphEditor() {
         e.preventDefault();
         setIsDictOpen(true);
       }
-      }
     };
-    window.addEventListener('keydown', handleSaveShortcut);
-    return () => window.removeEventListener('keydown', handleSaveShortcut);
+    window.addEventListener('keydown', handleShortcuts);
+    return () => window.removeEventListener('keydown', handleShortcuts);
   }, []);
 
 
@@ -2901,15 +2900,7 @@ export default function GraphEditor() {
             popularity: 50
           });
           addedCount++;
-          catAddedItems.push(`  + ${rawWord} (Word)`);
-        } else {
-          const existingWordObj = dictCat.words[existingWordIndex];
-          if (existingWordObj.word.toLowerCase() !== rawWord.toLowerCase()) {
-            const oldWord = existingWordObj.word;
-            existingWordObj.word = rawWord;
-            updatedCount++;
-            catUpdatedItems.push(`  ~ ${oldWord} -> ${rawWord}`);
-          }
+          catAddedItems.push(`  + ${wordStr} (Word)`);
         }
       });
 
@@ -2922,15 +2913,7 @@ export default function GraphEditor() {
         if (!dictCat.subcategories.includes(subcatStr)) {
           dictCat.subcategories.push(subcatStr);
           addedCount++;
-          catAddedItems.push(`  + ${rawWord} (Word)`);
-        } else {
-          const existingWordObj = dictCat.words[existingWordIndex];
-          if (existingWordObj.word.toLowerCase() !== rawWord.toLowerCase()) {
-            const oldWord = existingWordObj.word;
-            existingWordObj.word = rawWord;
-            updatedCount++;
-            catUpdatedItems.push(`  ~ ${oldWord} -> ${rawWord}`);
-          }
+          catAddedItems.push(`  + ${subcatStr} (Subcategory)`);
         }
       });
 

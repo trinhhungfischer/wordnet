@@ -1241,7 +1241,6 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                           {isExpanded && (
                             <tr>
                               <td colSpan={8} style={{ background: 'rgba(0,0,0,0.15)', padding: '16px 24px' }}>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
                                   
                                   {/* Vocab Factors & Rare Words */}
