@@ -271,3 +271,40 @@ Cấu trúc:
 ```
 
 **Luật chơi:** Quả bóng đang bị nứt. Mỗi lần hit (hoặc ghép) sẽ làm giảm crackCount đi 1. Khi crackCount = 0, quả bóng sẽ bị vỡ ra và spawn ra các chunkWords tương ứng. Các chunkWords này có thể merge được và tạo lại thành từ bình thường.
+
+# 13. Requirement Lock
+**Trường áp dụng:** `requirementLockBubbles` (Mảng)
+Cấu trúc:
+```json
+"requirementLockBubbles": [
+  {
+    "requirementLockWord": "Requirement",
+    "requireWeight": 3
+  },
+  {
+    "requirementLockWord": "Lock",
+    "requireWeight": 2
+  }
+]
+```
+
+**Luật chơi:** Quả bóng có khoá Requirement Lock từ 2 tới 3. Khoá này quy định quả bóng này chỉ merge được vào Merge Bubble có số lượng từ (weight) bằng hoặc lớn hơn `requireWeight`. Chiều ngược lại merge Merge Bubble cũng thế. 
+Ví dụ: nếu `requireWeight` = 2, thì quả bóng này chỉ merge được vào Merge Bubble có 2 từ trở lên rồi
+
+
+# 14. Cycle Fade Out
+**Trường áp dụng:** `cycleFadeOutBubbles` (Mảng)
+Cấu trúc:
+```json
+"cycleFadeOutBubbles": [
+  {
+    "fadeWord": "CycleFadeOut",
+    "startingPosition": 0
+  }
+]
+```
+- `startingPosition`: Vị trí ban đầu của từ khi bắt đầu level (0 = không bị ẩn từ, 1 = bị ẩn từ)
+
+**Luật chơi:** Tương tự Cycle Lock mỗi lần hit (merge) sẽ ẩn hoặc hiện chữ trong bóng đi luân phiên. Bóng đó vẫn được merge hoặc kéo đi chỗ khác nên không ảnh hưởng tới thuật toán giải. Chỉ ảnh hưởng tới hiển thị chữ trên bóng.
+
+# 15. 
