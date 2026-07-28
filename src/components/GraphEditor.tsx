@@ -3063,7 +3063,7 @@ export default function GraphEditor() {
             <input type="file" accept=".json" ref={fileInputRef} onChange={handleLoadJson} style={{ display: 'none' }} />
             <button 
               onClick={() => fileInputRef.current?.click()}
-              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.3)', background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}
             >
               <RefreshCw size={14} /> Load JSON
             </button>
@@ -3071,7 +3071,7 @@ export default function GraphEditor() {
             <button 
               onClick={handleExportJson}
               disabled={!rawLevelData}
-              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--accent)', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
             >
               <Save size={14} /> {isAdmin ? 'Export Local' : 'Save JSON'}
             </button>
@@ -3093,7 +3093,7 @@ export default function GraphEditor() {
             <button 
               onClick={() => setIsSolutionModalOpen(true)}
               disabled={!rawLevelData}
-              style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
+              style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--accent)', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
             >
               <Calculator size={14} /> Calculate
             </button>
