@@ -2945,7 +2945,7 @@ export default function GraphEditor() {
       <div className="glass-panel" style={{
         position: 'absolute', top: '20px', left: '20px', right: '20px', 
         minHeight: '60px', borderRadius: '12px', zIndex: 10,
-        display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '16px', padding: '12px 16px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', padding: '12px 16px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
