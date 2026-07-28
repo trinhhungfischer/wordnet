@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Puzzle } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -295,15 +295,16 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: 'rgba(251,191,36,0.1)', padding: '8px', borderRadius: '6px', border: '1px solid rgba(251,191,36,0.3)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Zap 
-                            size={14} 
-                            color="#fbbf24" 
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => {
-                              if (onFocusWord) onFocusWord(crackItem.word);
-                            }}
-                            title={`Focus on ${crackItem.word}`}
-                          />
+                          <span title={`Focus on ${crackItem.word}`}>
+                            <Zap 
+                              size={14} 
+                              color="#fbbf24" 
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => {
+                                if (onFocusWord) onFocusWord(crackItem.word);
+                              }}
+                            />
+                          </span>
                           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', background: 'rgba(0,0,0,0.3)', padding: '2px 8px', borderRadius: '4px' }}>
                             {crackItem.word && String(crackItem.word).split('').map((char: string, charIdx: number) => {
                                const wStr = String(crackItem.word);

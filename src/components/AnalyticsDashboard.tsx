@@ -58,12 +58,20 @@ export default function AnalyticsDashboard({ isOpen, onClose, levels, loadLevel,
     });
   }, [levels]);
 
+  // Date range picker states
+  const [dateRangeType, setDateRangeType] = useState<'all' | '7d' | '14d' | '30d' | 'custom'>('all');
+  const [startDateInput, setStartDateInput] = useState<string>('');
+  const [endDateInput, setEndDateInput] = useState<string>('');
+
   // Handle initialization and range loading
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || levels.length === 0) return;
     
-    // Auto-detect best defaults based on available levels
-    if (levels.length > 0) {
+    let currentStart = startLevelInput;
+    let currentEnd = endLevelInput;
+    
+    // On first open, set defaults
+    if (levelDataList.length === 0) {
       const numbers = levels.map(name => {
         const match = name.match(/\d+/);
         return match ? parseInt(match[0]) : 0;
@@ -71,19 +79,25 @@ export default function AnalyticsDashboard({ isOpen, onClose, levels, loadLevel,
       
       const minVal = numbers.length > 0 ? Math.min(...numbers) : 1;
       const maxVal = numbers.length > 0 ? Math.max(...numbers) : 100;
-      
-      // Default to 100-200 if available, otherwise full range
+
       if (maxVal >= 200 && minVal <= 100) {
-        setStartLevelInput(100);
-        setEndLevelInput(Math.min(200, maxVal));
-        fetchAndProcessRange(100, Math.min(200, maxVal));
+        currentStart = 100;
+        currentEnd = Math.min(200, maxVal);
       } else {
-        setStartLevelInput(minVal);
-        setEndLevelInput(maxVal);
-        fetchAndProcessRange(minVal, maxVal);
+        currentStart = minVal;
+        currentEnd = maxVal;
       }
+      setStartLevelInput(currentStart);
+      setEndLevelInput(currentEnd);
     }
-  }, [isOpen, levels]);
+
+    if (dateRangeType === 'custom') {
+      // Don't auto-fetch on custom dates to prevent typing spam
+      return;
+    }
+
+    fetchAndProcessRange(currentStart, currentEnd);
+  }, [isOpen, dateRangeType]);
 
   const fetchAndProcessRange = async (start: number, end: number) => {
     if (levels.length === 0) return;
@@ -104,10 +118,43 @@ export default function AnalyticsDashboard({ isOpen, onClose, levels, loadLevel,
       return;
     }
 
+    // Compute date filtering parameters
+    let sd = '';
+    let ed = '';
+    if (dateRangeType !== 'all') {
+      const formatDate = (date: Date) => {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+      };
+
+      const today = new Date();
+      if (dateRangeType === '7d') {
+        const past = new Date();
+        past.setDate(today.getDate() - 7);
+        sd = formatDate(past);
+        ed = formatDate(today);
+      } else if (dateRangeType === '14d') {
+        const past = new Date();
+        past.setDate(today.getDate() - 14);
+        sd = formatDate(past);
+        ed = formatDate(today);
+      } else if (dateRangeType === '30d') {
+        const past = new Date();
+        past.setDate(today.getDate() - 30);
+        sd = formatDate(past);
+        ed = formatDate(today);
+      } else if (dateRangeType === 'custom') {
+        sd = startDateInput;
+        ed = endDateInput;
+      }
+    }
+
     // 1. Fetch ClickHouse Telemetry
     const telemetryMap: Record<number, any> = {};
     try {
-      const telRes = await fetch(`/api/level-telemetry?start=${start}&end=${end}`);
+      const telRes = await fetch(`/api/level-telemetry?start=${start}&end=${end}&startDate=${sd}&endDate=${ed}`);
       if (telRes.ok) {
         const telData = await telRes.json();
         if (telData.success && Array.isArray(telData.telemetry)) {
@@ -627,6 +674,52 @@ export default function AnalyticsDashboard({ isOpen, onClose, levels, loadLevel,
                   color: 'white', fontSize: '12px', textAlign: 'center', outline: 'none'
                 }}
               />
+            </div>
+
+            {/* Date range picker */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: '8px', marginLeft: '4px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }} title="Filter by User Install Date (user_first_touch_timestamp) cohort">Cohort:</span>
+              <select
+                value={dateRangeType}
+                onChange={e => setDateRangeType(e.target.value as any)}
+                style={{
+                  padding: '5px 8px', background: 'rgba(0,0,0,0.3)',
+                  border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px',
+                  color: 'white', fontSize: '12px', outline: 'none', cursor: 'pointer'
+                }}
+              >
+                <option value="all">All Time</option>
+                <option value="7d">Last 7 Days</option>
+                <option value="14d">Last 14 Days</option>
+                <option value="30d">Last 30 Days</option>
+                <option value="custom">Custom Range</option>
+              </select>
+
+              {dateRangeType === 'custom' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <input
+                    type="date"
+                    value={startDateInput}
+                    onChange={e => setStartDateInput(e.target.value)}
+                    style={{
+                      padding: '4px 6px', background: 'rgba(0,0,0,0.3)',
+                      border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px',
+                      color: 'white', fontSize: '11px', outline: 'none'
+                    }}
+                  />
+                  <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '11px' }}>to</span>
+                  <input
+                    type="date"
+                    value={endDateInput}
+                    onChange={e => setEndDateInput(e.target.value)}
+                    style={{
+                      padding: '4px 6px', background: 'rgba(0,0,0,0.3)',
+                      border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px',
+                      color: 'white', fontSize: '11px', outline: 'none'
+                    }}
+                  />
+                </div>
+              )}
             </div>
             
             <button

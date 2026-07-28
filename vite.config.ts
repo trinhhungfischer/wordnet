@@ -198,6 +198,16 @@ if ($f.ShowDialog($form) -eq [System.Windows.Forms.DialogResult]::OK) {
       if (url.pathname === '/api/level-telemetry' && req.method === 'GET') {
         const start = parseInt(url.searchParams.get('start') || '1');
         const end = parseInt(url.searchParams.get('end') || '20');
+        const startDate = url.searchParams.get('startDate') || '';
+        const endDate = url.searchParams.get('endDate') || '';
+
+        let cohortFilter = '';
+        if (startDate) {
+          cohortFilter += ` AND toDate(toDateTime(user_first_touch_timestamp / 1000000)) >= '${startDate}'`;
+        }
+        if (endDate) {
+          cohortFilter += ` AND toDate(toDateTime(user_first_touch_timestamp / 1000000)) <= '${endDate}'`;
+        }
 
         const chUrl = 'http://117.6.160.176:8123/?user=zitga_clickhouse&password=Zitga%40123';
         const query = `
@@ -213,13 +223,13 @@ if ($f.ShowDialog($form) -eq [System.Windows.Forms.DialogResult]::OK) {
           FROM (
             SELECT level, count() as total_starts, count(distinct user_pseudo_id) as total_users 
             FROM THP024.level_start 
-            WHERE level >= ${start} AND level <= ${end}
+            WHERE level >= ${start} AND level <= ${end}${cohortFilter}
             GROUP BY level
           ) as starts
           LEFT JOIN (
             SELECT level, countIf(win = 1) as total_wins 
             FROM THP024.level_end 
-            WHERE level >= ${start} AND level <= ${end}
+            WHERE level >= ${start} AND level <= ${end}${cohortFilter}
             GROUP BY level
           ) as ends ON starts.level = ends.level
           LEFT JOIN (
@@ -227,6 +237,7 @@ if ($f.ShowDialog($form) -eq [System.Windows.Forms.DialogResult]::OK) {
             FROM (
               SELECT user_pseudo_id, max(level) as max_level 
               FROM THP024.level_start 
+              WHERE 1=1${cohortFilter}
               GROUP BY user_pseudo_id
             )
             GROUP BY max_level
@@ -236,7 +247,7 @@ if ($f.ShowDialog($form) -eq [System.Windows.Forms.DialogResult]::OK) {
               toInt64OrZero(max_level) as level,
               countIf(placement IN ('bubble_ads', 'buy_booster')) as reward_ads
             FROM THP024.ad_impression
-            WHERE toInt64OrZero(max_level) >= ${start} AND toInt64OrZero(max_level) <= ${end}
+            WHERE toInt64OrZero(max_level) >= ${start} AND toInt64OrZero(max_level) <= ${end}${cohortFilter}
             GROUP BY level
           ) as ads ON starts.level = ads.level
           ORDER BY level ASC
