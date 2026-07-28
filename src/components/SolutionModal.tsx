@@ -181,23 +181,91 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                 </div>
               </div>
 
-              {/* Difficulty */}
+              {/* Vocabulary Difficulty */}
               <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', border: '1px solid var(--panel-border)' }}>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                  Difficulty Rating
+                  Vocabulary Difficulty
                 </div>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: 1, color: solution.difficulty.color }}>
-                    {solution.difficulty.score}
+                  <span style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: 1, color: solution.vocabDifficulty?.color || '#fff' }}>
+                    {solution.vocabDifficulty?.score ?? 0}
                   </span>
-                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: solution.difficulty.color, marginBottom: '4px' }}>
-                    {solution.difficulty.label}
+                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: solution.vocabDifficulty?.color || '#fff', marginBottom: '4px' }}>
+                    {solution.vocabDifficulty?.label ?? 'N/A'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  {solution.difficulty.factors.map((factor: string, i: number) => (
+                  {(solution.vocabDifficulty?.factors || []).map((factor: string, i: number) => (
                     <div key={i} style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '6px' }}>
-                      <span style={{ color: solution.difficulty.color }}>•</span> {factor}
+                      <span style={{ color: solution.vocabDifficulty?.color || '#fff' }}>•</span> {factor}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Moves Difficulty */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  Puzzle / Moves Difficulty
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: 1, color: solution.moveDifficulty?.color || '#fff' }}>
+                    {solution.moveDifficulty?.score ?? 0}
+                  </span>
+                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: solution.moveDifficulty?.color || '#fff', marginBottom: '4px' }}>
+                    {solution.moveDifficulty?.label ?? 'N/A'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {(solution.moveDifficulty?.factors || []).map((factor: string, i: number) => (
+                    <div key={i} style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '6px' }}>
+                      <span style={{ color: solution.moveDifficulty?.color || '#fff' }}>•</span> {factor}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Learning Curve Difficulty */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                  Learning Curve Difficulty
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: 1, color: solution.learningDifficulty?.color || '#fff' }}>
+                    {solution.learningDifficulty?.score ?? 0}
+                  </span>
+                  <span style={{ fontSize: '16px', fontWeight: 'bold', color: solution.learningDifficulty?.color || '#fff', marginBottom: '4px' }}>
+                    {solution.learningDifficulty?.label ?? 'N/A'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {(solution.learningDifficulty?.factors || []).map((factor: string, i: number) => (
+                    <div key={i} style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '6px' }}>
+                      <span style={{ color: solution.learningDifficulty?.color || '#fff' }}>•</span> {factor}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Combined Difficulty (Retention) */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', border: '1px solid var(--panel-border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', justifyItems: 'center', gap: '4px' }}>
+                    <span>Combined Difficulty (Retention)</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: 1, color: solution.difficulty?.color || '#fff' }}>
+                      {solution.difficulty?.score ?? 0}
+                    </span>
+                    <span style={{ fontSize: '16px', fontWeight: 'bold', color: solution.difficulty?.color || '#fff', marginBottom: '4px' }}>
+                      {solution.difficulty?.label ?? 'N/A'}
+                    </span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {(solution.difficulty?.factors || []).map((factor: string, i: number) => (
+                    <div key={i} style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '6px' }}>
+                      <span style={{ color: solution.difficulty?.color || '#fff' }}>•</span> {factor}
                     </div>
                   ))}
                 </div>
