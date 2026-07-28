@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Search, Play, ArrowUpDown, ChevronDown, ChevronUp, Loader2, Sparkles, HelpCircle, Layers, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { X, Search, Play, ArrowUpDown, ChevronDown, ChevronUp, Loader2, Sparkles, HelpCircle, Layers, CheckCircle2, ShieldAlert, Activity } from 'lucide-react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
 interface LevelsDashboardModalProps {
@@ -21,6 +21,16 @@ interface LevelDifficultyData {
   move: { score: number; label: string; color: string; factors: string[] };
   learning: { score: number; label: string; color: string; factors: string[] };
   combined: { score: number; label: string; color: string; factors: string[] };
+  telemetry?: {
+    starts: number;
+    wins: number;
+    users_attempted: number;
+    users_dropped: number;
+    churn_rate: number;
+    fail_rate: number;
+    reward_ads?: number;
+    avg_ads_per_user?: number;
+  };
 }
 
 export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLevel, globalDict, onRefreshLevels }: LevelsDashboardModalProps) {
@@ -55,7 +65,9 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
     vocab: true,
     move: true,
     learning: true,
-    combined: true
+    combined: true,
+    realChurn: true,
+    realFail: true
   });
 
   // Directory browser states
@@ -118,6 +130,30 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
     const slice = levels.slice(startIdx, endIdx + 1);
     const total = slice.length;
     setSliceLength(total);
+
+    const levelNums = slice.map(name => {
+      const m = name.match(/\d+/);
+      return m ? parseInt(m[0]) : null;
+    }).filter((x): x is number => x !== null);
+    
+    const telemetryMap: Record<number, any> = {};
+    if (levelNums.length > 0) {
+      const minL = Math.min(...levelNums);
+      const maxL = Math.max(...levelNums);
+      try {
+        const telRes = await fetch(`/api/level-telemetry?start=${minL}&end=${maxL}`);
+        if (telRes.ok) {
+          const telData = await telRes.json();
+          if (telData.success && Array.isArray(telData.telemetry)) {
+            telData.telemetry.forEach((item: any) => {
+              telemetryMap[item.level] = item;
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch telemetry data:', e);
+      }
+    }
     
     const results: LevelDifficultyData[] = [];
     
@@ -163,6 +199,10 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
         // Count words not dropped
         const wordsNotDropped = Math.max(0, (levelData.allWordEntries?.length || 0) - (levelData.maxBubblesInScene || 20));
 
+        const numMatch = lvlName.match(/\d+/);
+        const levelNum = numMatch ? parseInt(numMatch[0]) : null;
+        const telemetry = levelNum ? telemetryMap[levelNum] : undefined;
+
         results.push({
           name: lvlName,
           theme: levelData.theme || 'Untitled Theme',
@@ -172,7 +212,8 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
           vocab: solution.vocabDifficulty,
           move: solution.moveDifficulty,
           learning: solution.learningDifficulty,
-          combined: solution.difficulty
+          combined: solution.difficulty,
+          telemetry
         });
       } catch (err) {
         console.error(`Error loading level ${lvlName}:`, err);
@@ -266,7 +307,7 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
             });
           }
           
-          if (w.chunks && Array.isArray(w.chunks)) {
+          if (w.chunks && Array.isArray(w.chunks) && w.chunks.length > 0) {
             w.chunks.forEach((chunkItem: any) => {
               const chunkStr = typeof chunkItem === 'string' ? chunkItem : Object.keys(chunkItem)[0];
               if (!chunkStr) return;
@@ -289,6 +330,24 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                 source: wordNode.id,
                 target: chunkNode.id
               });
+            });
+          } else if (levelData.allWordEntries && Array.isArray(levelData.allWordEntries)) {
+            // Support new flattened format
+            levelData.allWordEntries.forEach((entry: any, arrIdx: number) => {
+              if (entry.parentWord && String(entry.parentWord).toLowerCase().trim() === wordLower) {
+                const chunkNode = {
+                  id: nextId(),
+                  type: 'custom',
+                  position: { x: 0, y: 0 },
+                  data: { label: String(entry.fullWord).toLowerCase(), isCategory: false, isChunk: true, globalIndex: arrIdx + 1 }
+                };
+                nodes.push(chunkNode);
+                edges.push({
+                  id: `e-${wordNode.id}-${chunkNode.id}`,
+                  source: wordNode.id,
+                  target: chunkNode.id
+                });
+              }
             });
           }
         });
@@ -419,6 +478,8 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
       if (visibleIndices.move && item.move.score > max) max = item.move.score;
       if (visibleIndices.learning && (item.learning?.score || 0) > max) max = item.learning.score;
       if (visibleIndices.combined && item.combined.score > max) max = item.combined.score;
+      if (visibleIndices.realChurn && item.telemetry && item.telemetry.churn_rate > max) max = item.telemetry.churn_rate;
+      if (visibleIndices.realFail && item.telemetry && item.telemetry.fail_rate > max) max = item.telemetry.fail_rate;
     });
     
     return Math.ceil(max / 10) * 10;
@@ -428,11 +489,13 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
     return chartHeight - paddingBottom - (score / yMax) * (chartHeight - paddingTop - paddingBottom);
   };
 
-  const { pointsVocab, pointsMove, pointsLearning, pointsCombined } = useMemo(() => {
+  const { pointsVocab, pointsMove, pointsLearning, pointsCombined, pointsRealChurn, pointsRealFail } = useMemo(() => {
     let pVocab = '';
     let pMove = '';
     let pLearning = '';
     let pCombined = '';
+    let pRealChurn = '';
+    let pRealFail = '';
 
     visibleList.forEach((lvl, idx) => {
       const x = xScale(idx);
@@ -440,13 +503,19 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
       pMove += `${x},${yScale(lvl.move.score)} `;
       pLearning += `${x},${yScale(lvl.learning?.score || 0)} `;
       pCombined += `${x},${yScale(lvl.combined.score)} `;
+      if (lvl.telemetry) {
+        pRealChurn += `${x},${yScale(lvl.telemetry.churn_rate)} `;
+        pRealFail += `${x},${yScale(lvl.telemetry.fail_rate)} `;
+      }
     });
 
     return {
       pointsVocab: pVocab.trim(),
       pointsMove: pMove.trim(),
       pointsLearning: pLearning.trim(),
-      pointsCombined: pCombined.trim()
+      pointsCombined: pCombined.trim(),
+      pointsRealChurn: pRealChurn.trim(),
+      pointsRealFail: pRealFail.trim()
     };
   }, [visibleList, yMax]);
 
@@ -740,6 +809,28 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                     >
                       Combined
                     </button>
+                    <button
+                      onClick={() => setVisibleIndices(v => ({ ...v, realChurn: !v.realChurn }))}
+                      style={{
+                        padding: '4px 6px', borderRadius: '4px', fontSize: '11px', border: '1px solid #f59e0b',
+                        background: visibleIndices.realChurn ? 'rgba(245,158,11,0.15)' : 'transparent',
+                        color: visibleIndices.realChurn ? '#f59e0b' : 'rgba(255,255,255,0.4)',
+                        cursor: 'pointer', transition: 'all 0.2s', fontWeight: 500
+                      }}
+                    >
+                      Real Churn
+                    </button>
+                    <button
+                      onClick={() => setVisibleIndices(v => ({ ...v, realFail: !v.realFail }))}
+                      style={{
+                        padding: '4px 6px', borderRadius: '4px', fontSize: '11px', border: '1px solid #ec4899',
+                        background: visibleIndices.realFail ? 'rgba(236,72,153,0.15)' : 'transparent',
+                        color: visibleIndices.realFail ? '#ec4899' : 'rgba(255,255,255,0.4)',
+                        cursor: 'pointer', transition: 'all 0.2s', fontWeight: 500
+                      }}
+                    >
+                      Real Fail
+                    </button>
                   </div>
                 </div>
 
@@ -770,10 +861,34 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                               <span style={{ color: '#fb7185' }}>Learning:</span>
                               <span style={{ color: hLvl.learning?.color || '#fff', fontWeight: 'bold' }}>{hLvl.learning?.score ?? 0}</span>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', borderTop: '1px dashed rgba(255,255,255,0.1)', paddingTop: '4px', marginTop: '4px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', borderBottom: '1px dashed rgba(255,255,255,0.1)', paddingBottom: '4px', marginBottom: '4px' }}>
                               <span style={{ color: '#34d399', fontWeight: 600 }}>Combined:</span>
                               <span style={{ color: hLvl.combined.color, fontWeight: 'bold' }}>{hLvl.combined.score}</span>
                             </div>
+                            {hLvl.telemetry ? (
+                              <>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                                  <span style={{ color: '#f59e0b' }}>Real Churn:</span>
+                                  <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>{hLvl.telemetry.churn_rate}%</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                                  <span style={{ color: '#ec4899' }}>Real Fail:</span>
+                                  <span style={{ color: '#ec4899', fontWeight: 'bold' }}>{hLvl.telemetry.fail_rate}%</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                                  <span style={{ color: '#10b981' }}>Real Ads/User:</span>
+                                  <span style={{ color: '#10b981', fontWeight: 'bold' }}>{hLvl.telemetry.avg_ads_per_user ?? 0}</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
+                                  <span>Starts (CH):</span>
+                                  <span>{hLvl.telemetry.starts.toLocaleString()}</span>
+                                </div>
+                              </>
+                            ) : (
+                              <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontStyle: 'italic', textAlign: 'center', marginTop: '4px' }}>
+                                No ClickHouse telemetry
+                              </div>
+                            )}
                           </div>
                         </>
                       );
@@ -836,6 +951,8 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                     {visibleIndices.move && pointsMove && <polyline points={pointsMove} fill="none" stroke="#a78bfa" strokeWidth="2" />}
                     {visibleIndices.learning && pointsLearning && <polyline points={pointsLearning} fill="none" stroke="#fb7185" strokeWidth="2" strokeDasharray="3,3" />}
                     {visibleIndices.combined && pointsCombined && <polyline points={pointsCombined} fill="none" stroke="#34d399" strokeWidth="3" />}
+                    {visibleIndices.realChurn && pointsRealChurn && <polyline points={pointsRealChurn} fill="none" stroke="#f59e0b" strokeWidth="2" />}
+                    {visibleIndices.realFail && pointsRealFail && <polyline points={pointsRealFail} fill="none" stroke="#ec4899" strokeWidth="2" />}
 
                     {/* Hover trigger rectangles */}
                     {visibleList.map((_, idx) => {
@@ -867,6 +984,8 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                             {visibleIndices.move && <circle cx={x} cy={yScale(hLvl.move.score)} r="4" fill="#a78bfa" stroke="white" strokeWidth="1" />}
                             {visibleIndices.learning && <circle cx={x} cy={yScale(hLvl.learning?.score || 0)} r="4" fill="#fb7185" stroke="white" strokeWidth="1" />}
                             {visibleIndices.combined && <circle cx={x} cy={yScale(hLvl.combined.score)} r="5.5" fill="#34d399" stroke="white" strokeWidth="1.5" />}
+                            {visibleIndices.realChurn && hLvl.telemetry && <circle cx={x} cy={yScale(hLvl.telemetry.churn_rate)} r="4" fill="#f59e0b" stroke="white" strokeWidth="1" />}
+                            {visibleIndices.realFail && hLvl.telemetry && <circle cx={x} cy={yScale(hLvl.telemetry.fail_rate)} r="4" fill="#ec4899" stroke="white" strokeWidth="1" />}
                           </g>
                         );
                       })()
@@ -888,6 +1007,12 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                   <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#a78bfa' }}><span style={{ display: 'inline-block', width: '5px', height: '5px', borderRadius: '50%', background: '#a78bfa' }}></span>Moves</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#fb7185' }}><span style={{ display: 'inline-block', width: '5px', height: '2.5px', background: '#fb7185' }}></span>Learning</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#34d399' }}><span style={{ display: 'inline-block', width: '5px', height: '5px', borderRadius: '50%', background: '#34d399' }}></span>Combined</span>
+                  {visibleIndices.vocab && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#60a5fa' }}><span style={{ display: 'inline-block', width: '5px', height: '5px', borderRadius: '50%', background: '#60a5fa' }}></span>Vocab</span>}
+                  {visibleIndices.move && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#a78bfa' }}><span style={{ display: 'inline-block', width: '5px', height: '5px', borderRadius: '50%', background: '#a78bfa' }}></span>Moves</span>}
+                  {visibleIndices.learning && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#fb7185' }}><span style={{ display: 'inline-block', width: '5px', height: '2.5px', background: '#fb7185' }}></span>Learning</span>}
+                  {visibleIndices.combined && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#34d399' }}><span style={{ display: 'inline-block', width: '5px', height: '5px', borderRadius: '50%', background: '#34d399' }}></span>Combined</span>}
+                  {visibleIndices.realChurn && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#f59e0b' }}><span style={{ display: 'inline-block', width: '5px', height: '5px', borderRadius: '50%', background: '#f59e0b' }}></span>Real Churn</span>}
+                  {visibleIndices.realFail && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#ec4899' }}><span style={{ display: 'inline-block', width: '5px', height: '5px', borderRadius: '50%', background: '#ec4899' }}></span>Real Fail</span>}
                 </div>
               </div>
             </div>
@@ -1117,6 +1242,7 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                             <tr>
                               <td colSpan={8} style={{ background: 'rgba(0,0,0,0.15)', padding: '16px 24px' }}>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
                                   
                                   {/* Vocab Factors & Rare Words */}
                                   <div>
@@ -1193,6 +1319,52 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                                         </span>
                                       ))}
                                     </div>
+                                  </div>
+
+                                  {/* ClickHouse Telemetry */}
+                                  <div>
+                                    <h4 style={{ color: 'white', margin: '0 0 8px 0', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                      <Activity size={14} className="text-amber-400" />
+                                      ClickHouse Telemetry Stats
+                                    </h4>
+                                    {lvl.telemetry ? (
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '6px', borderRadius: '4px', textAlign: 'center' }}>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '2px' }}>Total Starts</div>
+                                            <div style={{ fontSize: '13px', color: 'white', fontWeight: 'bold' }}>{lvl.telemetry.starts.toLocaleString()}</div>
+                                          </div>
+                                          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '6px', borderRadius: '4px', textAlign: 'center' }}>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '2px' }}>Total Wins</div>
+                                            <div style={{ fontSize: '13px', color: '#22c55e', fontWeight: 'bold' }}>{lvl.telemetry.wins.toLocaleString()}</div>
+                                          </div>
+                                          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '6px', borderRadius: '4px', textAlign: 'center' }}>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '2px' }}>Unique Users</div>
+                                            <div style={{ fontSize: '13px', color: '#3b82f6', fontWeight: 'bold' }}>{lvl.telemetry.users_attempted.toLocaleString()}</div>
+                                          </div>
+                                          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '6px', borderRadius: '4px', textAlign: 'center' }}>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '2px' }}>Users Churned</div>
+                                            <div style={{ fontSize: '13px', color: '#ef4444', fontWeight: 'bold' }}>{lvl.telemetry.users_dropped.toLocaleString()}</div>
+                                          </div>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '6px', marginTop: '4px' }}>
+                                          <span style={{ color: '#f59e0b', fontWeight: 600 }}>Real Churn Rate:</span>
+                                          <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>{lvl.telemetry.churn_rate}%</span>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                                          <span style={{ color: '#ec4899', fontWeight: 600 }}>Real Fail Rate:</span>
+                                          <span style={{ color: '#ec4899', fontWeight: 'bold' }}>{lvl.telemetry.fail_rate}%</span>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                                          <span style={{ color: '#10b981', fontWeight: 600 }}>Real Ads / User:</span>
+                                          <span style={{ color: '#10b981', fontWeight: 'bold' }}>{lvl.telemetry.avg_ads_per_user ?? 0}</span>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(0,0,0,0.1)', padding: '12px', borderRadius: '6px' }}>
+                                        <HelpCircle size={14} /> Telemetry data not available.
+                                      </div>
+                                    )}
                                   </div>
 
                                 </div>
