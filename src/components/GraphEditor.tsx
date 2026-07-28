@@ -2945,10 +2945,10 @@ export default function GraphEditor() {
       <div className="glass-panel" style={{
         position: 'absolute', top: '20px', left: '20px', right: '20px', 
         height: '60px', borderRadius: '12px', zIndex: 10,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.2)', overflowX: 'auto', whiteSpace: 'nowrap'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
           <div style={{ fontWeight: 700, fontSize: '20px', letterSpacing: '1px' }}>
             WordNet Builder
           </div>
@@ -3044,7 +3044,7 @@ export default function GraphEditor() {
             <ChevronRight size={16} />
           </button>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.15)', padding: '4px', borderRadius: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0,0,0,0.15)', padding: '4px', borderRadius: '10px', flexShrink: 0 }}>
             <button 
               onClick={() => {
                 if (confirm('Create a new empty level? Unsaved progress will be lost.')) {
@@ -3088,8 +3088,8 @@ export default function GraphEditor() {
           </div>
         </div>
         
-        <div style={{ display: 'flex', gap: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,0,0,0.15)', padding: '4px', borderRadius: '10px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0,0,0,0.15)', padding: '4px', borderRadius: '10px' }}>
             <button 
               onClick={() => setIsSolutionModalOpen(true)}
               disabled={!rawLevelData}
