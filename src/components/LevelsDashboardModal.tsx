@@ -28,6 +28,8 @@ interface LevelDifficultyData {
     users_dropped: number;
     churn_rate: number;
     fail_rate: number;
+    reward_ads?: number;
+    avg_ads_per_user?: number;
   };
 }
 
@@ -305,7 +307,7 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
             });
           }
           
-          if (w.chunks && Array.isArray(w.chunks)) {
+          if (w.chunks && Array.isArray(w.chunks) && w.chunks.length > 0) {
             w.chunks.forEach((chunkItem: any) => {
               const chunkStr = typeof chunkItem === 'string' ? chunkItem : Object.keys(chunkItem)[0];
               if (!chunkStr) return;
@@ -328,6 +330,24 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                 source: wordNode.id,
                 target: chunkNode.id
               });
+            });
+          } else if (levelData.allWordEntries && Array.isArray(levelData.allWordEntries)) {
+            // Support new flattened format
+            levelData.allWordEntries.forEach((entry: any, arrIdx: number) => {
+              if (entry.parentWord && String(entry.parentWord).toLowerCase().trim() === wordLower) {
+                const chunkNode = {
+                  id: nextId(),
+                  type: 'custom',
+                  position: { x: 0, y: 0 },
+                  data: { label: String(entry.fullWord).toLowerCase(), isCategory: false, isChunk: true, globalIndex: arrIdx + 1 }
+                };
+                nodes.push(chunkNode);
+                edges.push({
+                  id: `e-${wordNode.id}-${chunkNode.id}`,
+                  source: wordNode.id,
+                  target: chunkNode.id
+                });
+              }
             });
           }
         });
@@ -855,6 +875,10 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                                   <span style={{ color: '#ec4899' }}>Real Fail:</span>
                                   <span style={{ color: '#ec4899', fontWeight: 'bold' }}>{hLvl.telemetry.fail_rate}%</span>
                                 </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                                  <span style={{ color: '#10b981' }}>Real Ads/User:</span>
+                                  <span style={{ color: '#10b981', fontWeight: 'bold' }}>{hLvl.telemetry.avg_ads_per_user ?? 0}</span>
+                                </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
                                   <span>Starts (CH):</span>
                                   <span>{hLvl.telemetry.starts.toLocaleString()}</span>
@@ -1324,6 +1348,10 @@ export default function LevelsDashboardModal({ isOpen, onClose, levels, loadLeve
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
                                           <span style={{ color: '#ec4899', fontWeight: 600 }}>Real Fail Rate:</span>
                                           <span style={{ color: '#ec4899', fontWeight: 'bold' }}>{lvl.telemetry.fail_rate}%</span>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                                          <span style={{ color: '#10b981', fontWeight: 600 }}>Real Ads / User:</span>
+                                          <span style={{ color: '#10b981', fontWeight: 'bold' }}>{lvl.telemetry.avg_ads_per_user ?? 0}</span>
                                         </div>
                                       </div>
                                     ) : (
