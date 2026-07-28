@@ -2944,9 +2944,9 @@ export default function GraphEditor() {
       {/* Top Navbar */}
       <div className="glass-panel" style={{
         position: 'absolute', top: '20px', left: '20px', right: '20px', 
-        minHeight: '60px', borderRadius: '12px', zIndex: 10,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', padding: '12px 20px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+        height: '60px', borderRadius: '12px', zIndex: 10,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.2)', overflowX: 'auto', whiteSpace: 'nowrap'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
           <div style={{ fontWeight: 700, fontSize: '20px', letterSpacing: '1px' }}>
@@ -3135,7 +3135,7 @@ export default function GraphEditor() {
 
       {/* Word List Panel on the Left */}
       <div style={{ 
-        position: 'absolute', top: '140px', left: '20px', bottom: '20px', width: '280px', 
+        position: 'absolute', top: '100px', left: '20px', bottom: '20px', width: '280px', 
         background: 'var(--panel-bg)', borderRadius: '12px', border: '1px solid var(--panel-border)', 
         zIndex: 10, display: 'flex', flexDirection: 'column', padding: '16px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.3)', backdropFilter: 'blur(10px)'
