@@ -1210,26 +1210,23 @@ export default function GraphEditor() {
       const isInput = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
       
       // Shortcuts that work EVERYWHERE (even in inputs)
-      if (e.altKey && e.key === '1') {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsSolutionModalOpen(true);
-        return;
-      } else if (e.altKey && e.key === '2') {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDictOpen(true);
-        return;
-      }
-      
-      if (e.ctrlKey || e.metaKey) {
-        const key = e.key.toLowerCase();
-        if (key === 's') {
+      if (e.shiftKey) {
+        if (e.code === 'Digit1') {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsSolutionModalOpen(true);
+          return;
+        } else if (e.code === 'Digit2') {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDictOpen(true);
+          return;
+        } else if (e.code === 'KeyS') {
           e.preventDefault();
           e.stopPropagation();
           handleExportJsonRef.current();
           return;
-        } else if (key === 'q') {
+        } else if (e.code === 'KeyQ') {
           e.preventDefault();
           e.stopPropagation();
           handleShuffleRangeRef.current();
