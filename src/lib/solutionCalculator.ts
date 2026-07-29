@@ -17,6 +17,11 @@ export interface BoardBubbleState {
   screwLockIndex?: number;
   screwDriverIndex?: number;
   reqLockWeight?: number;
+  isIceBomb?: boolean;
+  iceBombTurnToActive?: number;
+  iceBombConfigTurnToActive?: number;
+  iceBombConfigFreezeTurns?: number;
+  iceBombInfectedFreezeTurns?: number;
 }
 
 export interface MergeStep {
@@ -73,6 +78,29 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   let bombPenalties = 0;
   const explodedBombs = new Set<string>();
   const screwEventsEmitted = new Set<string>();
+
+  interface ActiveIceBomb {
+    turnToActiveRemaining: number;
+    configTurnToActive: number;
+    configFreezeTurns: number;
+  }
+  
+  interface InfectedIceBomb {
+    freezeMergesLeft: number;
+    configTurnToActive: number;
+    configFreezeTurns: number;
+  }
+  
+  const activeIceBombs = new Map<string, ActiveIceBomb>();
+  const infectedIceBombs = new Map<string, InfectedIceBomb>();
+
+  levelData?.iceBombBubbles?.forEach((ib: any) => {
+     activeIceBombs.set(ib.word.toLowerCase(), {
+        turnToActiveRemaining: ib.turnToActive,
+        configTurnToActive: ib.turnToActive,
+        configFreezeTurns: ib.freezeTurns
+     });
+  });
 
   const crackBreakMap: Record<string, number> = {};
   if (levelData?.allWordEntries) {
@@ -190,6 +218,24 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       }
     }
 
+    let isIceBomb = false;
+    let iceBombTurnToActive: number | undefined;
+    let iceBombConfigTurnToActive: number | undefined;
+    let iceBombConfigFreezeTurns: number | undefined;
+    let iceBombInfectedFreezeTurns: number | undefined;
+
+    if (activeIceBombs.has(w)) {
+      isIceBomb = true;
+      const ib = activeIceBombs.get(w)!;
+      iceBombTurnToActive = ib.turnToActiveRemaining;
+      iceBombConfigTurnToActive = ib.configTurnToActive;
+      iceBombConfigFreezeTurns = ib.configFreezeTurns;
+    }
+
+    if (infectedIceBombs.has(w)) {
+      iceBombInfectedFreezeTurns = infectedIceBombs.get(w)!.freezeMergesLeft;
+    }
+
     return {
       id: bid,
       label: displayLabel,
@@ -204,11 +250,25 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       isScrewDriver: isScrewDriverCheck,
       screwLockIndex,
       screwDriverIndex,
-      reqLockWeight
+      reqLockWeight,
+      isIceBomb,
+      iceBombTurnToActive,
+      iceBombConfigTurnToActive,
+      iceBombConfigFreezeTurns,
+      iceBombInfectedFreezeTurns
     };
   };
 
   const addStep = (type: 'chunk' | 'category' | 'event' | 'success', left: string, right: string, result: string, text?: string) => {
+    if (type !== 'event' && type !== 'success') {
+      const leftW = left.toLowerCase();
+      const rightW = right.toLowerCase();
+      activeIceBombs.delete(leftW);
+      activeIceBombs.delete(rightW);
+      infectedIceBombs.delete(leftW);
+      infectedIceBombs.delete(rightW);
+    }
+    
     let currentMoveIndex = moveCount;
     if (type !== 'event' && type !== 'success') {
       moveCount++;
@@ -295,6 +355,108 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
             }
          });
       });
+
+       // Check Ice Bombs
+       const iceBombsToExplode: string[] = [];
+       board.forEach(bid => {
+          const node = nodes.find(n => n.id === bid);
+          const displayLabel = node ? String(node.data.label) : bid.split('_')[1]?.replace(/^\[|\]$/g, '') || bid;
+          const w = displayLabel.toLowerCase();
+          if (activeIceBombs.has(w)) {
+             const ib = activeIceBombs.get(w)!;
+             ib.turnToActiveRemaining--;
+             if (ib.turnToActiveRemaining <= 0) {
+                iceBombsToExplode.push(bid);
+             }
+          }
+       });
+
+       iceBombsToExplode.forEach(bombBid => {
+          const candidateBids = board.filter(b => {
+              const n = nodes.find(x => x.id === b);
+              if (n && n.data.isChunk) return false;
+              if (b.startsWith('temp_')) return false;
+              const lbl = n ? String(n.data.label) : b.split('_')[1]?.replace(/^\[|\]$/g, '') || b;
+              const wl = lbl.toLowerCase();
+              return !activeIceBombs.has(wl) && !infectedIceBombs.has(wl);
+          });
+          
+          const bombNode = nodes.find(n => n.id === bombBid);
+          const bombLabel = bombNode ? String(bombNode.data.label) : bombBid.split('_')[1]?.replace(/^\[|\]$/g, '') || bombBid;
+          const bombW = bombLabel.toLowerCase();
+          const ib = activeIceBombs.get(bombW)!;
+
+          if (candidateBids.length > 0) {
+              const targetBid = candidateBids[Math.floor(Math.random() * candidateBids.length)];
+              const targetNode = nodes.find(n => n.id === targetBid);
+              const targetLabel = targetNode ? String(targetNode.data.label) : targetBid.split('_')[1]?.replace(/^\[|\]$/g, '') || targetBid;
+              const targetW = targetLabel.toLowerCase();
+
+              infectedIceBombs.set(targetW, {
+                  freezeMergesLeft: ib.configFreezeTurns,
+                  configTurnToActive: ib.configTurnToActive,
+                  configFreezeTurns: ib.configFreezeTurns
+              });
+
+              ib.turnToActiveRemaining = ib.configTurnToActive;
+
+              steps.push({
+                  id: `step-${stepIdCounter++}`,
+                  type: 'event',
+                  left: '',
+                  right: '',
+                  result: '',
+                  text: `💣 Ice Bomb "${bombLabel}" exploded and froze "${targetLabel}"!`,
+                  isComboBonus: false,
+                  boardState: board.map(bid => getBubbleState(bid)),
+                  moveIndex: currentMoveIndex
+              });
+          } else {
+              ib.turnToActiveRemaining = ib.configTurnToActive;
+          }
+       });
+
+       // Handle Infected Ice Bombs
+       const infectedToThaw: string[] = [];
+       board.forEach(bid => {
+          const node = nodes.find(n => n.id === bid);
+          const displayLabel = node ? String(node.data.label) : bid.split('_')[1]?.replace(/^\[|\]$/g, '') || bid;
+          const w = displayLabel.toLowerCase();
+          if (infectedIceBombs.has(w)) {
+             const infected = infectedIceBombs.get(w)!;
+             infected.freezeMergesLeft--;
+             if (infected.freezeMergesLeft <= 0) {
+                infectedToThaw.push(bid);
+             }
+          }
+       });
+
+       infectedToThaw.forEach(thawBid => {
+          const node = nodes.find(n => n.id === thawBid);
+          const displayLabel = node ? String(node.data.label) : thawBid.split('_')[1]?.replace(/^\[|\]$/g, '') || thawBid;
+          const w = displayLabel.toLowerCase();
+          
+          const infected = infectedIceBombs.get(w)!;
+          infectedIceBombs.delete(w);
+          
+          activeIceBombs.set(w, {
+              turnToActiveRemaining: infected.configTurnToActive,
+              configTurnToActive: infected.configTurnToActive,
+              configFreezeTurns: infected.configFreezeTurns
+          });
+
+          steps.push({
+              id: `step-${stepIdCounter++}`,
+              type: 'event',
+              left: '',
+              right: '',
+              result: '',
+              text: `🧊 Infected bubble "${displayLabel}" thawed and became a new Ice Bomb!`,
+              isComboBonus: false,
+              boardState: board.map(bid => getBubbleState(bid)),
+              moveIndex: currentMoveIndex
+          });
+       });
     } else {
       steps.push({
         id: `step-${stepIdCounter++}`,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Dumbbell } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Dumbbell, Radiation } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -425,6 +425,111 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                           </div>
                         </div>
                       </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )
+    },
+    {
+      id: 'icebomb',
+      isActive: () => forceOpen.icebomb || (levelData.iceBombBubbles && levelData.iceBombBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Radiation size={16} color="#38bdf8" />
+              Mechanic: Ice Bomb Bubbles
+            </h3>
+            <Toggle 
+              checked={forceOpen.icebomb || (levelData.iceBombBubbles && levelData.iceBombBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, icebomb: checked }));
+                handleChange('iceBombBubbles', checked ? [] : undefined);
+              }}
+            />
+          </div>
+          {(forceOpen.icebomb || (levelData.iceBombBubbles && levelData.iceBombBubbles.length > 0)) && (
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                Ice Bomb Words (Drag & Drop from left panel):
+              </div>
+              <div 
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                  if (wordLabel) {
+                    const currentIceBombs = levelData.iceBombBubbles || [];
+                    if (!currentIceBombs.some((f: any) => f.word === wordLabel)) {
+                      handleChange('iceBombBubbles', [...currentIceBombs, { word: wordLabel, turnToActive: 5, freezeTurns: 5 }]);
+                    }
+                  }
+                }}
+                style={{ 
+                  minHeight: '80px', padding: '8px', border: '1px dashed rgba(56,189,248,0.5)', 
+                  borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                }}
+              >
+                {(!levelData.iceBombBubbles || levelData.iceBombBubbles.length === 0) ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                    Drop words here
+                  </span>
+                ) : (
+                  levelData.iceBombBubbles.map((iceBombItem: any, i: number) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(56,189,248,0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(56,189,248,0.3)' }}>
+                      <span 
+                        onClick={() => {
+                          if (onFocusWord) onFocusWord(iceBombItem.word);
+                        }}
+                        style={{ 
+                          fontSize: '13px', fontWeight: 600, color: 'white', 
+                          cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
+                        }}
+                      >
+                        {iceBombItem.word}
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Merges:</span>
+                        <input 
+                          type="number" 
+                          value={iceBombItem.turnToActive}
+                          onChange={(e) => {
+                            const newIceBombs = [...levelData.iceBombBubbles];
+                            newIceBombs[i].turnToActive = parseInt(e.target.value) || 1;
+                            handleChange('iceBombBubbles', newIceBombs);
+                          }}
+                          style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Freeze:</span>
+                        <input 
+                          type="number" 
+                          value={iceBombItem.freezeTurns}
+                          onChange={(e) => {
+                            const newIceBombs = [...levelData.iceBombBubbles];
+                            newIceBombs[i].freezeTurns = parseInt(e.target.value) || 1;
+                            handleChange('iceBombBubbles', newIceBombs);
+                          }}
+                          style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                        />
+                      </div>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleChange('iceBombBubbles', levelData.iceBombBubbles.filter((f: any) => f.word !== iceBombItem.word));
+                        }}
+                        style={{ 
+                          background: 'transparent', border: 'none', 
+                          color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                        }}
+                      >
+                        &times;
+                      </button>
                     </div>
                   ))
                 )}
@@ -1548,12 +1653,119 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
 
 
       
+        <div style={{ marginBottom: '16px', background: 'rgba(0,0,0,0.1)', padding: '10px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <h3 style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mechanics Toggle</h3>
+            <button
+              onClick={() => {
+                const newData = { ...levelData };
+                newData.useBubbleSeparator = 0;
+                delete newData.frozenBubbles;
+                delete newData.crackBubbles;
+                delete newData.iceBombBubbles;
+                delete newData.burstBubbles;
+                delete newData.backwardBubbles;
+                delete newData.keyLockBubbles;
+                delete newData.screwLockBubbles;
+                delete newData.cycleLockBubbles;
+                delete newData.crypticBubbles;
+                delete newData.immovableBubbles;
+                delete newData.countdownBubbles;
+                delete newData.linkedBubbles;
+                delete newData.requirementLockBubbles;
+                
+                setForceOpen({});
+                setSortedMechanicIds([]);
+                onSave(newData);
+              }}
+              style={{
+                background: 'transparent', border: '1px solid var(--panel-border)', borderRadius: '4px',
+                color: 'var(--text-muted)', fontSize: '9px', padding: '2px 6px', cursor: 'pointer',
+                transition: 'all 0.2s', textTransform: 'uppercase', fontWeight: 600
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--panel-border)'; e.currentTarget.style.background = 'transparent'; }}
+            >
+              Clear
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+            {mechanicsConfig.map(m => {
+              const active = m.isActive();
+              
+              const meta: Record<string, {name: string, icon: JSX.Element, color: string}> = {
+                chain: { name: 'Chain', icon: <Link size={10} />, color: '#818cf8' },
+                frozen: { name: 'Frozen', icon: <Snowflake size={10} />, color: '#38bdf8' },
+                crack: { name: 'Crack', icon: <Zap size={10} />, color: '#fbbf24' },
+                icebomb: { name: 'Ice Bomb', icon: <Radiation size={10} />, color: '#38bdf8' },
+                burst: { name: 'Burst', icon: <Bomb size={10} />, color: '#ef4444' },
+                backward: { name: 'Backward', icon: <ArrowLeftRight size={10} />, color: '#a855f7' },
+                keyLock: { name: 'Key Lock', icon: <Key size={10} />, color: '#eab308' },
+                screwLock: { name: 'Screw Lock', icon: <Wrench size={10} />, color: '#f97316' },
+                cycleLock: { name: 'Cycle', icon: <RefreshCw size={10} />, color: '#14b8a6' },
+                cryptic: { name: 'Cryptic', icon: <Eye size={10} />, color: '#c084fc' },
+                immovable: { name: 'Immovable', icon: <Pin size={10} />, color: '#9ca3af' },
+                countdown: { name: 'Countdown', icon: <Timer size={10} />, color: '#ec4899' },
+                linked: { name: 'Linked', icon: <Magnet size={10} />, color: '#0ea5e9' },
+                requirementLock: { name: 'Req Lock', icon: <Dumbbell size={10} />, color: '#f97316' }
+              };
+              
+              const mMeta = meta[m.id] || { name: m.id, icon: <Zap size={10} />, color: '#ffffff' };
+              
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => {
+                    const willBeActive = !active;
+                    setForceOpen(prev => ({ ...prev, [m.id]: willBeActive }));
+                    if (m.id === 'chain') handleChange('useBubbleSeparator', willBeActive ? 1 : 0);
+                    else if (m.id === 'frozen') handleChange('frozenBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'crack') handleChange('crackBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'icebomb') handleChange('iceBombBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'burst') handleChange('burstBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'backward') handleChange('backwardBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'keyLock') handleChange('keyLockBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'screwLock') handleChange('screwLockBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'cycleLock') handleChange('cycleLockBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'cryptic') handleChange('crypticBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'immovable') handleChange('immovableBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'countdown') handleChange('countdownBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'linked') handleChange('linkedBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'requirementLock') handleChange('requirementLockBubbles', willBeActive ? [] : undefined);
+                    
+                    if (willBeActive) {
+                      setSortedMechanicIds(prev => {
+                        const newSorted = prev.filter(id => id !== m.id);
+                        return [m.id, ...newSorted];
+                      });
+                    }
+                  }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '3px',
+                    padding: '3px 6px', borderRadius: '4px', fontSize: '9px', fontWeight: 600,
+                    background: active ? `${mMeta.color}20` : 'rgba(0,0,0,0.2)',
+                    color: active ? mMeta.color : 'var(--text-muted)',
+                    border: `1px solid ${active ? mMeta.color : 'var(--panel-border)'}`,
+                    cursor: 'pointer', transition: 'all 0.2s', opacity: active ? 1 : 0.5
+                  }}
+                  onMouseOver={(e) => { if (!active) e.currentTarget.style.opacity = '1'; }}
+                  onMouseOut={(e) => { if (!active) e.currentTarget.style.opacity = '0.5'; }}
+                  title={`Toggle ${mMeta.name}`}
+                >
+                  <span style={{ color: active ? mMeta.color : 'inherit', display: 'flex' }}>{mMeta.icon}</span>
+                  {mMeta.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {sortedMechanicIds.length > 0 
           ? sortedMechanicIds.map(id => {
               const mechanic = mechanicsConfig.find(m => m.id === id);
-              return mechanic ? <div key={id}>{mechanic.render()}</div> : null;
+              return mechanic && mechanic.isActive() ? <div key={id}>{mechanic.render()}</div> : null;
             })
-          : mechanicsConfig.map(m => <div key={m.id}>{m.render()}</div>) // Fallback if effect hasn't run yet
+          : mechanicsConfig.filter(m => m.isActive()).map(m => <div key={m.id}>{m.render()}</div>) // Fallback if effect hasn't run yet
         }
       </div>
     </div>

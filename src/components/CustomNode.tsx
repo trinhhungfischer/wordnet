@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap } from 'lucide-react';
+import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Radiation } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
@@ -12,6 +12,7 @@ const CustomNode = ({ data, selected }: any) => {
   const isBackward = data.isBackward === true;
   const isCrackBubble = data.isCrackBubble === true;
   const crackCountRemaining = data.crackCountRemaining !== undefined ? data.crackCountRemaining : 0;
+  const isIceBomb = data.isIceBomb === true;
   const isBurst = data.isBurst === true;
   const burstMovesRemaining = data.burstMovesRemaining !== undefined ? data.burstMovesRemaining : 0;
   const lockIndex = data.lockIndex !== undefined ? data.lockIndex : -1;
@@ -69,9 +70,10 @@ const CustomNode = ({ data, selected }: any) => {
         {isLinkedMain && <Magnet size={14} style={{ color: '#0ea5e9', marginLeft: '4px' }} />}
         {isLinkedChunk && <Magnet size={14} style={{ color: '#bae6fd', marginLeft: '4px' }} />}
         {isChained && <Link size={14} style={{ color: '#818cf8', marginLeft: '4px' }} />}
-        {isCryptic && <Eye size={14} style={{ color: '#c084fc', marginLeft: '4px' }} />}
         {isImmovable && <Pin size={14} style={{ color: '#9ca3af', marginLeft: '4px' }} />}
+        {isIceBomb && <Radiation size={14} style={{ color: '#38bdf8', marginLeft: '4px' }} />}
         {isFrozen && <Snowflake size={14} style={{ color: '#38bdf8', marginLeft: '4px' }} />}
+        {isCryptic && <Eye size={14} style={{ color: '#c084fc', marginLeft: '4px' }} />}
         {isCrackBubble && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#fbbf24', marginLeft: '4px' }}>
             <Zap size={14} />
@@ -79,7 +81,7 @@ const CustomNode = ({ data, selected }: any) => {
           </div>
         )}
         {isBackward && <ArrowLeftRight size={14} style={{ color: '#a855f7', marginLeft: '4px' }} />}
-        {isBurst && (
+        {isBurst && burstMovesRemaining > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: burstMovesRemaining <= 3 ? '#ef4444' : '#f97316', marginLeft: '4px' }}>
             <Bomb size={14} />
             <span style={{ fontSize: '11px' }}>{burstMovesRemaining}</span>

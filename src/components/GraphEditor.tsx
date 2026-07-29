@@ -127,6 +127,33 @@ const isNodeFrozen = (node: Node, frozenBubblesList: any[], edges: Edge[], nodes
   return false;
 };
 
+const isNodeIceBomb = (node: Node, iceBombBubblesList: any[], edges: Edge[], nodes: Node[]) => {
+  if (!iceBombBubblesList || iceBombBubblesList.length === 0) return false;
+  const label = String(node.data.label).toLowerCase();
+  
+  if (iceBombBubblesList.some((i: any) => i.word.toLowerCase() === label)) return true;
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode && iceBombBubblesList.some((i: any) => i.word.toLowerCase() === String(parentNode.data.label).toLowerCase())) {
+        return true;
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    if (chunkLabels.some(cLabel => iceBombBubblesList.some((i: any) => i.word.toLowerCase() === cLabel))) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const isNodeRequirementLocked = (node: Node, reqLocks: any[], edges: Edge[], nodes: Node[]): number | null => {
   if (!reqLocks || reqLocks.length === 0) return null;
   const label = String(node.data.label).toLowerCase();
@@ -1474,6 +1501,13 @@ export default function GraphEditor() {
         isChanged = true;
       }
 
+      if (clonedRawData.iceBombBubbles) {
+        clonedRawData.iceBombBubbles = clonedRawData.iceBombBubbles.map((ib: any) => 
+          ib.word.toLowerCase() === oldLabel ? { ...ib, word: newLabelLower } : ib
+        );
+        isChanged = true;
+      }
+
       if (clonedRawData.burstBubbles) {
         clonedRawData.burstBubbles = clonedRawData.burstBubbles.map((bb: any) => 
           bb.word.toLowerCase() === oldLabel ? { ...bb, word: newLabelLower } : bb
@@ -1962,6 +1996,12 @@ export default function GraphEditor() {
           if (updatedRawLevelData.crackBubbles) {
             updatedRawLevelData.crackBubbles = updatedRawLevelData.crackBubbles.map((cb: any) => 
               cb.word.toLowerCase() === oldLabel ? { ...cb, word: newLabel } : cb
+            );
+          }
+          
+          if (updatedRawLevelData.iceBombBubbles) {
+            updatedRawLevelData.iceBombBubbles = updatedRawLevelData.iceBombBubbles.map((ib: any) => 
+              ib.word.toLowerCase() === oldLabel ? { ...ib, word: newLabel } : ib
             );
           }
           
@@ -2697,6 +2737,13 @@ export default function GraphEditor() {
               );
             }
 
+            // 2.2 Ice Bomb Bubbles
+            if (clonedRawData.iceBombBubbles) {
+              clonedRawData.iceBombBubbles = clonedRawData.iceBombBubbles.map((ib: any) => 
+                ib.word.toLowerCase() === oldLabel ? { ...ib, word: w.word } : ib
+              );
+            }
+
             // 2.5 Crack Bubbles
             if (clonedRawData.crackBubbles) {
               clonedRawData.crackBubbles = clonedRawData.crackBubbles.map((cb: any) => 
@@ -3353,6 +3400,7 @@ export default function GraphEditor() {
                   const isChunk = Boolean(node.data.isChunk);
                   const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
                   const isFrozen = isNodeFrozen(node, rawLevelData?.frozenBubbles || [], edges, nodes);
+                  const isIceBomb = isNodeIceBomb(node, rawLevelData?.iceBombBubbles || [], edges, nodes);
                   const isBackward = isNodeBackward(node, rawLevelData?.backwardBubbles || [], edges, nodes);
                   const isCryptic = isNodeCryptic(node, rawLevelData?.crypticBubbles || [], edges, nodes);
                   const reqLockWeight = isNodeRequirementLocked(node, rawLevelData?.requirementLockBubbles || [], edges, nodes);
@@ -3413,12 +3461,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))))))))),
+                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isIceBomb ? 'rgba(56, 189, 248, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))))))))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))))))))),
+                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isIceBomb ? '1px solid rgba(56, 189, 248, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -3442,6 +3490,9 @@ export default function GraphEditor() {
                             <Eye size={12} color="#c084fc" />
                           )}
                           {isFrozen && (
+                            <Snowflake size={12} color="#38bdf8" />
+                          )}
+                          {isIceBomb && (
                             <Snowflake size={12} color="#38bdf8" />
                           )}
                           {isBackward && (
@@ -3480,6 +3531,7 @@ export default function GraphEditor() {
                           {screwDriverIndex !== -1 && <PenTool size={14} color={selectedNodeId === nodeId ? "white" : lockKeyColors[screwDriverIndex % lockKeyColors.length]} />}
                           {isChained && <Link size={14} color={selectedNodeId === nodeId ? "white" : "#818cf8"} />}
                           {isCryptic && <Eye size={14} color={selectedNodeId === nodeId ? "white" : "#c084fc"} />}
+                          {isIceBomb && <Bomb size={14} color={selectedNodeId === nodeId ? "white" : "#38bdf8"} />}
                           {isFrozen && <Snowflake size={14} color={selectedNodeId === nodeId ? "white" : "#38bdf8"} />}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
                             {isChunk ? 'Chunk' : 'Word'}

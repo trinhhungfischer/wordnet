@@ -126,7 +126,8 @@ Cấu trúc:
 
 - `word`: Chữ bị gắn bom nổ chậm.
 - `movesRemaining`: Số lượt đi (Hit) còn lại trước khi quả bom phát nổ. (Dưới 3 turn sẽ hiển thị cảnh báo đỏ). Mỗi lần **Hit** (bất kể ghép đúng hay kéo sai) sẽ làm giảm đi 1.
-- `results`: Nếu bom nổ, lượt chơi sẽ trừ đi một lượt -> thay đổi cách tính toán và recommend lời giải
+- `results`: Nếu bom nổ, lượt chơi sẽ trừ đi một lượt -> thay đổi cách tính toán và recommend lời giải.
+- *Lưu ý mô phỏng:* Khi quả bom đếm ngược về 0 (hết lượt), nó sẽ nổ và mất cơ chế Bom (trở về hiển thị như một quả bóng thường trên board state).
 
 ---
 
@@ -347,10 +348,16 @@ Cấu trúc:
 ]
 ```
 
-"turnToActive": Số lượt merge (theo chu kì) để quả bóng này active kĩ năng biến một quả bóng bất kỳ thành Freeze "Ice Bomb Bubble".
+"turnToActive": Số lượt merge (theo chu kì) trên toàn bàn để quả bóng này active kĩ năng biến một quả bóng bất kỳ thành Freeze "Ice Bomb Bubble".
 "freezeTurns": Số lượt Freeze "Ice Bomb Bubble" để nó biến thành một "Ice Bomb Bubble" mới
 
-**Luật chơi:** Khi quả bóng này được merge đủ số lượt `turnToActive`, nó sẽ biến một quả bóng bất kỳ thành "Ice Bomb Bubble". Quả bóng bị biến đổi sẽ bị đóng băng trong `freezeTurns` lượt, sau đó sẽ biến thành Ice Bomb Bubble với config giống config của cha
+**Luật chơi:** 
+- Khi người chơi thực hiện thành công một lần ghép đúng (Merge) trên bàn, `turnToActive` của Ice Bomb sẽ giảm 1.
+- Khi đếm ngược đạt 0, nó sẽ biến một quả bóng bất kỳ trên bàn thành "Ice Bomb Bubble" ở trạng thái bị đóng băng. Đếm ngược của Ice Bomb gốc sẽ reset về lại `turnToActive` ban đầu và tiếp tục vòng lặp nổ.
+- Quả bóng mục tiêu bị lây nhiễm sẽ bị đóng băng (hiển thị giống cơ chế Frozen Bubble) trong `freezeTurns` lượt merge. Sau đó nó sẽ rã đông và chính thức biến thành Ice Bomb Bubble với config giống config của cha.
+- Nếu quả bóng đang là Ice Bomb bị người chơi ghép (merge) thành chữ khác, cơ chế Ice Bomb trên quả bóng đó sẽ biến mất hoàn toàn.
+- **Merge giữa các Ice Bomb và Bóng bị lây nhiễm (Infected):** Bóng Ice Bomb hoặc bóng đang bị lây nhiễm (Infected - chưa hóa hoàn toàn thành Ice Bomb) hoàn toàn có thể tự merge với nhau hoặc merge với bóng bình thường (nếu cùng nhóm) để tạo ra một Merge Bubble bình thường. Khi đó tất cả sẽ mất cơ chế Ice Bomb/Infected. Bóng Infected **không bị khoá merge**.
+- **Lưu ý mục tiêu:** Ice Bomb **KHÔNG** lây nhiễm sang các quả bóng đang là mảnh ghép cắt ra (chunk) hoặc các Merge Bubble (đã gộp nhiều chữ). Nếu trên bàn không còn bong bóng hợp lệ nào để lây nhiễm, nó sẽ bỏ qua lượt nổ đó và tự động reset lại đếm ngược.
 
 ## 16. Soap Bubble
 
