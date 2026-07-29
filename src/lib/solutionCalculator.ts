@@ -120,7 +120,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let reqLockWeight: number | undefined;
 
     const w = displayLabel.toLowerCase();
-    const currentWeight = displayLabel.split(',').length;
+    const currentWeight = displayLabel.split('|').length;
     
     if (linkedWords.has(w) && !chainBroken && levelData?.useBubbleSeparator === 1) {
        isChained = true;
@@ -507,8 +507,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                       const label1 = getBubbleState(p1).label.toLowerCase();
                       const label2 = getBubbleState(p2).label.toLowerCase();
                       
-                      const weight1 = p1.startsWith('temp_') ? label1.split(',').length : 1;
-                      const weight2 = p2.startsWith('temp_') ? label2.split(',').length : 1;
+                      const weight1 = p1.startsWith('temp_') ? label1.split('|').length : 1;
+                      const weight2 = p2.startsWith('temp_') ? label2.split('|').length : 1;
 
                       const reqLock1 = levelData?.requirementLockBubbles?.find((r: any) => r.requirementLockWord.toLowerCase() === label1);
                       if (reqLock1 && weight2 < reqLock1.requireWeight) continue;
