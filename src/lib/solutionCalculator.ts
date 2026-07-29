@@ -16,6 +16,7 @@ export interface BoardBubbleState {
   isScrewDriver?: boolean;
   screwLockIndex?: number;
   screwDriverIndex?: number;
+  reqLockWeight?: number;
 }
 
 export interface MergeStep {
@@ -116,8 +117,10 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let isScrewDriverCheck: boolean | undefined;
     let screwLockIndex = -1;
     let screwDriverIndex = -1;
+    let reqLockWeight: number | undefined;
 
     const w = displayLabel.toLowerCase();
+    const currentWeight = displayLabel.split(',').length;
     
     if (linkedWords.has(w) && !chainBroken && levelData?.useBubbleSeparator === 1) {
        isChained = true;
@@ -178,6 +181,13 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       } else {
         isScrewDriverCheck = false;
       }
+      
+      const reqLockRule = levelData?.requirementLockBubbles?.find((r: any) => r.requirementLockWord.toLowerCase() === w);
+      if (reqLockRule) {
+        if (currentWeight < reqLockRule.requireWeight) {
+          reqLockWeight = reqLockRule.requireWeight;
+        }
+      }
     }
 
     return {
@@ -193,7 +203,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       screwCount: screwCountCalc,
       isScrewDriver: isScrewDriverCheck,
       screwLockIndex,
-      screwDriverIndex
+      screwDriverIndex,
+      reqLockWeight
     };
   };
 
@@ -496,6 +507,16 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                       const label1 = getBubbleState(p1).label.toLowerCase();
                       const label2 = getBubbleState(p2).label.toLowerCase();
                       
+                      const weight1 = p1.startsWith('temp_') ? label1.split(',').length : 1;
+                      const weight2 = p2.startsWith('temp_') ? label2.split(',').length : 1;
+
+                      const reqLock1 = levelData?.requirementLockBubbles?.find((r: any) => r.requirementLockWord.toLowerCase() === label1);
+                      if (reqLock1 && weight2 < reqLock1.requireWeight) continue;
+
+                      const reqLock2 = levelData?.requirementLockBubbles?.find((r: any) => r.requirementLockWord.toLowerCase() === label2);
+                      if (reqLock2 && weight1 < reqLock2.requireWeight) continue;
+                      
+                      
                       const burstRule1 = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === label1);
                       const burstRule2 = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === label2);
                       
@@ -755,6 +776,7 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, reco
     keyLock: 50,
     burst: 81,
     screwLock: 161,
+    requirementLock: 201,
   };
 
   const activeMechanics: string[] = [];
@@ -764,6 +786,7 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, reco
   if (levelData?.keyLockBubbles && levelData.keyLockBubbles.length > 0) activeMechanics.push('keyLock');
   if (levelData?.burstBubbles && levelData.burstBubbles.length > 0) activeMechanics.push('burst');
   if (levelData?.screwLockBubbles && levelData.screwLockBubbles.length > 0) activeMechanics.push('screwLock');
+  if (levelData?.requirementLockBubbles && levelData.requirementLockBubbles.length > 0) activeMechanics.push('requirementLock');
 
   let mechanicUnfamiliarityScore = 0;
   const learningFactors: string[] = [];

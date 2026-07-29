@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Dumbbell } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -1360,6 +1360,104 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 )})
               )}
             </div>
+            </div>
+          )}
+        </div>
+      )
+    },
+    {
+      id: 'requirementLock',
+      isActive: () => forceOpen.requirementLock || (levelData.requirementLockBubbles && levelData.requirementLockBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Dumbbell size={16} color="#f97316" />
+              Mechanic: Requirement Lock
+            </h3>
+            <Toggle 
+              checked={forceOpen.requirementLock || (levelData.requirementLockBubbles && levelData.requirementLockBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, requirementLock: checked }));
+                if (!checked) handleChange('requirementLockBubbles', undefined);
+              }}
+            />
+          </div>
+          {(forceOpen.requirementLock || (levelData.requirementLockBubbles && levelData.requirementLockBubbles.length > 0)) && (
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                Drag a word here to lock it with a weight requirement.
+              </div>
+              <div 
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                  if (wordLabel) {
+                    const currentReqLocks = levelData.requirementLockBubbles || [];
+                    if (!currentReqLocks.some((w: any) => w.requirementLockWord === wordLabel)) {
+                      handleChange('requirementLockBubbles', [...currentReqLocks, { requirementLockWord: wordLabel, requireWeight: 2 }]);
+                    }
+                  }
+                }}
+                style={{ 
+                  minHeight: '80px', padding: '8px', border: '1px dashed rgba(249, 115, 22, 0.5)', 
+                  borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                }}
+              >
+                {(!levelData.requirementLockBubbles || levelData.requirementLockBubbles.length === 0) ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                    Drop word here
+                  </span>
+                ) : (
+                  levelData.requirementLockBubbles.map((rlItem: any, i: number) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(249, 115, 22, 0.15)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(249, 115, 22, 0.3)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, overflow: 'hidden' }}>
+                        <Dumbbell size={14} color="#f97316" />
+                        <span 
+                          onClick={() => {
+                            if (onFocusWord) onFocusWord(rlItem.requirementLockWord);
+                          }}
+                          style={{ 
+                            fontSize: '13px', fontWeight: 600, color: 'white', 
+                            cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis'
+                          }}
+                        >
+                          {rlItem.requirementLockWord}
+                        </span>
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Require weight:</span>
+                        <input 
+                          type="number" 
+                          min={2}
+                          max={3}
+                          value={rlItem.requireWeight}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          onChange={(e) => {
+                            const newReqLocks = [...levelData.requirementLockBubbles];
+                            newReqLocks[i].requireWeight = Math.max(2, Math.min(3, parseInt(e.target.value) || 2));
+                            handleChange('requirementLockBubbles', newReqLocks);
+                          }}
+                          style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.4)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                        />
+                        <button 
+                          onClick={() => {
+                            handleChange('requirementLockBubbles', levelData.requirementLockBubbles.filter((w: any) => w.requirementLockWord !== rlItem.requirementLockWord));
+                          }}
+                          style={{ 
+                            background: 'transparent', border: 'none', marginLeft: '4px',
+                            color: '#fca5a5', cursor: 'pointer', padding: '0', fontSize: '16px', lineHeight: 1
+                          }}
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           )}
         </div>

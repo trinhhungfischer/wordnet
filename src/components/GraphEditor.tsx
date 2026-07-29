@@ -33,7 +33,7 @@ import LevelSelectorModal from './LevelSelectorModal';
 import LoginModal from './LoginModal';
 import LevelsDashboardModal from './LevelsDashboardModal';
 import AnalyticsDashboard from './AnalyticsDashboard';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2 } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2, Dumbbell } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 
@@ -125,6 +125,37 @@ const isNodeFrozen = (node: Node, frozenBubblesList: any[], edges: Edge[], nodes
     }
   }
   return false;
+};
+
+const isNodeRequirementLocked = (node: Node, reqLocks: any[], edges: Edge[], nodes: Node[]): number | null => {
+  if (!reqLocks || reqLocks.length === 0) return null;
+  const label = String(node.data.label).toLowerCase();
+  
+  const directMatch = reqLocks.find((r: any) => r.requirementLockWord.toLowerCase() === label);
+  if (directMatch) return directMatch.requireWeight;
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode) {
+        const parentMatch = reqLocks.find((r: any) => r.requirementLockWord.toLowerCase() === String(parentNode.data.label).toLowerCase());
+        if (parentMatch) return parentMatch.requireWeight;
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    
+    for (const cLabel of chunkLabels) {
+      const match = reqLocks.find((r: any) => r.requirementLockWord.toLowerCase() === cLabel);
+      if (match) return match.requireWeight;
+    }
+  }
+  return null;
 };
 
 const isNodeBackward = (node: Node, backwardBubblesList: any[], edges: Edge[], nodes: Node[]) => {
@@ -1110,23 +1141,7 @@ export default function GraphEditor() {
 
     const jsonStr = JSON.stringify(newData, null, 2);
     const fileName = selectedLevelName ? `${selectedLevelName.replace('.json', '')}.json` : "level_config.json";
-    
-    // Try to save directly to disk via local API
-    try {
-      const saveRes = await fetch('/api/save-level', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: selectedLevelName || "level_config", data: newData })
-      });
-      if (saveRes.ok) {
-        alert(`Đã lưu level "${selectedLevelName || "level_config"}" trực tiếp vào thư mục cấu hình thành công!`);
-        setRawLevelData(newData);
-        fetchLevelsList();
-        return;
-      }
-    } catch (err) {
-      console.warn("Failed to save directly to levels folder via API, falling back to browser download:", err);
-    }
+
 
     if ('showSaveFilePicker' in window) {
       try {
@@ -1191,34 +1206,39 @@ export default function GraphEditor() {
         return;
       }
       
+      const target = e.target as HTMLElement;
+      const isInput = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+      
+      // Shortcuts that work EVERYWHERE (even in inputs)
+      if (e.altKey && e.key === '1') {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsSolutionModalOpen(true);
+        return;
+      } else if (e.altKey && e.key === '2') {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDictOpen(true);
+        return;
+      }
+      
       if (e.ctrlKey || e.metaKey) {
         const key = e.key.toLowerCase();
         if (key === 's') {
           e.preventDefault();
+          e.stopPropagation();
           handleExportJsonRef.current();
+          return;
         } else if (key === 'q') {
           e.preventDefault();
+          e.stopPropagation();
           handleShuffleRangeRef.current();
+          return;
         }
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        if (s.levels.length > 0 && s.selectedLevelName) {
-          const idx = s.levels.indexOf(s.selectedLevelName);
-          if (idx < s.levels.length - 1 && idx !== -1) s.loadLevel(s.levels[idx + 1]);
-        }
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        if (s.levels.length > 0 && s.selectedLevelName) {
-          const idx = s.levels.indexOf(s.selectedLevelName);
-          if (idx > 0) s.loadLevel(s.levels[idx - 1]);
-        }
-      } else if (e.key === '1') {
-        e.preventDefault();
-        setIsSolutionModalOpen(true);
-      } else if (e.key === '2') {
-        e.preventDefault();
-        setIsDictOpen(true);
       }
+      
+      // Ignore other normal shortcuts if we are typing in an input
+      if (isInput) return;
     };
     window.addEventListener('keydown', handleShortcuts);
     return () => window.removeEventListener('keydown', handleShortcuts);
@@ -1460,6 +1480,13 @@ export default function GraphEditor() {
       if (clonedRawData.burstBubbles) {
         clonedRawData.burstBubbles = clonedRawData.burstBubbles.map((bb: any) => 
           bb.word.toLowerCase() === oldLabel ? { ...bb, word: newLabelLower } : bb
+        );
+        isChanged = true;
+      }
+      
+      if (clonedRawData.requirementLockBubbles) {
+        clonedRawData.requirementLockBubbles = clonedRawData.requirementLockBubbles.map((rlb: any) => 
+          rlb.requirementLockWord.toLowerCase() === oldLabel ? { ...rlb, requirementLockWord: newLabelLower } : rlb
         );
         isChanged = true;
       }
@@ -1931,6 +1958,19 @@ export default function GraphEditor() {
           if (updatedRawLevelData.frozenBubbles) {
             updatedRawLevelData.frozenBubbles = updatedRawLevelData.frozenBubbles.map((fb: any) => 
               fb.word.toLowerCase() === oldLabel ? { ...fb, word: newLabel } : fb
+            );
+          }
+
+          // 2.5 Crack Bubbles
+          if (updatedRawLevelData.crackBubbles) {
+            updatedRawLevelData.crackBubbles = updatedRawLevelData.crackBubbles.map((cb: any) => 
+              cb.word.toLowerCase() === oldLabel ? { ...cb, word: newLabel } : cb
+            );
+          }
+          
+          if (updatedRawLevelData.requirementLockBubbles) {
+            updatedRawLevelData.requirementLockBubbles = updatedRawLevelData.requirementLockBubbles.map((rlb: any) => 
+              rlb.requirementLockWord.toLowerCase() === oldLabel ? { ...rlb, requirementLockWord: newLabel } : rlb
             );
           }
 
@@ -2660,6 +2700,19 @@ export default function GraphEditor() {
               );
             }
 
+            // 2.5 Crack Bubbles
+            if (clonedRawData.crackBubbles) {
+              clonedRawData.crackBubbles = clonedRawData.crackBubbles.map((cb: any) => 
+                cb.word.toLowerCase() === oldLabel ? { ...cb, word: w.word } : cb
+              );
+            }
+
+            if (clonedRawData.requirementLockBubbles) {
+              clonedRawData.requirementLockBubbles = clonedRawData.requirementLockBubbles.map((rlb: any) => 
+                rlb.requirementLockWord.toLowerCase() === oldLabel ? { ...rlb, requirementLockWord: w.word } : rlb
+              );
+            }
+
             // 3. Burst Bubbles
             if (clonedRawData.burstBubbles) {
               clonedRawData.burstBubbles = clonedRawData.burstBubbles.map((bb: any) => 
@@ -3073,7 +3126,7 @@ export default function GraphEditor() {
               disabled={!rawLevelData}
               style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--accent)', background: 'var(--accent)', color: 'white', cursor: rawLevelData ? 'pointer' : 'not-allowed', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', opacity: rawLevelData ? 1 : 0.5 }}
             >
-              <Save size={14} /> {isAdmin ? 'Export Local' : 'Save JSON'}
+              <Save size={14} /> Save Local
             </button>
             {isAdmin && (
               <button 
@@ -3305,6 +3358,7 @@ export default function GraphEditor() {
                   const isFrozen = isNodeFrozen(node, rawLevelData?.frozenBubbles || [], edges, nodes);
                   const isBackward = isNodeBackward(node, rawLevelData?.backwardBubbles || [], edges, nodes);
                   const isCryptic = isNodeCryptic(node, rawLevelData?.crypticBubbles || [], edges, nodes);
+                  const reqLockWeight = isNodeRequirementLocked(node, rawLevelData?.requirementLockBubbles || [], edges, nodes);
                   const burstState = isNodeBurst(node, rawLevelData?.burstBubbles || [], edges, nodes);
                   const isBurst = burstState.isBurst;
                   const burstMovesRemaining = burstState.movesRemaining;
@@ -3362,12 +3416,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))))))),
+                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))))))))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))))))),
+                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -3395,6 +3449,12 @@ export default function GraphEditor() {
                           )}
                           {isBackward && (
                             <ArrowLeftRight size={12} color="#a855f7" />
+                          )}
+                          {reqLockWeight !== null && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#f97316' }}>
+                              <Dumbbell size={12} />
+                              <span style={{ fontSize: '10px' }}>{reqLockWeight}</span>
+                            </div>
                           )}
                           {lockIndex !== -1 && (
                             <Lock size={12} color={lockKeyColors[lockIndex % lockKeyColors.length]} />
@@ -3550,6 +3610,7 @@ export default function GraphEditor() {
             isFrozen: isNodeFrozen(n, rawLevelData?.frozenBubbles || [], edges, nodes),
             isBackward: isNodeBackward(n, rawLevelData?.backwardBubbles || [], edges, nodes),
             isCryptic: isNodeCryptic(n, rawLevelData?.crypticBubbles || [], edges, nodes),
+            reqLockWeight: isNodeRequirementLocked(n, rawLevelData?.requirementLockBubbles || [], edges, nodes),
             isBurst: isNodeBurst(n, rawLevelData?.burstBubbles || [], edges, nodes).isBurst,
             burstMovesRemaining: isNodeBurst(n, rawLevelData?.burstBubbles || [], edges, nodes).movesRemaining,
             lockIndex: isNodeLock(n, rawLevelData?.keyLockBubbles || [], edges, nodes),

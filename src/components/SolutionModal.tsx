@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid } from 'lucide-react';
+import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -108,7 +108,9 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
          if (familyNode) familyName = String(familyNode.data.label);
       }
 
-      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, originalIdx: idx };
+      const reqLockWeight = bubbleState.reqLockWeight;
+
+      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx: idx };
     }).filter(Boolean) as any[];
 
     if (boardSortMode === 'name') {
@@ -400,7 +402,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, originalIdx }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -413,7 +415,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   const isCountdown = countdownValue !== undefined;
 
                   const bgColor = useFamilyColor ? familyBg : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isCycleLock ? (cycleLockState === 1 ? 'rgba(20, 184, 166, 0.25)' : 'rgba(20, 184, 166, 0.1)') : (isImmovable ? 'rgba(107, 114, 128, 0.15)' : (isCountdown ? 'rgba(236, 72, 153, 0.15)' : (isLinkedMain ? 'rgba(14, 165, 233, 0.15)' : (isLinkedChunk ? 'rgba(14, 165, 233, 0.05)' : (isCrackBubble ? 'rgba(251, 191, 36, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))));
-                  const borderColor = useFamilyColor ? familyBorder : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isCycleLock ? (cycleLockState === 1 ? '2px solid rgba(20, 184, 166, 0.8)' : '1px solid rgba(20, 184, 166, 0.4)') : (isImmovable ? '1px solid rgba(107, 114, 128, 0.4)' : (isCountdown ? '1px solid rgba(236, 72, 153, 0.4)' : (isLinkedMain ? '1px solid rgba(14, 165, 233, 0.4)' : (isLinkedChunk ? '1px dashed rgba(14, 165, 233, 0.4)' : (isCrackBubble ? '1px dashed rgba(251, 191, 36, 0.8)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))));
+                  const borderColor = useFamilyColor ? familyBorder : (reqLockWeight !== undefined ? '1px solid #f97316' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isCycleLock ? (cycleLockState === 1 ? '2px solid rgba(20, 184, 166, 0.8)' : '1px solid rgba(20, 184, 166, 0.4)') : (isImmovable ? '1px solid rgba(107, 114, 128, 0.4)' : (isCountdown ? '1px solid rgba(236, 72, 153, 0.4)' : (isLinkedMain ? '1px solid rgba(14, 165, 233, 0.4)' : (isLinkedChunk ? '1px dashed rgba(14, 165, 233, 0.4)' : (isCrackBubble ? '1px dashed rgba(251, 191, 36, 0.8)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))))));
                   const textColor = useFamilyColor ? baseColorStr : (isChunk ? '#a5b4fc' : 'var(--text-main)');
 
                   return (
@@ -454,6 +456,11 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {iceMergesLeft > 0 && (
                             <span title={`Frozen (${iceMergesLeft} groups left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#38bdf8', fontSize: '11px', fontWeight: 'bold' }}>
                               <Snowflake size={14} color="#38bdf8" /> {iceMergesLeft}
+                            </span>
+                          )}
+                          {reqLockWeight !== undefined && (
+                            <span title={`Requires ${reqLockWeight} words to merge`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#f97316', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Dumbbell size={14} color="#f97316" /> {reqLockWeight}
                             </span>
                           )}
                           {isImmovable && (

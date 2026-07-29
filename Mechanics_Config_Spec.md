@@ -11,6 +11,22 @@ Dưới đây là cấu trúc chi tiết của các mảng Object mechanic thự
 
 ---
 
+## Định nghĩa thuật ngữ cơ bản (Terminology)
+Để làm rõ cách hoạt động của các cơ chế đếm lùi/tính lượt, các khái niệm tương tác được định nghĩa thống nhất như sau:
+
+1. **Merge (Ghép đúng):**
+   - Là hành động kéo một quả bóng (source) thả vào một quả bóng khác (target) **cùng nhóm** thành công, khiến chúng gộp lại với nhau.
+   - Khi một cơ chế đếm theo "Merge" (Ví dụ: đếm lùi toàn bàn hoặc đếm lùi trực tiếp), bộ đếm **chỉ giảm khi người chơi ghép thành công**.
+
+2. **Hit (Lượt tương tác / Nước đi):** 
+   - Là **bất kỳ** hành động thao tác nào của người chơi làm tiêu tốn 1 lượt đi (Turn/Move). Bao gồm:
+     - Kéo ghép thành công (Merge đúng).
+     - Kéo ghép thất bại (Kéo sai nhóm khiến 2 bóng đẩy nhau ra).
+     - Tương tác đặc biệt (Ví dụ: Double-tap để lau bọt xà phòng Soap Bubble).
+   - Khi cơ chế đếm theo "Hit", bộ đếm sẽ giảm ở mọi nước đi của người chơi (bất kể đúng sai).
+
+---
+
 ## 1. Xích chia đôi (Chain) - Lv 20
 
 **Trường áp dụng:** `useBubbleSeparator` và `bubbleSeparatorData`
@@ -58,7 +74,7 @@ Cấu trúc:
 ```
 
 - `word`: Cụm từ đích danh bị đóng băng.
-- `mergesNeeded`: Số lần hit (hoặc ghép) cần thiết để rã đông bóng.
+- `mergesNeeded`: Số lần ghép đúng (merge) cần thiết để rã đông bóng.
 
 ---
 
@@ -109,7 +125,7 @@ Cấu trúc:
 ```
 
 - `word`: Chữ bị gắn bom nổ chậm.
-- `movesRemaining`: Số lượt đi còn lại trước khi quả bom phát nổ. (Dưới 3 turn sẽ hiển thị cảnh báo đỏ). Mỗi lần hit (hoặc ghép) sẽ làm giảm đi 1.
+- `movesRemaining`: Số lượt đi (Hit) còn lại trước khi quả bom phát nổ. (Dưới 3 turn sẽ hiển thị cảnh báo đỏ). Mỗi lần **Hit** (bất kể ghép đúng hay kéo sai) sẽ làm giảm đi 1.
 - `results`: Nếu bom nổ, lượt chơi sẽ trừ đi một lượt -> thay đổi cách tính toán và recommend lời giải
 
 ---
@@ -198,7 +214,7 @@ Cấu trúc:
 
 - `startingPosition`: Vị trí ban đầu của từ khi bắt đầu level (0 = không bị khoá khởi đầu, 1 = bị khoá khởi đầu)
 
-**Luật chơi:** Các từ bị Cycle Lock là 1 sẽ không thể merge và khi sang trạng thái 0 thì có thể merge. Số lần hit (hoặc ghép) sẽ chuyển khoá từ 0 sang 1 và ngược lại. Khi merge vào bóng Cycle (hoặc ngược lại) thì bóng merge sẽ mất luôn Cycle Lock trở lại trạng thái bình thường.
+**Luật chơi:** Các từ bị Cycle Lock là 1 sẽ không thể merge và khi sang trạng thái 0 thì có thể merge. Số lần merge sẽ chuyển khoá từ 0 sang 1 và ngược lại. Khi merge vào bóng Cycle (hoặc ngược lại) thì bóng merge sẽ mất luôn Cycle Lock trở lại trạng thái bình thường.
 
 ## 9. Immovable Bubbles
 
@@ -226,7 +242,7 @@ Cấu trúc:
   }
 ```
 
-**Luật chơi:** Có một số đếm ngược phía bên phải của quả bóng. Mỗi lần hit (Hoặc ghép) countdown sẽ trừ đi 1 và trừ tối đa về min trong config. Config "countdownValue" là mảng chứa giá trị ban đầu và giá trị tối thiểu. Tới khi merge quả bóng này, cộng thêm số lượt move bằng số điểm countdown
+**Luật chơi:** Có một số đếm ngược phía bên phải của quả bóng. Mỗi lần ghép đúng (Merge) countdown sẽ trừ đi 1 và trừ tối đa về min trong config. Config "countdownValue" là mảng chứa giá trị ban đầu và giá trị tối thiểu. Tới khi merge quả bóng này, cộng thêm số lượt move bằng số điểm countdown
 
 **Chú ý:** Không thể xuất hiện cùng lúc với các cơ chế khác như Frozen, Burst, Screw Lock, Cycle Lock. Nếu xuất hiện cùng lúc thì sẽ bị lỗi hiển thị.
 
@@ -245,13 +261,15 @@ Cấu trúc:
 ```
 
 **Luật chơi:**
-1. Có một từ chính (ví dụ: `Friday`) bị linked với 1 hoặc nhiều chunk (ví dụ: `Go`, `Hor`). 
+
+1. Có một từ chính (ví dụ: `Friday`) bị linked với 1 hoặc nhiều chunk (ví dụ: `Go`, `Hor`).
 2. Từ chính (`Friday`) bị khoá cứng: không thể di chuyển, không thể tương tác hay merge vào từ khác.
 3. Các bóng Chunk bị liên kết (`Go`, `Hor`) cũng bị khoá chiều kéo đi: không thể kéo chúng đi merge với từ khác (không làm source).
 4. Chỉ có thể dùng bóng khác kéo vào các Chunk liên kết này (chúng chỉ làm target). Khi ghép thành công (ví dụ kéo `At` vào `Go` để thành `Goat`), liên kết đó sẽ bị tháo gỡ.
 5. Khi **tất cả** các chunk liên kết đều bị tháo gỡ (đã ghép thành từ hoàn chỉnh), từ chính (`Friday`) sẽ trở lại trạng thái bình thường, có thể tương tác/merge.
 
-**Chú ý:** 
+**Chú ý:**
+
 - Các phần tử trong mảng `linkedChunks` chỉ chứa các mảnh từ (chunk), không dùng cho từ hoàn chỉnh.
 - **Cảnh báo Deadlock (Lỗi thiết kế màn chơi):** Tuyệt đối KHÔNG đưa toàn bộ các mảnh cắt ra của cùng một từ (ví dụ: cả `"Hor"` và `"Se"`) vào chung mảng `linkedChunks`. Vì các mảnh trong `linkedChunks` không thể kéo đi (bị khoá vai trò source), người chơi sẽ không thể kéo mảnh này vào mảnh kia để ghép thành từ hoàn chỉnh, dẫn đến màn chơi bị **deadlock** (bế tắc không thể giải).
 
@@ -270,11 +288,13 @@ Cấu trúc:
 ]
 ```
 
-**Luật chơi:** Quả bóng đang bị nứt. Mỗi lần hit (hoặc ghép) sẽ làm giảm crackCount đi 1. Khi crackCount = 0, quả bóng sẽ bị vỡ ra và spawn ra các chunkWords tương ứng. Các chunkWords này có thể merge được và tạo lại thành từ bình thường.
+**Luật chơi:** Quả bóng đang bị nứt. Mỗi lần ghép đúng (Merge) liên quan tới quả bóng này sẽ làm giảm crackCount đi 1. Khi crackCount = 0, quả bóng sẽ bị vỡ ra và spawn ra các chunkWords tương ứng. Các chunkWords này có thể merge được và tạo lại thành từ bình thường.
 
 # 13. Requirement Lock
+
 **Trường áp dụng:** `requirementLockBubbles` (Mảng)
 Cấu trúc:
+
 ```json
 "requirementLockBubbles": [
   {
@@ -288,13 +308,17 @@ Cấu trúc:
 ]
 ```
 
-**Luật chơi:** Quả bóng có khoá Requirement Lock từ 2 tới 3. Khoá này quy định quả bóng này chỉ merge được vào Merge Bubble có số lượng từ (weight) bằng hoặc lớn hơn `requireWeight`. Chiều ngược lại merge Merge Bubble cũng thế. 
-Ví dụ: nếu `requireWeight` = 2, thì quả bóng này chỉ merge được vào Merge Bubble có 2 từ trở lên rồi
-
+**Luật chơi:** Quả bóng có khoá Requirement Lock từ 2 tới 3. Khoá này quy định quả bóng này chỉ merge được vào Merge Bubble có số lượng từ (weight) bằng hoặc lớn hơn `requireWeight`. Chiều ngược lại merge Merge Bubble cũng thế.
+Ví dụ: nếu `requireWeight` = 2, thì quả bóng này chỉ merge được vào Merge Bubble có 2 từ trở lên rồi.
+*Lưu ý:* 
+- Requirement Lock chỉ áp dụng cho từ hoàn chỉnh (không cản trở việc ghép các mảnh chunks của từ đó lại với nhau).
+- Sau khi ghép thành công vào một bong bóng đủ weight, cụm bong bóng mới tạo ra sẽ không còn bị khoá Requirement Lock nữa.
 
 # 14. Cycle Fade Out
+
 **Trường áp dụng:** `cycleFadeOutBubbles` (Mảng)
 Cấu trúc:
+
 ```json
 "cycleFadeOutBubbles": [
   {
@@ -303,8 +327,182 @@ Cấu trúc:
   }
 ]
 ```
+
 - `startingPosition`: Vị trí ban đầu của từ khi bắt đầu level (0 = không bị ẩn từ, 1 = bị ẩn từ)
 
-**Luật chơi:** Tương tự Cycle Lock mỗi lần hit (merge) sẽ ẩn hoặc hiện chữ trong bóng đi luân phiên. Bóng đó vẫn được merge hoặc kéo đi chỗ khác nên không ảnh hưởng tới thuật toán giải. Chỉ ảnh hưởng tới hiển thị chữ trên bóng.
+**Luật chơi:** Tương tự Cycle Lock mỗi lần merge sẽ ẩn hoặc hiện chữ trong bóng đi luân phiên. Bóng đó vẫn được merge hoặc kéo đi chỗ khác nên không ảnh hưởng tới thuật toán giải. Chỉ ảnh hưởng tới hiển thị chữ trên bóng.
 
-# 15. 
+# 15. Ice Bomb Bubble
+
+**Trường áp dụng:** `iceBombBubbles` (Mảng)
+Cấu trúc:
+
+```json
+"iceBombBubbles": [
+  {
+    "word": "IceBomb",
+    "turnToActive": 3,
+    "freezeTurns": 1
+  }
+]
+```
+
+"turnToActive": Số lượt merge (theo chu kì) để quả bóng này active kĩ năng biến một quả bóng bất kỳ thành Freeze "Ice Bomb Bubble".
+"freezeTurns": Số lượt Freeze "Ice Bomb Bubble" để nó biến thành một "Ice Bomb Bubble" mới
+
+**Luật chơi:** Khi quả bóng này được merge đủ số lượt `turnToActive`, nó sẽ biến một quả bóng bất kỳ thành "Ice Bomb Bubble". Quả bóng bị biến đổi sẽ bị đóng băng trong `freezeTurns` lượt, sau đó sẽ biến thành Ice Bomb Bubble với config giống config của cha
+
+## 16. Soap Bubble
+
+**Trường áp dụng:** `soapBubbles` (Mảng)
+Cấu trúc đề xuất:
+
+```json
+"soapBubbles": [
+  {
+    "word": "Soap"
+  }
+]
+```
+
+**Luật chơi:**
+
+- Chữ trên bong bóng bị che mờ hoàn toàn bởi một lớp bọt xà phòng bẩn (chỉ hiển thị dấu chấm hỏi `?` hoặc chữ bị nhòe).
+- **Cách giảm lượt:** Người chơi phải chạm đúp (Double-tap) vào bong bóng đó để "lau sạch" bọt và nhìn rõ từ vựng bên trong. Thao tác chạm đúp này sẽ tính là **1 lượt đi (Move)**.
+- **Kéo bừa (thử vận may):** Nếu người chơi lười mở chữ mà kéo một từ khác vào để thử ghép:
+  - Nếu **sai nhóm**: Mất 1 lượt đi và hai bong bóng đẩy nhau ra.
+  - Nếu **đúng nhóm**: Bong bóng tự mở chữ và gộp nhóm thành công (không bị phạt lượt lau bọt).
+
+---
+
+## 17. Spike Bubble
+
+**Trường áp dụng:** `spikeBubbles` (Mảng)
+Cấu trúc đề xuất:
+
+```json
+"spikeBubbles": ["Spike", "Thorn"]
+```
+
+**Luật chơi:**
+
+- Có visual gai nhọn xung quanh quả bóng.
+- Tương tự như cơ chế **Immovable Bubbles** (không thể tự kéo đi), nhưng khi có một quả bóng khác kéo vào ghép (merge) thì bóng gai sẽ mất gai và biến thành bóng thường.
+
+---
+
+## 18. Bomb Cracking Bubble
+
+**Trường áp dụng:** `bombCrackingBubbles` (Mảng)
+Cấu trúc đề xuất:
+
+```json
+"bombCrackingBubbles": [
+  {
+    "word": "Bomb",
+    "movesRemaining": 5,
+    "chainCount": 3
+  }
+]
+```
+
+- `movesRemaining`: Số lần ghép đúng (Merge) trên toàn bàn chơi trước khi quả bom nổ.
+- `chainCount`: Số lần giật sét dây chuyền.
+
+**Luật chơi:**
+
+- Sau `movesRemaining` lần Merge, quả bom sẽ nổ làm tất cả các quả bóng đang liên kết (link) với nó bị tách ra.
+- Hiệu ứng nổ có thể làm dạng giật sét dây chuyền (chain lightning) lan ra `chainCount` lần.
+
+---
+
+## 19. Float Bubble
+
+**Trường áp dụng:** `floatBubbles` (Mảng)
+Cấu trúc đề xuất:
+
+```json
+"floatBubbles": [
+  {
+    "word": "Float",
+    "mergesToFloat": 3
+  }
+]
+```
+
+- `mergesToFloat`: Số lần ghép đúng (Merge) trên toàn bàn chơi.
+
+**Luật chơi:**
+- Nếu trải qua `mergesToFloat` lần ghép đúng trên màn chơi mà quả bóng này **không bị merge**, nó sẽ bị đẩy xuống dưới cùng của Drop Queue. Có thể thay đổi thuật toán giải của level.
+- **Visual:** Kéo quả bóng bay ngược lên trên.
+
+---
+
+## 20. Teleport Bubble
+
+**Trường áp dụng:** `teleportBubbles` (Mảng)
+Cấu trúc đề xuất:
+
+```json
+"teleportBubbles": [
+  {
+    "word": "Teleport",
+    "mergesToTeleport": 4
+  }
+]
+```
+
+- `mergesToTeleport`: Số lần ghép đúng (Merge) toàn bàn chơi để kích hoạt dịch chuyển.
+
+**Luật chơi:**
+
+- Sau `mergesToTeleport` lần merge trên bàn chơi, bóng sẽ tự động đổi vị trí với một quả bóng khác trên bản đồ.
+- Việc dịch chuyển này không làm thay đổi thuật toán giải của level (chỉ đổi vị trí hiển thị vật lý).
+
+---
+
+## 21. Stack Pipe
+
+**Trường áp dụng:** `stackPipes` (Mảng)
+Cấu trúc đề xuất:
+
+```json
+"stackPipes": [
+  {
+    "pipeId": 0,
+    "words": ["TopWord", "MiddleWord", "BottomWord"]
+  }
+]
+```
+
+- `words`: Danh sách các từ nằm trong ống, theo thứ tự từ miệng ống (trên cùng) xuống đáy.
+
+**Luật chơi:**
+
+- Trên map có một cấu trúc ống (pipe) giữ từ 3-4 bóng tạo thành một cấu trúc ngăn xếp (stack).
+- **Chỉ có bóng ở đầu stack** mới có thể được kéo ra để merge với bóng khác, hoặc cho phép bóng khác kéo vào để merge.
+- Hành động kéo ra/merge này sẽ đẩy quả bóng đó ra ngoài stack, để lộ quả bóng tiếp theo lên đầu ống.
+
+---
+
+## 22. Resize Bubble
+
+**Trường áp dụng:** `resizeBubbles` (Mảng)
+Cấu trúc đề xuất:
+
+```json
+"resizeBubbles": [
+  {
+    "word": "Resize",
+    "maxWeight": 3
+  }
+]
+```
+
+- `maxWeight`: Kích thước tối đa mà bóng có thể phình to tới.
+
+**Luật chơi:**
+
+- Bóng sẽ to dần tới kích thước của bóng weight `maxWeight` (ví dụ: weight 3), trong lúc đó tương tác vật lý đẩy nhau diễn ra bình thường.
+- Không ảnh hưởng tới thuật toán logic (từ bên trong không đổi).
+- Khi merge thành công vào một bóng khác, bóng sẽ trở về trạng thái/kích thước bình thường và không to dần nữa.

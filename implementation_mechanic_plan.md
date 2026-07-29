@@ -9,7 +9,10 @@ Tài liệu này tổng hợp các bước cần thiết dựa trên kinh nghi�
 Mỗi cơ chế cần một nơi để lưu trữ cấu hình trong file JSON của level.
 
 - **Thêm field vào LevelData:** Xác định kiểu dữ liệu cho cơ chế (VD: mảng các object `{ word: string, mergesNeeded: number }` cho Ice, hoặc `{ lockWord: string, keyWord: string }` cho Key & Lock).
-- **Cập nhật Structure Matcher / Magic Change:** Đảm bảo khi người dùng import file từ điển mới hoặc sử dụng Magic Change, logic copy mechanic sẽ map từ cũ sang từ mới. Bạn cần cập nhật hàm `handleImportDictionary` trong `GraphEditor.tsx` để copy các rule của cơ chế sang tên node mới.
+- **Cập nhật logic thay thế/đổi tên từ:** Khi thêm cơ chế mới, phải đảm bảo các tính năng làm thay đổi/đổi tên node đều được copy trạng thái của cơ chế cũ sang từ mới để không bị mất logic. Bạn **BẮT BUỘC** phải cập nhật đồng thời 3 hàm sau trong `GraphEditor.tsx`:
+  - `handleImportDictionary`: Xử lý cho tính năng Structure Matcher (Batch Magic / Import Dictionary).
+  - `handleMagicChange`: Xử lý cho tính năng Magic Change.
+  - `handleRenameNode`: Xử lý cho tính năng Replace word by sibling (đổi tên từ tab Siblings).
 
 ## 2. Giao diện Cài đặt Level (Level Settings UI)
 
