@@ -1,4 +1,4 @@
-import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer } from 'lucide-react';
+import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Ghost, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer } from 'lucide-react';
 
 export const MECHANICS_ICONS = {
   LinkedMain: Magnet,
@@ -14,6 +14,7 @@ export const MECHANICS_ICONS = {
   ScrewLock: Wrench,
   ScrewDriver: PenTool,
   CycleLock: RefreshCw,
+  CycleFadeOut: Ghost,
   Cryptic: Eye
 };
 
@@ -28,5 +29,6 @@ export const MECHANICS_COLORS = {
   BurstNormal: '#f97316',
   Countdown: '#ec4899',
   CycleLock: '#14b8a6',
+  CycleFadeOut: '#64748b',
   Cryptic: '#c084fc',
 };

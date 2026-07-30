@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Dumbbell, Radiation } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Dumbbell, Radiation, Ghost } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -1050,6 +1050,101 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
       )
     },
     {
+      id: 'cycleFadeOut',
+      isActive: () => forceOpen.cycleFadeOut || (levelData.cycleFadeOutBubbles && levelData.cycleFadeOutBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Ghost size={16} color="#64748b" />
+                    Mechanic: Cycle Fade Out
+                  </h3>
+                  <Toggle 
+                    checked={forceOpen.cycleFadeOut || (levelData.cycleFadeOutBubbles && levelData.cycleFadeOutBubbles.length > 0)}
+                    onChange={(checked) => {
+                      setForceOpen(prev => ({ ...prev, cycleFadeOut: checked }));
+                      handleChange('cycleFadeOutBubbles', checked ? [] : undefined);
+                    }}
+                  />
+                </div>
+                
+                {(forceOpen.cycleFadeOut || (levelData.cycleFadeOutBubbles && levelData.cycleFadeOutBubbles.length > 0)) && (
+                  <div style={{ marginTop: '16px' }}>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                      Cycle Fade Out Words (Drag & Drop from left panel):
+                    </div>
+                    
+                    <div 
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                        if (wordLabel) {
+                          const currentCycleFadeOuts = levelData.cycleFadeOutBubbles || [];
+                          if (!currentCycleFadeOuts.some((c: any) => c.fadeWord === wordLabel)) {
+                            handleChange('cycleFadeOutBubbles', [...currentCycleFadeOuts, { fadeWord: wordLabel, startingPosition: 0 }]);
+                          }
+                        }
+                      }}
+                      style={{ 
+                        minHeight: '60px', padding: '8px', border: '1px dashed rgba(100,116,139,0.5)', 
+                        borderRadius: '6px', background: 'rgba(100,116,139,0.05)', display: 'flex', flexDirection: 'column', gap: '8px'
+                      }}
+                    >
+                      {(!levelData.cycleFadeOutBubbles || levelData.cycleFadeOutBubbles.length === 0) ? (
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '44px' }}>
+                          Drop words here to add Cycle Fade Outs
+                        </span>
+                      ) : (
+                        levelData.cycleFadeOutBubbles.map((cycleFadeOut: any, i: number) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', background: 'rgba(0,0,0,0.2)', padding: '6px 12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Ghost size={14} color="#64748b" />
+                              <span 
+                                onClick={() => {
+                                  if (onFocusWord) onFocusWord(cycleFadeOut.fadeWord);
+                                }}
+                                style={{ fontSize: '13px', fontWeight: 600, color: 'white', cursor: 'pointer' }}
+                                title={cycleFadeOut.fadeWord}
+                              >
+                                {cycleFadeOut.fadeWord}
+                              </span>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                                <input 
+                                  type="checkbox" 
+                                  checked={cycleFadeOut.startingPosition === 1}
+                                  onChange={(e) => {
+                                    const newCycleFadeOuts = [...levelData.cycleFadeOutBubbles];
+                                    newCycleFadeOuts[i].startingPosition = e.target.checked ? 1 : 0;
+                                    handleChange('cycleFadeOutBubbles', newCycleFadeOuts);
+                                  }}
+                                  style={{ accentColor: '#64748b', cursor: 'pointer' }}
+                                />
+                                Faded Init (1)
+                              </label>
+                              <button
+                                onClick={() => {
+                                  handleChange('cycleFadeOutBubbles', levelData.cycleFadeOutBubbles.filter((c: any) => c.fadeWord !== cycleFadeOut.fadeWord));
+                                }}
+                                style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}
+                                title="Remove"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+      )
+    },
+    {
       id: 'cryptic',
       isActive: () => forceOpen.cryptic || (levelData.crypticBubbles && levelData.crypticBubbles.length > 0),
       render: () => (
@@ -1668,6 +1763,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 delete newData.keyLockBubbles;
                 delete newData.screwLockBubbles;
                 delete newData.cycleLockBubbles;
+                delete newData.cycleFadeOutBubbles;
                 delete newData.crypticBubbles;
                 delete newData.immovableBubbles;
                 delete newData.countdownBubbles;
@@ -1702,7 +1798,8 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 backward: { name: 'Backward', icon: <ArrowLeftRight size={10} />, color: '#a855f7' },
                 keyLock: { name: 'Key Lock', icon: <Key size={10} />, color: '#eab308' },
                 screwLock: { name: 'Screw Lock', icon: <Wrench size={10} />, color: '#f97316' },
-                cycleLock: { name: 'Cycle', icon: <RefreshCw size={10} />, color: '#14b8a6' },
+                cycleLock: { name: 'Cycle Lock', icon: <RefreshCw size={10} />, color: '#14b8a6' },
+                cycleFadeOut: { name: 'Cycle Fade', icon: <Ghost size={10} />, color: '#64748b' },
                 cryptic: { name: 'Cryptic', icon: <Eye size={10} />, color: '#c084fc' },
                 immovable: { name: 'Immovable', icon: <Pin size={10} />, color: '#9ca3af' },
                 countdown: { name: 'Countdown', icon: <Timer size={10} />, color: '#ec4899' },
@@ -1727,6 +1824,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     else if (m.id === 'keyLock') handleChange('keyLockBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'screwLock') handleChange('screwLockBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'cycleLock') handleChange('cycleLockBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'cycleFadeOut') handleChange('cycleFadeOutBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'cryptic') handleChange('crypticBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'immovable') handleChange('immovableBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'countdown') handleChange('countdownBubbles', willBeActive ? [] : undefined);
