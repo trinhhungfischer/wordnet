@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Radiation, Ghost, Asterisk } from 'lucide-react';
+import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Radiation, Ghost, Asterisk, Flame } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
@@ -24,6 +24,8 @@ const CustomNode = ({ data, selected }: any) => {
   const isCycleLock = data.isCycleLock === true;
   const isSoapBubble = data.isSoapBubble === true;
   const isCycleFadeOut = data.isCycleFadeOut === true;
+  const isBombCrackingBubble = data.isBombCrackingBubble === true;
+  const bombMergeRemain = data.bombMergeRemain !== undefined ? data.bombMergeRemain : 0;
   const isImmovable = data.isImmovable === true;
   const isSpikeBubble = data.isSpikeBubble === true;
   const isCountdown = data.isCountdown === true;
@@ -97,6 +99,10 @@ const CustomNode = ({ data, selected }: any) => {
     bgColor = 'rgba(236, 72, 153, 0.15)';
     borderColor = '2px dashed rgba(236, 72, 153, 0.8)';
     shadow = '0 0 15px rgba(236, 72, 153, 0.3)';
+  } else if (isBombCrackingBubble) {
+    bgColor = 'rgba(249, 115, 22, 0.15)';
+    borderColor = '2px dashed rgba(249, 115, 22, 0.8)';
+    shadow = '0 0 15px rgba(249, 115, 22, 0.3)';
   } else if (isSpikeBubble) {
     bgColor = 'rgba(220, 38, 38, 0.15)';
     borderColor = '2px solid rgba(220, 38, 38, 0.8)';
@@ -157,6 +163,12 @@ const CustomNode = ({ data, selected }: any) => {
         )}
         {isCycleLock && <RefreshCw size={14} style={{ color: '#14b8a6', marginLeft: '4px' }} />}
         {isSoapBubble && <CircleDashed size={14} style={{ color: '#ec4899', marginLeft: '4px' }} />}
+        {isBombCrackingBubble && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#f97316', marginLeft: '4px' }}>
+            <Flame size={14} />
+            <span style={{ fontSize: '11px' }}>{bombMergeRemain}</span>
+          </div>
+        )}
         {isCycleFadeOut && <Ghost size={14} style={{ color: '#64748b', marginLeft: '4px' }} />}
         {isLinkedMain && <Magnet size={14} style={{ color: '#0ea5e9', marginLeft: '4px' }} />}
         {isLinkedChunk && <Magnet size={14} style={{ color: '#bae6fd', marginLeft: '4px' }} />}

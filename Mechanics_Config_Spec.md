@@ -415,19 +415,24 @@ Cấu trúc đề xuất:
 "bombCrackingBubbles": [
   {
     "word": "Bomb",
-    "movesRemaining": 5,
+    "mergeRemain": 5,
     "chainCount": 3
   }
 ]
 ```
 
-- `movesRemaining`: Số lần ghép đúng (Merge) trên toàn bàn chơi trước khi quả bom nổ.
-- `chainCount`: Số lần giật sét dây chuyền.
+- `mergeRemain`: Số lần ghép đúng (Merge) trên toàn bàn chơi trước khi quả bom nổ.
+- `chainCount`: Số lượng Merged Bubble tối đa bị chọn làm mục tiêu khi bom nổ để tách chữ.
 
 **Luật chơi:**
 
-- Sau `movesRemaining` lần Merge, quả bom sẽ nổ làm tất cả các quả bóng đang liên kết (link) với nó bị tách ra.
-- Hiệu ứng nổ có thể làm dạng giật sét dây chuyền (chain lightning) lan ra `chainCount` lần.
+- Mỗi khi người chơi thực hiện thành công một lượt **Merge** (bất kỳ đâu trên bàn chơi), bộ đếm `mergeRemain` của quả bom sẽ giảm đi 1.
+- **Gỡ bom (Defuse):** Bất cứ khi nào quả bóng chứa bom được ghép (Merge) thành công với một bóng khác (bất kể là kéo vào hay bị kéo vào, biến thành Merged Bubble), quả bom sẽ bị gỡ, mất trạng thái bom và không bao giờ phát nổ nữa.
+- **Bom nổ:** Khi bộ đếm `mergeRemain` về 0:
+  - Game engine sẽ tạo hiệu ứng nổ và chọn ra tối đa `chainCount` quả bóng đã ghép (Merged Bubbles) trên bàn.
+  - Tia sét sẽ giật vào các Merged Bubbles này và **tách 1 từ nguyên vẹn (uncut word) ra khỏi mỗi Merged Bubble bị chọn** (Ví dụ: `apple|orange|grape` bị tách thành `apple|orange` và `grape`).
+  - Sau khi nổ xong, bộ đếm `mergeRemain` của quả bom tự động **reset lại về giá trị ban đầu** và lặp lại chu kỳ đếm ngược mới.
+- **Lưu ý cho mô phỏng logic (Solution Calculator):** Việc tia sét chọn và tách các Merged Bubbles chỉ là tính năng dưới game engine. Đối với thuật toán giải đố của Wordnet Tool, bộ Solver sẽ **bỏ qua hành động tách chữ** này (vì yếu tố ngẫu nhiên sẽ không thể giả lập chính xác). Solver chỉ cần mô phỏng đếm lùi bộ đếm, kích hoạt event Nổ và reset lại bộ đếm vòng tiếp theo.
 
 ---
 

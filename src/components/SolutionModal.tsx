@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed, Asterisk } from 'lucide-react';
+import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed, Asterisk, Flame } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -402,7 +402,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx, isIceBomb, iceBombTurnToActive, iceBombInfectedFreezeTurns, isSpikeBubble }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx, isIceBomb, iceBombTurnToActive, iceBombInfectedFreezeTurns, isSpikeBubble, isBombCrackingBubble, bombMergeRemain }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -430,7 +430,8 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                               isCountdown ? 'rgba(236, 72, 153, 0.15)' :
                               isLinkedMain ? 'rgba(14, 165, 233, 0.15)' :
                               isLinkedChunk ? 'rgba(14, 165, 233, 0.05)' :
-                              isCrackBubble ? 'rgba(251, 191, 36, 0.15)' : baseBg;
+                              isCrackBubble ? 'rgba(251, 191, 36, 0.15)' :
+                              isBombCrackingBubble ? 'rgba(249, 115, 22, 0.15)' : baseBg;
                   }
 
                   const baseBorder = isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)';
@@ -448,7 +449,8 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                                   isCountdown ? '1px solid rgba(236, 72, 153, 0.4)' :
                                   isLinkedMain ? '1px solid rgba(14, 165, 233, 0.4)' :
                                   isLinkedChunk ? '1px dashed rgba(14, 165, 233, 0.4)' :
-                                  isCrackBubble ? '1px dashed rgba(251, 191, 36, 0.8)' : baseBorder;
+                                  isCrackBubble ? '1px dashed rgba(251, 191, 36, 0.8)' : 
+                                  isBombCrackingBubble ? '1px dashed rgba(249, 115, 22, 0.8)' : baseBorder;
                   }
 
                   const textColor = useFamilyColor ? baseColorStr : (isChunk ? '#a5b4fc' : 'var(--text-main)');
@@ -536,6 +538,11 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {isBackward && (
                             <span title="Từ Ngược" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#a855f7', fontSize: '11px', fontWeight: 'bold' }}>
                               <ArrowLeftRight size={14} color="#a855f7" /> Ngược
+                            </span>
+                          )}
+                          {isBombCrackingBubble && (
+                            <span title={`Bomb Cracking Bubble (${bombMergeRemain} merges left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#f97316', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Flame size={14} color="#f97316" /> {bombMergeRemain}
                             </span>
                           )}
                           {burstMovesRemaining !== undefined && burstMovesRemaining > 0 && (

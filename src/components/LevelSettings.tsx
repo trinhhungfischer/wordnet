@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost, Asterisk } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost, Asterisk, Flame } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -1065,7 +1065,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
               <CircleDashed size={20} color="#ec4899" />
               <div>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  16. Soap Bubble
+                  Soap Bubble
                 </h3>
                 <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
                   Mechanic: Soap Bubble
@@ -1853,13 +1853,141 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
           )}
         </div>
       )
+    },
+    {
+      id: 'bombCracking',
+      isActive: () => forceOpen.bombCracking || (levelData.bombCrackingBubbles && levelData.bombCrackingBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Flame size={20} color="#f97316" />
+              <div>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  Bomb Cracking Bubble
+                </h3>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Mechanic: Bomb Cracking Bubble
+                </p>
+              </div>
+            </div>
+            <Toggle 
+              checked={forceOpen.bombCracking || (levelData.bombCrackingBubbles && levelData.bombCrackingBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, bombCracking: checked }));
+                handleChange('bombCrackingBubbles', checked ? [] : undefined);
+              }}
+            />
+          </div>
+          
+          {(forceOpen.bombCracking || (levelData.bombCrackingBubbles && levelData.bombCrackingBubbles.length > 0)) && (
+            <div style={{ background: 'var(--panel-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--panel-border)' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '12px', color: 'var(--text-main)', fontWeight: 500 }}>
+                  Bomb Cracking Bubbles (Drag & Drop from left panel):
+                </label>
+                <div 
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    try {
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentBombs = levelData.bombCrackingBubbles || [];
+                        if (!currentBombs.some((c: any) => c?.word?.toLowerCase() === wordLabel.toLowerCase())) {
+                          handleChange('bombCrackingBubbles', [...currentBombs, { word: wordLabel.toLowerCase(), mergeRemain: 5, chainCount: 3 }]);
+                        }
+                      }
+                    } catch (err) {}
+                  }}
+                  style={{
+                    minHeight: '80px', padding: '8px', border: '1px dashed rgba(249, 115, 22, 0.5)',
+                    borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                  }}
+                >
+                  {(!levelData.bombCrackingBubbles || levelData.bombCrackingBubbles.length === 0) ? (
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                      Drop words here to add Bomb Cracking Bubbles
+                    </span>
+                  ) : (
+                    levelData.bombCrackingBubbles.map((bomb: any, i: number) => (
+                      <div 
+                        key={i} 
+                        style={{ 
+                          display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(249, 115, 22, 0.15)',
+                          padding: '8px', borderRadius: '6px', border: '1px solid rgba(249, 115, 22, 0.3)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(bomb.word);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' 
+                            }}
+                            title={bomb.word}
+                          >
+                            {bomb.word}
+                          </span>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('bombCrackingBubbles', levelData.bombCrackingBubbles.filter((c: any) => c.word !== bomb.word));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '16px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Merges:</span>
+                            <input 
+                              type="number" 
+                              value={bomb.mergeRemain ?? 5}
+                              onChange={(e) => {
+                                const newBombs = [...levelData.bombCrackingBubbles];
+                                newBombs[i] = { ...newBombs[i], mergeRemain: parseInt(e.target.value) || 1 };
+                                handleChange('bombCrackingBubbles', newBombs);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Chain:</span>
+                            <input 
+                              type="number" 
+                              value={bomb.chainCount ?? 3}
+                              onChange={(e) => {
+                                const newBombs = [...levelData.bombCrackingBubbles];
+                                newBombs[i] = { ...newBombs[i], chainCount: parseInt(e.target.value) || 1 };
+                                handleChange('bombCrackingBubbles', newBombs);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )
     }
   ];
 
   const mechanicsOrder = [
     'chain', 'frozen', 'keyLock', 'burst', 'cryptic', 'screwLock',
     'backward', 'cycleLock', 'immovable', 'countdown', 'linked',
-    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike'
+    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike', 'bombCracking'
   ];
 
   useEffect(() => {
@@ -2014,7 +2142,8 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 spike: { name: 'Spike', icon: <Asterisk size={10} />, color: '#dc2626' },
                 countdown: { name: 'Countdown', icon: <Timer size={10} />, color: '#ec4899' },
                 linked: { name: 'Linked', icon: <Magnet size={10} />, color: '#0ea5e9' },
-                requirementLock: { name: 'Req Lock', icon: <Dumbbell size={10} />, color: '#f97316' }
+                requirementLock: { name: 'Req Lock', icon: <Dumbbell size={10} />, color: '#f97316' },
+                bombCracking: { name: 'Bomb Crack', icon: <Flame size={10} />, color: '#f97316' }
               };
               
               const mMeta = meta[m.id] || { name: m.id, icon: <Zap size={10} />, color: '#ffffff' };
@@ -2048,6 +2177,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     else if (m.id === 'countdown') handleChange('countdownBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'linked') handleChange('linkedBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'requirementLock') handleChange('requirementLockBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'bombCracking') handleChange('bombCrackingBubbles', willBeActive ? [] : undefined);
                     
                     if (willBeActive) {
                       setSortedMechanicIds(prev => {
