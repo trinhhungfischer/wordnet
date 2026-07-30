@@ -62,7 +62,13 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                   </h3>
                   <Toggle 
                     checked={levelData.useBubbleSeparator === 1}
-                    onChange={(checked) => handleChange('useBubbleSeparator', checked ? 1 : 0)}
+                    onChange={(checked) => {
+                      onSave({
+                        ...levelData,
+                        useBubbleSeparator: checked ? 1 : 0,
+                        bubbleSeparatorData: checked ? levelData.bubbleSeparatorData : undefined
+                      });
+                    }}
                   />
                 </div>
         
