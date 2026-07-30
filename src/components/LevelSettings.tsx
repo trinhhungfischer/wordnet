@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost, Asterisk } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -1365,6 +1365,80 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
       )
     },
     {
+      id: 'spike',
+      isActive: () => forceOpen.spike || (levelData.spikeBubbles && levelData.spikeBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Asterisk size={16} color="#dc2626" />
+              Mechanic: Spike
+            </h3>
+            <Toggle 
+              checked={forceOpen.spike || (levelData.spikeBubbles && levelData.spikeBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, spike: checked }));
+                handleChange('spikeBubbles', checked ? [] : undefined);
+              }}
+            />
+          </div>
+          {(forceOpen.spike || (levelData.spikeBubbles && levelData.spikeBubbles.length > 0)) && (
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                Spike Words (Drag & Drop from left panel):
+              </div>
+              <div 
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const wordLabel = e.dataTransfer.getData('application/reactflow-node') || e.dataTransfer.getData('text/plain');
+                  if (wordLabel) {
+                    const currentSpike = levelData.spikeBubbles || [];
+                    if (!currentSpike.some((f: any) => (typeof f === 'string' ? f : f.word) === wordLabel)) {
+                      handleChange('spikeBubbles', [...currentSpike, wordLabel]);
+                    }
+                  }
+                }}
+                style={{ 
+                  minHeight: '80px', padding: '8px', border: '1px dashed rgba(220,38,38,0.5)', 
+                  borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                }}
+              >
+                {(!levelData.spikeBubbles || levelData.spikeBubbles.length === 0) ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                    Drop words here to add Spike
+                  </span>
+                ) : (
+                  levelData.spikeBubbles.map((sb: any, i: number) => {
+                    const wordStr = typeof sb === 'string' ? sb : sb.word;
+                    return (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(220,38,38,0.15)', padding: '8px', borderRadius: '6px', border: '1px solid rgba(220,38,38,0.3)' }}>
+                        <span 
+                          onClick={() => onFocusWord?.(wordStr)}
+                          style={{ fontSize: '14px', fontWeight: 600, color: 'white', cursor: 'pointer' }}
+                        >
+                          {wordStr}
+                        </span>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleChange('spikeBubbles', levelData.spikeBubbles.filter((w: any) => (typeof w === 'string' ? w : w.word) !== wordStr));
+                          }}
+                          style={{ background: 'transparent', border: 'none', color: '#fca5a5', cursor: 'pointer', padding: '0 4px', fontSize: '18px', lineHeight: 1 }}
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    )
+                  })
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )
+    },
+    {
       id: 'immovable',
       isActive: () => forceOpen.immovable || (levelData.immovableBubbles && levelData.immovableBubbles.length > 0),
       render: () => (
@@ -1785,7 +1859,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
   const mechanicsOrder = [
     'chain', 'frozen', 'keyLock', 'burst', 'cryptic', 'screwLock',
     'backward', 'cycleLock', 'immovable', 'countdown', 'linked',
-    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble'
+    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike'
   ];
 
   useEffect(() => {
@@ -1864,7 +1938,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
         </div>
       </div>
 
-      <div style={{ padding: '20px', overflowY: 'auto', flex: 1 }}>
+      <div style={{ padding: '20px', overflowY: 'auto', flex: 1, scrollbarGutter: 'stable' }}>
         {/* General Settings */}
         <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
           <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>General</h3>
@@ -1898,6 +1972,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 delete newData.cycleFadeOutBubbles;
                 delete newData.crypticBubbles;
                 delete newData.immovableBubbles;
+                delete newData.spikeBubbles;
                 delete newData.countdownBubbles;
                 delete newData.linkedBubbles;
                 delete newData.requirementLockBubbles;
@@ -1932,10 +2007,11 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 keyLock: { name: 'Key Lock', icon: <Key size={10} />, color: '#eab308' },
                 screwLock: { name: 'Screw Lock', icon: <Wrench size={10} />, color: '#f97316' },
                 cycleLock: { name: 'Cycle Lock', icon: <RefreshCw size={10} />, color: '#14b8a6' },
-                soapBubble: { name: 'Soap Bubble', icon: <CircleDashed size={10} />, color: '#ec4899' },
+                soapBubble: { name: 'Soap', icon: <CircleDashed size={10} />, color: '#ec4899' },
                 cycleFadeOut: { name: 'Cycle Fade', icon: <Ghost size={10} />, color: '#64748b' },
                 cryptic: { name: 'Cryptic', icon: <Eye size={10} />, color: '#c084fc' },
                 immovable: { name: 'Immovable', icon: <Pin size={10} />, color: '#9ca3af' },
+                spike: { name: 'Spike', icon: <Asterisk size={10} />, color: '#dc2626' },
                 countdown: { name: 'Countdown', icon: <Timer size={10} />, color: '#ec4899' },
                 linked: { name: 'Linked', icon: <Magnet size={10} />, color: '#0ea5e9' },
                 requirementLock: { name: 'Req Lock', icon: <Dumbbell size={10} />, color: '#f97316' }
@@ -1968,6 +2044,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     else if (m.id === 'cycleFadeOut') handleChange('cycleFadeOutBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'cryptic') handleChange('crypticBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'immovable') handleChange('immovableBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'spike') handleChange('spikeBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'countdown') handleChange('countdownBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'linked') handleChange('linkedBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'requirementLock') handleChange('requirementLockBubbles', willBeActive ? [] : undefined);
@@ -1985,10 +2062,8 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     background: active ? `${mMeta.color}20` : 'rgba(0,0,0,0.2)',
                     color: active ? mMeta.color : 'var(--text-muted)',
                     border: `1px solid ${active ? mMeta.color : 'var(--panel-border)'}`,
-                    cursor: 'pointer', transition: 'all 0.2s', opacity: active ? 1 : 0.5
+                    cursor: 'pointer', transition: 'all 0.2s', boxSizing: 'border-box'
                   }}
-                  onMouseOver={(e) => { if (!active) e.currentTarget.style.opacity = '1'; }}
-                  onMouseOut={(e) => { if (!active) e.currentTarget.style.opacity = '0.5'; }}
                   title={`Toggle ${mMeta.name}`}
                 >
                   <span style={{ color: active ? mMeta.color : 'inherit', display: 'flex' }}>{mMeta.icon}</span>

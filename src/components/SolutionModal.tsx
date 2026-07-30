@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed } from 'lucide-react';
+import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed, Asterisk } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -110,7 +110,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
 
       const reqLockWeight = bubbleState.reqLockWeight;
 
-      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx: idx, isIceBomb: bubbleState.isIceBomb, iceBombTurnToActive: bubbleState.iceBombTurnToActive, iceBombConfigTurnToActive: bubbleState.iceBombConfigTurnToActive, iceBombConfigFreezeTurns: bubbleState.iceBombConfigFreezeTurns, iceBombInfectedFreezeTurns: bubbleState.iceBombInfectedFreezeTurns };
+      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx: idx, isIceBomb: bubbleState.isIceBomb, iceBombTurnToActive: bubbleState.iceBombTurnToActive, iceBombConfigTurnToActive: bubbleState.iceBombConfigTurnToActive, iceBombConfigFreezeTurns: bubbleState.iceBombConfigFreezeTurns, iceBombInfectedFreezeTurns: bubbleState.iceBombInfectedFreezeTurns, isSpikeBubble: bubbleState.isSpikeBubble };
     }).filter(Boolean) as any[];
 
     if (boardSortMode === 'name') {
@@ -402,7 +402,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx, isIceBomb, iceBombTurnToActive, iceBombInfectedFreezeTurns }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx, isIceBomb, iceBombTurnToActive, iceBombInfectedFreezeTurns, isSpikeBubble }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -424,6 +424,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                               isChained ? 'rgba(129, 140, 248, 0.15)' :
                               isBackward ? 'rgba(168, 85, 247, 0.15)' :
                               isSoapBubble ? 'rgba(236, 72, 153, 0.15)' :
+                              isSpikeBubble ? 'rgba(220, 38, 38, 0.15)' :
                               isCycleLock ? (cycleLockState === 1 ? 'rgba(20, 184, 166, 0.25)' : 'rgba(20, 184, 166, 0.1)') :
                               isImmovable ? 'rgba(107, 114, 128, 0.15)' :
                               isCountdown ? 'rgba(236, 72, 153, 0.15)' :
@@ -441,6 +442,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                                   isChained ? '1px solid rgba(129, 140, 248, 0.4)' :
                                   isBackward ? '1px solid rgba(168, 85, 247, 0.4)' :
                                   isSoapBubble ? '1px solid rgba(236, 72, 153, 0.4)' :
+                                  isSpikeBubble ? '1px solid rgba(220, 38, 38, 0.4)' :
                                   isCycleLock ? (cycleLockState === 1 ? '2px solid rgba(20, 184, 166, 0.8)' : '1px solid rgba(20, 184, 166, 0.4)') :
                                   isImmovable ? '1px solid rgba(107, 114, 128, 0.4)' :
                                   isCountdown ? '1px solid rgba(236, 72, 153, 0.4)' :
@@ -494,6 +496,16 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {iceBombInfectedFreezeTurns !== undefined && iceBombInfectedFreezeTurns > 0 && (
                             <span title={`Frozen by Ice Bomb (${iceBombInfectedFreezeTurns} merges left)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#38bdf8', fontSize: '11px', fontWeight: 'bold' }}>
                               <Snowflake size={14} color="#38bdf8" /> {iceBombInfectedFreezeTurns}
+                            </span>
+                          )}
+                          {isSoapBubble && (
+                            <span title="Soap Bubble" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#ec4899', fontSize: '11px', fontWeight: 'bold' }}>
+                              <CircleDashed size={14} color="#ec4899" />
+                            </span>
+                          )}
+                          {isSpikeBubble && (
+                            <span title="Spike Bubble" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#dc2626', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Asterisk size={14} color="#dc2626" />
                             </span>
                           )}
                           {iceMergesLeft > 0 && (

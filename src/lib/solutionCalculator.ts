@@ -22,6 +22,7 @@ export interface BoardBubbleState {
   iceBombConfigTurnToActive?: number;
   iceBombConfigFreezeTurns?: number;
   iceBombInfectedFreezeTurns?: number;
+  isSpikeBubble?: boolean;
 }
 
 export interface MergeStep {
@@ -146,6 +147,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let screwLockIndex = -1;
     let screwDriverIndex = -1;
     let reqLockWeight: number | undefined;
+    let isSpikeBubble = false;
 
     const w = displayLabel.toLowerCase();
     const currentWeight = displayLabel.split('|').length;
@@ -177,6 +179,10 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       const lockIdx = levelData?.keyLockBubbles?.findIndex((k: any) => k.lockWord.toLowerCase() === w);
       if (lockIdx !== undefined && lockIdx !== -1 && !usedWords.has(levelData.keyLockBubbles[lockIdx].keyWord.toLowerCase())) {
         lockIndex = lockIdx;
+      }
+
+      if (levelData?.spikeBubbles?.some((s: any) => (typeof s === 'string' ? s : s.word).toLowerCase() === w)) {
+        isSpikeBubble = true;
       }
 
       const keyIdx = levelData?.keyLockBubbles?.findIndex((k: any) => k.keyWord.toLowerCase() === w);
@@ -255,7 +261,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       iceBombTurnToActive,
       iceBombConfigTurnToActive,
       iceBombConfigFreezeTurns,
-      iceBombInfectedFreezeTurns
+      iceBombInfectedFreezeTurns,
+      isSpikeBubble
     };
   };
 
@@ -591,6 +598,18 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       // Try Chunk -> Word Merge
       for (const [wordId, chunkIds] of wordToChunks.entries()) {
         if (!resolvedWords.has(wordId) && chunkIds.every(cid => board.includes(cid))) {
+          
+          let allSpikes = true;
+          for (const cid of chunkIds) {
+            if (!getBubbleState(cid).isSpikeBubble) {
+              allSpikes = false;
+              break;
+            }
+          }
+          if (allSpikes && chunkIds.length > 1) {
+             continue; // Cannot merge if ALL pieces are Spike Bubbles
+          }
+          
           let score = 10;
           const wordLabel = String(nodes.find(n => n.id === wordId)?.data.label).toLowerCase();
           const burstRule = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === wordLabel);
@@ -671,6 +690,10 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                       
                       const weight1 = p1.startsWith('temp_') ? label1.split('|').length : 1;
                       const weight2 = p2.startsWith('temp_') ? label2.split('|').length : 1;
+                      
+                      const isSpike1 = getBubbleState(p1).isSpikeBubble;
+                      const isSpike2 = getBubbleState(p2).isSpikeBubble;
+                      if (isSpike1 && isSpike2) continue; // Cannot merge two spike bubbles
 
                       const reqLock1 = levelData?.requirementLockBubbles?.find((r: any) => r.requirementLockWord.toLowerCase() === label1);
                       if (reqLock1 && weight2 < reqLock1.requireWeight) continue;

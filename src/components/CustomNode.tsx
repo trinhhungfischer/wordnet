@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Radiation, Ghost } from 'lucide-react';
+import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Radiation, Ghost, Asterisk } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
@@ -25,6 +25,7 @@ const CustomNode = ({ data, selected }: any) => {
   const isSoapBubble = data.isSoapBubble === true;
   const isCycleFadeOut = data.isCycleFadeOut === true;
   const isImmovable = data.isImmovable === true;
+  const isSpikeBubble = data.isSpikeBubble === true;
   const isCountdown = data.isCountdown === true;
   const countdownValue = data.countdownValue;
 
@@ -32,6 +33,92 @@ const CustomNode = ({ data, selected }: any) => {
   const keyColor = keyIndex !== -1 ? lockKeyColors[keyIndex % lockKeyColors.length] : '#f59e0b';
   const screwLockColor = screwLockIndex !== -1 ? lockKeyColors[screwLockIndex % lockKeyColors.length] : '#f97316';
   const screwDriverColor = screwDriverIndex !== -1 ? lockKeyColors[screwDriverIndex % lockKeyColors.length] : '#fb923c';
+
+  let bgColor = 'var(--node-bg)';
+  let borderColor = '1px solid var(--node-border)';
+  let shadow = '0 4px 6px rgba(0,0,0,0.1)';
+
+  if (isChunk) {
+    bgColor = 'rgba(0,0,0,0.4)';
+    borderColor = '1px dashed rgba(99,102,241,0.7)';
+  } else if (keyIndex !== -1) {
+    bgColor = 'rgba(250, 204, 21, 0.15)';
+    borderColor = '2px solid rgba(250, 204, 21, 0.8)';
+    shadow = '0 0 15px rgba(250, 204, 21, 0.3)';
+  } else if (lockIndex !== -1) {
+    bgColor = 'rgba(161, 161, 170, 0.15)';
+    borderColor = '2px solid rgba(161, 161, 170, 0.8)';
+    shadow = '0 0 15px rgba(161, 161, 170, 0.3)';
+  } else if (screwDriverIndex !== -1) {
+    bgColor = 'rgba(249, 115, 22, 0.1)';
+    borderColor = '2px solid rgba(249, 115, 22, 0.4)';
+    shadow = '0 0 15px rgba(249, 115, 22, 0.2)';
+  } else if (screwLockIndex !== -1) {
+    bgColor = 'rgba(249, 115, 22, 0.15)';
+    borderColor = '2px solid rgba(249, 115, 22, 0.8)';
+    shadow = '0 0 15px rgba(249, 115, 22, 0.3)';
+  } else if (isBurst) {
+    bgColor = burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)';
+    borderColor = burstMovesRemaining <= 3 ? '2px solid rgba(239, 68, 68, 0.8)' : '2px solid rgba(249, 115, 22, 0.8)';
+    shadow = burstMovesRemaining <= 3 ? '0 0 15px rgba(239, 68, 68, 0.3)' : '0 0 15px rgba(249, 115, 22, 0.3)';
+  } else if (isCryptic) {
+    bgColor = 'rgba(192, 132, 252, 0.15)';
+    borderColor = '2px solid rgba(192, 132, 252, 0.8)';
+    shadow = '0 0 15px rgba(192, 132, 252, 0.3)';
+  } else if (isImmovable) {
+    bgColor = 'rgba(107, 114, 128, 0.15)';
+    borderColor = '2px solid rgba(107, 114, 128, 0.8)';
+    shadow = '0 0 15px rgba(107, 114, 128, 0.3)';
+  } else if (isCountdown) {
+    bgColor = 'rgba(236, 72, 153, 0.15)';
+    borderColor = '2px solid rgba(236, 72, 153, 0.8)';
+    shadow = '0 0 15px rgba(236, 72, 153, 0.3)';
+  } else if (isFrozen) {
+    bgColor = 'rgba(56, 189, 248, 0.15)';
+    borderColor = '2px solid rgba(56, 189, 248, 0.8)';
+    shadow = '0 0 15px rgba(56, 189, 248, 0.3)';
+  } else if (isCrackBubble) {
+    bgColor = 'rgba(251, 191, 36, 0.15)';
+    borderColor = '2px dashed rgba(251, 191, 36, 0.8)';
+    shadow = '0 0 15px rgba(251, 191, 36, 0.3)';
+  } else if (isBackward) {
+    bgColor = 'rgba(168, 85, 247, 0.15)';
+    borderColor = '2px solid rgba(168, 85, 247, 0.8)';
+    shadow = '0 0 15px rgba(168, 85, 247, 0.3)';
+  } else if (isCycleLock) {
+    bgColor = 'rgba(20, 184, 166, 0.15)';
+    borderColor = '2px solid rgba(20, 184, 166, 0.8)';
+    shadow = '0 0 15px rgba(20, 184, 166, 0.3)';
+  } else if (isCycleFadeOut) {
+    bgColor = 'rgba(100, 116, 139, 0.15)';
+    borderColor = '2px solid rgba(100, 116, 139, 0.8)';
+    shadow = '0 0 15px rgba(100, 116, 139, 0.3)';
+  } else if (isSoapBubble) {
+    bgColor = 'rgba(236, 72, 153, 0.15)';
+    borderColor = '2px dashed rgba(236, 72, 153, 0.8)';
+    shadow = '0 0 15px rgba(236, 72, 153, 0.3)';
+  } else if (isSpikeBubble) {
+    bgColor = 'rgba(220, 38, 38, 0.15)';
+    borderColor = '2px solid rgba(220, 38, 38, 0.8)';
+    shadow = '0 0 15px rgba(220, 38, 38, 0.3)';
+  } else if (isLinkedMain) {
+    bgColor = 'rgba(14, 165, 233, 0.15)';
+    borderColor = '2px solid rgba(14, 165, 233, 0.8)';
+    shadow = '0 0 15px rgba(14, 165, 233, 0.3)';
+  } else if (isLinkedChunk) {
+    bgColor = 'rgba(14, 165, 233, 0.05)';
+    borderColor = '2px dashed rgba(14, 165, 233, 0.8)';
+    shadow = '0 0 10px rgba(14, 165, 233, 0.2)';
+  } else if (isChained) {
+    bgColor = 'rgba(99,102,241,0.15)';
+    borderColor = '2px solid rgba(99,102,241,0.8)';
+    shadow = '0 0 15px rgba(99,102,241,0.3)';
+  }
+
+  if (selected) {
+    borderColor = '1px solid var(--node-selected-border)';
+    shadow = '0 0 15px rgba(99,102,241,0.5)';
+  }
 
   return (
     <div 
@@ -44,9 +131,9 @@ const CustomNode = ({ data, selected }: any) => {
       textAlign: 'center',
       cursor: 'pointer',
       transition: 'all 0.2s',
-      background: isChunk ? 'rgba(0,0,0,0.4)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isImmovable ? 'rgba(107, 114, 128, 0.15)' : (isCountdown ? 'rgba(236, 72, 153, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isCrackBubble ? 'rgba(251, 191, 36, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isCycleFadeOut ? 'rgba(100, 116, 139, 0.15)' : (isSoapBubble ? 'rgba(236, 72, 153, 0.15)' : (isLinkedMain ? 'rgba(14, 165, 233, 0.15)' : (isLinkedChunk ? 'rgba(14, 165, 233, 0.05)' : (isChained ? 'rgba(99,102,241,0.15)' : 'var(--node-bg)'))))))))))))))))),
-      border: selected ? '1px solid var(--node-selected-border)' : (isChunk ? '1px dashed rgba(99,102,241,0.7)' : (keyIndex !== -1 ? '2px solid rgba(250, 204, 21, 0.8)' : (lockIndex !== -1 ? '2px solid rgba(161, 161, 170, 0.8)' : (screwDriverIndex !== -1 ? '2px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '2px solid rgba(249, 115, 22, 0.8)' : (isBurst ? (burstMovesRemaining <= 3 ? '2px solid rgba(239, 68, 68, 0.8)' : '2px solid rgba(249, 115, 22, 0.8)') : (isCryptic ? '2px solid rgba(192, 132, 252, 0.8)' : (isImmovable ? '2px solid rgba(107, 114, 128, 0.8)' : (isCountdown ? '2px solid rgba(236, 72, 153, 0.8)' : (isFrozen ? '2px solid rgba(56, 189, 248, 0.8)' : (isCrackBubble ? '2px dashed rgba(251, 191, 36, 0.8)' : (isBackward ? '2px solid rgba(168, 85, 247, 0.8)' : (isCycleLock ? '2px solid rgba(20, 184, 166, 0.8)' : (isCycleFadeOut ? '2px solid rgba(100, 116, 139, 0.8)' : (isSoapBubble ? '2px dashed rgba(236, 72, 153, 0.8)' : (isLinkedMain ? '2px solid rgba(14, 165, 233, 0.8)' : (isLinkedChunk ? '2px dashed rgba(14, 165, 233, 0.8)' : (isChained ? '2px solid rgba(99,102,241,0.8)' : '1px solid var(--node-border)')))))))))))))))))),
-      boxShadow: selected ? '0 0 15px rgba(99,102,241,0.5)' : (keyIndex !== -1 ? '0 0 15px rgba(250, 204, 21, 0.3)' : (lockIndex !== -1 ? '0 0 15px rgba(161, 161, 170, 0.3)' : (screwDriverIndex !== -1 ? '0 0 15px rgba(249, 115, 22, 0.2)' : (screwLockIndex !== -1 ? '0 0 15px rgba(249, 115, 22, 0.3)' : (isBurst ? (burstMovesRemaining <= 3 ? '0 0 15px rgba(239, 68, 68, 0.3)' : '0 0 15px rgba(249, 115, 22, 0.3)') : (isCryptic ? '0 0 15px rgba(192, 132, 252, 0.3)' : (isImmovable ? '0 0 15px rgba(107, 114, 128, 0.3)' : (isCountdown ? '0 0 15px rgba(236, 72, 153, 0.3)' : (isFrozen ? '0 0 15px rgba(56, 189, 248, 0.3)' : (isCrackBubble ? '0 0 15px rgba(251, 191, 36, 0.3)' : (isBackward ? '0 0 15px rgba(168, 85, 247, 0.3)' : (isCycleLock ? '0 0 15px rgba(20, 184, 166, 0.3)' : (isCycleFadeOut ? '0 0 15px rgba(100, 116, 139, 0.3)' : (isSoapBubble ? '0 0 15px rgba(236, 72, 153, 0.3)' : (isLinkedMain ? '0 0 15px rgba(14, 165, 233, 0.3)' : (isLinkedChunk ? '0 0 10px rgba(14, 165, 233, 0.2)' : (isChained ? '0 0 15px rgba(99,102,241,0.3)' : '0 4px 6px rgba(0,0,0,0.1)')))))))))))))))))
+      background: bgColor,
+      border: borderColor,
+      boxShadow: shadow
     }}>
       <Handle
         type="target"
@@ -97,6 +184,7 @@ const CustomNode = ({ data, selected }: any) => {
             <span style={{ fontSize: '11px' }}>{countdownValue?.[0]}</span>
           </div>
         )}
+        {isSpikeBubble && <Asterisk size={14} style={{ color: '#dc2626', marginLeft: '4px' }} />}
       </div>
       
       {data.isRoot && (

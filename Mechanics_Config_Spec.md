@@ -507,15 +507,8 @@ Cấu trúc đề xuất:
 Cấu trúc đề xuất:
 
 ```json
-"resizeBubbles": [
-  {
-    "word": "Resize",
-    "maxWeight": 3
-  }
-]
+"resizeBubbles": ["Resize"]
 ```
-
-- `maxWeight`: Kích thước tối đa mà bóng có thể phình to tới.
 
 **Luật chơi:**
 

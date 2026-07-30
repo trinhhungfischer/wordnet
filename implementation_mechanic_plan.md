@@ -59,3 +59,10 @@ Cập nhật giao diện mô phỏng lời giải `SolutionModal.tsx` để tái
 
 - Cố gắng giữ màu sắc hiển thị **nhất quán** trên toàn bộ 3 màn hình: Graph Editor, Drop Queue, và Solution Modal.
 - Cân nhắc sử dụng **mảng màu động (dynamic palette)** (như đã làm với Lock & Key) nếu một màn chơi có thể có nhiều cụm cơ chế giống nhau để người chơi phân biệt (Khoá A đi với Chìa A, Khoá B đi với Chìa B).
+
+## 6. Kiểm tra Web (Web Testing)
+
+Sau khi hoàn thành tích hợp các bước trên, **BẮT BUỘC** phải test web:
+- Kiểm tra xem app có bị crash (màn hình đen/trắng) không.
+- Test thử giao diện Settings của mechanic (layout, toggle) có đồng bộ giống các mechanic khác không.
+- Nếu được, chạy thử quy trình mô phỏng thuật toán để xác nhận tính năng thực sự hoạt động.
