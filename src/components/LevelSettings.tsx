@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, Pin, Timer, Zap, Dumbbell, Radiation, Ghost } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -1050,6 +1050,117 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
       )
     },
     {
+      id: 'soapBubble',
+      isActive: () => forceOpen.soapBubble || (levelData.soapBubbles && levelData.soapBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <CircleDashed size={20} color="#ec4899" />
+              <div>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  16. Soap Bubble
+                </h3>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Mechanic: Soap Bubble
+                </p>
+              </div>
+            </div>
+            <Toggle 
+              checked={forceOpen.soapBubble || (levelData.soapBubbles && levelData.soapBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, soapBubble: checked }));
+                handleChange('soapBubbles', checked ? [] : undefined);
+              }}
+            />
+          </div>
+          
+          {(forceOpen.soapBubble || (levelData.soapBubbles && levelData.soapBubbles.length > 0)) && (
+            <div style={{ background: 'var(--panel-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--panel-border)' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '12px', color: 'var(--text-main)', fontWeight: 500 }}>
+                  Soap Bubble Words (Drag & Drop from left panel):
+                </label>
+                <div 
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    try {
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const currentSoaps = levelData.soapBubbles || [];
+                        if (!currentSoaps.some((c: any) => c.word.toLowerCase() === wordLabel.toLowerCase())) {
+                          handleChange('soapBubbles', [...currentSoaps, { word: wordLabel.toLowerCase(), turnToFill: 2 }]);
+                        }
+                      }
+                    } catch (err) {}
+                  }}
+                  style={{
+                    minHeight: '80px', padding: '8px', border: '1px dashed rgba(236,72,153,0.5)',
+                    borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                  }}
+                >
+                  {(!levelData.soapBubbles || levelData.soapBubbles.length === 0) ? (
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                      Drop words here to add Soap Bubbles
+                    </span>
+                  ) : (
+                    levelData.soapBubbles.map((soap: any, i: number) => (
+                      <div 
+                        key={i} 
+                        style={{ 
+                          display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(236,72,153,0.15)',
+                          padding: '6px', borderRadius: '6px', border: '1px solid rgba(236,72,153,0.3)'
+                        }}
+                      >
+                        <span 
+                          onClick={() => {
+                            if (onFocusWord) onFocusWord(soap.word);
+                          }}
+                          style={{ 
+                            fontSize: '13px', fontWeight: 600, color: 'white', 
+                            cursor: 'pointer', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' 
+                          }}
+                          title={soap.word}
+                        >
+                          {soap.word}
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Turns:</span>
+                          <input 
+                            type="number" 
+                            value={soap.turnToFill ?? 2}
+                            onChange={(e) => {
+                              const newSoaps = [...levelData.soapBubbles];
+                              newSoaps[i] = { ...newSoaps[i], turnToFill: parseInt(e.target.value) || 1 };
+                              handleChange('soapBubbles', newSoaps);
+                            }}
+                            style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                          />
+                        </div>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleChange('soapBubbles', levelData.soapBubbles.filter((c: any) => c.word !== soap.word));
+                          }}
+                          style={{ 
+                            background: 'transparent', border: 'none', 
+                            color: '#fca5a5', cursor: 'pointer', padding: '4px', fontSize: '16px', lineHeight: 1
+                          }}
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )
+    },
+    {
       id: 'cycleFadeOut',
       isActive: () => forceOpen.cycleFadeOut || (levelData.cycleFadeOutBubbles && levelData.cycleFadeOutBubbles.length > 0),
       render: () => (
@@ -1665,17 +1776,32 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
     }
   ];
 
+  const mechanicsOrder = [
+    'chain', 'frozen', 'keyLock', 'burst', 'cryptic', 'screwLock',
+    'backward', 'cycleLock', 'immovable', 'countdown', 'linked',
+    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble'
+  ];
+
   useEffect(() => {
     if (isOpen && levelData) {
       const sorted = [...mechanicsConfig].sort((a, b) => {
         const aActive = a.isActive() ? 1 : 0;
         const bActive = b.isActive() ? 1 : 0;
-        return bActive - aActive;
+        if (aActive !== bActive) {
+          return bActive - aActive; // Active items float to the top
+        }
+        // Secondary sort: by document order
+        const aIndex = mechanicsOrder.indexOf(a.id);
+        const bIndex = mechanicsOrder.indexOf(b.id);
+        
+        const finalAIndex = aIndex === -1 ? 999 : aIndex;
+        const finalBIndex = bIndex === -1 ? 999 : bIndex;
+        
+        return finalAIndex - finalBIndex;
       });
       setSortedMechanicIds(sorted.map(m => m.id));
     }
   }, [isOpen, levelName]); // Do not include levelData/forceOpen to avoid live jumping
-
 
 
   useEffect(() => {
@@ -1736,12 +1862,10 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
         {/* General Settings */}
         <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
           <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>General</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
             <LabelInput label="Move Limit" value={levelData.moveLimit} onChange={(val: string) => handleChange('moveLimit', parseInt(val))} type="number" />
-            <LabelInput label="Difficulty (0-2)" value={levelData.levelDifficulty} onChange={(val: string) => handleChange('levelDifficulty', parseInt(val))} type="number" />
+            <LabelInput label="Difficulty" value={levelData.levelDifficulty} onChange={(val: string) => handleChange('levelDifficulty', Math.max(0, Math.min(2, parseInt(val) || 0)))} type="number" />
             <LabelInput label="Max Bubbles" value={levelData.maxBubblesInScene} onChange={(val: string) => handleChange('maxBubblesInScene', parseInt(val))} type="number" />
-            <LabelInput label="Tutorial ID" value={levelData.tutorialId} onChange={(val: string) => handleChange('tutorialId', parseInt(val))} type="number" />
-          <LabelInput label="Max Word Len" value={levelData.maxWordLength} onChange={(val: string) => handleChange('maxWordLength', parseInt(val))} type="number" />
         </div>
       </div>
 
@@ -1755,6 +1879,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
               onClick={() => {
                 const newData = { ...levelData };
                 newData.useBubbleSeparator = 0;
+                delete newData.bubbleSeparatorData;
                 delete newData.frozenBubbles;
                 delete newData.crackBubbles;
                 delete newData.iceBombBubbles;
@@ -1763,6 +1888,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 delete newData.keyLockBubbles;
                 delete newData.screwLockBubbles;
                 delete newData.cycleLockBubbles;
+                delete newData.soapBubbles;
                 delete newData.cycleFadeOutBubbles;
                 delete newData.crypticBubbles;
                 delete newData.immovableBubbles;
@@ -1786,10 +1912,11 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
             </button>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-            {mechanicsConfig.map(m => {
+            {mechanicsOrder.map(id => mechanicsConfig.find(c => c.id === id)).filter(Boolean).map(m => {
+              if (!m) return null;
               const active = m.isActive();
               
-              const meta: Record<string, {name: string, icon: JSX.Element, color: string}> = {
+              const meta: Record<string, {name: string, icon: React.ReactNode, color: string}> = {
                 chain: { name: 'Chain', icon: <Link size={10} />, color: '#818cf8' },
                 frozen: { name: 'Frozen', icon: <Snowflake size={10} />, color: '#38bdf8' },
                 crack: { name: 'Crack', icon: <Zap size={10} />, color: '#fbbf24' },
@@ -1799,6 +1926,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 keyLock: { name: 'Key Lock', icon: <Key size={10} />, color: '#eab308' },
                 screwLock: { name: 'Screw Lock', icon: <Wrench size={10} />, color: '#f97316' },
                 cycleLock: { name: 'Cycle Lock', icon: <RefreshCw size={10} />, color: '#14b8a6' },
+                soapBubble: { name: 'Soap Bubble', icon: <CircleDashed size={10} />, color: '#ec4899' },
                 cycleFadeOut: { name: 'Cycle Fade', icon: <Ghost size={10} />, color: '#64748b' },
                 cryptic: { name: 'Cryptic', icon: <Eye size={10} />, color: '#c084fc' },
                 immovable: { name: 'Immovable', icon: <Pin size={10} />, color: '#9ca3af' },
@@ -1815,7 +1943,13 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                   onClick={() => {
                     const willBeActive = !active;
                     setForceOpen(prev => ({ ...prev, [m.id]: willBeActive }));
-                    if (m.id === 'chain') handleChange('useBubbleSeparator', willBeActive ? 1 : 0);
+                    if (m.id === 'chain') {
+                      if (willBeActive) {
+                        handleChange('useBubbleSeparator', 1);
+                      } else {
+                        onSave({ ...levelData, useBubbleSeparator: 0, bubbleSeparatorData: undefined });
+                      }
+                    }
                     else if (m.id === 'frozen') handleChange('frozenBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'crack') handleChange('crackBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'icebomb') handleChange('iceBombBubbles', willBeActive ? [] : undefined);
@@ -1824,6 +1958,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     else if (m.id === 'keyLock') handleChange('keyLockBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'screwLock') handleChange('screwLockBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'cycleLock') handleChange('cycleLockBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'soapBubble') handleChange('soapBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'cycleFadeOut') handleChange('cycleFadeOutBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'cryptic') handleChange('crypticBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'immovable') handleChange('immovableBubbles', willBeActive ? [] : undefined);

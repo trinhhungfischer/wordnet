@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation } from 'lucide-react';
+import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -402,7 +402,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx, isIceBomb, iceBombTurnToActive, iceBombConfigTurnToActive, iceBombConfigFreezeTurns, iceBombInfectedFreezeTurns }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx, isIceBomb, iceBombTurnToActive, iceBombInfectedFreezeTurns }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -411,6 +411,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   const useFamilyColor = boardSortMode === 'family';
 
                   const isBackward = levelData?.backwardBubbles?.some((b: any) => b.word.toLowerCase() === displayLabel.toLowerCase());
+                  const isSoapBubble = levelData?.soapBubbles?.some((b: any) => b.word.toLowerCase() === displayLabel.toLowerCase());
                   const isCycleLock = cycleLockState !== undefined;
                   const isCountdown = countdownValue !== undefined;
                   const isFrozen = iceBombInfectedFreezeTurns !== undefined && iceBombInfectedFreezeTurns > 0;
@@ -422,6 +423,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                               isFrozen ? 'rgba(56, 189, 248, 0.15)' :
                               isChained ? 'rgba(129, 140, 248, 0.15)' :
                               isBackward ? 'rgba(168, 85, 247, 0.15)' :
+                              isSoapBubble ? 'rgba(236, 72, 153, 0.15)' :
                               isCycleLock ? (cycleLockState === 1 ? 'rgba(20, 184, 166, 0.25)' : 'rgba(20, 184, 166, 0.1)') :
                               isImmovable ? 'rgba(107, 114, 128, 0.15)' :
                               isCountdown ? 'rgba(236, 72, 153, 0.15)' :
@@ -438,6 +440,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                                   isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' :
                                   isChained ? '1px solid rgba(129, 140, 248, 0.4)' :
                                   isBackward ? '1px solid rgba(168, 85, 247, 0.4)' :
+                                  isSoapBubble ? '1px solid rgba(236, 72, 153, 0.4)' :
                                   isCycleLock ? (cycleLockState === 1 ? '2px solid rgba(20, 184, 166, 0.8)' : '1px solid rgba(20, 184, 166, 0.4)') :
                                   isImmovable ? '1px solid rgba(107, 114, 128, 0.4)' :
                                   isCountdown ? '1px solid rgba(236, 72, 153, 0.4)' :
@@ -546,6 +549,11 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                           {isScrewDriver && (
                             <span title="Screw Driver" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: (screwDriverIndex !== undefined && screwDriverIndex !== -1) ? lockKeyColors[screwDriverIndex % lockKeyColors.length] : '#fb923c', fontSize: '11px', fontWeight: 'bold' }}>
                               <PenTool size={14} color={(screwDriverIndex !== undefined && screwDriverIndex !== -1) ? lockKeyColors[screwDriverIndex % lockKeyColors.length] : '#fb923c'} /> Driver
+                            </span>
+                          )}
+                          {isSoapBubble && (
+                            <span title="Soap Bubble" style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#ec4899', fontSize: '11px', fontWeight: 'bold' }}>
+                              <CircleDashed size={14} color="#ec4899" />
                             </span>
                           )}
                           {cycleLockState !== undefined && (

@@ -33,7 +33,7 @@ import LevelSelectorModal from './LevelSelectorModal';
 import LoginModal from './LoginModal';
 import LevelsDashboardModal from './LevelsDashboardModal';
 import AnalyticsDashboard from './AnalyticsDashboard';
-import { Save, BookOpen, Settings, Plus, RefreshCw, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2, Dumbbell, Ghost } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, CircleDashed, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2, Dumbbell, Ghost } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 
@@ -248,6 +248,26 @@ const isNodeBackward = (node: Node, backwardBubblesList: any[], edges: Edge[], n
     if (chunkLabels.some(cLabel => backwardBubblesList.some((f: any) => f.word.toLowerCase() === cLabel))) {
       return true;
     }
+  }
+  return false;
+};
+
+const isNodeSoapBubble = (node: Node, list: any[], edges: Edge[], nodes: Node[]) => {
+  if (!list || list.length === 0) return false;
+  const label = String(node.data.label).toLowerCase();
+  if (list.some((f: any) => f.word.toLowerCase() === label)) return true;
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode && list.some((f: any) => f.word.toLowerCase() === String(parentNode.data.label).toLowerCase())) return true;
+    }
+  } else if (!node.data.isCategory) {
+    const chunkLabels = edges.filter(e => e.source === node.id)
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    if (chunkLabels.some(cLabel => list.some((f: any) => f.word.toLowerCase() === cLabel))) return true;
   }
   return false;
 };
@@ -1606,6 +1626,13 @@ export default function GraphEditor() {
         isChanged = true;
       }
 
+      if (clonedRawData.soapBubbles) {
+        clonedRawData.soapBubbles = clonedRawData.soapBubbles.map((sb: any) => 
+          sb.word.toLowerCase() === oldLabel ? { ...sb, word: newLabelLower } : sb
+        );
+        isChanged = true;
+      }
+
       if (clonedRawData.screwLockBubbles) {
         clonedRawData.screwLockBubbles = clonedRawData.screwLockBubbles.map((sl: any) => ({
           ...sl,
@@ -2090,6 +2117,13 @@ export default function GraphEditor() {
           if (updatedRawLevelData.cycleLockBubbles) {
             updatedRawLevelData.cycleLockBubbles = updatedRawLevelData.cycleLockBubbles.map((clb: any) => 
               clb.cycleLockWord.toLowerCase() === oldLabel ? { ...clb, cycleLockWord: newLabel } : clb
+            );
+          }
+
+          // 4.3. Soap Bubble
+          if (updatedRawLevelData.soapBubbles) {
+            updatedRawLevelData.soapBubbles = updatedRawLevelData.soapBubbles.map((sb: any) => 
+              sb.word.toLowerCase() === oldLabel ? { ...sb, word: newLabel } : sb
             );
           }
 
@@ -2853,6 +2887,13 @@ export default function GraphEditor() {
               );
             }
 
+            // 4.3. Soap Bubbles
+            if (clonedRawData.soapBubbles) {
+              clonedRawData.soapBubbles = clonedRawData.soapBubbles.map((sb: any) => 
+                sb.word.toLowerCase() === oldLabel ? { ...sb, word: w.word } : sb
+              );
+            }
+
             // 5. Key Lock Bubbles
             if (clonedRawData.keyLockBubbles) {
               clonedRawData.keyLockBubbles = clonedRawData.keyLockBubbles.map((kl: any) => ({
@@ -3268,7 +3309,7 @@ export default function GraphEditor() {
         </div>
         
         <div style={{ display: 'flex', gap: '12px', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0,0,0,0.15)', padding: '4px', borderRadius: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0,0,0,0.15)', padding: '4px', borderRadius: '10px', flexShrink: 0 }}>
             <button 
               onClick={() => setIsSolutionModalOpen(true)}
               disabled={!rawLevelData}
@@ -3484,6 +3525,7 @@ export default function GraphEditor() {
                   const isFrozen = isNodeFrozen(node, rawLevelData?.frozenBubbles || [], edges, nodes);
                   const isCycleFadeOut = isNodeCycleFadeOut(node, rawLevelData?.cycleFadeOutBubbles || [], edges, nodes);
                   const isCycleLock = isNodeCycleLock(node, rawLevelData?.cycleLockBubbles || [], edges, nodes);
+                  const isSoapBubble = isNodeSoapBubble(node, rawLevelData?.soapBubbles || [], edges, nodes);
                   const isIceBomb = isNodeIceBomb(node, rawLevelData?.iceBombBubbles || [], edges, nodes);
                   const isBackward = isNodeBackward(node, rawLevelData?.backwardBubbles || [], edges, nodes);
                   const isCryptic = isNodeCryptic(node, rawLevelData?.crypticBubbles || [], edges, nodes);
@@ -3545,12 +3587,12 @@ export default function GraphEditor() {
                             ? 'rgba(56, 189, 248, 0.1)' 
                             : (selectedNodeId === nodeId 
                               ? 'var(--accent)' 
-                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isCycleFadeOut ? 'rgba(100, 116, 139, 0.15)' : (isIceBomb ? 'rgba(56, 189, 248, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))))))))))),
+                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isCycleFadeOut ? 'rgba(100, 116, 139, 0.15)' : (isSoapBubble ? 'rgba(236, 72, 153, 0.15)' : (isIceBomb ? 'rgba(56, 189, 248, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))))))))))))),
                         border: dragOverNodeId === nodeId 
                             ? '2px dashed var(--accent)' 
                             : (selectedNodeId === nodeId 
                               ? '1px solid var(--accent)' 
-                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.4)' : (isCycleFadeOut ? '1px solid rgba(100, 116, 139, 0.4)' : (isIceBomb ? '1px solid rgba(56, 189, 248, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))))))))))),
+                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.4)' : (isCycleFadeOut ? '1px solid rgba(100, 116, 139, 0.4)' : (isSoapBubble ? '1px solid rgba(236, 72, 153, 0.4)' : (isIceBomb ? '1px solid rgba(56, 189, 248, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))))))))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -3578,6 +3620,9 @@ export default function GraphEditor() {
                           )}
                           {isCycleLock && (
                             <RefreshCw size={12} color="#14b8a6" />
+                          )}
+                          {isSoapBubble && (
+                            <CircleDashed size={12} color="#ec4899" />
                           )}
                           {isCycleFadeOut && (
                             <Ghost size={12} color="#64748b" />
@@ -3624,6 +3669,7 @@ export default function GraphEditor() {
                           {isIceBomb && <Bomb size={14} color={selectedNodeId === nodeId ? "white" : "#38bdf8"} />}
                           {isFrozen && <Snowflake size={14} color={selectedNodeId === nodeId ? "white" : "#38bdf8"} />}
                           {isCycleLock && <RefreshCw size={14} color={selectedNodeId === nodeId ? "white" : "#14b8a6"} />}
+                          {isSoapBubble && <CircleDashed size={14} color={selectedNodeId === nodeId ? "white" : "#ec4899"} />}
                           {isCycleFadeOut && <Ghost size={14} color={selectedNodeId === nodeId ? "white" : "#64748b"} />}
                           <span style={{ fontSize: '10px', opacity: 0.7, padding: '2px 4px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}>
                             {isChunk ? 'Chunk' : 'Word'}
@@ -3751,6 +3797,7 @@ export default function GraphEditor() {
             isFrozen: isNodeFrozen(n, rawLevelData?.frozenBubbles || [], edges, nodes),
             isCycleFadeOut: isNodeCycleFadeOut(n, rawLevelData?.cycleFadeOutBubbles || [], edges, nodes),
             isCycleLock: isNodeCycleLock(n, rawLevelData?.cycleLockBubbles || [], edges, nodes),
+            isSoapBubble: isNodeSoapBubble(n, rawLevelData?.soapBubbles || [], edges, nodes),
             isIceBomb: isNodeIceBomb(n, rawLevelData?.iceBombBubbles || [], edges, nodes),
             isBackward: isNodeBackward(n, rawLevelData?.backwardBubbles || [], edges, nodes),
             isCryptic: isNodeCryptic(n, rawLevelData?.crypticBubbles || [], edges, nodes),

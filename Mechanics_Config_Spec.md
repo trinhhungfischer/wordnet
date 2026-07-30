@@ -12,13 +12,14 @@ Dưới đây là cấu trúc chi tiết của các mảng Object mechanic thự
 ---
 
 ## Định nghĩa thuật ngữ cơ bản (Terminology)
+
 Để làm rõ cách hoạt động của các cơ chế đếm lùi/tính lượt, các khái niệm tương tác được định nghĩa thống nhất như sau:
 
 1. **Merge (Ghép đúng):**
    - Là hành động kéo một quả bóng (source) thả vào một quả bóng khác (target) **cùng nhóm** thành công, khiến chúng gộp lại với nhau.
    - Khi một cơ chế đếm theo "Merge" (Ví dụ: đếm lùi toàn bàn hoặc đếm lùi trực tiếp), bộ đếm **chỉ giảm khi người chơi ghép thành công**.
 
-2. **Hit (Lượt tương tác / Nước đi):** 
+2. **Hit (Lượt tương tác / Nước đi):**
    - Là **bất kỳ** hành động thao tác nào của người chơi làm tiêu tốn 1 lượt đi (Turn/Move). Bao gồm:
      - Kéo ghép thành công (Merge đúng).
      - Kéo ghép thất bại (Kéo sai nhóm khiến 2 bóng đẩy nhau ra).
@@ -127,7 +128,7 @@ Cấu trúc:
 - `word`: Chữ bị gắn bom nổ chậm.
 - `movesRemaining`: Số lượt đi (Hit) còn lại trước khi quả bom phát nổ. (Dưới 3 turn sẽ hiển thị cảnh báo đỏ). Mỗi lần **Hit** (bất kể ghép đúng hay kéo sai) sẽ làm giảm đi 1.
 - `results`: Nếu bom nổ, lượt chơi sẽ trừ đi một lượt -> thay đổi cách tính toán và recommend lời giải.
-- *Lưu ý mô phỏng:* Khi quả bom đếm ngược về 0 (hết lượt), nó sẽ nổ và mất cơ chế Bom (trở về hiển thị như một quả bóng thường trên board state).
+- _Lưu ý mô phỏng:_ Khi quả bom đếm ngược về 0 (hết lượt), nó sẽ nổ và mất cơ chế Bom (trở về hiển thị như một quả bóng thường trên board state).
 
 ---
 
@@ -311,7 +312,8 @@ Cấu trúc:
 
 **Luật chơi:** Quả bóng có khoá Requirement Lock từ 2 tới 3. Khoá này quy định quả bóng này chỉ merge được vào Merge Bubble có số lượng từ (weight) bằng hoặc lớn hơn `requireWeight`. Chiều ngược lại merge Merge Bubble cũng thế.
 Ví dụ: nếu `requireWeight` = 2, thì quả bóng này chỉ merge được vào Merge Bubble có 2 từ trở lên rồi.
-*Lưu ý:* 
+_Lưu ý:_
+
 - Requirement Lock chỉ áp dụng cho từ hoàn chỉnh (không cản trở việc ghép các mảnh chunks của từ đó lại với nhau).
 - Sau khi ghép thành công vào một bong bóng đủ weight, cụm bong bóng mới tạo ra sẽ không còn bị khoá Requirement Lock nữa.
 
@@ -351,7 +353,8 @@ Cấu trúc:
 "turnToActive": Số lượt merge (theo chu kì) trên toàn bàn để quả bóng này active kĩ năng biến một quả bóng bất kỳ thành Freeze "Ice Bomb Bubble".
 "freezeTurns": Số lượt Freeze "Ice Bomb Bubble" để nó biến thành một "Ice Bomb Bubble" mới
 
-**Luật chơi:** 
+**Luật chơi:**
+
 - Khi người chơi thực hiện thành công một lần ghép đúng (Merge) trên bàn, `turnToActive` của Ice Bomb sẽ giảm 1.
 - Khi đếm ngược đạt 0, nó sẽ biến một quả bóng bất kỳ trên bàn thành "Ice Bomb Bubble" ở trạng thái bị đóng băng. Đếm ngược của Ice Bomb gốc sẽ reset về lại `turnToActive` ban đầu và tiếp tục vòng lặp nổ.
 - Quả bóng mục tiêu bị lây nhiễm sẽ bị đóng băng (hiển thị giống cơ chế Frozen Bubble) trong `freezeTurns` lượt merge. Sau đó nó sẽ rã đông và chính thức biến thành Ice Bomb Bubble với config giống config của cha.
@@ -367,7 +370,8 @@ Cấu trúc đề xuất:
 ```json
 "soapBubbles": [
   {
-    "word": "Soap"
+    "word": "Soap",
+    "turnsToFill": 3
   }
 ]
 ```
@@ -375,10 +379,14 @@ Cấu trúc đề xuất:
 **Luật chơi:**
 
 - Chữ trên bong bóng bị che mờ hoàn toàn bởi một lớp bọt xà phòng bẩn (chỉ hiển thị dấu chấm hỏi `?` hoặc chữ bị nhòe).
-- **Cách giảm lượt:** Người chơi phải chạm đúp (Double-tap) vào bong bóng đó để "lau sạch" bọt và nhìn rõ từ vựng bên trong. Thao tác chạm đúp này sẽ tính là **1 lượt đi (Move)**.
+- **Cách hết mờ:** Người chơi phải chạm đúp (Double-tap) vào bong bóng đó để "lau sạch" bọt và nhìn rõ từ vựng bên trong. Thao tác chạm đúp này sẽ tính là **1 lượt đi (Move)**.
 - **Kéo bừa (thử vận may):** Nếu người chơi lười mở chữ mà kéo một từ khác vào để thử ghép:
   - Nếu **sai nhóm**: Mất 1 lượt đi và hai bong bóng đẩy nhau ra.
   - Nếu **đúng nhóm**: Bong bóng tự mở chữ và gộp nhóm thành công (không bị phạt lượt lau bọt).
+- **Khi hết bọt:** Bong bóng sẽ trở về trạng thái bình thường, và sau "turnsToFill" lượt đi (Move) tiếp theo, nó sẽ tự động xuất hiện bọt xà phòng trở lại (bị che mờ chữ).
+
+- **Lưu ý:**
+  - Cơ chế này không ảnh hưởng tới thuật toán giải của level nhưng sẽ làm recommend move thêm một với mỗi bong bóng Soap (Do người chơi phải trỏ vào để xem là nó là gì), chỉ là một lớp tương tác vật lý và hiển thị chữ trên bóng.
 
 ---
 
@@ -393,8 +401,8 @@ Cấu trúc đề xuất:
 
 **Luật chơi:**
 
-- Có visual gai nhọn xung quanh quả bóng.
 - Tương tự như cơ chế **Immovable Bubbles** (không thể tự kéo đi), nhưng khi có một quả bóng khác kéo vào ghép (merge) thì bóng gai sẽ mất gai và biến thành bóng thường.
+- Có visual gai nhọn xung quanh quả bóng.
 
 ---
 
@@ -440,6 +448,7 @@ Cấu trúc đề xuất:
 - `mergesToFloat`: Số lần ghép đúng (Merge) trên toàn bàn chơi.
 
 **Luật chơi:**
+
 - Nếu trải qua `mergesToFloat` lần ghép đúng trên màn chơi mà quả bóng này **không bị merge**, nó sẽ bị đẩy xuống dưới cùng của Drop Queue. Có thể thay đổi thuật toán giải của level.
 - **Visual:** Kéo quả bóng bay ngược lên trên.
 
