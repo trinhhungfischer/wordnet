@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { X, History, Calendar, CheckCircle2, Edit2, Trash2, Plus, Layers, Target, Download, Upload, Package, Cloud } from 'lucide-react';
+import { X, History, Calendar, CheckCircle2, Edit2, Trash2, Plus, Layers, Target, Download, Upload, Package, Cloud, GitBranch } from 'lucide-react';
 import initialChangelogData from '../data/changelog.json';
 
 interface ChangelogEntry {
@@ -120,6 +120,49 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
     }
   };
 
+  const handleFork = async (version: string) => {
+    const baseVersion = version.split('_')[0]; // e.g. 'v9' from 'v9_1'
+    let maxSuffix = 0;
+    changelogData.forEach(log => {
+      if (log.version === baseVersion || log.version.startsWith(baseVersion + '_')) {
+        const parts = log.version.split('_');
+        if (parts.length > 1) {
+          const suffix = parseInt(parts[1], 10);
+          if (!isNaN(suffix) && suffix > maxSuffix) {
+            maxSuffix = suffix;
+          }
+        }
+      }
+    });
+
+    const newVersion = `${baseVersion}_${maxSuffix + 1}`;
+    
+    const srcEntry = changelogData.find(log => log.version === version);
+    if (!srcEntry) return;
+
+    const newEntry = {
+      ...srcEntry,
+      version: newVersion,
+      note: `Fork of ${version}`,
+      isBuilt: false
+    };
+
+    const newData = [...changelogData, newEntry];
+    setChangelogData(newData);
+    setSelectedVersion(newVersion);
+
+    try {
+      await fetch('/api/update-changelog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newData)
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Lỗi khi tạo fork!');
+    }
+  };
+
   const handleDelete = async (index: number) => {
     if (!confirm('Bạn có chắc chắn muốn xóa log này?')) return;
     const newData = [...changelogData];
@@ -195,47 +238,59 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
       return;
     }
 
-    // Sort versions to process oldest to newest (e.g. v4, v5, v6...)
-    const sortedVersions = unbuiltLogs.map(l => l.version).sort((a, b) => {
-      const numA = parseInt(a.replace(/\D/g, '')) || 0;
-      const numB = parseInt(b.replace(/\D/g, '')) || 0;
-      return numA - numB;
+    // Identify branches based on suffixes of unbuiltLogs
+    const branchSuffixes = new Set<number>();
+    branchSuffixes.add(0); // Always have branch 0 (main branch)
+
+    unbuiltLogs.forEach(l => {
+      const parts = l.version.split('_');
+      if (parts.length > 1) {
+        const suffix = parseInt(parts[1], 10);
+        if (!isNaN(suffix)) branchSuffixes.add(suffix);
+      }
     });
 
-    const levelMap = new Map<number, string>(); // level number -> version string (e.g. 16 -> '6')
+    const finalJson: Record<string, any[]> = {};
 
-    sortedVersions.forEach(versionStr => {
-      const log = changelogData.find(l => l.version === versionStr);
-      if (!log) return;
-      
-      const vNumStr = versionStr.replace(/\D/g, ''); // Extract '6' from 'v6'
-      
-      // Parse levels (e.g., 'Level 1, Level 2' or '1, 2')
-      const levelsStr = log.levels;
-      if (!levelsStr) return;
-      
-      const parts = levelsStr.split(',').map(s => s.trim()).filter(Boolean);
-      parts.forEach(p => {
-        const match = p.match(/\d+/);
-        if (match) {
-          const num = parseInt(match[0], 10);
-          levelMap.set(num, vNumStr); // Newer versions overwrite older ones because of the sorting
+    Array.from(branchSuffixes).forEach(branchK => {
+      const levelMap = new Map<number, { folder: string, ver: string, fileName: string }>();
+
+      unbuiltLogs.forEach(log => {
+        const parts = log.version.split('_');
+        const baseVersion = parts[0]; // e.g. 'v9'
+        const verNumStr = baseVersion.replace(/\D/g, ''); // '9'
+        const suffix = parts.length > 1 ? parseInt(parts[1], 10) : 0;
+
+        // Apply this log to branch K if it's the main branch (0) OR its suffix is K
+        if (suffix === 0 || suffix === branchK) {
+          const levelsStr = log.levels;
+          if (!levelsStr) return;
+
+          const levelParts = levelsStr.split(',').map(s => s.trim()).filter(Boolean);
+          levelParts.forEach(p => {
+            const match = p.match(/\d+/);
+            if (match) {
+              const num = parseInt(match[0], 10);
+              const fileName = p.endsWith('.json') ? p : p + '.json';
+              levelMap.set(num, { folder: log.version, ver: verNumStr, fileName });
+            }
+          });
         }
       });
+
+      // Create array for this branch
+      const resultArr = Array.from(levelMap.entries())
+        .sort((a, b) => a[0] - b[0])
+        .map(([levelNum, data]) => ({
+          level: levelNum.toString(),
+          csv: `${data.folder}/${data.fileName}`,
+          ver: data.ver
+        }));
+
+      finalJson[branchK.toString()] = resultArr;
     });
 
-    // Create the final array sorted by level number
-    const resultArr = Array.from(levelMap.entries())
-      .sort((a, b) => a[0] - b[0])
-      .map(([levelNum, verNum]) => ({
-        level: levelNum.toString(),
-        csv: `v${verNum}/Level ${levelNum}.json`,
-        ver: verNum
-      }));
-
-    const finalJson = { "0": resultArr };
-
-    // Trigger download
+    const sortedVersions = unbuiltLogs.map(l => l.version);
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(finalJson, null, 0));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
@@ -534,6 +589,11 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                         style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
                         title="Xóa"
                       ><Trash2 size={14} /></button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleFork(log.version); }}
+                        style={{ background: 'transparent', border: 'none', color: '#60a5fa', cursor: 'pointer', padding: '4px' }}
+                        title="Tạo nhánh (Fork)"
+                      ><GitBranch size={14} /></button>
                     </div>
                   )}
                   <div style={{ fontSize: '12px', opacity: 0.6, display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
