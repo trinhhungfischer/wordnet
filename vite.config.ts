@@ -99,16 +99,9 @@ const dictionaryApiPlugin = () => ({
           try {
             const body = Buffer.concat(chunks).toString('utf-8')
             const { stagedLevels, note, targetVersion } = JSON.parse(body)
-            
-            // 1. Write each level to public/real_levels/
             const levelNames = Object.keys(stagedLevels)
-            levelNames.forEach(fileName => {
-              const safeFileName = fileName.endsWith('.json') ? fileName : `${fileName}.json`;
-              const filePath = path.resolve(__dirname, 'public/real_levels', safeFileName)
-              fs.writeFileSync(filePath, JSON.stringify(stagedLevels[fileName], null, 2), 'utf-8')
-            });
 
-            // 2. Read changelog.json, append new version, write it back
+            // 1. Read changelog.json, compute version
             const changelogPathSrc = path.resolve(__dirname, 'src/data/changelog.json')
             const changelogPathPublic = path.resolve(__dirname, 'public/changelog.json')
             
@@ -167,7 +160,8 @@ const dictionaryApiPlugin = () => ({
                 version: newVersionStr,
                 levels: levelsListStr,
                 date: dateStr,
-                note: note || ''
+                note: note || '',
+                isBuilt: false
               };
 
               changelogData.push(newEntry);
@@ -176,6 +170,24 @@ const dictionaryApiPlugin = () => ({
             
             fs.writeFileSync(changelogPathSrc, JSON.stringify(changelogData, null, 2), 'utf-8')
             fs.writeFileSync(changelogPathPublic, JSON.stringify(changelogData, null, 2), 'utf-8')
+
+            // 2. Write each level to public/real_levels/ AND public/[version]/
+            const versionDirPath = path.resolve(__dirname, 'public', versionToReport)
+            if (!fs.existsSync(versionDirPath)) {
+              fs.mkdirSync(versionDirPath, { recursive: true })
+            }
+
+            levelNames.forEach(fileName => {
+              const safeFileName = fileName.endsWith('.json') ? fileName : `${fileName}.json`;
+              
+              // Write to real_levels
+              const realLevelsPath = path.resolve(__dirname, 'public/real_levels', safeFileName)
+              fs.writeFileSync(realLevelsPath, JSON.stringify(stagedLevels[fileName], null, 2), 'utf-8')
+              
+              // Write to version directory
+              const versionFilePath = path.resolve(versionDirPath, safeFileName)
+              fs.writeFileSync(versionFilePath, JSON.stringify(stagedLevels[fileName], null, 2), 'utf-8')
+            });
 
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify({ success: true, version: versionToReport, entry: finalEntry }))
