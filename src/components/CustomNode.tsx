@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Radiation, Ghost, Asterisk, Flame } from 'lucide-react';
+import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Radiation, Ghost, Asterisk, Flame, Cloud } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
@@ -30,6 +30,8 @@ const CustomNode = ({ data, selected }: any) => {
   const isSpikeBubble = data.isSpikeBubble === true;
   const isCountdown = data.isCountdown === true;
   const countdownValue = data.countdownValue;
+  const isFloatBubble = data.isFloatBubble === true;
+  const mergesToFloat = data.mergesToFloat !== undefined ? data.mergesToFloat : 0;
 
   const lockColor = lockIndex !== -1 ? lockKeyColors[lockIndex % lockKeyColors.length] : '#a1a1aa';
   const keyColor = keyIndex !== -1 ? lockKeyColors[keyIndex % lockKeyColors.length] : '#f59e0b';
@@ -107,6 +109,10 @@ const CustomNode = ({ data, selected }: any) => {
     bgColor = 'rgba(220, 38, 38, 0.15)';
     borderColor = '2px solid rgba(220, 38, 38, 0.8)';
     shadow = '0 0 15px rgba(220, 38, 38, 0.3)';
+  } else if (isFloatBubble) {
+    bgColor = 'rgba(96, 165, 250, 0.15)';
+    borderColor = '2px dashed rgba(96, 165, 250, 0.8)';
+    shadow = '0 0 15px rgba(96, 165, 250, 0.3)';
   } else if (isLinkedMain) {
     bgColor = 'rgba(14, 165, 233, 0.15)';
     borderColor = '2px solid rgba(14, 165, 233, 0.8)';
@@ -167,6 +173,12 @@ const CustomNode = ({ data, selected }: any) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#f97316', marginLeft: '4px' }}>
             <Flame size={14} />
             <span style={{ fontSize: '11px' }}>{bombMergeRemain}</span>
+          </div>
+        )}
+        {isFloatBubble && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#60a5fa', marginLeft: '4px' }}>
+            <Cloud size={14} />
+            <span style={{ fontSize: '11px' }}>{mergesToFloat}</span>
           </div>
         )}
         {isCycleFadeOut && <Ghost size={14} style={{ color: '#64748b', marginLeft: '4px' }} />}

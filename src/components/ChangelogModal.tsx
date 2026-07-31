@@ -704,19 +704,7 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                                   onClearDraft?.(lvl);
                                 }
                               }}
-                              style={{ position: 'absolute', top: -6, right: -6, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-                              title="Xóa nháp"
-                            >
-                          <Edit2 size={14} /> Sửa
-                        </button>
-                        <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if(window.confirm(`Xóa bản nháp của ${lvl}?`)) {
-                                  onClearDraft?.(lvl);
-                                }
-                              }}
-                              style={{ position: 'absolute', top: -6, right: -6, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                              style={{ position: 'absolute', top: -6, right: -6, background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
                               title="Xóa nháp"
                             >
                               <X size={12} />

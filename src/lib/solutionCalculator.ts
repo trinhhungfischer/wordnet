@@ -26,6 +26,8 @@ export interface BoardBubbleState {
   isBombCrackingBubble?: boolean;
   bombMergeRemain?: number;
   bombChainCount?: number;
+  isFloatBubble?: boolean;
+  mergesToFloat?: number;
 }
 
 export interface MergeStep {
@@ -72,6 +74,7 @@ export interface SolutionResult {
 }
 
 export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, spawnQueueIds: string[] = []): SolutionResult {
+  const localSpawnQueueIds = [...spawnQueueIds];
   const steps: MergeStep[] = [];
   let moveCount = 0;
   let bonusTurns = 0;
@@ -97,6 +100,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   
   const activeIceBombs = new Map<string, ActiveIceBomb>();
   const infectedIceBombs = new Map<string, InfectedIceBomb>();
+  const floatBubblesRemoved = new Set<string>();
 
   levelData?.iceBombBubbles?.forEach((ib: any) => {
      activeIceBombs.set(ib.word.toLowerCase(), {
@@ -154,6 +158,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let isBombCrackingBubble = false;
     let bombMergeRemain: number | undefined;
     let bombChainCount: number | undefined;
+    let isFloatBubble = false;
+    let mergesToFloat: number | undefined;
 
     const w = displayLabel.toLowerCase();
     const currentWeight = displayLabel.split('|').length;
@@ -240,6 +246,17 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
         bombMergeRemain = rem;
         bombChainCount = bombCrackingRule.chainCount;
       }
+      
+      const floatRule = levelData?.floatBubbles?.find((f: any) => f.word.toLowerCase() === w);
+      if (floatRule && !floatBubblesRemoved.has(w) && currentWeight === 1) {
+        isFloatBubble = true;
+        let rem = floatRule.mergesToFloat;
+        if (wordDropMove?.has(w)) {
+           rem = floatRule.mergesToFloat - (moveCount - wordDropMove.get(w)!);
+        }
+        if (rem < 0) rem = 0;
+        mergesToFloat = rem;
+      }
     }
 
     let isIceBomb = false;
@@ -283,7 +300,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       isSpikeBubble,
       isBombCrackingBubble,
       bombMergeRemain,
-      bombChainCount
+      bombChainCount,
+      isFloatBubble,
+      mergesToFloat
     };
   };
 
@@ -365,23 +384,203 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       // Check Bomb Cracking Explosions
       levelData?.bombCrackingBubbles?.forEach((b: any) => {
         const w = b.word.toLowerCase();
-        if (!usedWords.has(w) && !explodedBombs.has(w) && wordDropMove.has(w)) {
+        if (!usedWords.has(w) && wordDropMove.has(w)) {
           const dropTime = wordDropMove.get(w)!;
           const rem = b.mergeRemain - (currentMoveIndex - dropTime);
           if (rem <= 0) {
-            explodedBombs.add(w);
+            wordDropMove.set(w, currentMoveIndex); // Reset countdown
             bombPenalties++;
-            steps.push({
-              id: `step-${stepIdCounter++}`,
-              type: 'event',
-              left: '',
-              right: '',
-              result: '',
-              text: `💥 Bomb Cracking exploded on "${b.word}"! (+1 move penalty)`,
-              isComboBonus: false,
-              boardState: board.map(bid => getBubbleState(bid)),
-              moveIndex: currentMoveIndex
+            
+            const mergedBids = board.filter(bid => {
+                if (bid.startsWith('temp_[')) return true;
+                if (wordToChunks.has(bid) && resolvedWords.has(bid)) return true;
+                return false;
             });
+            
+            let unmergedCount = 0;
+            let chainCount = b.chainCount || 1;
+            
+            for (let i = 0; i < chainCount && mergedBids.length > 0; i++) {
+                const randIdx = Math.floor(Math.random() * mergedBids.length);
+                const targetBid = mergedBids[randIdx];
+                mergedBids.splice(randIdx, 1);
+                
+                let targetDisplay = "";
+                
+                if (targetBid.startsWith('temp_[')) {
+                    const match = targetBid.match(/^temp_\[(.*?)\]_\[(.*?)\]$/);
+                    if (match) {
+                        const lbls = match[1].split('|').map(s => s.trim());
+                        targetDisplay = match[1];
+                        const catId = match[2];
+                        board.splice(board.indexOf(targetBid), 1);
+                        
+                        // Pop one bubble off the merged group
+                        const poppedLabel = lbls.pop()!;
+                        const catWordIds = catToWords.get(catId) || [];
+                        const wordsToRestore = catWordIds.filter(wid => {
+                            const l = String(nodes.find(n => n.id === wid)?.data.label).toLowerCase().trim();
+                            return l === poppedLabel.toLowerCase();
+                        });
+                        
+                        // Restore the popped word
+                        wordsToRestore.forEach(wid => {
+                            board.push(wid);
+                            const l = String(nodes.find(n => n.id === wid)?.data.label).toLowerCase();
+                            usedWords.delete(l);
+                        });
+                        
+                        // Keep the rest merged
+                        if (lbls.length > 1) {
+                            const remainingStr = lbls.join(' | ');
+                            const newTempId = `temp_[${remainingStr}]_[${catId}]`;
+                            board.push(newTempId);
+                        } else if (lbls.length === 1) {
+                            const remRestore = catWordIds.filter(wid => {
+                                const l = String(nodes.find(n => n.id === wid)?.data.label).toLowerCase().trim();
+                                return l === lbls[0].toLowerCase();
+                            });
+                            remRestore.forEach(wid => {
+                                board.push(wid);
+                                const l = String(nodes.find(n => n.id === wid)?.data.label).toLowerCase();
+                                usedWords.delete(l);
+                            });
+                        }
+                        
+                        resolvedCategories.delete(catId);
+                        
+                        unmergedCount++;
+                        steps.push({
+                           id: `step-${stepIdCounter++}`,
+                           type: 'event',
+                           left: '',
+                           right: '',
+                           result: '',
+                           text: `💥 Bomb Cracking popped "${poppedLabel}" off "${targetDisplay}"!`,
+                           isComboBonus: false,
+                           boardState: board.map(bid => getBubbleState(bid)),
+                           moveIndex: currentMoveIndex
+                        });
+                    }
+                } else {
+                    const cNode = nodes.find(n => n.id === targetBid);
+                    targetDisplay = String(cNode?.data.label);
+                    board.splice(board.indexOf(targetBid), 1);
+                    
+                    const wordId = targetBid;
+                    const chunkIds = wordToChunks.get(wordId) || [];
+                    chunkIds.forEach(cid => {
+                        board.push(cid);
+                        const l = String(nodes.find(n => n.id === cid)?.data.label).toLowerCase();
+                        usedWords.delete(l);
+                    });
+                    
+                    resolvedWords.delete(wordId);
+                    usedWords.delete(targetDisplay.toLowerCase());
+                    
+                    unmergedCount++;
+                    steps.push({
+                       id: `step-${stepIdCounter++}`,
+                       type: 'event',
+                       left: '',
+                       right: '',
+                       result: '',
+                       text: `💥 Bomb Cracking shattered "${targetDisplay}" into pieces!`,
+                       isComboBonus: false,
+                       boardState: board.map(bid => getBubbleState(bid)),
+                       moveIndex: currentMoveIndex
+                    });
+                }
+            }
+            
+            if (unmergedCount === 0) {
+               steps.push({
+                  id: `step-${stepIdCounter++}`,
+                  type: 'event',
+                  left: '',
+                  right: '',
+                  result: '',
+                  text: `💥 Bomb Cracking exploded on "${b.word}"! (+1 move penalty)`,
+                  isComboBonus: false,
+                  boardState: board.map(bid => getBubbleState(bid)),
+                  moveIndex: currentMoveIndex
+               });
+            }
+          }
+        }
+      });
+
+      // Check Float Bubbles
+      levelData?.floatBubbles?.forEach((b: any) => {
+        const w = b.word.toLowerCase();
+        if (!usedWords.has(w) && wordDropMove.has(w)) {
+          const dropTime = wordDropMove.get(w)!;
+          const rem = b.mergesToFloat - (currentMoveIndex - dropTime);
+          if (rem <= 0 && !floatBubblesRemoved.has(w)) {
+            floatBubblesRemoved.add(w);
+            
+            // Remove from board and add to END of remainingQueue
+            const nodeOnBoardIndex = board.findIndex(bid => {
+                const n = nodes.find(nn => nn.id === bid);
+                const displayLabel = n ? String(n.data.label) : bid.split('_')[1]?.replace(/^\[|\]$/g, '') || bid;
+                return displayLabel.toLowerCase() === w;
+            });
+            
+            if (nodeOnBoardIndex !== -1) {
+                const poppedId = board[nodeOnBoardIndex];
+                board.splice(nodeOnBoardIndex, 1);
+                localSpawnQueueIds.push(poppedId);
+                
+                steps.push({
+                   id: `step-${stepIdCounter++}`,
+                   type: 'event',
+                   left: '',
+                   right: '',
+                   result: '',
+                   text: `☁️ Float Bubble "${b.word}" floated away and returned to Drop Queue!`,
+                   isComboBonus: false,
+                   boardState: board.map(bid => getBubbleState(bid)),
+                   moveIndex: currentMoveIndex
+                });
+                
+                // Drop a new bubble from queue to replace it if possible
+                if (queueIndex < localSpawnQueueIds.length && board.length < maxBubbles) {
+                   const nextId = localSpawnQueueIds[queueIndex];
+                   board.push(nextId);
+                   droppedWords.add(nextId);
+                   queueIndex++;
+                   
+                   const node = nodes.find(n => n.id === nextId);
+                   if (node?.data.isChunk) {
+                      const parentEdge = edges.find(e => e.target === nextId);
+                      if (parentEdge) {
+                         const parentNode = nodes.find(n => n.id === parentEdge.source);
+                         if (parentNode) {
+                            const pLabel = String(parentNode.data.label).toLowerCase();
+                            if (!wordDropMove.has(pLabel)) wordDropMove.set(pLabel, moveCount);
+                         }
+                      }
+                      const cLabel = String(node.data.label).toLowerCase();
+                      if (!wordDropMove.has(cLabel)) wordDropMove.set(cLabel, moveCount);
+                   } else if (node) {
+                      const label = String(node.data.label).toLowerCase();
+                      if (!wordDropMove.has(label)) wordDropMove.set(label, moveCount);
+                   }
+                   
+                   const displayLabel = node ? String(node.data.label) : nextId.split('_')[1]?.replace(/^\[|\]$/g, '') || nextId;
+                   steps.push({
+                       id: `step-${stepIdCounter++}`,
+                       type: 'event',
+                       left: '',
+                       right: '',
+                       result: '',
+                       text: `🔄 A new bubble "${displayLabel}" dropped to replace the floated one!`,
+                       isComboBonus: false,
+                       boardState: board.map(bid => getBubbleState(bid)),
+                       moveIndex: currentMoveIndex
+                   });
+                }
+            }
           }
         }
       });
@@ -592,8 +791,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   const doDrops = (count: number) => {
     const newlyDropped: string[] = [];
     let dropped = 0;
-    while (dropped < count && board.length < maxBubbles && queueIndex < spawnQueueIds.length) {
-      const nextId = spawnQueueIds[queueIndex];
+    while (dropped < count && board.length < maxBubbles && queueIndex < localSpawnQueueIds.length) {
+      const nextId = localSpawnQueueIds[queueIndex];
       board.push(nextId);
       droppedWords.add(nextId);
       newlyDropped.push(nextId);
@@ -666,6 +865,26 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           if (bombCrackingRule) {
              const rem = bombCrackingRule.mergeRemain - moveCount;
              score = Math.max(score, 100 - rem * 5);
+          }
+          
+          // Boost if word is part of a category that has a bomb (so AI forms the word to save the bomb)
+          const parentCatEdge = edges.find(e => e.target === wordId && catNodes.some(n => n.id === e.source));
+          if (parentCatEdge) {
+             const catId = parentCatEdge.source;
+             const catWordIds = catToWords.get(catId) || [];
+             catWordIds.forEach(cwid => {
+                const cwLabel = String(nodes.find(n => n.id === cwid)?.data.label).toLowerCase();
+                const burst = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === cwLabel);
+                if (burst) {
+                   const dropTime = wordDropMove.get(cwLabel) || moveCount;
+                   score = Math.max(score, 100 - (burst.movesRemaining - (moveCount - dropTime)) * 5);
+                }
+                const bc = levelData?.bombCrackingBubbles?.find((b: any) => b.word.toLowerCase() === cwLabel);
+                if (bc) {
+                   const dropTime = wordDropMove.get(cwLabel) || moveCount;
+                   score = Math.max(score, 100 - (bc.mergeRemain - (moveCount - dropTime)) * 5);
+                }
+             });
           }
           // Also check chunks!
           chunkIds.forEach(cid => {
@@ -756,18 +975,34 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                       const reqLock2 = levelData?.requirementLockBubbles?.find((r: any) => r.requirementLockWord.toLowerCase() === label2);
                       if (reqLock2 && weight1 < reqLock2.requireWeight) continue;
                       
+                      const labels1 = label1.split('|');
+                      const labels2 = label2.split('|');
                       
-                      const burstRule1 = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === label1);
-                      const burstRule2 = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === label2);
+                      labels1.forEach(l => {
+                          const burst = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === l);
+                          if (burst) {
+                              const dropTime = wordDropMove.get(l) || moveCount;
+                              score = Math.max(score, 100 - (burst.movesRemaining - (moveCount - dropTime)) * 5);
+                          }
+                          const bc = levelData?.bombCrackingBubbles?.find((b: any) => b.word.toLowerCase() === l);
+                          if (bc) {
+                              const dropTime = wordDropMove.get(l) || moveCount;
+                              score = Math.max(score, 100 - (bc.mergeRemain - (moveCount - dropTime)) * 5);
+                          }
+                      });
                       
-                      if (burstRule1) score = Math.max(score, 100 - (burstRule1.movesRemaining - moveCount) * 5);
-                      if (burstRule2) score = Math.max(score, 100 - (burstRule2.movesRemaining - moveCount) * 5);
-
-                      const bombCracking1 = levelData?.bombCrackingBubbles?.find((b: any) => b.word.toLowerCase() === label1);
-                      const bombCracking2 = levelData?.bombCrackingBubbles?.find((b: any) => b.word.toLowerCase() === label2);
-
-                      if (bombCracking1) score = Math.max(score, 100 - (bombCracking1.mergeRemain - moveCount) * 5);
-                      if (bombCracking2) score = Math.max(score, 100 - (bombCracking2.mergeRemain - moveCount) * 5);
+                      labels2.forEach(l => {
+                          const burst = levelData?.burstBubbles?.find((b: any) => b.word.toLowerCase() === l);
+                          if (burst) {
+                              const dropTime = wordDropMove.get(l) || moveCount;
+                              score = Math.max(score, 100 - (burst.movesRemaining - (moveCount - dropTime)) * 5);
+                          }
+                          const bc = levelData?.bombCrackingBubbles?.find((b: any) => b.word.toLowerCase() === l);
+                          if (bc) {
+                              const dropTime = wordDropMove.get(l) || moveCount;
+                              score = Math.max(score, 100 - (bc.mergeRemain - (moveCount - dropTime)) * 5);
+                          }
+                      });
 
                       possibleMerges.push({ type: 'category', catId, p1, p2, originalWordIds, piecesOnBoard, score });
                    }
@@ -780,6 +1015,14 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       if (possibleMerges.length > 0) {
         possibleMerges.sort((a, b) => b.score - a.score);
         const bestMerge = possibleMerges[0];
+        
+        // Safety check to prevent infinite loop (e.g. bomb cracking loop) inside the merge loop
+        if (moveCount > 100) {
+          addStep('event', '', '', '', `⚠️ Simulation aborted: Infinite loop detected or level too complex (>100 moves).`);
+          progress = false;
+          mergedSomething = false;
+          break;
+        }
 
         if (bestMerge.type === 'chunk') {
           const { wordId, chunkIds } = bestMerge;
@@ -1032,6 +1275,7 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, reco
   if (levelData?.keyLockBubbles && levelData.keyLockBubbles.length > 0) activeMechanics.push('keyLock');
   if (levelData?.burstBubbles && levelData.burstBubbles.length > 0) activeMechanics.push('burst');
   if (levelData?.bombCrackingBubbles && levelData.bombCrackingBubbles.length > 0) activeMechanics.push('bombCracking');
+  if (levelData?.floatBubbles && levelData.floatBubbles.length > 0) activeMechanics.push('float');
   if (levelData?.screwLockBubbles && levelData.screwLockBubbles.length > 0) activeMechanics.push('screwLock');
   if (levelData?.requirementLockBubbles && levelData.requirementLockBubbles.length > 0) activeMechanics.push('requirementLock');
 
