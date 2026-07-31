@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Radiation, Ghost, Asterisk, Flame, Cloud } from 'lucide-react';
+import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Rocket, Radiation, Ghost, Asterisk, Flame, Cloud, Zap } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
@@ -32,6 +32,8 @@ const CustomNode = ({ data, selected }: any) => {
   const countdownValue = data.countdownValue;
   const isFloatBubble = data.isFloatBubble === true;
   const mergesToFloat = data.mergesToFloat !== undefined ? data.mergesToFloat : 0;
+  const isTeleportBubble = data.isTeleportBubble === true;
+  const mergesToTeleport = data.mergesToTeleport !== undefined ? data.mergesToTeleport : 0;
 
   const lockColor = lockIndex !== -1 ? lockKeyColors[lockIndex % lockKeyColors.length] : '#a1a1aa';
   const keyColor = keyIndex !== -1 ? lockKeyColors[keyIndex % lockKeyColors.length] : '#f59e0b';
@@ -113,6 +115,10 @@ const CustomNode = ({ data, selected }: any) => {
     bgColor = 'rgba(96, 165, 250, 0.15)';
     borderColor = '2px dashed rgba(96, 165, 250, 0.8)';
     shadow = '0 0 15px rgba(96, 165, 250, 0.3)';
+  } else if (isTeleportBubble) {
+    bgColor = 'rgba(234, 179, 8, 0.15)';
+    borderColor = '2px dashed rgba(234, 179, 8, 0.8)';
+    shadow = '0 0 15px rgba(234, 179, 8, 0.3)';
   } else if (isLinkedMain) {
     bgColor = 'rgba(14, 165, 233, 0.15)';
     borderColor = '2px solid rgba(14, 165, 233, 0.8)';
@@ -179,6 +185,12 @@ const CustomNode = ({ data, selected }: any) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#60a5fa', marginLeft: '4px' }}>
             <Cloud size={14} />
             <span style={{ fontSize: '11px' }}>{mergesToFloat}</span>
+          </div>
+        )}
+        {isTeleportBubble && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#eab308', marginLeft: '4px' }}>
+            <Rocket size={14} />
+            <span style={{ fontSize: '11px' }}>{mergesToTeleport}</span>
           </div>
         )}
         {isCycleFadeOut && <Ghost size={14} style={{ color: '#64748b', marginLeft: '4px' }} />}

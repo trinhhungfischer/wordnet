@@ -61,23 +61,39 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
     return levels.map(l => l.replace('Level ', '').replace('.json', '')).sort((a, b) => parseInt(a) - parseInt(b));
   }, [levels]);
 
-  // Map each level to its 3 most recent update versions
-  const levelToRecentVersions = useMemo(() => {
-    const map: Record<string, string[]> = {};
+  const availableSegments = useMemo(() => {
+    const segments = new Set<number>();
+    segments.add(0);
     changelogData.forEach(log => {
-      const lvls = log.levels.split(',').map(s => s.trim()).filter(s => s);
-      lvls.forEach(l => {
-        if (!map[l]) map[l] = [];
-        map[l].push(log.version);
-      });
+      const parts = log.version.split('_');
+      if (parts.length > 1) {
+        const suffix = parseInt(parts[1], 10);
+        if (!isNaN(suffix)) segments.add(suffix);
+      }
     });
-    
-    // Keep only the most recent 3 for each level, reversed so newest is first
-    Object.keys(map).forEach(l => {
-      map[l] = map[l].slice(-3).reverse();
+    return Array.from(segments).sort((a,b) => a - b);
+  }, [changelogData]);
+
+  const [selectedSegment, setSelectedSegment] = useState<number>(0);
+
+  // Map each level to its latest version for the selected segment
+  const levelToLatestVersion = useMemo(() => {
+    const map: Record<string, { baseVer: string, fullVer: string }> = {};
+    changelogData.forEach(log => {
+      const parts = log.version.split('_');
+      const baseVer = parts[0];
+      const suffix = parts.length > 1 ? parseInt(parts[1], 10) : 0;
+      
+      // Only apply if it belongs to default segment (0) or the currently selected segment
+      if (suffix === 0 || suffix === selectedSegment) {
+        const lvls = log.levels.split(',').map(s => s.trim()).filter(s => s);
+        lvls.forEach(l => {
+          map[l] = { baseVer, fullVer: log.version };
+        });
+      }
     });
     return map;
-  }, [changelogData]);
+  }, [changelogData, selectedSegment]);
 
   // CRUD states
   const [isEditing, setIsEditing] = useState(false);
@@ -156,6 +172,13 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newData)
+      });
+      
+      // Also request backend to duplicate the physical files in public folder
+      await fetch('/api/fork-version', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ baseVersion: version, newVersion: newVersion })
       });
     } catch (e) {
       console.error(e);
@@ -271,7 +294,11 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
             const match = p.match(/\d+/);
             if (match) {
               const num = parseInt(match[0], 10);
-              const fileName = p.endsWith('.json') ? p : p + '.json';
+              let fileName = p;
+              if (!fileName.toLowerCase().includes('level')) {
+                fileName = `Level ${fileName}`;
+              }
+              fileName = fileName.endsWith('.json') ? fileName : fileName + '.json';
               levelMap.set(num, { folder: log.version, ver: verNumStr, fileName });
             }
           });
@@ -633,8 +660,32 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                       }}>
                         <Layers size={24} />
                         <div>
-                          <div style={{ fontSize: '12px', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tổng số lượng</div>
+                          <div style={{ fontSize: '12px', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tổng số màn chơi</div>
                           <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{totalLevels} levels</div>
+                        </div>
+                      </div>
+
+                      <div style={{
+                        background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)',
+                        padding: '12px 20px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px'
+                      }}>
+                        <Target size={24} />
+                        <div>
+                          <div style={{ fontSize: '12px', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bộ lọc tập người dùng</div>
+                          <select
+                            value={selectedSegment}
+                            onChange={(e) => setSelectedSegment(parseInt(e.target.value, 10))}
+                            style={{ 
+                              background: 'transparent', border: 'none', color: '#10b981', 
+                              fontSize: '20px', fontWeight: 'bold', outline: 'none', cursor: 'pointer' 
+                            }}
+                          >
+                            {availableSegments.map(seg => (
+                              <option key={seg} value={seg} style={{ color: 'black' }}>
+                                {seg === 0 ? 'Tập 0 (Default)' : `Tập ${seg}`}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     </div>
@@ -649,17 +700,16 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                       gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', 
                       gap: '12px' 
                     }}>
-                      {levelList.map((lvlNumber, i) => {
-                        const displayLvlName = `Level ${lvlNumber}`;
-                        const exactLvl = `Level ${lvlNumber}.json`; 
-                        
-                        const isSelected = selectedLevelName === exactLvl || selectedLevelName === displayLvlName;
+                      {levelList.map(lvl => {
+                        const lvlNumber = parseInt(lvl.replace(/\D/g, '')) || 0;
+                        const isSelected = selectedLevelName === lvl;
+                        const targetVersion = levelToLatestVersion[lvl]?.fullVer;
 
                         return (
                           <button
-                            key={i}
+                            key={lvl}
                             onClick={() => {
-                              onSelectLevel(exactLvl);
+                              onSelectLevel(`Level ${lvlNumber}.json`, targetVersion);
                               onClose();
                             }}
                             style={{
@@ -689,21 +739,19 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                             }}
                           >
                             {lvlNumber}
-                            {levelToRecentVersions[lvlNumber] && levelToRecentVersions[lvlNumber].length > 0 && (
+                            {levelToLatestVersion[lvl] && (
                               <div style={{
                                 position: 'absolute', top: '-6px', right: '-6px',
-                                display: 'flex', flexDirection: 'row-reverse', gap: '2px', alignItems: 'center'
+                                display: 'flex', gap: '2px', alignItems: 'center'
                               }}>
-                                {levelToRecentVersions[lvlNumber].map((v, idx) => (
-                                  <div key={v} style={{
-                                    background: getTagColor(v), color: 'white', fontSize: '10px',
-                                    padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                    zIndex: 3 - idx
-                                  }}>
-                                    {v}
-                                  </div>
-                                ))}
+                                <div style={{
+                                  background: getTagColor(levelToLatestVersion[lvl].baseVer), color: 'white', fontSize: '10px',
+                                  padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                  zIndex: 3
+                                }}>
+                                  {levelToLatestVersion[lvl].baseVer}
+                                </div>
                               </div>
                             )}
                           </button>
@@ -845,21 +893,19 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                             }}
                           >
                             {lvlNumber}
-                            {levelToRecentVersions[lvlNumber] && levelToRecentVersions[lvlNumber].length > 0 && (
+                            {levelToLatestVersion[lvlNumber] && (
                               <div style={{
                                 position: 'absolute', top: '-6px', right: '-6px',
-                                display: 'flex', flexDirection: 'row-reverse', gap: '2px', alignItems: 'center'
+                                display: 'flex', gap: '2px', alignItems: 'center'
                               }}>
-                                {levelToRecentVersions[lvlNumber].map((v, idx) => (
-                                  <div key={v} style={{
-                                    background: getTagColor(v), color: 'white', fontSize: '10px',
-                                    padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                                    zIndex: 3 - idx
-                                  }}>
-                                    {v}
-                                  </div>
-                                ))}
+                                <div style={{
+                                  background: getTagColor(levelToLatestVersion[lvlNumber].baseVer), color: 'white', fontSize: '10px',
+                                  padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                  zIndex: 3
+                                }}>
+                                  {levelToLatestVersion[lvlNumber].baseVer}
+                                </div>
                               </div>
                             )}
                           </button>

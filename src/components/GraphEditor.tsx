@@ -33,7 +33,7 @@ import LevelSelectorModal from './LevelSelectorModal';
 import LoginModal from './LoginModal';
 import LevelsDashboardModal from './LevelsDashboardModal';
 import AnalyticsDashboard from './AnalyticsDashboard';
-import { Save, BookOpen, Settings, Plus, RefreshCw, CircleDashed, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2, Dumbbell, Ghost, Asterisk, Flame, Cloud } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, CircleDashed, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2, Dumbbell, Ghost, Asterisk, Flame, Cloud, Zap } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 
@@ -341,6 +341,32 @@ const isNodeFloatBubble = (node: Node, list: any[], edges: Edge[], nodes: Node[]
     if (b) return { isFloatBubble: true, mergesToFloat: b.mergesToFloat };
   }
   return { isFloatBubble: false, mergesToFloat: 0 };
+};
+
+const isNodeTeleportBubble = (node: Node, list: any[], edges: Edge[], nodes: Node[]) => {
+  if (!list || list.length === 0) return { isTeleportBubble: false, mergesToTeleport: 0 };
+  const label = String(node.data.label).toLowerCase();
+  let b = list.find((f: any) => f?.word?.toLowerCase() === label);
+  if (b) return { isTeleportBubble: true, mergesToTeleport: b.mergesToTeleport };
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode) {
+        b = list.find((f: any) => f?.word?.toLowerCase() === String(parentNode.data.label).toLowerCase());
+        if (b) return { isTeleportBubble: true, mergesToTeleport: b.mergesToTeleport };
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const chunkLabels = edges.filter(e => e.source === node.id)
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    
+    b = list.find((f: any) => f?.word && chunkLabels.includes(f.word.toLowerCase()));
+    if (b) return { isTeleportBubble: true, mergesToTeleport: b.mergesToTeleport };
+  }
+  return { isTeleportBubble: false, mergesToTeleport: 0 };
 };
 
 const isNodeBurst = (node: Node, burstBubblesList: any[], edges: Edge[], nodes: Node[]) => {
@@ -2228,6 +2254,12 @@ export default function GraphEditor() {
             );
           }
 
+          if (updatedRawLevelData.teleportBubbles) {
+            updatedRawLevelData.teleportBubbles = updatedRawLevelData.teleportBubbles.map((tb: any) => 
+              tb?.word?.toLowerCase() === oldLabel ? { ...tb, word: newLabel } : tb
+            );
+          }
+
           // 5. Key Lock
           if (updatedRawLevelData.keyLockBubbles) {
             updatedRawLevelData.keyLockBubbles = updatedRawLevelData.keyLockBubbles.map((kl: any) => ({
@@ -3641,6 +3673,7 @@ export default function GraphEditor() {
                   const isSoapBubble = isNodeSoapBubble(node, rawLevelData?.soapBubbles || [], edges, nodes);
                   const { isBombCrackingBubble, mergeRemain: bombMergeRemain } = isNodeBombCrackingBubble(node, rawLevelData?.bombCrackingBubbles || [], edges, nodes);
                   const { isFloatBubble, mergesToFloat } = isNodeFloatBubble(node, rawLevelData?.floatBubbles || [], edges, nodes);
+                  const { isTeleportBubble, mergesToTeleport } = isNodeTeleportBubble(node, rawLevelData?.teleportBubbles || [], edges, nodes);
                   const isSpikeBubble = isNodeSpikeBubble(node, rawLevelData?.spikeBubbles || [], edges, nodes);
                   const isIceBomb = isNodeIceBomb(node, rawLevelData?.iceBombBubbles || [], edges, nodes);
                   const isBackward = isNodeBackward(node, rawLevelData?.backwardBubbles || [], edges, nodes);
@@ -3701,10 +3734,10 @@ export default function GraphEditor() {
                         padding: '8px 12px', borderRadius: '8px', cursor: 'grab',
                         backgroundColor: selectedNodeId === nodeId 
                               ? (isDuplicate ? 'rgba(239, 68, 68, 0.4)' : (isChunk ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.1)')) 
-                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isCycleFadeOut ? 'rgba(100, 116, 139, 0.15)' : (isSoapBubble ? 'rgba(236, 72, 153, 0.15)' : (isBombCrackingBubble ? 'rgba(249, 115, 22, 0.15)' : (isFloatBubble ? 'rgba(96, 165, 250, 0.15)' : (isSpikeBubble ? 'rgba(220, 38, 38, 0.15)' : (isIceBomb ? 'rgba(56, 189, 248, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))))))))))))))),
+                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isCycleFadeOut ? 'rgba(100, 116, 139, 0.15)' : (isSoapBubble ? 'rgba(236, 72, 153, 0.15)' : (isBombCrackingBubble ? 'rgba(249, 115, 22, 0.15)' : (isTeleportBubble ? 'rgba(234, 179, 8, 0.15)' : (isFloatBubble ? 'rgba(96, 165, 250, 0.15)' : (isSpikeBubble ? 'rgba(220, 38, 38, 0.15)' : (isIceBomb ? 'rgba(56, 189, 248, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))))))))))))))),
                         border: selectedNodeId === nodeId 
                               ? (isDuplicate ? '1px solid rgba(239, 68, 68, 0.8)' : (isChunk ? '1px solid rgba(99,102,241,0.6)' : '1px solid rgba(255,255,255,0.4)'))
-                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.4)' : (isCycleFadeOut ? '1px solid rgba(100, 116, 139, 0.4)' : (isSoapBubble ? '1px solid rgba(236, 72, 153, 0.4)' : (isBombCrackingBubble ? '1px solid rgba(249, 115, 22, 0.4)' : (isFloatBubble ? '1px solid rgba(96, 165, 250, 0.4)' : (isSpikeBubble ? '1px solid rgba(220, 38, 38, 0.4)' : (isIceBomb ? '1px solid rgba(56, 189, 248, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))))))))))))))),
+                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.4)' : (isCycleFadeOut ? '1px solid rgba(100, 116, 139, 0.4)' : (isSoapBubble ? '1px solid rgba(236, 72, 153, 0.4)' : (isBombCrackingBubble ? '1px solid rgba(249, 115, 22, 0.4)' : (isTeleportBubble ? '1px solid rgba(234, 179, 8, 0.4)' : (isFloatBubble ? '1px solid rgba(96, 165, 250, 0.4)' : (isSpikeBubble ? '1px solid rgba(220, 38, 38, 0.4)' : (isIceBomb ? '1px solid rgba(56, 189, 248, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))))))))))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -3755,6 +3788,12 @@ export default function GraphEditor() {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#60a5fa' }}>
                               <Cloud size={12} />
                               <span style={{ fontSize: '10px' }}>{mergesToFloat}</span>
+                            </div>
+                          )}
+                          {isTeleportBubble && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#eab308' }}>
+                              <Zap size={12} />
+                              <span style={{ fontSize: '10px' }}>{mergesToTeleport}</span>
                             </div>
                           )}
                           {isBackward && (
@@ -3942,6 +3981,8 @@ export default function GraphEditor() {
             bombMergeRemain: isNodeBombCrackingBubble(n, rawLevelData?.bombCrackingBubbles || [], edges, nodes).mergeRemain,
             isFloatBubble: isNodeFloatBubble(n, rawLevelData?.floatBubbles || [], edges, nodes).isFloatBubble,
             mergesToFloat: isNodeFloatBubble(n, rawLevelData?.floatBubbles || [], edges, nodes).mergesToFloat,
+            isTeleportBubble: isNodeTeleportBubble(n, rawLevelData?.teleportBubbles || [], edges, nodes).isTeleportBubble,
+            mergesToTeleport: isNodeTeleportBubble(n, rawLevelData?.teleportBubbles || [], edges, nodes).mergesToTeleport,
             isSpikeBubble: isNodeSpikeBubble(n, rawLevelData?.spikeBubbles || [], edges, nodes),
             isIceBomb: isNodeIceBomb(n, rawLevelData?.iceBombBubbles || [], edges, nodes),
             isBackward: isNodeBackward(n, rawLevelData?.backwardBubbles || [], edges, nodes),

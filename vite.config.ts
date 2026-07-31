@@ -197,6 +197,43 @@ const dictionaryApiPlugin = () => ({
             res.end(JSON.stringify({ success: false, error: 'Error publishing update' }))
           }
         })
+      } else if (req.url === '/api/fork-version' && req.method === 'POST') {
+        let body = ''
+        req.on('data', (chunk: any) => { body += chunk.toString() })
+        req.on('end', () => {
+          try {
+            const { baseVersion, newVersion } = JSON.parse(body)
+            if (!baseVersion || !newVersion) {
+              res.statusCode = 400
+              res.end(JSON.stringify({ success: false, error: 'Missing baseVersion or newVersion' }))
+              return
+            }
+
+            const baseDirPath = path.resolve(__dirname, 'public', baseVersion)
+            const newDirPath = path.resolve(__dirname, 'public', newVersion)
+
+            if (fs.existsSync(baseDirPath)) {
+              if (!fs.existsSync(newDirPath)) {
+                fs.mkdirSync(newDirPath, { recursive: true })
+              }
+              const files = fs.readdirSync(baseDirPath)
+              for (const file of files) {
+                const src = path.join(baseDirPath, file)
+                const dest = path.join(newDirPath, file)
+                if (fs.statSync(src).isFile()) {
+                  fs.copyFileSync(src, dest)
+                }
+              }
+            }
+
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ success: true }))
+          } catch (error) {
+            console.error('Error forking version:', error)
+            res.statusCode = 500
+            res.end(JSON.stringify({ success: false, error: 'Error forking version' }))
+          }
+        })
       } else {
         next()
       }

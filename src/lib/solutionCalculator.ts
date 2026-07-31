@@ -28,6 +28,8 @@ export interface BoardBubbleState {
   bombChainCount?: number;
   isFloatBubble?: boolean;
   mergesToFloat?: number;
+  isTeleportBubble?: boolean;
+  mergesToTeleport?: number;
 }
 
 export interface MergeStep {
@@ -101,6 +103,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
   const activeIceBombs = new Map<string, ActiveIceBomb>();
   const infectedIceBombs = new Map<string, InfectedIceBomb>();
   const floatBubblesRemoved = new Set<string>();
+  const teleportCounts = new Map<string, number>();
 
   levelData?.iceBombBubbles?.forEach((ib: any) => {
      activeIceBombs.set(ib.word.toLowerCase(), {
@@ -160,6 +163,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let bombChainCount: number | undefined;
     let isFloatBubble = false;
     let mergesToFloat: number | undefined;
+    let isTeleportBubble = false;
+    let mergesToTeleport: number | undefined;
 
     const w = displayLabel.toLowerCase();
     const currentWeight = displayLabel.split('|').length;
@@ -257,6 +262,17 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
         if (rem < 0) rem = 0;
         mergesToFloat = rem;
       }
+      
+      const teleportRule = levelData?.teleportBubbles?.find((f: any) => f.word.toLowerCase() === w);
+      if (teleportRule && currentWeight === 1) {
+        isTeleportBubble = true;
+        let rem = teleportRule.mergesToTeleport;
+        if (wordDropMove?.has(w)) {
+           rem = teleportRule.mergesToTeleport - ((moveCount - wordDropMove.get(w)!) % teleportRule.mergesToTeleport);
+        }
+        if (rem === 0) rem = teleportRule.mergesToTeleport;
+        mergesToTeleport = rem;
+      }
     }
 
     let isIceBomb = false;
@@ -302,7 +318,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       bombMergeRemain,
       bombChainCount,
       isFloatBubble,
-      mergesToFloat
+      mergesToFloat,
+      isTeleportBubble,
+      mergesToTeleport
     };
   };
 
@@ -580,6 +598,51 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                        moveIndex: currentMoveIndex
                    });
                 }
+            }
+          }
+        }
+      });
+
+      // Check Teleport Bubbles
+      levelData?.teleportBubbles?.forEach((b: any) => {
+        const w = b.word.toLowerCase();
+        if (!usedWords.has(w) && wordDropMove.has(w)) {
+          const dropTime = wordDropMove.get(w)!;
+          const movesSinceDrop = currentMoveIndex - dropTime;
+          if (movesSinceDrop > 0) {
+            const currentTriggerCount = Math.floor(movesSinceDrop / b.mergesToTeleport);
+            const recordedCount = teleportCounts.get(w) || 0;
+            
+            if (currentTriggerCount > recordedCount) {
+              teleportCounts.set(w, currentTriggerCount);
+              
+              // Teleport: Move from current position to the end of the board
+              const nodeOnBoardIndex = board.findIndex(bid => {
+                  const n = nodes.find(nn => nn.id === bid);
+                  const displayLabel = n ? String(n.data.label) : bid.split('_')[1]?.replace(/^\[|\]$/g, '') || bid;
+                  return displayLabel.toLowerCase() === w;
+              });
+              
+              if (nodeOnBoardIndex !== -1 && nodeOnBoardIndex !== board.length - 1) {
+                  const poppedId = board[nodeOnBoardIndex];
+                  board.splice(nodeOnBoardIndex, 1);
+                  board.push(poppedId); // Teleport to the end
+                  
+                  const n = nodes.find(nn => nn.id === poppedId);
+                  const displayLabel = n ? String(n.data.label) : poppedId.split('_')[1]?.replace(/^\[|\]$/g, '') || poppedId;
+                  
+                  steps.push({
+                     id: `step-${stepIdCounter++}`,
+                     type: 'event',
+                     left: '',
+                     right: '',
+                     result: '',
+                     text: `⚡ Teleport Bubble "${displayLabel}" teleported to a new position!`,
+                     isComboBonus: false,
+                     boardState: board.map(bid => getBubbleState(bid)),
+                     moveIndex: currentMoveIndex
+                  });
+              }
             }
           }
         }
@@ -1276,6 +1339,7 @@ function calculateDifficulty(nodes: Node[], _edges: Edge[], levelData: any, reco
   if (levelData?.burstBubbles && levelData.burstBubbles.length > 0) activeMechanics.push('burst');
   if (levelData?.bombCrackingBubbles && levelData.bombCrackingBubbles.length > 0) activeMechanics.push('bombCracking');
   if (levelData?.floatBubbles && levelData.floatBubbles.length > 0) activeMechanics.push('float');
+  if (levelData?.teleportBubbles && levelData.teleportBubbles.length > 0) activeMechanics.push('teleport');
   if (levelData?.screwLockBubbles && levelData.screwLockBubbles.length > 0) activeMechanics.push('screwLock');
   if (levelData?.requirementLockBubbles && levelData.requirementLockBubbles.length > 0) activeMechanics.push('requirementLock');
 

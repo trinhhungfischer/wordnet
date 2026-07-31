@@ -2103,13 +2103,135 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
           )}
         </div>
       )
+    },
+    {
+      id: 'teleportBubble',
+      isActive: () => forceOpen.teleportBubble || (levelData.teleportBubbles && levelData.teleportBubbles.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Zap size={20} color="#eab308" />
+              <div>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  Teleport Bubble
+                </h3>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Mechanic: Teleport Bubble (Changes position after N merges)
+                </p>
+              </div>
+            </div>
+            <Toggle 
+              checked={forceOpen.teleportBubble || (levelData.teleportBubbles && levelData.teleportBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, teleportBubble: checked }));
+                handleChange('teleportBubbles', checked ? [] : undefined);
+              }}
+            />
+          </div>
+          
+          {(forceOpen.teleportBubble || (levelData.teleportBubbles && levelData.teleportBubbles.length > 0)) && (
+            <div style={{ background: 'var(--panel-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--panel-border)' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '12px', color: 'var(--text-main)', fontWeight: 500 }}>
+                  Teleport Bubbles (Drag & Drop from left panel):
+                </label>
+                <div 
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    try {
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const wordLower = wordLabel.toLowerCase();
+                        const isChained = levelData.bubbleSeparatorData?.linkedWords?.some((w: string) => w.toLowerCase() === wordLower);
+                        if (isChained) {
+                          alert("Không thể thêm bong bóng đã bị Chain vào Teleport Bubble!");
+                          return;
+                        }
+                        
+                        const currentTeleport = levelData.teleportBubbles || [];
+                        if (!currentTeleport.some((c: any) => c?.word?.toLowerCase() === wordLower)) {
+                          handleChange('teleportBubbles', [...currentTeleport, { word: wordLower, mergesToTeleport: 4 }]);
+                        }
+                      }
+                    } catch (err) {}
+                  }}
+                  style={{
+                    minHeight: '80px', padding: '8px', border: '1px dashed rgba(234, 179, 8, 0.5)',
+                    borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                  }}
+                >
+                  {(!levelData.teleportBubbles || levelData.teleportBubbles.length === 0) ? (
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                      Drop words here to add Teleport Bubbles
+                    </span>
+                  ) : (
+                    levelData.teleportBubbles.map((teleportItem: any, i: number) => (
+                      <div 
+                        key={i} 
+                        style={{ 
+                          display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(234, 179, 8, 0.15)',
+                          padding: '8px', borderRadius: '6px', border: '1px solid rgba(234, 179, 8, 0.3)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                          <span 
+                            onClick={() => {
+                              if (onFocusWord) onFocusWord(teleportItem.word);
+                            }}
+                            style={{ 
+                              fontSize: '13px', fontWeight: 600, color: 'white', 
+                              cursor: 'pointer', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' 
+                            }}
+                            title={teleportItem.word}
+                          >
+                            {teleportItem.word}
+                          </span>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChange('teleportBubbles', levelData.teleportBubbles.filter((c: any) => c.word !== teleportItem.word));
+                            }}
+                            style={{ 
+                              background: 'transparent', border: 'none', 
+                              color: '#fef08a', cursor: 'pointer', padding: '0 4px', fontSize: '16px', lineHeight: 1
+                            }}
+                          >
+                            &times;
+                          </button>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Merges To Teleport:</span>
+                            <input 
+                              type="number" 
+                              value={teleportItem.mergesToTeleport ?? 4}
+                              onChange={(e) => {
+                                const newTeleport = [...levelData.teleportBubbles];
+                                newTeleport[i] = { ...newTeleport[i], mergesToTeleport: parseInt(e.target.value) || 1 };
+                                handleChange('teleportBubbles', newTeleport);
+                              }}
+                              style={{ width: '40px', padding: '2px 4px', borderRadius: '4px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--panel-border)', color: 'white', outline: 'none', fontSize: '12px' }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )
     }
   ];
 
   const mechanicsOrder = [
     'chain', 'frozen', 'keyLock', 'burst', 'cryptic', 'screwLock',
     'backward', 'cycleLock', 'immovable', 'countdown', 'linked',
-    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike', 'bombCracking', 'floatBubble'
+    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike', 'bombCracking', 'floatBubble', 'teleportBubble'
   ];
 
   useEffect(() => {
@@ -2228,6 +2350,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 delete newData.requirementLockBubbles;
                 delete newData.bombCrackingBubbles;
                 delete newData.floatBubbles;
+                delete newData.teleportBubbles;
                 
                 setForceOpen({});
                 setSortedMechanicIds([]);
@@ -2268,7 +2391,8 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 linked: { name: 'Linked', icon: <Magnet size={10} />, color: '#0ea5e9' },
                 requirementLock: { name: 'Req Lock', icon: <Dumbbell size={10} />, color: '#f97316' },
                 bombCracking: { name: 'Bomb Crack', icon: <Flame size={10} />, color: '#f97316' },
-                floatBubble: { name: 'Float', icon: <Cloud size={10} />, color: '#60a5fa' }
+                floatBubble: { name: 'Float', icon: <Cloud size={10} />, color: '#60a5fa' },
+                teleportBubble: { name: 'Teleport', icon: <Zap size={10} />, color: '#eab308' }
               };
               
               const mMeta = meta[m.id] || { name: m.id, icon: <Zap size={10} />, color: '#ffffff' };
@@ -2304,6 +2428,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     else if (m.id === 'requirementLock') handleChange('requirementLockBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'bombCracking') handleChange('bombCrackingBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'floatBubble') handleChange('floatBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'teleportBubble') handleChange('teleportBubbles', willBeActive ? [] : undefined);
                     
                     if (willBeActive) {
                       setSortedMechanicIds(prev => {
