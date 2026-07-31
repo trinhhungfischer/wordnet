@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost, Asterisk, Flame, Cloud, Rocket, Layers, Plus } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost, Asterisk, Flame, Cloud, Rocket, Layers, Plus, Maximize } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -2339,13 +2339,118 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
           )}
         </div>
       )
+    },
+    {
+      id: 'resizeBubble',
+      isActive: () => forceOpen.resizeBubble || (levelData.resizeBubbles && levelData.resizeBubbles.length > 0),
+      render: () => (
+        <div key="resizeBubble" style={{ background: 'rgba(0,0,0,0.2)', padding: '12px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Maximize size={16} color="#f59e0b" />
+              <strong style={{ color: 'var(--text-main)', fontSize: '13px' }}>Resize Bubble</strong>
+            </div>
+            <Toggle 
+              checked={forceOpen.resizeBubble || (levelData.resizeBubbles && levelData.resizeBubbles.length > 0)}
+              onChange={(checked) => {
+                setForceOpen(prev => ({ ...prev, resizeBubble: checked }));
+                if (!checked) {
+                  handleChange('resizeBubbles', undefined);
+                }
+              }}
+            />
+          </div>
+          
+          {(forceOpen.resizeBubble || (levelData.resizeBubbles && levelData.resizeBubbles.length > 0)) && (
+            <div style={{ background: 'var(--panel-bg)', padding: '12px', borderRadius: '6px', border: '1px solid var(--panel-border)', marginTop: '12px' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '12px', color: 'var(--text-main)', fontWeight: 500 }}>
+                  Resize Bubbles (Drag & Drop from left panel):
+                </label>
+                <div 
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    try {
+                      const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                      if (wordLabel) {
+                        const wordLower = wordLabel.toLowerCase();
+                        const isChained = levelData.bubbleSeparatorData?.linkedWords?.some((w: string) => w.toLowerCase() === wordLower);
+                        if (isChained) {
+                          alert("Không thể thêm bong bóng đã bị Chain vào Resize Bubble!");
+                          return;
+                        }
+                        
+                        const currentResize = levelData.resizeBubbles || [];
+                        if (!currentResize.some((c: any) => (typeof c === 'string' ? c : c.word).toLowerCase() === wordLower)) {
+                          handleChange('resizeBubbles', [...currentResize, wordLower]);
+                        }
+                      }
+                    } catch (err) {}
+                  }}
+                  style={{
+                    minHeight: '80px', padding: '8px', border: '1px dashed rgba(245, 158, 11, 0.5)',
+                    borderRadius: '6px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', gap: '6px'
+                  }}
+                >
+                  {(!levelData.resizeBubbles || levelData.resizeBubbles.length === 0) ? (
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                      Drop words here to add Resize Bubbles
+                    </span>
+                  ) : (
+                    levelData.resizeBubbles.map((resizeItem: any, i: number) => {
+                      const word = typeof resizeItem === 'string' ? resizeItem : resizeItem.word;
+                      return (
+                        <div 
+                          key={i} 
+                          style={{ 
+                            display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(245, 158, 11, 0.15)',
+                            padding: '8px', borderRadius: '6px', border: '1px solid rgba(245, 158, 11, 0.3)'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                            <span 
+                              onClick={() => {
+                                if (onFocusWord) onFocusWord(word);
+                              }}
+                              style={{ 
+                                fontSize: '13px', fontWeight: 600, color: 'white', 
+                                cursor: 'pointer', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' 
+                              }}
+                              title={word}
+                            >
+                              {word}
+                            </span>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleChange('resizeBubbles', levelData.resizeBubbles.filter((c: any) => (typeof c === 'string' ? c : c.word) !== word));
+                              }}
+                              style={{ 
+                                background: 'transparent', border: 'none', 
+                                color: '#fef08a', cursor: 'pointer', padding: '0 4px', fontSize: '16px', lineHeight: 1
+                              }}
+                            >
+                              &times;
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )
     }
   ];
 
   const mechanicsOrder = [
     'chain', 'frozen', 'keyLock', 'burst', 'cryptic', 'screwLock',
     'backward', 'cycleLock', 'immovable', 'countdown', 'linked',
-    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike', 'bombCracking', 'floatBubble', 'teleportBubble', 'stack_pipe'
+    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike', 'bombCracking', 'floatBubble', 'teleportBubble', 'stack_pipe', 'resizeBubble'
   ];
 
   useEffect(() => {
@@ -2465,6 +2570,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 delete newData.bombCrackingBubbles;
                 delete newData.floatBubbles;
                 delete newData.teleportBubbles;
+                delete newData.resizeBubbles;
                 
                 setForceOpen({});
                 setSortedMechanicIds([]);
@@ -2507,6 +2613,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 bombCracking: { name: 'Bomb Crack', icon: <Flame size={10} />, color: '#f97316' },
                 floatBubble: { name: 'Float', icon: <Cloud size={10} />, color: '#60a5fa' },
                 teleportBubble: { name: 'Teleport', icon: <Rocket size={10} />, color: '#eab308' },
+                resizeBubble: { name: 'Resize', icon: <Maximize size={10} />, color: '#f59e0b' },
                 stack_pipe: { name: 'Stack Pipe', icon: <Layers size={10} />, color: '#10b981' }
               };
               
@@ -2544,6 +2651,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                     else if (m.id === 'bombCracking') handleChange('bombCrackingBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'floatBubble') handleChange('floatBubbles', willBeActive ? [] : undefined);
                     else if (m.id === 'teleportBubble') handleChange('teleportBubbles', willBeActive ? [] : undefined);
+                    else if (m.id === 'resizeBubble') handleChange('resizeBubbles', willBeActive ? [] : undefined);
                     
                     if (willBeActive) {
                       setSortedMechanicIds(prev => {

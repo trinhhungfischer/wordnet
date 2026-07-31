@@ -32,6 +32,7 @@ export interface BoardBubbleState {
   mergesToTeleport?: number;
   stackPipeId?: number;
   stackPipeDepth?: number;
+  isResize?: boolean;
 }
 
 export interface MergeStep {
@@ -169,6 +170,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let mergesToTeleport: number | undefined;
     let stackPipeId: number | undefined;
     let stackPipeDepth: number | undefined;
+    let isResize = false;
 
     const w = displayLabel.toLowerCase();
     const currentWeight = displayLabel.split('|').length;
@@ -278,6 +280,10 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
         mergesToTeleport = rem;
       }
 
+      if (levelData?.resizeBubbles?.some((r: any) => (typeof r === 'string' ? r : r.word).toLowerCase() === w)) {
+        isResize = true;
+      }
+
       const stackPipeRule = levelData?.stackPipes?.find((p: any) => p.words.some((pw: string) => pw.toLowerCase() === w));
       if (stackPipeRule) {
         stackPipeId = stackPipeRule.pipeId;
@@ -332,7 +338,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       isTeleportBubble,
       mergesToTeleport,
       stackPipeId,
-      stackPipeDepth
+      stackPipeDepth,
+      isResize
     };
   };
 

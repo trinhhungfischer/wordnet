@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Rocket, Radiation, Ghost, Asterisk, Flame, Cloud, Zap, Layers } from 'lucide-react';
+import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Rocket, Radiation, Ghost, Asterisk, Flame, Cloud, Zap, Layers, Maximize } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
@@ -37,6 +37,7 @@ const CustomNode = ({ data, selected }: any) => {
   const mergesToFloat = data.mergesToFloat !== undefined ? data.mergesToFloat : 0;
   const isTeleportBubble = data.isTeleportBubble === true;
   const mergesToTeleport = data.mergesToTeleport !== undefined ? data.mergesToTeleport : 0;
+  const isResize = data.isResize === true;
 
   const lockColor = lockIndex !== -1 ? lockKeyColors[lockIndex % lockKeyColors.length] : '#a1a1aa';
   const keyColor = keyIndex !== -1 ? lockKeyColors[keyIndex % lockKeyColors.length] : '#f59e0b';
@@ -126,6 +127,10 @@ const CustomNode = ({ data, selected }: any) => {
     bgColor = 'rgba(234, 179, 8, 0.15)';
     borderColor = '2px dashed rgba(234, 179, 8, 0.8)';
     shadow = '0 0 15px rgba(234, 179, 8, 0.3)';
+  } else if (isResize) {
+    bgColor = 'rgba(245, 158, 11, 0.15)';
+    borderColor = '2px dashed rgba(245, 158, 11, 0.8)';
+    shadow = '0 0 15px rgba(245, 158, 11, 0.3)';
   } else if (isLinkedMain) {
     bgColor = 'rgba(14, 165, 233, 0.15)';
     borderColor = '2px solid rgba(14, 165, 233, 0.8)';
@@ -234,6 +239,7 @@ const CustomNode = ({ data, selected }: any) => {
           </div>
         )}
         {isSpikeBubble && <Asterisk size={14} style={{ color: '#dc2626', marginLeft: '4px' }} />}
+        {isResize && <Maximize size={14} style={{ color: '#f59e0b', marginLeft: '4px' }} />}
       </div>
       
       {data.isRoot && (
