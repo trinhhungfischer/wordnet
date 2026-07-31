@@ -13,7 +13,7 @@ interface ChangelogEntry {
 interface ChangelogModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectLevel: (level: string) => void;
+  onSelectLevel: (level: string, customPath?: string) => void;
   selectedLevelName: string;
   isAdmin: boolean;
   levels?: string[];
@@ -754,7 +754,8 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                           <button
                             key={i}
                             onClick={() => {
-                              onSelectLevel(exactLvl);
+                              const path = selectedLog ? `/${selectedLog.version}/Level ${lvlNumber}.json` : undefined;
+                              onSelectLevel(exactLvl, path);
                               onClose();
                             }}
                             style={{

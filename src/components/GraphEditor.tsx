@@ -1060,11 +1060,15 @@ export default function GraphEditor() {
       setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 100);
   };
 
-  const loadLevel = async (levelName: string) => {
+  const loadLevel = async (levelName: string, customPath?: string) => {
     if (!levelName) return false;
     try {
       let data;
-      if (dirHandle) {
+      if (customPath) {
+        const res = await fetch(customPath);
+        if (!res.ok) throw new Error('Not found');
+        data = await res.json();
+      } else if (dirHandle) {
         const fileHandle = await dirHandle.getFileHandle(`${levelName}.json`);
         const file = await fileHandle.getFile();
         const text = await file.text();
@@ -4091,7 +4095,7 @@ export default function GraphEditor() {
         isOpen={isChangelogModalOpen}
         onClose={() => setIsChangelogModalOpen(false)}
         selectedLevelName={selectedLevelName}
-        onSelectLevel={(level) => loadLevel(level)}
+        onSelectLevel={(level, customPath) => loadLevel(level, customPath)}
         isAdmin={isAdmin}
         levels={levels}
         stagedLevels={stagedLevels}
