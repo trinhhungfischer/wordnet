@@ -61,14 +61,20 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
     return levels.map(l => l.replace('Level ', '').replace('.json', '')).sort((a, b) => parseInt(a) - parseInt(b));
   }, [levels]);
 
-  // Map each level to its latest update version
-  const levelToLatestVersion = useMemo(() => {
-    const map: Record<string, string> = {};
+  // Map each level to its 3 most recent update versions
+  const levelToRecentVersions = useMemo(() => {
+    const map: Record<string, string[]> = {};
     changelogData.forEach(log => {
       const lvls = log.levels.split(',').map(s => s.trim()).filter(s => s);
       lvls.forEach(l => {
-        map[l] = log.version;
+        if (!map[l]) map[l] = [];
+        map[l].push(log.version);
       });
+    });
+    
+    // Keep only the most recent 3 for each level, reversed so newest is first
+    Object.keys(map).forEach(l => {
+      map[l] = map[l].slice(-3).reverse();
     });
     return map;
   }, [changelogData]);
@@ -623,14 +629,21 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                             }}
                           >
                             {lvlNumber}
-                            {levelToLatestVersion[lvlNumber] && (
+                            {levelToRecentVersions[lvlNumber] && levelToRecentVersions[lvlNumber].length > 0 && (
                               <div style={{
                                 position: 'absolute', top: '-6px', right: '-6px',
-                                background: getTagColor(levelToLatestVersion[lvlNumber]), color: 'white', fontSize: '10px',
-                                padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                                display: 'flex', flexDirection: 'row-reverse', gap: '2px', alignItems: 'center'
                               }}>
-                                {levelToLatestVersion[lvlNumber]}
+                                {levelToRecentVersions[lvlNumber].map((v, idx) => (
+                                  <div key={v} style={{
+                                    background: getTagColor(v), color: 'white', fontSize: '10px',
+                                    padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                    zIndex: 3 - idx
+                                  }}>
+                                    {v}
+                                  </div>
+                                ))}
                               </div>
                             )}
                           </button>
@@ -784,14 +797,21 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                             }}
                           >
                             {lvlNumber}
-                            {levelToLatestVersion[lvlNumber] && (
+                            {levelToRecentVersions[lvlNumber] && levelToRecentVersions[lvlNumber].length > 0 && (
                               <div style={{
                                 position: 'absolute', top: '-6px', right: '-6px',
-                                background: getTagColor(levelToLatestVersion[lvlNumber]), color: 'white', fontSize: '10px',
-                                padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                                display: 'flex', flexDirection: 'row-reverse', gap: '2px', alignItems: 'center'
                               }}>
-                                {levelToLatestVersion[lvlNumber]}
+                                {levelToRecentVersions[lvlNumber].map((v, idx) => (
+                                  <div key={v} style={{
+                                    background: getTagColor(v), color: 'white', fontSize: '10px',
+                                    padding: '2px 4px', borderRadius: '4px', fontWeight: 'bold',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                                    zIndex: 3 - idx
+                                  }}>
+                                    {v}
+                                  </div>
+                                ))}
                               </div>
                             )}
                           </button>
