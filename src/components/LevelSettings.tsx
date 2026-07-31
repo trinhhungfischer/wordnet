@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost, Asterisk, Flame, Cloud } from 'lucide-react';
+import { X, Magnet, Link, Calculator, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Zap, Dumbbell, Radiation, Ghost, Asterisk, Flame, Cloud, Rocket, Layers, Plus } from 'lucide-react';
 import { lockKeyColors } from './GraphEditor';
 
 interface LevelSettingsProps {
@@ -149,6 +149,120 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
               </div>
         
               
+      )
+    },
+    {
+      id: 'stack_pipe',
+      isActive: () => forceOpen.stack_pipe || (levelData.stackPipes && levelData.stackPipes.length > 0),
+      render: () => (
+        <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Layers size={16} color="#4ade80" />
+              Stack Pipe
+            </h3>
+            <Toggle 
+              checked={forceOpen.stack_pipe || (levelData.stackPipes && levelData.stackPipes.length > 0)}
+              onChange={(checked) => {
+                if (checked) {
+                  setForceOpen(prev => ({ ...prev, stack_pipe: true }));
+                } else {
+                  setForceOpen(prev => ({ ...prev, stack_pipe: false }));
+                  handleChange('stackPipes', undefined);
+                }
+              }}
+            />
+          </div>
+
+          {(forceOpen.stack_pipe || (levelData.stackPipes && levelData.stackPipes.length > 0)) && (
+            <div style={{ marginTop: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+                <button
+                  onClick={() => {
+                    const currentPipes = levelData.stackPipes || [];
+                    const maxPipeId = currentPipes.length > 0 ? Math.max(...currentPipes.map((p: any) => p.pipeId)) : 0;
+                    handleChange('stackPipes', [...currentPipes, { pipeId: maxPipeId + 1, words: [] }]);
+                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(74, 222, 128, 0.2)', color: '#4ade80', border: '1px solid rgba(74, 222, 128, 0.4)', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.background = 'rgba(74, 222, 128, 0.3)'}
+                  onMouseOut={(e) => e.currentTarget.style.background = 'rgba(74, 222, 128, 0.2)'}
+                >
+                  <Plus size={14} /> Add Pipe
+                </button>
+              </div>
+
+              {(!levelData.stackPipes || levelData.stackPipes.length === 0) ? (
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic', textAlign: 'center', padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '6px' }}>
+                  No pipes added yet. Click "Add Pipe" to start.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {levelData.stackPipes.map((pipe: any, pipeIndex: number) => (
+                    <div key={pipeIndex} style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(74, 222, 128, 0.3)', borderRadius: '8px', padding: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#4ade80' }}>Pipe #{pipe.pipeId}</div>
+                        <button
+                          onClick={() => {
+                            handleChange('stackPipes', levelData.stackPipes.filter((_: any, i: number) => i !== pipeIndex));
+                          }}
+                          style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#ef4444', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', cursor: 'pointer' }}
+                        >
+                          Remove Pipe
+                        </button>
+                      </div>
+
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                        Words in Pipe (Bottom to Top):
+                      </div>
+                      
+                      <div
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const wordLabel = e.dataTransfer.getData('application/reactflow-node');
+                          if (wordLabel && !pipe.words.includes(wordLabel)) {
+                            const newPipes = [...levelData.stackPipes];
+                            newPipes[pipeIndex] = { ...pipe, words: [...pipe.words, wordLabel] };
+                            handleChange('stackPipes', newPipes);
+                          }
+                        }}
+                        style={{ minHeight: '60px', padding: '8px', border: '1px dashed rgba(74, 222, 128, 0.5)', borderRadius: '6px', background: 'rgba(0,0,0,0.3)', display: 'flex', flexWrap: 'wrap', gap: '6px', alignContent: 'flex-start' }}
+                      >
+                        {(!pipe.words || pipe.words.length === 0) ? (
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                            Drop words here
+                          </span>
+                        ) : (
+                          pipe.words.map((word: string, wordIndex: number) => (
+                            <div key={wordIndex} style={{ display: 'flex', alignItems: 'center' }}>
+                              <span
+                                onClick={() => { if (onFocusWord) onFocusWord(word); }}
+                                style={{ fontSize: '12px', fontWeight: 500, background: 'rgba(74, 222, 128, 0.2)', color: 'white', padding: '4px 8px', borderRadius: '4px 0 0 4px', cursor: 'pointer', border: '1px solid rgba(74, 222, 128, 0.4)', borderRight: 'none' }}
+                              >
+                                {wordIndex + 1}. {word}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const newPipes = [...levelData.stackPipes];
+                                  newPipes[pipeIndex] = { ...pipe, words: pipe.words.filter((w: string) => w !== word) };
+                                  handleChange('stackPipes', newPipes);
+                                }}
+                                style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#fca5a5', cursor: 'pointer', padding: '4px 6px', fontSize: '14px', lineHeight: 1, borderRadius: '0 4px 4px 0' }}
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       )
     },
     {
@@ -2111,7 +2225,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
         <div style={{ marginBottom: '24px', background: 'rgba(0,0,0,0.1)', padding: '16px', borderRadius: '8px', border: '1px solid var(--panel-border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Zap size={20} color="#eab308" />
+              <Rocket size={20} color="#eab308" />
               <div>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   Teleport Bubble
@@ -2231,7 +2345,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
   const mechanicsOrder = [
     'chain', 'frozen', 'keyLock', 'burst', 'cryptic', 'screwLock',
     'backward', 'cycleLock', 'immovable', 'countdown', 'linked',
-    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike', 'bombCracking', 'floatBubble', 'teleportBubble'
+    'crack', 'requirementLock', 'cycleFadeOut', 'icebomb', 'soapBubble', 'spike', 'bombCracking', 'floatBubble', 'teleportBubble', 'stack_pipe'
   ];
 
   useEffect(() => {
@@ -2392,7 +2506,8 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                 requirementLock: { name: 'Req Lock', icon: <Dumbbell size={10} />, color: '#f97316' },
                 bombCracking: { name: 'Bomb Crack', icon: <Flame size={10} />, color: '#f97316' },
                 floatBubble: { name: 'Float', icon: <Cloud size={10} />, color: '#60a5fa' },
-                teleportBubble: { name: 'Teleport', icon: <Zap size={10} />, color: '#eab308' }
+                teleportBubble: { name: 'Teleport', icon: <Rocket size={10} />, color: '#eab308' },
+                stack_pipe: { name: 'Stack Pipe', icon: <Layers size={10} />, color: '#10b981' }
               };
               
               const mMeta = meta[m.id] || { name: m.id, icon: <Zap size={10} />, color: '#ffffff' };

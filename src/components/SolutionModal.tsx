@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed, Asterisk, Flame, Cloud } from 'lucide-react';
+import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed, Asterisk, Flame, Cloud, Rocket, Layers } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -110,7 +110,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
 
       const reqLockWeight = bubbleState.reqLockWeight;
 
-      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx: idx, isIceBomb: bubbleState.isIceBomb, iceBombTurnToActive: bubbleState.iceBombTurnToActive, iceBombConfigTurnToActive: bubbleState.iceBombConfigTurnToActive, iceBombConfigFreezeTurns: bubbleState.iceBombConfigFreezeTurns, iceBombInfectedFreezeTurns: bubbleState.iceBombInfectedFreezeTurns, isSpikeBubble: bubbleState.isSpikeBubble, isBombCrackingBubble: bubbleState.isBombCrackingBubble, bombMergeRemain: bubbleState.bombMergeRemain, bombChainCount: bubbleState.bombChainCount, isFloatBubble: bubbleState.isFloatBubble, mergesToFloat: bubbleState.mergesToFloat, isTeleportBubble: bubbleState.isTeleportBubble, mergesToTeleport: bubbleState.mergesToTeleport };
+      return { nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, familyName, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx: idx, isIceBomb: bubbleState.isIceBomb, iceBombTurnToActive: bubbleState.iceBombTurnToActive, iceBombConfigTurnToActive: bubbleState.iceBombConfigTurnToActive, iceBombConfigFreezeTurns: bubbleState.iceBombConfigFreezeTurns, iceBombInfectedFreezeTurns: bubbleState.iceBombInfectedFreezeTurns, isSpikeBubble: bubbleState.isSpikeBubble, isBombCrackingBubble: bubbleState.isBombCrackingBubble, bombMergeRemain: bubbleState.bombMergeRemain, bombChainCount: bubbleState.bombChainCount, isFloatBubble: bubbleState.isFloatBubble, mergesToFloat: bubbleState.mergesToFloat, isTeleportBubble: bubbleState.isTeleportBubble, mergesToTeleport: bubbleState.mergesToTeleport, stackPipeId: bubbleState.stackPipeId, stackPipeDepth: bubbleState.stackPipeDepth, stackPipeTotal: bubbleState.stackPipeTotal };
     }).filter(Boolean) as any[];
 
     if (boardSortMode === 'name') {
@@ -402,7 +402,7 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                   Board is empty.
                 </div>
               ) : (
-                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx, isIceBomb, iceBombTurnToActive, iceBombInfectedFreezeTurns, isSpikeBubble, isBombCrackingBubble, bombMergeRemain, isFloatBubble, mergesToFloat, isTeleportBubble, mergesToTeleport }: any) => {
+                displayNodes.map(({ nodeId, node, isTemp, displayLabel, isChunk, isCategory, familyId, isChained, chainMergesLeft, iceMergesLeft, crackMergesLeft, isCrackBubble, crackCountRemaining, burstMovesRemaining, lockIndex, keyIndex, screwCount, isScrewDriver, screwLockIndex, screwDriverIndex, cycleLockState, isImmovable, countdownValue, isLinkedMain, isLinkedChunk, reqLockWeight, originalIdx, isIceBomb, iceBombTurnToActive, iceBombInfectedFreezeTurns, isSpikeBubble, isBombCrackingBubble, bombMergeRemain, isFloatBubble, mergesToFloat, isTeleportBubble, mergesToTeleport, stackPipeId, stackPipeDepth }: any) => {
                   
                   const baseColorStr = familyColors.get(familyId) || 'hsla(230, 70%, 65%, 1)';
                   const familyBg = baseColorStr.replace(', 1)', ', 0.15)');
@@ -433,7 +433,8 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                               isCrackBubble ? 'rgba(251, 191, 36, 0.15)' :
                               isBombCrackingBubble ? 'rgba(249, 115, 22, 0.15)' : 
                               isFloatBubble ? 'rgba(96, 165, 250, 0.15)' : 
-                              isTeleportBubble ? 'rgba(234, 179, 8, 0.15)' : baseBg;
+                              isTeleportBubble ? 'rgba(234, 179, 8, 0.15)' :
+                              stackPipeId !== undefined ? 'rgba(16, 185, 129, 0.15)' : baseBg;
                   }
 
                   const baseBorder = isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)';
@@ -454,7 +455,8 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                                   isCrackBubble ? '1px solid rgba(251, 191, 36, 0.4)' : 
                                   isBombCrackingBubble ? '1px solid rgba(249, 115, 22, 0.4)' : 
                                   isFloatBubble ? '1px dashed rgba(96, 165, 250, 0.8)' : 
-                                  isTeleportBubble ? '1px dashed rgba(234, 179, 8, 0.8)' : baseBorder;
+                                  isTeleportBubble ? '1px dashed rgba(234, 179, 8, 0.8)' : 
+                                  stackPipeId !== undefined ? '1px solid rgba(16, 185, 129, 0.4)' : baseBorder;
                   }
 
                   const textColor = useFamilyColor ? baseColorStr : (isChunk ? '#a5b4fc' : 'var(--text-main)');
@@ -554,9 +556,14 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
                               <Cloud size={14} color="#60a5fa" /> {mergesToFloat}
                             </span>
                           )}
-                          {isTeleportBubble && (
+                          {isTeleportBubble && mergesToTeleport !== undefined && (
                             <span title={`Teleport Bubble (${mergesToTeleport} merges to teleport)`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#eab308', fontSize: '11px', fontWeight: 'bold' }}>
-                              <Zap size={14} color="#eab308" /> {mergesToTeleport}
+                              <Rocket size={14} color="#eab308" /> {mergesToTeleport}
+                            </span>
+                          )}
+                          {stackPipeId !== undefined && (
+                            <span title={`Stack Pipe #${stackPipeId} (Depth: ${stackPipeDepth})`} style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#10b981', fontSize: '11px', fontWeight: 'bold' }}>
+                              <Layers size={14} color="#10b981" /> {stackPipeDepth !== undefined ? stackPipeDepth + 1 : ''}
                             </span>
                           )}
                           {burstMovesRemaining !== undefined && burstMovesRemaining > 0 && (

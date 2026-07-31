@@ -19,16 +19,16 @@
     "guid": "d22e55d88a56a9cc174a4379c66bb9c6",
     "type": 3
   },
-  "m_Name": "Level 27",
+  "m_Name": "Level 61",
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Easter",
+      "category": "Type of environment",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Spring",
+          "fullWord": "Urban",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -36,7 +36,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Sunday",
+          "fullWord": "Coastal",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -44,7 +44,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Eggs",
+          "fullWord": "Suburban",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -52,7 +52,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Basket",
+          "fullWord": "Rural",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -62,12 +62,51 @@
       ]
     },
     {
-      "category": "Bicycle",
+      "category": "Urban",
+      "parentCategory": "Type of environment",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Roads",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Transit",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Traffic",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Crowd",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Weather types",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Bell",
+          "fullWord": "Tropical",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -75,7 +114,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Trail",
+          "fullWord": "Rainy",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -83,7 +122,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Chain",
+          "fullWord": "Clear",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -91,7 +130,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Balance",
+          "fullWord": "Temperate",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -101,12 +140,90 @@
       ]
     },
     {
-      "category": "Nobel prize",
+      "category": "Tropical",
+      "parentCategory": "Weather types",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Beach",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Palm",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Lagoon",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Mango",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Rainy",
+      "parentCategory": "Weather types",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Wet",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Hood",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Showers",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Raindrop",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Living room",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Literature",
+          "fullWord": "Tv",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -114,7 +231,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Physics",
+          "fullWord": "Carpet",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -122,7 +239,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Chemistry",
+          "fullWord": "Sofa",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -130,7 +247,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Economic sciences",
+          "fullWord": "Couch",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -140,12 +257,12 @@
       ]
     },
     {
-      "category": "Literature",
-      "parentCategory": "Nobel prize",
+      "category": "Tv",
+      "parentCategory": "Living room",
       "icon": null,
       "words": [
         {
-          "fullWord": "Chapter",
+          "fullWord": "Screen",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -153,7 +270,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Novel",
+          "fullWord": "Cable",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -161,7 +278,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Poem",
+          "fullWord": "Remote",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -169,7 +286,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Story",
+          "fullWord": "Channel",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -179,51 +296,12 @@
       ]
     },
     {
-      "category": "Physics",
-      "parentCategory": "Nobel prize",
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "Energy",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Force",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Gravity",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Mass",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Music composition",
+      "category": "Birds of prey",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Composer",
+          "fullWord": "Raven",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -231,7 +309,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Harmony",
+          "fullWord": "Hawk",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -239,7 +317,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Melody",
+          "fullWord": "Owl",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -247,7 +325,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Notes",
+          "fullWord": "Kite",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -257,12 +335,12 @@
       ]
     },
     {
-      "category": "Composer",
-      "parentCategory": "Music composition",
+      "category": "Raven",
+      "parentCategory": "Birds of prey",
       "icon": null,
       "words": [
         {
-          "fullWord": "Bach",
+          "fullWord": "Ebony",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -270,7 +348,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Beethoven",
+          "fullWord": "Lenore",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -278,7 +356,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Chopin",
+          "fullWord": "Poe",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -286,7 +364,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Mozart",
+          "fullWord": "Edgar",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -296,12 +374,12 @@
       ]
     },
     {
-      "category": "Terrain",
-      "parentCategory": null,
+      "category": "Hawk",
+      "parentCategory": "Birds of prey",
       "icon": null,
       "words": [
         {
-          "fullWord": "Mountain",
+          "fullWord": "Peregrine",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -309,7 +387,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Plateau",
+          "fullWord": "Buzzard",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -317,7 +395,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Valley",
+          "fullWord": "Red-tailed",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -325,46 +403,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Plains",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
-      "category": "Elemental powers",
-      "parentCategory": null,
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "Air",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Earth",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Fire",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Water",
+          "fullWord": "Osprey",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -374,13 +413,13 @@
       ]
     }
   ],
-  "maxBubblesInScene": 26,
-  "moveLimit": 50,
+  "maxBubblesInScene": 24,
+  "moveLimit": 45,
   "randomSeed": 0,
-  "levelDifficulty": 0,
+  "levelDifficulty": 1,
   "allWordEntries": [
     {
-      "fullWord": "Bach",
+      "fullWord": "Beach",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -389,7 +428,25 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Chopin",
+      "fullWord": "Pa",
+      "parentWord": "Palm",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Lm",
+      "parentWord": "Palm",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Lagoon",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -398,7 +455,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Story",
+      "fullWord": "Mango",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -407,8 +464,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Ear",
-      "parentWord": "Earth",
+      "fullWord": "Temp",
+      "parentWord": "Temperate",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -416,8 +473,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Th",
-      "parentWord": "Earth",
+      "fullWord": "Erate",
+      "parentWord": "Temperate",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -425,7 +482,25 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Air",
+      "fullWord": "Coa",
+      "parentWord": "Coastal",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Stal",
+      "parentWord": "Coastal",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Suburban",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -434,7 +509,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Fire",
+      "fullWord": "Rural",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -443,7 +518,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Beethoven",
+      "fullWord": "Clear",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -452,7 +527,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Mozart",
+      "fullWord": "Screen",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -461,7 +536,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Harmony",
+      "fullWord": "Cable",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -470,7 +545,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Melody",
+      "fullWord": "Remote",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -479,25 +554,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Chap",
-      "parentWord": "Chapter",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Ter",
-      "parentWord": "Chapter",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Novel",
+      "fullWord": "Channel",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -506,7 +563,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Spring",
+      "fullWord": "Carpet",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -515,7 +572,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Sunday",
+      "fullWord": "Sofa",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -524,7 +581,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Eggs",
+      "fullWord": "Hood",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -533,7 +590,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Basket",
+      "fullWord": "Showers",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -542,8 +599,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Be",
-      "parentWord": "Bell",
+      "fullWord": "Cr",
+      "parentWord": "Crowd",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -551,16 +608,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Ll",
-      "parentWord": "Bell",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": []
-    },
-    {
-      "fullWord": "Trail",
+      "fullWord": "Lenore",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -569,7 +617,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Chain",
+      "fullWord": "Poe",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -578,7 +626,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Force",
+      "fullWord": "Edgar",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -587,7 +635,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Poem",
+      "fullWord": "Red-tailed",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -596,7 +644,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Balance",
+      "fullWord": "Raindrop",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -605,7 +653,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Water",
+      "fullWord": "Buzzard",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -614,7 +662,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Chemistry",
+      "fullWord": "Peregrine",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -623,7 +671,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Economic sciences",
+      "fullWord": "Ebony",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -632,7 +680,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Plateau",
+      "fullWord": "Owl",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -641,7 +689,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Energy",
+      "fullWord": "Traffic",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -650,7 +698,16 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Valley",
+      "fullWord": "Owd",
+      "parentWord": "Crowd",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Transit",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -659,7 +716,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Gravity",
+      "fullWord": "Kite",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -668,7 +725,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Mass",
+      "fullWord": "Roads",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -677,7 +734,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Mountain",
+      "fullWord": "Osprey",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -686,7 +743,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Notes",
+      "fullWord": "Couch",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -695,7 +752,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Plains",
+      "fullWord": "Wet",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -705,7 +762,24 @@
     }
   ],
   "allWords": [],
-  "frozenBubbles": [],
+  "frozenBubbles": [
+    {
+      "word": "Suburban",
+      "mergesNeeded": 10
+    },
+    {
+      "word": "Rural",
+      "mergesNeeded": 7
+    },
+    {
+      "word": "Channel",
+      "mergesNeeded": 5
+    },
+    {
+      "word": "Buzzard",
+      "mergesNeeded": 5
+    }
+  ],
   "burstBubbles": [],
   "keyLockBubbles": [],
   "bubbleChains": [],
@@ -713,13 +787,13 @@
   "bubbleSeparatorData": {
     "breakThreshold": 3,
     "linkedWords": [
-      "post",
-      "story",
-      "reel",
-      "chopin",
-      "bach",
-      "ear",
-      "th"
+      "beach",
+      "pa",
+      "lagoon",
+      "mango",
+      "temp",
+      "erate",
+      "lm"
     ]
   },
   "crypticBubbles": [],

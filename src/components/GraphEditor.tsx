@@ -33,7 +33,7 @@ import LevelSelectorModal from './LevelSelectorModal';
 import LoginModal from './LoginModal';
 import LevelsDashboardModal from './LevelsDashboardModal';
 import AnalyticsDashboard from './AnalyticsDashboard';
-import { Save, BookOpen, Settings, Plus, RefreshCw, CircleDashed, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2, Dumbbell, Ghost, Asterisk, Flame, Cloud, Zap } from 'lucide-react';
+import { Save, BookOpen, Settings, Plus, RefreshCw, CircleDashed, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2, Dumbbell, Ghost, Asterisk, Flame, Cloud, Rocket } from 'lucide-react';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 
@@ -98,6 +98,44 @@ const isNodeCryptic = (node: Node, crypticBubblesList: any[], edges: Edge[], nod
     }
   }
   return false;
+};
+
+const isNodeInStackPipe = (node: Node, stackPipes: any[], edges: Edge[], nodes: Node[]) => {
+  if (!stackPipes || stackPipes.length === 0) return { inPipe: false };
+  const label = String(node.data.label).toLowerCase();
+  
+  for (const pipe of stackPipes) {
+    const depth = pipe.words.findIndex((w: string) => w.toLowerCase() === label);
+    if (depth !== -1) return { inPipe: true, pipeId: pipe.pipeId, depth, total: pipe.words.length };
+  }
+  
+  if (node.data.isChunk) {
+    const parentEdge = edges.find(e => e.target === node.id);
+    if (parentEdge) {
+      const parentNode = nodes.find(n => n.id === parentEdge.source);
+      if (parentNode) {
+        const parentLabel = String(parentNode.data.label).toLowerCase();
+        for (const pipe of stackPipes) {
+          const depth = pipe.words.findIndex((w: string) => w.toLowerCase() === parentLabel);
+          if (depth !== -1) return { inPipe: true, pipeId: pipe.pipeId, depth, total: pipe.words.length };
+        }
+      }
+    }
+  } else if (!node.data.isCategory) {
+    const childEdges = edges.filter(e => e.source === node.id);
+    const chunkLabels = childEdges
+      .map(e => nodes.find(child => child.id === e.target))
+      .filter(child => child && child.data.isChunk)
+      .map(child => String(child!.data.label).toLowerCase());
+    
+    for (const cLabel of chunkLabels) {
+      for (const pipe of stackPipes) {
+        const depth = pipe.words.findIndex((w: string) => w.toLowerCase() === cLabel);
+        if (depth !== -1) return { inPipe: true, pipeId: pipe.pipeId, depth, total: pipe.words.length };
+      }
+    }
+  }
+  return { inPipe: false };
 };
 
 const isNodeFrozen = (node: Node, frozenBubblesList: any[], edges: Edge[], nodes: Node[]) => {
@@ -800,6 +838,54 @@ export default function GraphEditor() {
   }, [nodes, edges, globalDict, levels, selectedLevelName, rawLevelData, spawnQueueIds]);
 
   
+
+  const prevMechanicsRef = useRef<string>('');
+  
+  useEffect(() => {
+    const currentLinked = rawLevelData?.bubbleSeparatorData?.linkedWords || [];
+    const currentPipes = rawLevelData?.stackPipes || [];
+    const mechanicsState = JSON.stringify({ currentLinked, currentPipes });
+    
+    if (prevMechanicsRef.current && prevMechanicsRef.current !== mechanicsState && nodes.length > 0) {
+      setNodes(nds => {
+        const queueNodes = nds.filter(n => typeof n.data.globalIndex === 'number')
+                              .sort((a, b) => (a.data.globalIndex as number) - (b.data.globalIndex as number));
+        
+        queueNodes.sort((a, b) => {
+            const chainedA = isNodeChained(a, currentLinked, edges, nds);
+            const chainedB = isNodeChained(b, currentLinked, edges, nds);
+            
+            const stackPipeA = isNodeInStackPipe(a, currentPipes, edges, nds).inPipe;
+            const stackPipeB = isNodeInStackPipe(b, currentPipes, edges, nds).inPipe;
+
+            const priorityA = chainedA || stackPipeA;
+            const priorityB = chainedB || stackPipeB;
+
+            if (priorityA && !priorityB) return -1;
+            if (!priorityA && priorityB) return 1;
+            return 0;
+        });
+
+        const updates: Record<string, number> = {};
+        queueNodes.forEach((n, idx) => {
+          updates[n.id] = idx + 1;
+        });
+
+        let changed = false;
+        const newNodes = nds.map(n => {
+          if (updates[n.id] !== undefined && n.data.globalIndex !== updates[n.id]) {
+            changed = true;
+            return { ...n, data: { ...n.data, globalIndex: updates[n.id] } };
+          }
+          return n;
+        });
+
+        return changed ? newNodes : nds;
+      });
+    }
+    
+    prevMechanicsRef.current = mechanicsState;
+  }, [rawLevelData?.bubbleSeparatorData?.linkedWords, rawLevelData?.stackPipes, edges]);
 
   useEffect(() => {
     if (globalDict.length === 0 || nodes.length === 0) return;
@@ -1782,6 +1868,21 @@ export default function GraphEditor() {
         isChanged = true;
       }
 
+      if (clonedRawData.teleportBubbles) {
+        clonedRawData.teleportBubbles = clonedRawData.teleportBubbles.map((tb: any) => 
+          tb.word.toLowerCase() === oldLabel ? { ...tb, word: newLabelLower } : tb
+        );
+        isChanged = true;
+      }
+
+      if (clonedRawData.stackPipes) {
+        clonedRawData.stackPipes = clonedRawData.stackPipes.map((pipe: any) => ({
+          ...pipe,
+          words: pipe.words.map((w: string) => w.toLowerCase() === oldLabel ? newLabelLower : w)
+        }));
+        isChanged = true;
+      }
+
       if (clonedRawData.allWordEntries && Array.isArray(clonedRawData.allWordEntries)) {
         const globalIdx = oldNode.data.globalIndex;
         if (globalIdx !== undefined) {
@@ -2258,6 +2359,13 @@ export default function GraphEditor() {
             updatedRawLevelData.teleportBubbles = updatedRawLevelData.teleportBubbles.map((tb: any) => 
               tb?.word?.toLowerCase() === oldLabel ? { ...tb, word: newLabel } : tb
             );
+          }
+
+          if (updatedRawLevelData.stackPipes) {
+            updatedRawLevelData.stackPipes = updatedRawLevelData.stackPipes.map((pipe: any) => ({
+              ...pipe,
+              words: pipe.words.map((w: string) => w.toLowerCase() === oldLabel ? newLabel : w)
+            }));
           }
 
           // 5. Key Lock
@@ -3039,6 +3147,19 @@ export default function GraphEditor() {
               );
             }
 
+            if (clonedRawData.teleportBubbles) {
+              clonedRawData.teleportBubbles = clonedRawData.teleportBubbles.map((tb: any) => 
+                tb?.word?.toLowerCase() === oldLabel ? { ...tb, word: w.word } : tb
+              );
+            }
+
+            if (clonedRawData.stackPipes) {
+              clonedRawData.stackPipes = clonedRawData.stackPipes.map((pipe: any) => ({
+                ...pipe,
+                words: pipe.words.map((pw: string) => pw.toLowerCase() === oldLabel ? w.word : pw)
+              }));
+            }
+
             // 5. Key Lock Bubbles
             if (clonedRawData.keyLockBubbles) {
               clonedRawData.keyLockBubbles = clonedRawData.keyLockBubbles.map((kl: any) => ({
@@ -3120,14 +3241,20 @@ export default function GraphEditor() {
       const chainedA = getIsChained(a);
       const chainedB = getIsChained(b);
       
-      if (chainedA && !chainedB) return -1;
-      if (!chainedA && chainedB) return 1;
+      const stackPipeA = isNodeInStackPipe(a, rawLevelData?.stackPipes || [], edges, nodes).inPipe;
+      const stackPipeB = isNodeInStackPipe(b, rawLevelData?.stackPipes || [], edges, nodes).inPipe;
+
+      const priorityA = chainedA || stackPipeA;
+      const priorityB = chainedB || stackPipeB;
+
+      if (priorityA && !priorityB) return -1;
+      if (!priorityA && priorityB) return 1;
 
       const idxA = a.data.globalIndex ?? Infinity;
       const idxB = b.data.globalIndex ?? Infinity;
       return idxA - idxB;
     });
-  }, [nodes, edges]);
+  }, [nodes, edges, rawLevelData?.stackPipes, rawLevelData?.bubbleSeparatorData?.linkedWords]);
 
   const [dragOverNodeId, setDragOverNodeId] = useState<string | null>(null);
   
@@ -3649,10 +3776,18 @@ export default function GraphEditor() {
                     const nodeA = nodes.find(n => n.id === a);
                     const nodeB = nodes.find(n => n.id === b);
                     if (!nodeA || !nodeB) return 0;
+                    
                     const chainedA = isNodeChained(nodeA, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
                     const chainedB = isNodeChained(nodeB, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
-                    if (chainedA && !chainedB) return -1;
-                    if (!chainedA && chainedB) return 1;
+                    
+                    const stackPipeA = isNodeInStackPipe(nodeA, rawLevelData?.stackPipes || [], edges, nodes).inPipe;
+                    const stackPipeB = isNodeInStackPipe(nodeB, rawLevelData?.stackPipes || [], edges, nodes).inPipe;
+
+                    const priorityA = chainedA || stackPipeA;
+                    const priorityB = chainedB || stackPipeB;
+
+                    if (priorityA && !priorityB) return -1;
+                    if (!priorityA && priorityB) return 1;
                     return 0;
                   })
                 : spawnQueueIds)
@@ -3668,6 +3803,7 @@ export default function GraphEditor() {
                   const isChunk = Boolean(node.data.isChunk);
                   const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
                   const isFrozen = isNodeFrozen(node, rawLevelData?.frozenBubbles || [], edges, nodes);
+                  const { inPipe: isStackPipe, pipeId, depth: stackPipeDepth, total: stackPipeTotal } = isNodeInStackPipe(node, rawLevelData?.stackPipes || [], edges, nodes);
                   const isCycleFadeOut = isNodeCycleFadeOut(node, rawLevelData?.cycleFadeOutBubbles || [], edges, nodes);
                   const isCycleLock = isNodeCycleLock(node, rawLevelData?.cycleLockBubbles || [], edges, nodes);
                   const isSoapBubble = isNodeSoapBubble(node, rawLevelData?.soapBubbles || [], edges, nodes);
@@ -3734,10 +3870,10 @@ export default function GraphEditor() {
                         padding: '8px 12px', borderRadius: '8px', cursor: 'grab',
                         backgroundColor: selectedNodeId === nodeId 
                               ? (isDuplicate ? 'rgba(239, 68, 68, 0.4)' : (isChunk ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.1)')) 
-                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isCycleFadeOut ? 'rgba(100, 116, 139, 0.15)' : (isSoapBubble ? 'rgba(236, 72, 153, 0.15)' : (isBombCrackingBubble ? 'rgba(249, 115, 22, 0.15)' : (isTeleportBubble ? 'rgba(234, 179, 8, 0.15)' : (isFloatBubble ? 'rgba(96, 165, 250, 0.15)' : (isSpikeBubble ? 'rgba(220, 38, 38, 0.15)' : (isIceBomb ? 'rgba(56, 189, 248, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)')))))))))))))))))))),
+                              : (isDuplicate ? 'rgba(239, 68, 68, 0.3)' : (keyIndex !== -1 ? 'rgba(250, 204, 21, 0.15)' : (lockIndex !== -1 ? 'rgba(161, 161, 170, 0.15)' : (screwDriverIndex !== -1 ? 'rgba(249, 115, 22, 0.1)' : (screwLockIndex !== -1 ? 'rgba(249, 115, 22, 0.15)' : (reqLockWeight !== null ? 'rgba(249, 115, 22, 0.15)' : (isBurst ? (burstMovesRemaining <= 3 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(249, 115, 22, 0.15)') : (isCryptic ? 'rgba(192, 132, 252, 0.15)' : (isCycleLock ? 'rgba(20, 184, 166, 0.15)' : (isCycleFadeOut ? 'rgba(100, 116, 139, 0.15)' : (isSoapBubble ? 'rgba(236, 72, 153, 0.15)' : (isBombCrackingBubble ? 'rgba(249, 115, 22, 0.15)' : (isTeleportBubble ? 'rgba(234, 179, 8, 0.15)' : (isFloatBubble ? 'rgba(96, 165, 250, 0.15)' : (isSpikeBubble ? 'rgba(220, 38, 38, 0.15)' : (isIceBomb ? 'rgba(56, 189, 248, 0.15)' : (isStackPipe ? 'rgba(74, 222, 128, 0.15)' : (isFrozen ? 'rgba(56, 189, 248, 0.15)' : (isBackward ? 'rgba(168, 85, 247, 0.15)' : (isChained ? 'rgba(129, 140, 248, 0.15)' : (isChunk ? 'rgba(99,102,241,0.05)' : 'rgba(255,255,255,0.05)'))))))))))))))))))))),
                         border: selectedNodeId === nodeId 
                               ? (isDuplicate ? '1px solid rgba(239, 68, 68, 0.8)' : (isChunk ? '1px solid rgba(99,102,241,0.6)' : '1px solid rgba(255,255,255,0.4)'))
-                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.4)' : (isCycleFadeOut ? '1px solid rgba(100, 116, 139, 0.4)' : (isSoapBubble ? '1px solid rgba(236, 72, 153, 0.4)' : (isBombCrackingBubble ? '1px solid rgba(249, 115, 22, 0.4)' : (isTeleportBubble ? '1px solid rgba(234, 179, 8, 0.4)' : (isFloatBubble ? '1px solid rgba(96, 165, 250, 0.4)' : (isSpikeBubble ? '1px solid rgba(220, 38, 38, 0.4)' : (isIceBomb ? '1px solid rgba(56, 189, 248, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)')))))))))))))))))))),
+                              : (isDuplicate ? '1px solid rgba(239, 68, 68, 0.6)' : (keyIndex !== -1 ? '1px solid rgba(250, 204, 21, 0.4)' : (lockIndex !== -1 ? '1px solid rgba(161, 161, 170, 0.4)' : (screwDriverIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.4)' : (screwLockIndex !== -1 ? '1px solid rgba(249, 115, 22, 0.6)' : (reqLockWeight !== null ? '1px solid rgba(249, 115, 22, 0.6)' : (isBurst ? (burstMovesRemaining <= 3 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(249, 115, 22, 0.4)') : (isCryptic ? '1px solid rgba(192, 132, 252, 0.4)' : (isCycleLock ? '1px solid rgba(20, 184, 166, 0.4)' : (isCycleFadeOut ? '1px solid rgba(100, 116, 139, 0.4)' : (isSoapBubble ? '1px solid rgba(236, 72, 153, 0.4)' : (isBombCrackingBubble ? '1px solid rgba(249, 115, 22, 0.4)' : (isTeleportBubble ? '1px solid rgba(234, 179, 8, 0.4)' : (isFloatBubble ? '1px solid rgba(96, 165, 250, 0.4)' : (isSpikeBubble ? '1px solid rgba(220, 38, 38, 0.4)' : (isIceBomb ? '1px solid rgba(56, 189, 248, 0.4)' : (isStackPipe ? '1px solid rgba(74, 222, 128, 0.4)' : (isFrozen ? '1px solid rgba(56, 189, 248, 0.4)' : (isBackward ? '1px solid rgba(168, 85, 247, 0.4)' : (isChained ? '1px solid rgba(129, 140, 248, 0.4)' : (isChunk ? '1px solid rgba(99,102,241,0.3)' : '1px solid var(--panel-border)'))))))))))))))))))))),
                         transform: dragOverNodeId === nodeId ? 'scale(1.02)' : 'none',
                         transition: 'all 0.2s', color: selectedNodeId === nodeId ? 'white' : (isChunk ? '#a5b4fc' : 'var(--text-main)')
                       }}
@@ -3762,6 +3898,12 @@ export default function GraphEditor() {
                           )}
                           {isFrozen && (
                             <Snowflake size={12} color="#38bdf8" />
+                          )}
+                          {isStackPipe && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#4ade80' }}>
+                              <Layers size={12} />
+                              <span style={{ fontSize: '9px', fontWeight: 'bold' }}>{stackPipeDepth !== undefined ? stackPipeDepth + 1 : ''}/{stackPipeTotal}</span>
+                            </div>
                           )}
                           {isCycleLock && (
                             <RefreshCw size={12} color="#14b8a6" />
@@ -3792,7 +3934,7 @@ export default function GraphEditor() {
                           )}
                           {isTeleportBubble && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#eab308' }}>
-                              <Zap size={12} />
+                              <Rocket size={12} />
                               <span style={{ fontSize: '10px' }}>{mergesToTeleport}</span>
                             </div>
                           )}
@@ -3974,6 +4116,10 @@ export default function GraphEditor() {
             ...n.data,
             isChained: rawLevelData?.useBubbleSeparator === 1 && isNodeChained(n, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes),
             isFrozen: isNodeFrozen(n, rawLevelData?.frozenBubbles || [], edges, nodes),
+            isStackPipe: isNodeInStackPipe(n, rawLevelData?.stackPipes || [], edges, nodes).inPipe,
+            stackPipeId: isNodeInStackPipe(n, rawLevelData?.stackPipes || [], edges, nodes).pipeId,
+            stackPipeDepth: isNodeInStackPipe(n, rawLevelData?.stackPipes || [], edges, nodes).depth,
+            stackPipeTotal: isNodeInStackPipe(n, rawLevelData?.stackPipes || [], edges, nodes).total,
             isCycleFadeOut: isNodeCycleFadeOut(n, rawLevelData?.cycleFadeOutBubbles || [], edges, nodes),
             isCycleLock: isNodeCycleLock(n, rawLevelData?.cycleLockBubbles || [], edges, nodes),
             isSoapBubble: isNodeSoapBubble(n, rawLevelData?.soapBubbles || [], edges, nodes),

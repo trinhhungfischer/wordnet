@@ -30,6 +30,8 @@ export interface BoardBubbleState {
   mergesToFloat?: number;
   isTeleportBubble?: boolean;
   mergesToTeleport?: number;
+  stackPipeId?: number;
+  stackPipeDepth?: number;
 }
 
 export interface MergeStep {
@@ -165,6 +167,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
     let mergesToFloat: number | undefined;
     let isTeleportBubble = false;
     let mergesToTeleport: number | undefined;
+    let stackPipeId: number | undefined;
+    let stackPipeDepth: number | undefined;
 
     const w = displayLabel.toLowerCase();
     const currentWeight = displayLabel.split('|').length;
@@ -273,6 +277,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
         if (rem === 0) rem = teleportRule.mergesToTeleport;
         mergesToTeleport = rem;
       }
+
+      const stackPipeRule = levelData?.stackPipes?.find((p: any) => p.words.some((pw: string) => pw.toLowerCase() === w));
+      if (stackPipeRule) {
+        stackPipeId = stackPipeRule.pipeId;
+        stackPipeDepth = stackPipeRule.words.findIndex((pw: string) => pw.toLowerCase() === w);
+      }
     }
 
     let isIceBomb = false;
@@ -320,7 +330,9 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
       isFloatBubble,
       mergesToFloat,
       isTeleportBubble,
-      mergesToTeleport
+      mergesToTeleport,
+      stackPipeId,
+      stackPipeDepth
     };
   };
 
@@ -836,6 +848,27 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
        const dropTime = wordDropMove.has(w) ? wordDropMove.get(w)! : moveCount;
        const mergesDone = moveCount - dropTime;
        if (mergesDone < frozenRule.mergesNeeded) return true;
+    }
+    
+    // Stack Pipe logic
+    const stackPipeRule = levelData?.stackPipes?.find((p: any) => p.words.some((pw: string) => pw.toLowerCase() === w));
+    if (stackPipeRule) {
+      const wDepth = stackPipeRule.words.findIndex((pw: string) => pw.toLowerCase() === w);
+      let maxDepthOnBoard = -1;
+      
+      board.forEach(bid => {
+        const node = nodes.find(n => n.id === bid);
+        const displayLabel = node ? String(node.data.label) : bid.split('_')[1]?.replace(/^\[|\]$/g, '') || bid;
+        const bw = displayLabel.toLowerCase();
+        const bDepth = stackPipeRule.words.findIndex((pw: string) => pw.toLowerCase() === bw);
+        if (bDepth > maxDepthOnBoard) {
+          maxDepthOnBoard = bDepth;
+        }
+      });
+      
+      if (wDepth < maxDepthOnBoard) {
+        return true; // Not the top-most bubble, so locked
+      }
     }
     
     return false;

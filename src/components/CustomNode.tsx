@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Rocket, Radiation, Ghost, Asterisk, Flame, Cloud, Zap } from 'lucide-react';
+import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Rocket, Radiation, Ghost, Asterisk, Flame, Cloud, Zap, Layers } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
@@ -9,6 +9,9 @@ const CustomNode = ({ data, selected }: any) => {
   const isLinkedMain = data.isLinkedMain === true;
   const isLinkedChunk = data.isLinkedChunk === true;
   const isFrozen = data.isFrozen === true;
+  const isStackPipe = data.isStackPipe === true;
+  const stackPipeDepth = data.stackPipeDepth !== undefined ? data.stackPipeDepth : 0;
+  const stackPipeTotal = data.stackPipeTotal !== undefined ? data.stackPipeTotal : 0;
   const isBackward = data.isBackward === true;
   const isCrackBubble = data.isCrackBubble === true;
   const crackCountRemaining = data.crackCountRemaining !== undefined ? data.crackCountRemaining : 0;
@@ -79,6 +82,10 @@ const CustomNode = ({ data, selected }: any) => {
     bgColor = 'rgba(236, 72, 153, 0.15)';
     borderColor = '2px solid rgba(236, 72, 153, 0.8)';
     shadow = '0 0 15px rgba(236, 72, 153, 0.3)';
+  } else if (isStackPipe) {
+    bgColor = 'rgba(74, 222, 128, 0.15)';
+    borderColor = '2px solid rgba(74, 222, 128, 0.8)';
+    shadow = '0 0 15px rgba(74, 222, 128, 0.3)';
   } else if (isFrozen) {
     bgColor = 'rgba(56, 189, 248, 0.15)';
     borderColor = '2px solid rgba(56, 189, 248, 0.8)';
@@ -199,6 +206,12 @@ const CustomNode = ({ data, selected }: any) => {
         {isChained && <Link size={14} style={{ color: '#818cf8', marginLeft: '4px' }} />}
         {isImmovable && <Pin size={14} style={{ color: '#9ca3af', marginLeft: '4px' }} />}
         {isIceBomb && <Radiation size={14} style={{ color: '#38bdf8', marginLeft: '4px' }} />}
+        {isStackPipe && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#4ade80', marginLeft: '4px' }}>
+            <Layers size={14} />
+            <span style={{ fontSize: '11px', fontWeight: 'bold' }}>{stackPipeDepth + 1}/{stackPipeTotal}</span>
+          </div>
+        )}
         {isFrozen && <Snowflake size={14} style={{ color: '#38bdf8', marginLeft: '4px' }} />}
         {isCryptic && <Eye size={14} style={{ color: '#c084fc', marginLeft: '4px' }} />}
         {isCrackBubble && (
