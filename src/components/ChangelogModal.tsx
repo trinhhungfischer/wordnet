@@ -223,7 +223,7 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
       .sort((a, b) => a[0] - b[0])
       .map(([levelNum, verNum]) => ({
         level: levelNum.toString(),
-        csv: `Level ${levelNum}_v${verNum}.json`,
+        csv: `v${verNum}/Level ${levelNum}.json`,
         ver: verNum
       }));
 
