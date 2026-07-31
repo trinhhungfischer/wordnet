@@ -3842,7 +3842,7 @@ export default function GraphEditor() {
                   const isChunk = Boolean(node.data.isChunk);
                   const isChained = isNodeChained(node, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
                   const isFrozen = isNodeFrozen(node, rawLevelData?.frozenBubbles || [], edges, nodes);
-                  const { inPipe: isStackPipe, pipeId, depth: stackPipeDepth, total: stackPipeTotal } = isNodeInStackPipe(node, rawLevelData?.stackPipes || [], edges, nodes);
+                  const { inPipe: isStackPipe, depth: stackPipeDepth, total: stackPipeTotal } = isNodeInStackPipe(node, rawLevelData?.stackPipes || [], edges, nodes);
                   const isCycleFadeOut = isNodeCycleFadeOut(node, rawLevelData?.cycleFadeOutBubbles || [], edges, nodes);
                   const isCycleLock = isNodeCycleLock(node, rawLevelData?.cycleLockBubbles || [], edges, nodes);
                   const isSoapBubble = isNodeSoapBubble(node, rawLevelData?.soapBubbles || [], edges, nodes);
