@@ -54,7 +54,7 @@ const dictionaryApiPlugin = () => ({
           
           const files = fs.readdirSync(targetPath);
           const levelNames = files
-            .filter(f => f.endsWith('.json') && f !== 'index.json')
+            .filter(f => f.endsWith('.json') && f.startsWith('Level '))
             .map(f => f.replace('.json', ''));
             
           levelNames.sort((a, b) => {
@@ -511,7 +511,7 @@ if ($f.ShowDialog($form) -eq [System.Windows.Forms.DialogResult]::OK) {
         try {
           const files = fs.readdirSync(resolvedPath);
           const levelNames = files
-            .filter(f => f.endsWith('.json') && f !== 'index.json')
+            .filter(f => f.endsWith('.json') && f.startsWith('Level '))
             .map(f => f.replace(/\.json$/, ''));
 
           // Natural sorting
@@ -636,18 +636,7 @@ if ($f.ShowDialog($form) -eq [System.Windows.Forms.DialogResult]::OK) {
             const filePath = path.join(resolvedPath, `${name}.json`);
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
             
-            // Also write index.json if we are in public/levels or public/real_levels to maintain compatibility
-            if (levelsDir === 'public/levels' || levelsDir === 'public/real_levels') {
-              try {
-                const files = fs.readdirSync(resolvedPath);
-                const levelNames = files
-                  .filter(f => f.endsWith('.json') && f !== 'index.json')
-                  .map(f => f.replace(/\.json$/, ''))
-                  .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
-                
-                fs.writeFileSync(path.join(resolvedPath, 'index.json'), JSON.stringify(levelNames, null, 2), 'utf-8');
-              } catch (e) {}
-            }
+            // No longer write index.json to maintain compatibility since we read Level files directly
 
             return sendJson({ success: true, message: `Level ${name} saved successfully` });
           } catch (e) {

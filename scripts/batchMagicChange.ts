@@ -283,14 +283,14 @@ const generateNewBranch = (
   }
 
   let alignedWordsToImport: any[] = new Array(numRequired);
-  let oldSubcatsLower = (reqSig.oldSubcatNames || []).map((name: string) => name.toLowerCase());
+  let oldSubcatsLower = (reqSig.oldSubcatNames || []).map((name: string) => String(name).toLowerCase());
   let forcedIdx = 0;
   let otherIdx = 0;
   let forcedUnique = uniqueWords.slice(0, chosenSubcategories.length);
   let otherUnique = uniqueWords.slice(chosenSubcategories.length);
 
   for (let i = 0; i < numRequired; i++) {
-     let oldW = reqSig.oldWords && reqSig.oldWords[i] ? reqSig.oldWords[i].toLowerCase() : "";
+     let oldW = reqSig.oldWords && reqSig.oldWords[i] != null ? String(reqSig.oldWords[i]).toLowerCase() : "";
      let isOldSubcat = oldSubcatsLower.includes(oldW);
      if (isOldSubcat && forcedIdx < forcedUnique.length) {
          alignedWordsToImport[i] = forcedUnique[forcedIdx++];
@@ -313,7 +313,7 @@ const generateNewBranch = (
     let oldEntry = null;
     let oldChunks: any[] = [];
     if (oldWordStr) {
-      const oldWordLower = oldWordStr.toLowerCase();
+      const oldWordLower = String(oldWordStr).toLowerCase();
       wordMapping.set(oldWordLower, w.word.toLowerCase());
       oldEntry = oldAllWordEntries?.find((e: any) => !e.parentWord && String(e.fullWord).toLowerCase() === oldWordLower);
       oldChunks = oldAllWordEntries?.filter((e: any) => e.parentWord && String(e.parentWord).toLowerCase() === oldWordLower) || [];
@@ -362,8 +362,8 @@ const generateNewBranch = (
         outWordEntries.push(wordEntry);
       } else {
         if (oldChunks.length > 0) {
-          const oldC1 = oldChunks[0]?.fullWord.toLowerCase();
-          const oldC2 = oldChunks[1]?.fullWord.toLowerCase();
+          const oldC1 = oldChunks[0]?.fullWord ? String(oldChunks[0].fullWord).toLowerCase() : undefined;
+          const oldC2 = oldChunks[1]?.fullWord ? String(oldChunks[1].fullWord).toLowerCase() : undefined;
           if (oldC1 && chunks.length > 0) chunkMapping.set(oldC1, chunks[0].toLowerCase());
           if (oldC2 && chunks.length > 1) chunkMapping.set(oldC2, chunks[1].toLowerCase());
         }
@@ -486,9 +486,9 @@ for (let i = startLevel; i <= endLevel; i++) {
            const c = levelData.categories.find((x: any) => x.category === catName);
            if (c) {
               newCategories.push(c);
-              const subcatNames = levelData.categories.filter((x: any) => x.parentCategory).map((x: any) => x.category.toLowerCase());
+              const subcatNames = levelData.categories.filter((x: any) => x.parentCategory).map((x: any) => String(x.category).toLowerCase());
               c.words.forEach((w: any) => {
-                  const isSubcat = subcatNames.includes(w.fullWord.toLowerCase());
+                  const isSubcat = subcatNames.includes(String(w.fullWord).toLowerCase());
                   if (!isSubcat && !newAllWordEntries.some(e => String(e.fullWord) === String(w.fullWord))) {
                       newAllWordEntries.push(w);
                   }
@@ -561,7 +561,7 @@ for (let i = startLevel; i <= endLevel; i++) {
   // Remap mechanics (frozenBubbles, burstBubbles, etc.)
   const remapWordOrChunk = (w: string) => {
     if (!w) return w;
-    const lower = w.toLowerCase();
+    const lower = String(w).toLowerCase();
     if (wordMapping.has(lower)) {
        const newWordLower = wordMapping.get(lower)!;
        return newWordLower.charAt(0).toUpperCase() + newWordLower.slice(1);
@@ -597,7 +597,7 @@ for (let i = startLevel; i <= endLevel; i++) {
   }
   if (levelData.crypticBubbles) {
     levelData.crypticBubbles = levelData.crypticBubbles.map((cb: any) => {
-      const lowerLabel = cb.word.toLowerCase();
+      const lowerLabel = String(cb.word).toLowerCase();
       if (wordMapping.has(lowerLabel)) {
         const newWordLower = wordMapping.get(lowerLabel)!;
         const newWord = newWordLower.charAt(0).toUpperCase() + newWordLower.slice(1);

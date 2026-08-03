@@ -786,17 +786,10 @@ export default function GraphEditor() {
   const fetchLevelsList = async () => {
     if (dirHandle) return;
     try {
-      const res = await fetch(`/levels_index.json?t=${Date.now()}`);
-      if (res.ok) {
-        const data = await res.json();
-        setLevels(data);
-        return;
-      }
-    } catch (err) {}
-    try {
       const res = await fetch(`/api/list-levels?dir=${levelDir}`);
       if (res.ok) {
-        const data = await res.json();
+        let data = await res.json();
+        data = data.filter((name: string) => name.startsWith('Level '));
         setLevels(data);
       }
     } catch (err) {

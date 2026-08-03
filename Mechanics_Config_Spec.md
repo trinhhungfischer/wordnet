@@ -454,7 +454,7 @@ Cấu trúc đề xuất:
 
 **Luật chơi:**
 
-- Nếu trải qua `mergesToFloat` lần ghép đúng trên màn chơi mà quả bóng này **không bị merge**, nó sẽ bị đẩy xuống dưới cùng của Drop Queue. Có thể thay đổi thuật toán giải của level.
+- Nếu trải qua `mergesToFloat` lần ghép đúng trên màn chơi mà quả bóng này **không bị merge**, nó sẽ bị đẩy xuống dưới cùng của Drop Queue. Một quả bóng khác rơi xuống thay thế làm thay đổi thuật toán giải của level.
 - **Visual:** Kéo quả bóng bay ngược lên trên.
 
 ---
