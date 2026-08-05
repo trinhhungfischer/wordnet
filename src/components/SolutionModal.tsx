@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed, Asterisk, Flame, Cloud, Rocket, Layers, Maximize } from 'lucide-react';
+import { X, Magnet, Link as LinkIcon, Snowflake, Lock, Key, Bomb, ArrowLeftRight, RefreshCw, Pin, Timer, Wrench, PenTool, Calculator, ArrowRight, Zap, Target, LayoutGrid, Dumbbell, Radiation, CircleDashed, Asterisk, Flame, Cloud, Rocket, Layers, Maximize, CheckCircle2, AlertCircle } from 'lucide-react';
 import type { Node, Edge } from '@xyflow/react';
 import { calculateSolution } from '../lib/solutionCalculator';
 
@@ -28,6 +28,12 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
   const solution = useMemo(() => {
     return calculateSolution(nodes, edges, levelData, spawnQueueIds);
   }, [nodes, edges, levelData, spawnQueueIds]);
+
+  const isSolvable = useMemo(() => {
+    if (!solution || !solution.steps || solution.steps.length === 0) return false;
+    const finalStep = solution.steps[solution.steps.length - 1];
+    return finalStep.boardState.length === 0 || !!finalStep.text?.includes('Level Complete');
+  }, [solution]);
 
   const [selectedStepIndex, setSelectedStepIndex] = useState<number | null>(null);
   const [boardSortMode, setBoardSortMode] = useState<'default' | 'name' | 'family'>('default');
@@ -164,8 +170,19 @@ export default function SolutionModal({ isOpen, onClose, nodes, edges, levelData
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
               {/* Moves & Score */}
               <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '12px', border: '1px solid var(--panel-border)' }}>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                  Performance Metrics
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Performance Metrics
+                  </div>
+                  {isSolvable ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#22c55e', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <CheckCircle2 size={14} /> Solvable
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#ef4444', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <AlertCircle size={14} /> Not Solvable
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
