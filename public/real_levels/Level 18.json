@@ -28,8 +28,8 @@
       "icon": null,
       "words": [
         {
-          "fullWord": "Album",
-          "icon": null,
+          "fullWord": "Needle",
+          "icon": "needle",
           "IsCracked": 0,
           "crackBreakNum": 0,
           "IsLinked": 0,
@@ -52,7 +52,46 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Journal",
+          "fullWord": "Memo",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Needle",
+      "parentCategory": "Record",
+      "icon": "needle",
+      "words": [
+        {
+          "fullWord": "Thread",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Compass",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Sewing",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Thin",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -67,8 +106,8 @@
       "icon": null,
       "words": [
         {
-          "fullWord": "Volcano",
-          "icon": null,
+          "fullWord": "Precious Stones",
+          "icon": "precious stones",
           "IsCracked": 0,
           "crackBreakNum": 0,
           "IsLinked": 0,
@@ -101,12 +140,51 @@
       ]
     },
     {
+      "category": "Precious stones",
+      "parentCategory": "Geology",
+      "icon": "precious stones",
+      "words": [
+        {
+          "fullWord": "Diamond",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Ruby",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Jade",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Emerald",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
       "category": "Mineral",
       "parentCategory": "Geology",
       "icon": null,
       "words": [
         {
-          "fullWord": "Mica",
+          "fullWord": "Quartz",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -179,12 +257,12 @@
       ]
     },
     {
-      "category": "Clothes",
+      "category": "Farming machinery",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Boots",
+          "fullWord": "Harvester",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -192,7 +270,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Hat",
+          "fullWord": "Plow",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -200,7 +278,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Pants",
+          "fullWord": "Mower",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -208,7 +286,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Shirt",
+          "fullWord": "Seeder",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -270,7 +348,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Bear",
+          "fullWord": "Rabbit",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -297,7 +375,7 @@
     },
     {
       "category": "Deer",
-      "parentCategory": null,
+      "parentCategory": "Forest animals",
       "icon": null,
       "words": [
         {
@@ -333,15 +411,72 @@
           "linkedChunkWords": []
         }
       ]
+    },
+    {
+      "category": "Rabbit",
+      "parentCategory": "Forest animals",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Burrow",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Carrot",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Hop",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Long ear",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
     }
   ],
-  "maxBubblesInScene": 20,
-  "moveLimit": 40,
+  "maxBubblesInScene": 24,
+  "moveLimit": 45,
   "randomSeed": 0,
   "levelDifficulty": 1,
   "allWordEntries": [
     {
-      "fullWord": "Album",
+      "fullWord": "Thr",
+      "parentWord": "Thread",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ead",
+      "parentWord": "Thread",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Compass",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -350,7 +485,16 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Mica",
+      "fullWord": "Sewing",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Thin",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -386,7 +530,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Journal",
+      "fullWord": "Memo",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -431,7 +575,61 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Bear",
+      "fullWord": "Burrow",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Carrot",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Hop",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Long ear",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Diamond",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Ruby",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Jade",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -476,6 +674,15 @@
       "linkedChunkWords": []
     },
     {
+      "fullWord": "Emerald",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
       "fullWord": "Nose",
       "parentWord": null,
       "icon": null,
@@ -494,7 +701,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Boots",
+      "fullWord": "Plow",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -503,8 +710,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Pan",
-      "parentWord": "Pants",
+      "fullWord": "See",
+      "parentWord": "Seeder",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -521,7 +728,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Hat",
+      "fullWord": "Harvester",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -530,7 +737,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Volcano",
+      "fullWord": "Quartz",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -548,7 +755,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Shirt",
+      "fullWord": "Mower",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -566,8 +773,8 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Ts",
-      "parentWord": "Pants",
+      "fullWord": "Der",
+      "parentWord": "Seeder",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,

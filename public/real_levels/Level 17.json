@@ -23,12 +23,12 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Reading",
-      "parentCategory": "Education",
+      "category": "Media",
+      "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Book",
+          "fullWord": "Magazine",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -36,7 +36,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Novel",
+          "fullWord": "Newspaper",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -44,7 +44,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Story",
+          "fullWord": "Radio",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -52,7 +52,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Poem",
+          "fullWord": "Television",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -141,7 +141,7 @@
     },
     {
       "category": "Asia",
-      "parentCategory": null,
+      "parentCategory": "Continents",
       "icon": null,
       "words": [
         {
@@ -184,7 +184,7 @@
       "icon": null,
       "words": [
         {
-          "fullWord": "School",
+          "fullWord": "Math",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -192,7 +192,15 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Art",
+          "fullWord": "Reading",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Writing",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -206,20 +214,12 @@
           "crackBreakNum": 0,
           "IsLinked": 0,
           "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Math",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
         }
       ]
     },
     {
       "category": "Math",
-      "parentCategory": null,
+      "parentCategory": "Education",
       "icon": null,
       "words": [
         {
@@ -248,6 +248,84 @@
         },
         {
           "fullWord": "Subtraction",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Reading",
+      "parentCategory": "Education",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Chapter",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Novel",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Poem",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Story",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Writing",
+      "parentCategory": "Education",
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Marker",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Notebook",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Paper",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Pen",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -335,8 +413,8 @@
       ]
     }
   ],
-  "maxBubblesInScene": 20,
-  "moveLimit": 39,
+  "maxBubblesInScene": 24,
+  "moveLimit": 40,
   "randomSeed": 0,
   "levelDifficulty": 2,
   "allWordEntries": [
@@ -386,7 +464,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "School",
+      "fullWord": "Chapter",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -395,7 +473,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Art",
+      "fullWord": "Novel",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -404,7 +482,61 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Book",
+      "fullWord": "Poem",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Story",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Marker",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Notebook",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Paper",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Pen",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Magazine",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -431,7 +563,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Poem",
+      "fullWord": "Television",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -485,7 +617,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Novel",
+      "fullWord": "Newspaper",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -494,7 +626,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Story",
+      "fullWord": "Radio",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,

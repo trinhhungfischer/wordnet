@@ -141,7 +141,7 @@
     },
     {
       "category": "Nest",
-      "parentCategory": null,
+      "parentCategory": "Tree",
       "icon": null,
       "words": [
         {
@@ -184,22 +184,6 @@
       "icon": null,
       "words": [
         {
-          "fullWord": "Bake",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "Cake",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
           "fullWord": "Bread",
           "icon": "bread",
           "IsCracked": 0,
@@ -210,6 +194,100 @@
         {
           "fullWord": "Flour",
           "icon": "flour",
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Yeast",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Oven",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Bread",
+      "parentCategory": "Bakery",
+      "icon": "bread",
+      "words": [
+        {
+          "fullWord": "Brioche",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Focaccia",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Knead",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Pumpernickel",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Flour",
+      "parentCategory": "Bakery",
+      "icon": "flour",
+      "words": [
+        {
+          "fullWord": "Oat",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Barley",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Wheat",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Rye",
+          "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
           "IsLinked": 0,
@@ -296,8 +374,8 @@
       ]
     }
   ],
-  "maxBubblesInScene": 20,
-  "moveLimit": 44,
+  "maxBubblesInScene": 24,
+  "moveLimit": 48,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -500,7 +578,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Bake",
+      "fullWord": "Focaccia",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -509,7 +587,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Cake",
+      "fullWord": "Brioche",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -536,7 +614,7 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Bread",
+      "fullWord": "Yeast",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -554,7 +632,25 @@
       "linkedChunkWords": []
     },
     {
-      "fullWord": "Flour",
+      "fullWord": "Oat",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Knead",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Barley",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,
@@ -564,6 +660,42 @@
     },
     {
       "fullWord": "Feather",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Pumpernickel",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Oven",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Wheat",
+      "parentWord": null,
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": []
+    },
+    {
+      "fullWord": "Rye",
       "parentWord": null,
       "icon": null,
       "IsCracked": 0,

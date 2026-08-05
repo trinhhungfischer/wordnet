@@ -23,12 +23,12 @@
   "m_EditorClassIdentifier": null,
   "categories": [
     {
-      "category": "Insects",
+      "category": "Polygons",
       "parentCategory": null,
       "icon": null,
       "words": [
         {
-          "fullWord": "Ant",
+          "fullWord": "Hexagon",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -36,7 +36,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Bee",
+          "fullWord": "Octagon",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -44,7 +44,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Butterfly",
+          "fullWord": "Square",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -52,7 +52,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Fly",
+          "fullWord": "Pentagon",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -114,7 +114,7 @@
           "linkedChunkWords": []
         },
         {
-          "fullWord": "Strawberry",
+          "fullWord": "Cherry",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -145,8 +145,8 @@
       "icon": null,
       "words": [
         {
-          "fullWord": "Foosball",
-          "icon": null,
+          "fullWord": "8-ball",
+          "icon": "8-ball",
           "IsCracked": 0,
           "crackBreakNum": 0,
           "IsLinked": 0,
@@ -170,6 +170,45 @@
         },
         {
           "fullWord": "Pinball",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "8-ball",
+      "parentCategory": "Pub games",
+      "icon": "8-ball",
+      "words": [
+        {
+          "fullWord": "Break",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Cue",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Pocket",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Rack",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -209,6 +248,84 @@
         },
         {
           "fullWord": "Garage",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Software issues",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Bugs",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Crashes",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Errors",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Glitches",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
+    },
+    {
+      "category": "Record",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "Diary",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Album",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Groove",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Journal",
           "icon": null,
           "IsCracked": 0,
           "crackBreakNum": 0,
@@ -335,8 +452,8 @@
       ]
     }
   ],
-  "maxBubblesInScene": 20,
-  "moveLimit": 45,
+  "maxBubblesInScene": 26,
+  "moveLimit": 47,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -350,16 +467,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Strawberry",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Foosball",
+      "fullWord": "Cherry",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -503,6 +611,51 @@
       "linkedChunkWords": []
     },
     {
+      "fullWord": "Bugs",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Crashes",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Errors",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Glitches",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Break",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "June",
       "icon": null,
       "IsCracked": 0,
@@ -512,7 +665,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Ant",
+      "fullWord": "Hexagon",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -530,7 +683,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Fly",
+      "fullWord": "Pentagon",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Diary",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -548,7 +710,34 @@
       "linkedChunkWords": []
     },
     {
+      "fullWord": "Journal",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Index",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Groove",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Rack",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -566,6 +755,15 @@
       "parentWord": null
     },
     {
+      "fullWord": "Album",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "August",
       "icon": null,
       "IsCracked": 0,
@@ -575,7 +773,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Bee",
+      "fullWord": "Octagon",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Pocket",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -585,6 +792,15 @@
     },
     {
       "fullWord": "Middle",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Cue",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -611,7 +827,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Butterfly",
+      "fullWord": "Square",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,

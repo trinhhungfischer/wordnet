@@ -296,45 +296,6 @@
       ]
     },
     {
-      "category": "Can be folded",
-      "parentCategory": null,
-      "icon": null,
-      "words": [
-        {
-          "fullWord": "map",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "poker",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "business",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        },
-        {
-          "fullWord": "tent",
-          "icon": null,
-          "IsCracked": 0,
-          "crackBreakNum": 0,
-          "IsLinked": 0,
-          "linkedChunkWords": []
-        }
-      ]
-    },
-    {
       "category": "Organs",
       "parentCategory": null,
       "icon": null,
@@ -567,10 +528,49 @@
           "linkedChunkWords": []
         }
       ]
+    },
+    {
+      "category": "Areas of living",
+      "parentCategory": null,
+      "icon": null,
+      "words": [
+        {
+          "fullWord": "City",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "County",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "State",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        },
+        {
+          "fullWord": "Town",
+          "icon": null,
+          "IsCracked": 0,
+          "crackBreakNum": 0,
+          "IsLinked": 0,
+          "linkedChunkWords": []
+        }
+      ]
     }
   ],
   "maxBubblesInScene": 24,
-  "moveLimit": 49,
+  "moveLimit": 52,
   "randomSeed": 0,
   "levelDifficulty": 0,
   "allWordEntries": [
@@ -809,13 +809,13 @@
       "parentWord": null
     },
     {
-      "fullWord": "Tent",
+      "fullWord": "City",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
       "fullWord": "Surveillance",
@@ -872,22 +872,22 @@
       "parentWord": null
     },
     {
-      "fullWord": "Poker",
+      "fullWord": "County",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
-      "fullWord": "Business",
+      "fullWord": "State",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
       "fullWord": "Infiltration",
@@ -1061,13 +1061,13 @@
       "parentWord": null
     },
     {
-      "fullWord": "Map",
+      "fullWord": "Town",
+      "parentWord": null,
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
       "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
+      "linkedChunkWords": []
     },
     {
       "fullWord": "Disperse",
@@ -1129,12 +1129,12 @@
       ]
     },
     {
-      "word": "Tent",
+      "word": "city",
       "revealAtMerge": [
-        5,
+        3,
         1,
-        1,
-        6
+        2,
+        4
       ]
     },
     {
