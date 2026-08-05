@@ -765,13 +765,13 @@ export default function GraphEditor() {
   useEffect(() => {
     const handleNavKeys = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowLeft') {
+      if (e.shiftKey && e.key === 'ArrowLeft') {
         e.preventDefault();
         if (selectedLevelName && levels.length > 0) {
           const idx = levels.indexOf(selectedLevelName);
           if (idx > 0) loadLevel(levels[idx - 1]);
         }
-      } else if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowRight') {
+      } else if (e.shiftKey && e.key === 'ArrowRight') {
         e.preventDefault();
         if (selectedLevelName && levels.length > 0) {
           const idx = levels.indexOf(selectedLevelName);
