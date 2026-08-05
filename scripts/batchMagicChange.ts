@@ -15,6 +15,7 @@ let minPop = 0;
 let targetProperNoun = -1; // -1 means auto-calculate from old tree
 let inDir = '../level_configs';
 let outDir = '../level_configs';
+let lang = 'en';
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--start' && args[i + 1]) startLevel = parseInt(args[++i]);
@@ -23,6 +24,7 @@ for (let i = 0; i < args.length; i++) {
   else if (args[i] === '--targetProperNoun' && args[i + 1]) targetProperNoun = parseFloat(args[++i]);
   else if (args[i] === '--inDir' && args[i + 1]) inDir = args[++i];
   else if (args[i] === '--outDir' && args[i + 1]) outDir = args[++i];
+  else if (args[i] === '--lang' && args[i + 1]) lang = args[++i];
 }
 
 console.log(`Starting Batch Magic Change from Level ${startLevel} to ${endLevel}`);
@@ -37,10 +39,11 @@ if (!fs.existsSync(outputConfigsDir)) {
   fs.mkdirSync(outputConfigsDir, { recursive: true });
 }
 
-const dictionaryPath = path.join(__dirname, '../public/global_dictionary.json');
+const dictName = lang === 'en' ? 'global_dictionary.json' : `global_dictionary_${lang}.json`;
+const dictionaryPath = path.join(__dirname, `../public/${dictName}`);
 
 // Load Dictionary
-console.log('Loading global dictionary...');
+console.log(`Loading dictionary: ${dictName}...`);
 const globalDict = JSON.parse(fs.readFileSync(dictionaryPath, 'utf8'));
 
 // --- GLOBAL MEMORY ---
@@ -83,10 +86,11 @@ const isDuplicateRoot = (root: string, seenRoots: Set<string>) => {
 
 const getTreeSig = (catName: string, allCats: any[]): any => {
   const c = allCats.find((x: any) => x.category === catName);
-  if (!c) return { numWords: 0, subcats: [], oldWords: [], oldHasIcon: false, oldSubcatNames: [] };
+  if (!c) return { numWords: 0, subcats: [], oldWords: [], oldHasIcon: false, oldSubcatNames: [], wordLengths: [] };
   const subcats = allCats.filter((x: any) => x.parentCategory === catName);
   const subSig = subcats.map((x: any) => getTreeSig(x.category, allCats));
-  return { numWords: c.words.length, subcats: subSig, oldWords: c.words.map((w: any) => w.fullWord), oldHasIcon: !!c.icon, oldSubcatNames: subcats.map((x: any) => x.category) };
+  const wordLengths = c.words.map((w: any) => w.fullWord.length);
+  return { numWords: c.words.length, subcats: subSig, oldWords: c.words.map((w: any) => w.fullWord), oldHasIcon: !!c.icon, oldSubcatNames: subcats.map((x: any) => x.category), wordLengths: wordLengths };
 };
 
 const dictSigCache = new Map<string, any>();
@@ -96,17 +100,30 @@ const getDictSig = (catName: string): any => {
 
   const entry = globalDict.find((e: any) => e.name.toLowerCase() === lowerName);
   if (!entry) {
-    dictSigCache.set(lowerName, { numWords: 0, subcats: [] });
+    dictSigCache.set(lowerName, { name: catName, numWords: 0, subcats: [] });
     return dictSigCache.get(lowerName);
   }
   const subSig = entry.subcategories.map((sub: string) => getDictSig(sub));
-  const result = { numWords: entry.words.length, subcats: subSig };
+  const result = { name: entry.name, numWords: entry.words.length, subcats: subSig };
   dictSigCache.set(lowerName, result);
   return result;
 };
 
 const isFulfilled = (req: any, avail: any): boolean => {
   if (avail.numWords < req.numWords) return false;
+  
+  if (req.wordLengths && req.wordLengths.length > 0) {
+    const entry = globalDict.find((e: any) => e.name.toLowerCase() === avail.name.toLowerCase());
+    if (!entry) return false;
+    const availLengths = entry.words.map((w: any) => w.word.length);
+    let availCopy = [...availLengths];
+    for (const reqLen of req.wordLengths) {
+      const idx = availCopy.indexOf(reqLen);
+      if (idx === -1) return false;
+      availCopy.splice(idx, 1);
+    }
+  }
+
   let availSubs = [...avail.subcats];
   for (const rSub of req.subcats) {
     const matchIdx = availSubs.findIndex(aSub => isFulfilled(rSub, aSub));
@@ -186,119 +203,55 @@ const generateNewBranch = (
     }
   });
 
+  let requiredLengths = [...(reqSig.wordLengths || [])];
+  
   let forcedWords = entry.words.filter((w: any) => 
     chosenSubcategories.some((sub: string) => sub.toLowerCase() === w.word.toLowerCase())
   );
+  
+  for (const fw of forcedWords) {
+      const idx = requiredLengths.indexOf(fw.word.length);
+      if (idx !== -1) requiredLengths.splice(idx, 1);
+  }
+
   let otherWords = entry.words.filter((w: any) => 
     !chosenSubcategories.some((sub: string) => sub.toLowerCase() === w.word.toLowerCase())
   );
 
-  otherWords.sort(() => Math.random() - 0.5);
-
-  // Sort logic
-  const wantsProper = targetProperNoun !== -1 ? targetProperNoun : autoProperRatio;
+  let selectedOtherWords: any[] = [];
+  otherWords.sort(() => Math.random() - 0.5); 
   
-  otherWords.sort((a: any, b: any) => {
-    const aPop = a.popularity || 50;
-    const bPop = b.popularity || 50;
-    const aMet = aPop >= minPop ? 1 : 0;
-    const bMet = bPop >= minPop ? 1 : 0;
-    if (aMet !== bMet) return bMet - aMet; // minPop first
-
-    // History penalty across levels (lower is better)
-    const aHist = getWordHistoryPenalty(getRoot(a.word));
-    const bHist = getWordHistoryPenalty(getRoot(b.word));
-    if (aHist !== bHist) return aHist - bHist;
-
-    const aProper = hasProperNoun(a.word) ? 1 : 0;
-    const bProper = hasProperNoun(b.word) ? 1 : 0;
-    
-    const wProp = wantsProper >= 0.5 ? 1 : 0;
-    const aProperScore = Math.abs(aProper - wProp);
-    const bProperScore = Math.abs(bProper - wProp);
-    
-    if (aProperScore !== bProperScore) return aProperScore - bProperScore; // lower is better
-    return Math.abs(aPop - targetPop) - Math.abs(bPop - targetPop);
-  });
-
-  const anchor = otherWords[0];
-  const anchorPop = anchor?.popularity || 0;
-
-  if (anchor) {
-    otherWords.sort((a: any, b: any) => {
-      if (a === anchor) return -1;
-      if (b === anchor) return 1;
-
-      const aMet = (a.popularity || 0) >= minPop ? 1 : 0;
-      const bMet = (b.popularity || 0) >= minPop ? 1 : 0;
-      if (aMet !== bMet) return bMet - aMet;
-
-      const aHist = getWordHistoryPenalty(getRoot(a.word));
-      const bHist = getWordHistoryPenalty(getRoot(b.word));
-      if (aHist !== bHist) return aHist - bHist;
-
-      return Math.abs((a.popularity || 0) - anchorPop) - Math.abs((b.popularity || 0) - anchorPop);
-    });
-  }
-
-  // Duplicate root filtering
-  const uniqueWords: any[] = [];
-  const duplicateWords: any[] = [];
-  const tempSeenRoots = new Set<string>(magicChangeRoots);
-
-  for (const w of forcedWords) {
-    const root = getRoot(w.word);
-    tempSeenRoots.add(root);
-    uniqueWords.push(w);
-  }
-
-  for (const w of otherWords) {
-    const root = getRoot(w.word);
-    let isDuplicate = isDuplicateRoot(root, tempSeenRoots);
-
-    if (!isDuplicate) {
-      tempSeenRoots.add(root);
-      uniqueWords.push(w);
-    } else {
-      duplicateWords.push(w);
-    }
-  }
-
-  const numRequired = reqSig.numWords;
-  let retries = 0;
-  while (uniqueWords.length < numRequired && retries < 1000) {
-      retries++;
-      let randomCat = globalDict[Math.floor(Math.random() * globalDict.length)];
-      if (!randomCat.words || randomCat.words.length === 0) continue;
-      let randomWord = randomCat.words[Math.floor(Math.random() * randomCat.words.length)];
-      let r = getRoot(randomWord.word);
-      if (!isDuplicateRoot(r, tempSeenRoots)) {
-          tempSeenRoots.add(r);
-          uniqueWords.push(randomWord);
+  let tempReqLengths = [...requiredLengths];
+  for (let reqLen of tempReqLengths) {
+      let matchIdx = otherWords.findIndex((w: any) => w.word.length === reqLen);
+      if (matchIdx !== -1) {
+          selectedOtherWords.push(otherWords[matchIdx]);
+          otherWords.splice(matchIdx, 1);
       }
   }
 
-  while (uniqueWords.length < numRequired && duplicateWords.length > 0) {
-    uniqueWords.push(duplicateWords.shift());
-  }
+  let uniqueWords = [...forcedWords, ...selectedOtherWords];
 
+  let numRequired = reqSig.numWords;
   let alignedWordsToImport: any[] = new Array(numRequired);
-  let oldSubcatsLower = (reqSig.oldSubcatNames || []).map((name: string) => String(name).toLowerCase());
-  let forcedIdx = 0;
-  let otherIdx = 0;
-  let forcedUnique = uniqueWords.slice(0, chosenSubcategories.length);
-  let otherUnique = uniqueWords.slice(chosenSubcategories.length);
-
+  let oldWords = reqSig.oldWords || [];
+  let availableWords = [...uniqueWords];
+  
   for (let i = 0; i < numRequired; i++) {
-     let oldW = reqSig.oldWords && reqSig.oldWords[i] != null ? String(reqSig.oldWords[i]).toLowerCase() : "";
-     let isOldSubcat = oldSubcatsLower.includes(oldW);
-     if (isOldSubcat && forcedIdx < forcedUnique.length) {
-         alignedWordsToImport[i] = forcedUnique[forcedIdx++];
-     } else if (otherIdx < otherUnique.length) {
-         alignedWordsToImport[i] = otherUnique[otherIdx++];
-     } else {
-         alignedWordsToImport[i] = uniqueWords[0];
+     let expectedLength = oldWords[i] ? String(oldWords[i]).length : -1;
+     if (expectedLength !== -1) {
+         let matchIdx = availableWords.findIndex(w => w.word.length === expectedLength);
+         if (matchIdx !== -1) {
+             alignedWordsToImport[i] = availableWords[matchIdx];
+             availableWords.splice(matchIdx, 1);
+         }
      }
+  }
+  
+  for (let i = 0; i < numRequired; i++) {
+      if (!alignedWordsToImport[i]) {
+          alignedWordsToImport[i] = availableWords.shift() || uniqueWords[0];
+      }
   }
 
   alignedWordsToImport.forEach((w: any, index: number) => {
@@ -595,7 +548,7 @@ for (let i = startLevel; i <= endLevel; i++) {
       linkList: bc.linkList ? bc.linkList.map((ll: any) => ({ ...ll, linkedWord: remapWordOrChunk(ll.linkedWord) })) : []
     }));
   }
-  if (levelData.crypticBubbles) {
+  if (levelData.crypticBubbles && (lang === 'en' || lang === 'vi')) {
     levelData.crypticBubbles = levelData.crypticBubbles.map((cb: any) => {
       const lowerLabel = String(cb.word).toLowerCase();
       if (wordMapping.has(lowerLabel)) {
@@ -611,6 +564,8 @@ for (let i = startLevel; i <= endLevel; i++) {
       }
       return cb;
     });
+  } else if (lang === 'ko' || lang === 'ja') {
+    levelData.crypticBubbles = []; // Remove cryptic logic for these languages
   }
   if (levelData.screwLockBubbles) {
     levelData.screwLockBubbles = levelData.screwLockBubbles.map((sl: any) => ({

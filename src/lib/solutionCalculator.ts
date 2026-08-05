@@ -987,6 +987,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                    const dropTime = wordDropMove.get(cwLabel) || moveCount;
                    score = Math.max(score, 100 - (bc.mergeRemain - (moveCount - dropTime)) * 5);
                 }
+                const fb = levelData?.floatBubbles?.find((b: any) => b.word.toLowerCase() === cwLabel);
+                if (fb) {
+                   const dropTime = wordDropMove.get(cwLabel) || moveCount;
+                   const rem = fb.mergesToFloat - (moveCount - dropTime);
+                   score = Math.max(score, 40 - rem * 2);
+                }
              });
           }
           // Also check chunks!
@@ -1001,6 +1007,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
              if (cBombCracking) {
                  const rem = cBombCracking.mergeRemain - moveCount;
                  score = Math.max(score, 100 - rem * 5);
+             }
+             const cFloat = levelData?.floatBubbles?.find((b: any) => b.word.toLowerCase() === cLabel);
+             if (cFloat) {
+                 const dropTime = wordDropMove.get(cLabel) || moveCount;
+                 const rem = cFloat.mergesToFloat - (moveCount - dropTime);
+                 score = Math.max(score, 40 - rem * 2);
              }
           });
           // Also check if this word belongs to a category that has an active bomb on the board
@@ -1092,6 +1104,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                               const dropTime = wordDropMove.get(l) || moveCount;
                               score = Math.max(score, 100 - (bc.mergeRemain - (moveCount - dropTime)) * 5);
                           }
+                          const fb = levelData?.floatBubbles?.find((b: any) => b.word.toLowerCase() === l);
+                          if (fb) {
+                              const dropTime = wordDropMove.get(l) || moveCount;
+                              const rem = fb.mergesToFloat - (moveCount - dropTime);
+                              score = Math.max(score, 40 - rem * 2);
+                          }
                       });
                       
                       labels2.forEach(l => {
@@ -1104,6 +1122,12 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
                           if (bc) {
                               const dropTime = wordDropMove.get(l) || moveCount;
                               score = Math.max(score, 100 - (bc.mergeRemain - (moveCount - dropTime)) * 5);
+                          }
+                          const fb = levelData?.floatBubbles?.find((b: any) => b.word.toLowerCase() === l);
+                          if (fb) {
+                              const dropTime = wordDropMove.get(l) || moveCount;
+                              const rem = fb.mergesToFloat - (moveCount - dropTime);
+                              score = Math.max(score, 40 - rem * 2);
                           }
                       });
 
@@ -1175,7 +1199,8 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
           progress = true;
 
           const undroppedCount = originalWordIds.filter((id: string) => !droppedWords.has(id)).length;
-          if (undroppedCount === 0 && piecesOnBoard.length === 2 && originalWordIds.length === 4) {
+          const mergedWordCount = mergedString.split('|').length;
+          if (undroppedCount === 0 && mergedWordCount === 4) {
             board = board.filter(id => id !== mergedId);
             const isSubCategory = edges.some(e => e.target === catId && catNodes.some(n => n.id === e.source));
             if (isSubCategory) {

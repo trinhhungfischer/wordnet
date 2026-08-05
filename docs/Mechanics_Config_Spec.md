@@ -520,3 +520,17 @@ Cấu trúc đề xuất:
 - Bóng sẽ to dần tới kích thước của bóng weight `maxWeight` (ví dụ: weight 3), trong lúc đó tương tác vật lý đẩy nhau diễn ra bình thường.
 - Không ảnh hưởng tới thuật toán logic (từ bên trong không đổi).
 - Khi merge thành công vào một bóng khác, bóng sẽ trở về trạng thái/kích thước bình thường và không to dần nữa.
+
+# 23. No Booster Bubble
+
+**Trường áp dụng:** `noBoosterBubbles` (Mảng)
+Cấu trúc đề xuất:
+
+```json
+"noBoosterBubbles": ["NoBooster"]
+```
+
+**Luật chơi:**
+
+- Không có luật gì đặc biệt cả chỉ là một quả bóng bình thường nhưng không thể sử dụng booster (ví dụ: không thể dùng hammer để phá, không thể dùng swap để đổi vị trí, không thể dùng shuffle để xáo trộn).
+- Không thay đổi thuật toán giải của level chỉ cần setup cho có thể config thôi, không cần hiển thị trên bảng solution.
