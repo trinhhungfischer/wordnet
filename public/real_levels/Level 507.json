@@ -419,6 +419,78 @@
   "levelDifficulty": 0,
   "allWordEntries": [
     {
+      "fullWord": "Gem",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Dial",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Navigate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Meridian",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Bezel",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Caliper",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Cloak",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Snake",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Pictures",
       "icon": null,
       "IsCracked": 0,
@@ -500,52 +572,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Gem",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Fairy",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Dial",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Navigate",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Meridian",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Bezel",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -581,24 +608,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Caliper",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Cloak",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Mask",
       "icon": null,
       "IsCracked": 0,
@@ -618,15 +627,6 @@
     },
     {
       "fullWord": "Tunic",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Snake",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -775,25 +775,26 @@
   "crackedBubbles": [],
   "frozenBubbles": [
     {
-      "word": "Bezel",
-      "mergesNeeded": 5
+      "word": "Blueprint",
+      "mergesNeeded": 3
     }
   ],
   "useBubbleSeparator": 1,
   "bubbleSeparatorData": {
     "breakThreshold": 3,
     "linkedWords": [
+      "Dial",
+      "Navigate",
+      "Meridian",
+      "Bezel",
+      "Snake",
       "Cloak",
-      "Mask",
-      "Gauntlets",
-      "Tunic",
-      "Pictures",
-      "Tapemeasure",
-      "Meridian"
+      "Gem",
+      "Caliper"
     ]
   },
   "immovableBubbles": [
-    "Turtle",
-    "Glaze"
+    "Scale",
+    "Iguana"
   ]
 }

@@ -793,28 +793,36 @@
   "crackedBubbles": [],
   "requirementLockBubbles": [
     {
-      "requirementLockWord": "Bandit",
+      "requirementLockWord": "Outlook",
+      "requireWeight": 2
+    },
+    {
+      "requirementLockWord": "Leather",
       "requireWeight": 2
     }
   ],
   "cycleFadeOutBubbles": [
     {
+      "fadeWord": "Fingerprint",
+      "startingPosition": 0
+    },
+    {
       "fadeWord": "Alignment",
+      "startingPosition": 1
+    },
+    {
+      "fadeWord": "Magnifying glass",
       "startingPosition": 0
     },
     {
-      "fadeWord": "Hammock",
-      "startingPosition": 0
-    },
-    {
-      "fadeWord": "Letter",
+      "fadeWord": "Bandit",
       "startingPosition": 0
     }
   ],
   "burstBubbles": [
     {
-      "word": "Balance",
-      "movesRemaining": 5
+      "word": "Report",
+      "movesRemaining": 4
     }
   ]
 }

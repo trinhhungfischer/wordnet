@@ -497,6 +497,69 @@
   "levelDifficulty": 0,
   "allWordEntries": [
     {
+      "fullWord": "Slate",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Schist",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Gneiss",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Quartzite",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Badge",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Meridian",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Dalmatian",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Pastrami",
       "icon": null,
       "IsCracked": 0,
@@ -587,42 +650,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Slate",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Schist",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Gneiss",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Quartzite",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Cone",
       "icon": null,
       "IsCracked": 0,
@@ -695,15 +722,6 @@
       "parentWord": "Sherlock"
     },
     {
-      "fullWord": "Badge",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Pivot",
       "icon": null,
       "IsCracked": 0,
@@ -731,15 +749,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Meridian",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Ladybug",
       "icon": null,
       "IsCracked": 0,
@@ -750,15 +759,6 @@
     },
     {
       "fullWord": "Dice",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Dalmatian",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -970,38 +970,35 @@
   "crackedBubbles": [],
   "requirementLockBubbles": [
     {
-      "requirementLockWord": "Schist",
-      "requireWeight": 2
-    },
-    {
-      "requirementLockWord": "Recipe",
-      "requireWeight": 2
-    },
-    {
-      "requirementLockWord": "Guards",
+      "requirementLockWord": "Cuisine",
       "requireWeight": 2
     }
   ],
   "frozenBubbles": [
     {
-      "word": "Basketball",
-      "mergesNeeded": 5
+      "word": "Pivot",
+      "mergesNeeded": 3
     },
     {
-      "word": "Meridian",
-      "mergesNeeded": 5
+      "word": "Clue",
+      "mergesNeeded": 4
+    },
+    {
+      "word": "Housing",
+      "mergesNeeded": 4
     }
   ],
   "useBubbleSeparator": 1,
   "bubbleSeparatorData": {
     "breakThreshold": 3,
     "linkedWords": [
-      "Cone",
-      "Glitter",
-      "Color",
-      "Strap",
-      "Cuisine",
-      "Pastrami"
+      "Slate",
+      "Schist",
+      "Gneiss",
+      "Quartzite",
+      "Badge",
+      "Dalmatian",
+      "Meridian"
     ]
   }
 }
