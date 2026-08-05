@@ -671,6 +671,24 @@
       "parentWord": null
     },
     {
+      "fullWord": "Origami",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Pottery",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Notes",
       "icon": null,
       "IsCracked": 0,
@@ -761,24 +779,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Origami",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Pottery",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Knitting",
       "icon": null,
       "IsCracked": 0,
@@ -802,20 +802,20 @@
   "crackedBubbles": [],
   "requirementLockBubbles": [
     {
-      "requirementLockWord": "Guards",
+      "requirementLockWord": "Gloom",
       "requireWeight": 2
     },
     {
-      "requirementLockWord": "Reading",
+      "requirementLockWord": "Cajun",
       "requireWeight": 2
     }
   ],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Bamboo",
+      "screwLockWord": "Notes",
       "screwDriverWords": [
         "Origami",
-        "Sewing"
+        "Pottery"
       ],
       "id": 0,
       "screwCount": 2
@@ -823,12 +823,41 @@
   ],
   "crypticBubbles": [
     {
-      "word": "Cell",
+      "word": "Habanero",
       "revealAtMerge": [
+        0,
+        4,
+        5,
+        0,
         2,
+        1,
+        4,
+        3
+      ]
+    },
+    {
+      "word": "Sewing",
+      "revealAtMerge": [
+        5,
+        2,
+        4,
+        3,
+        4,
+        3
+      ]
+    },
+    {
+      "word": "Classroom",
+      "revealAtMerge": [
         5,
         4,
-        4
+        0,
+        1,
+        0,
+        1,
+        5,
+        2,
+        2
       ]
     }
   ]

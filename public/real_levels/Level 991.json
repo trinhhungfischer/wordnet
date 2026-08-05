@@ -509,6 +509,15 @@
       "parentWord": null
     },
     {
+      "fullWord": "Harbor",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Helmet",
       "icon": null,
       "IsCracked": 0,
@@ -519,6 +528,15 @@
     },
     {
       "fullWord": "Shield",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Scarlet",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -554,6 +572,15 @@
       "parentWord": null
     },
     {
+      "fullWord": "Cotton",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Hammer",
       "icon": null,
       "IsCracked": 0,
@@ -581,25 +608,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Cotton",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Linen",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Scarlet",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -617,7 +626,25 @@
       "parentWord": null
     },
     {
+      "fullWord": "Award",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Cherry",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Buoy",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -707,15 +734,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Award",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Loser",
       "icon": null,
       "IsCracked": 0,
@@ -735,15 +753,6 @@
     },
     {
       "fullWord": "Boom",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Harbor",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -788,15 +797,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Buoy",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Log",
       "icon": null,
       "IsCracked": 0,
@@ -811,37 +811,38 @@
   "crackedBubbles": [],
   "keyLockBubbles": [
     {
-      "keyWord": "Teeth",
-      "lockWord": "Log",
+      "keyWord": "Helmet",
+      "lockWord": "Harbor",
       "id": 0
     },
     {
-      "keyWord": "Envoy",
-      "lockWord": "Shoulder Pad",
+      "keyWord": "Hammer",
+      "lockWord": "Cotton",
       "id": 1
     },
     {
-      "keyWord": "Ambassador",
-      "lockWord": "Cotton",
+      "keyWord": "Maroon",
+      "lockWord": "Buoy",
       "id": 2
     },
     {
-      "keyWord": "Helmet",
-      "lockWord": "Crimson",
+      "keyWord": "Repair",
+      "lockWord": "Scarlet",
       "id": 3
+    },
+    {
+      "keyWord": "Cherry",
+      "lockWord": "Award",
+      "id": 4
     }
   ],
   "teleportBubbles": [
     {
-      "word": "Hammer",
-      "mergesToTeleport": 4
-    },
-    {
-      "word": "Repair",
+      "word": "Leather",
       "mergesToTeleport": 3
     },
     {
-      "word": "Toolbox",
+      "word": "Valley",
       "mergesToTeleport": 3
     }
   ]

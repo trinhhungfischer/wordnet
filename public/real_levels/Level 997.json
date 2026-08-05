@@ -464,6 +464,24 @@
       "parentWord": null
     },
     {
+      "fullWord": "Angled",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Bent",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Grayling",
       "icon": null,
       "IsCracked": 0,
@@ -572,15 +590,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Angled",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Warped",
       "icon": null,
       "IsCracked": 0,
@@ -591,15 +600,6 @@
     },
     {
       "fullWord": "Twisted",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Bent",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -802,10 +802,10 @@
   "crackedBubbles": [],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Decision making",
+      "screwLockWord": "Grayling",
       "screwDriverWords": [
-        "Catfish",
-        "Samurai"
+        "Angled",
+        "Bent"
       ],
       "id": 0,
       "screwCount": 2
@@ -813,14 +813,14 @@
   ],
   "countdownBubbles": [
     {
-      "word": "Arctic",
+      "word": "Downpour",
       "countdownValue": [
         5,
         -3
       ]
     },
     {
-      "word": "Pliers",
+      "word": "Arctic",
       "countdownValue": [
         5,
         -3
@@ -828,6 +828,8 @@
     }
   ],
   "spikeBubbles": [
-    "Bedroom"
+    "Wrench",
+    "Warped",
+    "Actor"
   ]
 }

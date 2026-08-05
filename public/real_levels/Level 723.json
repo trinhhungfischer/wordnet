@@ -650,6 +650,15 @@
       "parentWord": null
     },
     {
+      "fullWord": "Alphabet",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Moral",
       "icon": null,
       "IsCracked": 0,
@@ -660,6 +669,15 @@
     },
     {
       "fullWord": "Honest",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Booing",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -705,6 +723,15 @@
     },
     {
       "fullWord": "Fragrance",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Glyph",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -839,15 +866,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Booing",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Fo",
       "icon": null,
       "IsCracked": 0,
@@ -938,25 +956,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Glyph",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Hieroglyphics",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Alphabet",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -970,20 +970,33 @@
   "crackedBubbles": [],
   "requirementLockBubbles": [
     {
-      "requirementLockWord": "Fall",
+      "requirementLockWord": "Emotions",
+      "requireWeight": 2
+    },
+    {
+      "requirementLockWord": "Hieroglyphics",
+      "requireWeight": 2
+    },
+    {
+      "requirementLockWord": "Pyroclastic",
       "requireWeight": 2
     }
   ],
   "keyLockBubbles": [
     {
-      "keyWord": "Moral",
-      "lockWord": "Scatter",
+      "keyWord": "Stand-up",
+      "lockWord": "Booing",
       "id": 0
     },
     {
-      "keyWord": "Class",
-      "lockWord": "Cuneiform",
+      "keyWord": "Moral",
+      "lockWord": "Alphabet",
       "id": 1
+    },
+    {
+      "keyWord": "Red",
+      "lockWord": "Glyph",
+      "id": 2
     }
   ]
 }

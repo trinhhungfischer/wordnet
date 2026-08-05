@@ -527,7 +527,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Dashcam",
+      "fullWord": "Smartphone",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -536,7 +536,16 @@
       "parentWord": null
     },
     {
-      "fullWord": "Smartphone",
+      "fullWord": "Brassy",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Dashcam",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -600,15 +609,6 @@
     },
     {
       "fullWord": "Suspense",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Brassy",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -820,16 +820,20 @@
   "crackedBubbles": [],
   "requirementLockBubbles": [
     {
+      "requirementLockWord": "Sofa",
+      "requireWeight": 2
+    },
+    {
       "requirementLockWord": "Computer",
       "requireWeight": 2
     }
   ],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Route",
+      "screwLockWord": "Dashcam",
       "screwDriverWords": [
-        "Breeze",
-        "Frother"
+        "Smartphone",
+        "Brassy"
       ],
       "id": 0,
       "screwCount": 2

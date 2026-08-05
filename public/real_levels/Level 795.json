@@ -716,6 +716,24 @@
       "parentWord": null
     },
     {
+      "fullWord": "Epicenter",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Foreshock",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Vise",
       "icon": null,
       "IsCracked": 0,
@@ -806,25 +824,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Epicenter",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Magnitude",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Foreshock",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -1270,10 +1270,10 @@
   "crackedBubbles": [],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Hacksaw",
+      "screwLockWord": "Vise",
       "screwDriverWords": [
-        "Hummus",
-        "Flake"
+        "Epicenter",
+        "Foreshock"
       ],
       "id": 0,
       "screwCount": 2
@@ -1281,7 +1281,7 @@
   ],
   "bombCrackingBubbles": [
     {
-      "word": "Clamp",
+      "word": "Hacksaw",
       "mergeRemain": 5,
       "chainCount": 3
     }

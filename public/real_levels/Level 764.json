@@ -620,7 +620,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Jaywalking",
+      "fullWord": "Bluff",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -629,7 +629,25 @@
       "parentWord": null
     },
     {
-      "fullWord": "Bluff",
+      "fullWord": "Mugging",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Rip",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Jaywalking",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -648,6 +666,24 @@
     },
     {
       "fullWord": "Point",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Neap",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Snake",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -737,15 +773,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Mugging",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Arson",
       "icon": null,
       "IsCracked": 0,
@@ -755,25 +782,7 @@
       "parentWord": null
     },
     {
-      "fullWord": "Rip",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Flood",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Neap",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -855,15 +864,6 @@
     },
     {
       "fullWord": "Needle",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Snake",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -1075,10 +1075,10 @@
   "crackedBubbles": [],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Pill",
+      "screwLockWord": "Bribery",
       "screwDriverWords": [
-        "Bead",
-        "Succession"
+        "Neap",
+        "Snake"
       ],
       "id": 0,
       "screwCount": 2
@@ -1092,29 +1092,25 @@
       "Owl",
       "Wind",
       "Cricket",
-      "Cape",
-      "Jaywalking"
+      "Bluff",
+      "Mugging",
+      "Rip",
+      "Cape"
     ]
   },
   "crypticBubbles": [
     {
-      "word": "Turtle",
+      "word": "Education",
       "revealAtMerge": [
+        4,
+        5,
+        1,
+        0,
+        4,
         2,
         0,
         1,
-        2,
-        0,
-        1
-      ]
-    },
-    {
-      "word": "Bale",
-      "revealAtMerge": [
-        5,
-        4,
-        5,
-        5
+        3
       ]
     }
   ]

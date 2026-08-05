@@ -509,6 +509,24 @@
       "parentWord": null
     },
     {
+      "fullWord": "Bestseller",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Magazines",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Virus",
       "icon": null,
       "IsCracked": 0,
@@ -777,24 +795,6 @@
       "IsLinked": 0,
       "linkedChunkWords": [],
       "parentWord": null
-    },
-    {
-      "fullWord": "Bestseller",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Magazines",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
     }
   ],
   "allWords": [],
@@ -802,10 +802,10 @@
   "crackedBubbles": [],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Canvas",
+      "screwLockWord": "Virus",
       "screwDriverWords": [
-        "Stakes",
-        "Kayak"
+        "Bestseller",
+        "Magazines"
       ],
       "id": 0,
       "screwCount": 2
@@ -813,16 +813,24 @@
   ],
   "cycleFadeOutBubbles": [
     {
-      "fadeWord": "Security",
+      "fadeWord": "Ambulance siren",
       "startingPosition": 1
     },
     {
-      "fadeWord": "Foghorn",
+      "fadeWord": "Pull",
       "startingPosition": 1
+    },
+    {
+      "fadeWord": "Catalog",
+      "startingPosition": 0
+    },
+    {
+      "fadeWord": "Security",
+      "startingPosition": 0
     },
     {
       "fadeWord": "Teeth",
-      "startingPosition": 0
+      "startingPosition": 1
     }
   ]
 }

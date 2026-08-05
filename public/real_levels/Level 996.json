@@ -473,6 +473,24 @@
       "parentWord": null
     },
     {
+      "fullWord": "Pilot",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Camera",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Index",
       "icon": null,
       "IsCracked": 0,
@@ -599,15 +617,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Pilot",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Fault",
       "icon": null,
       "IsCracked": 0,
@@ -654,15 +663,6 @@
     },
     {
       "fullWord": "Tracker",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Camera",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -811,10 +811,10 @@
   "crackedBubbles": [],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Rift",
+      "screwLockWord": "Index",
       "screwDriverWords": [
-        "Wiretap",
-        "Roar"
+        "Pilot",
+        "Camera"
       ],
       "id": 0,
       "screwCount": 2
@@ -822,7 +822,16 @@
   ],
   "backwardBubbles": [
     {
-      "word": "Vanish"
+      "word": "Elude"
+    },
+    {
+      "word": "Yell"
+    },
+    {
+      "word": "Scram"
+    },
+    {
+      "word": "Middle"
     }
   ]
 }

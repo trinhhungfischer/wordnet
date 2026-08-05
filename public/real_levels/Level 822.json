@@ -617,6 +617,24 @@
       "parentWord": null
     },
     {
+      "fullWord": "Flowers",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Croissant",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Wolf",
       "icon": null,
       "IsCracked": 0,
@@ -707,24 +725,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Flowers",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Croissant",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Pretzel",
       "icon": null,
       "IsCracked": 0,
@@ -793,23 +793,27 @@
   "crackedBubbles": [],
   "requirementLockBubbles": [
     {
-      "requirementLockWord": "Muffin",
+      "requirementLockWord": "Morel",
+      "requireWeight": 2
+    },
+    {
+      "requirementLockWord": "Dandelion",
       "requireWeight": 2
     }
   ],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Gut",
+      "screwLockWord": "Wolf",
       "screwDriverWords": [
-        "Lonely",
-        "Amanita"
+        "Flowers",
+        "Croissant"
       ],
       "id": 0,
       "screwCount": 2
     }
   ],
   "immovableBubbles": [
-    "Panther",
-    "Oyster"
+    "Impose",
+    "Muffin"
   ]
 }

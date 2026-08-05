@@ -680,6 +680,24 @@
       "parentWord": null
     },
     {
+      "fullWord": "Drops",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
+      "fullWord": "Electricity",
+      "icon": null,
+      "IsCracked": 0,
+      "crackBreakNum": 0,
+      "IsLinked": 0,
+      "linkedChunkWords": [],
+      "parentWord": null
+    },
+    {
       "fullWord": "Cash",
       "icon": null,
       "IsCracked": 0,
@@ -698,15 +716,6 @@
       "parentWord": null
     },
     {
-      "fullWord": "Drops",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
       "fullWord": "Capsule",
       "icon": null,
       "IsCracked": 0,
@@ -717,15 +726,6 @@
     },
     {
       "fullWord": "Grams",
-      "icon": null,
-      "IsCracked": 0,
-      "crackBreakNum": 0,
-      "IsLinked": 0,
-      "linkedChunkWords": [],
-      "parentWord": null
-    },
-    {
-      "fullWord": "Electricity",
       "icon": null,
       "IsCracked": 0,
       "crackBreakNum": 0,
@@ -802,10 +802,10 @@
   "crackedBubbles": [],
   "screwLockBubbles": [
     {
-      "screwLockWord": "Service",
+      "screwLockWord": "Cash",
       "screwDriverWords": [
-        "Grams",
-        "Froth"
+        "Drops",
+        "Electricity"
       ],
       "id": 0,
       "screwCount": 2
@@ -813,22 +813,26 @@
   ],
   "crackBubbles": [
     {
-      "word": "Drops",
-      "crackCount": 3,
+      "word": "Gold",
+      "crackCount": 4,
       "chunkWords": [
-        "Dr",
-        "ops"
+        "Go",
+        "ld"
       ]
     }
   ],
   "floatBubbles": [
     {
-      "word": "Intake",
-      "mergesToFloat": 4
+      "word": "Joy",
+      "mergesToFloat": 5
     },
     {
-      "word": "Foam",
-      "mergesToFloat": 4
+      "word": "Coriander",
+      "mergesToFloat": 3
+    },
+    {
+      "word": "Bloom",
+      "mergesToFloat": 5
     }
   ]
 }
