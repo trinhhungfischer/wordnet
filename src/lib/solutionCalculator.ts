@@ -1177,7 +1177,7 @@ export function calculateSolution(nodes: Node[], edges: Edge[], levelData: any, 
             currentString = mergedString;
           }
         } else if (bestMerge.type === 'category') {
-          const { catId, p1, p2, originalWordIds, piecesOnBoard } = bestMerge;
+          const { catId, p1, p2, originalWordIds } = bestMerge;
           const label1 = getBubbleState(p1).label;
           const label2 = getBubbleState(p2).label;
           const mergedString = `${label1} | ${label2}`;

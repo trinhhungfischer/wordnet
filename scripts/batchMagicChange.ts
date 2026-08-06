@@ -103,7 +103,7 @@ const getDictSig = (catName: string): any => {
     dictSigCache.set(lowerName, { name: catName, numWords: 0, subcats: [] });
     return dictSigCache.get(lowerName);
   }
-  const subSig = entry.subcategories.map((sub: string) => getDictSig(sub));
+  const subSig = (entry.subcategories || []).map((sub: string) => getDictSig(sub));
   const result = { name: entry.name, numWords: entry.words.length, subcats: subSig };
   dictSigCache.set(lowerName, result);
   return result;
@@ -176,7 +176,7 @@ const generateNewBranch = (
   outCategories.push(newCat);
 
   let chosenSubcategories: string[] = [];
-  let availSubs = [...entry.subcategories];
+  let availSubs = [...(entry.subcategories || [])];
   availSubs.sort(() => Math.random() - 0.5);
 
   reqSig.subcats.forEach((rSub: any) => {

@@ -76,7 +76,7 @@ interface SidebarProps {
 type TabType = 'dict' | 'sibling' | 'specific' | 'related' | 'wiki';
 
 export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], nodes = [], contextChildLabel, onClose, onAddChild, onDeleteNode, onRenameNode, onToggleNodeIcon, onUpdateNodeIndex, onImportDictionary, copiedTreeConfig, setCopiedTreeConfig, onPasteTreeConfig, autoCutWords, setAutoCutWords, isSettingsOpen }: SidebarProps) {
-  const [manualWord, setManualWord] = useState('');
+    const [manualWord, setManualWord] = useState('');
   const [suggestions, setSuggestions] = useState<WordSuggestion[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('dict');
   const [isEditing, setIsEditing] = useState(false);
@@ -393,7 +393,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                     <div key={cat.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: conflict ? 'rgba(239,68,68,0.1)' : 'rgba(0,0,0,0.2)', padding: '10px 12px', borderRadius: '8px', border: conflict ? '1px solid rgba(239,68,68,0.4)' : '1px solid var(--panel-border)', opacity: conflict ? 0.6 : 1 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1, minWidth: 0, paddingRight: '8px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ fontWeight: 500, fontSize: '14px', textTransform: 'capitalize', color: conflict ? '#f87171' : 'white', wordBreak: 'break-word' }}>{cat.name}</span>
+                          <span style={{ fontWeight: 500, fontSize: '14px', textTransform: 'capitalize', color: conflict ? '#f87171' : 'white', wordBreak: 'break-word' }}>{}</span>
                           {cat.popularity !== undefined && (
                             <span style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
                               {cat.popularity}
@@ -447,7 +447,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
   const handleRenameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editValue.trim()) {
-      onRenameNode(selectedNode.id, editValue.trim().toLowerCase());
+      onRenameNode(selectedNode.id, editValue.trim());
       setIsEditing(false);
     }
   };
@@ -780,7 +780,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                       ) : (
                         <RefreshCw size={10} />
                       )}
-                      <span>{wObj.word}</span>
+                      <span>{}</span>
                       {wObj.popularity !== undefined && (
                         <span style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '4px' }}>{wObj.popularity}</span>
                       )}
@@ -853,7 +853,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                         ) : (
                           <Plus size={10} />
                         )}
-                        <span>{wObj.word}</span>
+                        <span>{}</span>
                         {wObj.popularity !== undefined && (
                           <span style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '4px' }}>{wObj.popularity}</span>
                         )}
@@ -887,7 +887,7 @@ export default function Sidebar({ selectedNode, selectedNodes = [], edges = [], 
                         display: 'flex', alignItems: 'center', gap: '4px'
                       }}
                     >
-                      <Plus size={12} /> {s.word}
+                      <Plus size={12} /> {}
                     </button>
                   ))}
                 </div>

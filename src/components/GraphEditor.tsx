@@ -34,6 +34,7 @@ import LoginModal from './LoginModal';
 import LevelsDashboardModal from './LevelsDashboardModal';
 import AnalyticsDashboard from './AnalyticsDashboard';
 import { Save, BookOpen, Settings, Plus, RefreshCw, CircleDashed, Puzzle, Sparkles, Link, Search, X, HelpCircle, History, Snowflake, Calculator, Lock, Key, Bomb, Pin, Eye, Wrench, PenTool, ArrowLeftRight, ChevronDown, ChevronLeft, ChevronRight, UploadCloud, User, UserCheck, Database, Layers, BarChart2, Dumbbell, Ghost, Asterisk, Flame, Cloud, Rocket, Maximize } from 'lucide-react';
+import { useI18n, initI18n, LANGUAGES, translateLevelData } from '../lib/i18n';
 import nlp from 'compromise';
 import { updateGlobalDictionary } from '../lib/api';
 
@@ -593,6 +594,13 @@ export const isNodeScrewDriver = (node: Node, screws: any[], edges: Edge[], node
 };
 
 export default function GraphEditor() {
+  const { lang, setLang } = useI18n();
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+
+  useEffect(() => {
+    initI18n();
+  }, []);
+
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
   
@@ -636,6 +644,8 @@ export default function GraphEditor() {
 
   const [copiedTreeConfig, setCopiedTreeConfig] = useState<any | null>(null);
   const [wordIndexSearchQuery, setWordIndexSearchQuery] = useState('');
+  const [editingQueueItemId, setEditingQueueItemId] = useState<string | null>(null);
+  const [queueEditValue, setQueueEditValue] = useState('');
   const [sortLinksFirst, setSortLinksFirst] = useState(false);
   const spawnQueueIds = useMemo(() => {
     return nodes.filter(n => typeof n.data.globalIndex === 'number')
@@ -804,11 +814,14 @@ export default function GraphEditor() {
 
 
   useEffect(() => {
-    fetch(`/global_dictionary.json?t=${Date.now()}`)
+    const dictFile = lang === 'en' ? '/global_dictionary.json' : '/global_dictionary_translated_vi.json';
+    fetch(`${dictFile}?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => setGlobalDict(data))
       .catch(console.error);
+  }, [lang]);
 
+  useEffect(() => {
     // Load from autosave
     const saved = localStorage.getItem('wordnet_autosave');
     if (saved) {
@@ -3919,7 +3932,99 @@ export default function GraphEditor() {
                           {(!isChunk && node.data.icon) ? (
                             <img src={`/word_icon/${String(node.data.icon)}.png`} alt="" title={`Missing File: ${String(node.data.icon)}.png`} style={{ width: 14, height: 14 }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
                           ) : null}
-                          <strong style={{ textTransform: isChunk ? 'none' : 'capitalize' }}>{String(node.data.label)}</strong>
+                          
+                          {editingQueueItemId === nodeId ? (
+                            <input
+                              autoFocus
+                              draggable
+                              onDragStart={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                              onPointerDown={(e) => e.stopPropagation()}
+                              value={queueEditValue}
+                              onChange={e => setQueueEditValue(e.target.value)}
+                              onBlur={() => {
+                                if (queueEditValue.trim()) {
+                                  setNodes(nds => nds.map(n => n.id === nodeId ? { ...n, data: { ...n.data, label: queueEditValue.trim() } } : n));
+                                }
+                                setEditingQueueItemId(null);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  if (queueEditValue.trim()) {
+                                    setNodes(nds => nds.map(n => n.id === nodeId ? { ...n, data: { ...n.data, label: queueEditValue.trim() } } : n));
+                                  }
+                                  setEditingQueueItemId(null);
+                                } else if (e.key === 'Tab') {
+                                  e.preventDefault();
+                                  if (queueEditValue.trim()) {
+                                    setNodes(nds => nds.map(n => n.id === nodeId ? { ...n, data: { ...n.data, label: queueEditValue.trim() } } : n));
+                                  }
+                                  const displayedQueueIds = (sortLinksFirst 
+                                    ? [...spawnQueueIds].sort((a, b) => {
+                                        const nodeA = nodes.find(n => n.id === a);
+                                        const nodeB = nodes.find(n => n.id === b);
+                                        if (!nodeA || !nodeB) return 0;
+                                        const chainedA = isNodeChained(nodeA, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+                                        const chainedB = isNodeChained(nodeB, rawLevelData?.bubbleSeparatorData?.linkedWords || [], edges, nodes);
+                                        const stackPipeA = isNodeInStackPipe(nodeA, rawLevelData?.stackPipes || [], edges, nodes).inPipe;
+                                        const stackPipeB = isNodeInStackPipe(nodeB, rawLevelData?.stackPipes || [], edges, nodes).inPipe;
+                                        const priorityA = chainedA || stackPipeA;
+                                        const priorityB = chainedB || stackPipeB;
+                                        if (priorityA && !priorityB) return -1;
+                                        if (!priorityA && priorityB) return 1;
+                                        return 0;
+                                      })
+                                    : spawnQueueIds)
+                                    .filter((id: string) => {
+                                      if (!wordIndexSearchQuery) return true;
+                                      const n = nodes.find(n => n.id === id);
+                                      return n && String(n.data.label).toLowerCase().includes(wordIndexSearchQuery.toLowerCase());
+                                    });
+                                  const currentIndex = displayedQueueIds.indexOf(nodeId);
+                                  if (currentIndex !== -1) {
+                                      const nextIndex = e.shiftKey ? currentIndex - 1 : currentIndex + 1;
+                                      if (nextIndex >= 0 && nextIndex < displayedQueueIds.length) {
+                                          const nextId = displayedQueueIds[nextIndex];
+                                          const nextNode = nodes.find(n => n.id === nextId);
+                                          if (nextNode) {
+                                              setQueueEditValue(String(nextNode.data.label));
+                                              setEditingQueueItemId(nextId);
+                                          } else {
+                                              setEditingQueueItemId(null);
+                                          }
+                                      } else {
+                                          setEditingQueueItemId(null);
+                                      }
+                                  }
+                                }
+                              }}
+                              style={{
+                                background: 'rgba(0,0,0,0.5)',
+                                color: 'white',
+                                border: '1px solid var(--accent)',
+                                borderRadius: '4px',
+                                padding: '2px 6px',
+                                outline: 'none',
+                                width: '120px',
+                                fontSize: 'inherit',
+                                fontWeight: 'inherit',
+                                fontFamily: 'inherit'
+                              }}
+                            />
+                          ) : (
+                            <strong 
+                              onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                setQueueEditValue(String(node.data.label));
+                                setEditingQueueItemId(nodeId);
+                              }}
+                              style={{ textTransform: isChunk ? 'none' : 'capitalize', cursor: 'text' }}
+                            >
+                              {String(node.data.label)}
+                            </strong>
+                          )}
                           {isBurst && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '2px', color: burstMovesRemaining <= 3 ? '#ef4444' : '#f97316' }}>
                               <Bomb size={12} />
@@ -4261,6 +4366,98 @@ export default function GraphEditor() {
           >
             <History size={28} />
           </button>
+
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+              title="Language"
+              style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                background: 'rgba(0,0,0,0.6)',
+                color: 'white',
+                border: '2px solid rgba(255,255,255,0.2)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                backdropFilter: 'blur(10px)',
+                transition: 'transform 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {(() => {
+                  const currLang = LANGUAGES.find(l => l.code === lang);
+                  return currLang ? (
+                    <img src={currLang.imgUrl} alt={currLang.label} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                  ) : '🌐';
+                })()}
+              </div>
+            </button>
+
+            {isLangMenuOpen && (
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                right: 'calc(100% + 16px)',
+                transform: 'translateY(-50%)',
+                background: 'rgba(15, 23, 42, 0.95)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '8px',
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '8px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                zIndex: 1000
+              }}>
+                {LANGUAGES.map(l => (
+                  <button
+                    key={l.code}
+                    onClick={() => {
+                      const newLang = l.code as 'en'|'vi';
+                      if (lang !== newLang) {
+                        const { newNodes, newLevelData } = translateLevelData(nodes, rawLevelData, newLang);
+                        setNodes(newNodes);
+                        setRawLevelData(newLevelData);
+                        setLang(newLang);
+                      }
+                      setIsLangMenuOpen(false);
+                    }}
+                    title={l.label}
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      background: lang === l.code ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255,255,255,0.05)',
+                      border: `2px solid ${lang === l.code ? '#38bdf8' : 'transparent'}`,
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                      e.currentTarget.style.transform = 'scale(1.1)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = lang === l.code ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255,255,255,0.05)';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                  >
+                    <img src={l.imgUrl} alt={l.label} style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => {

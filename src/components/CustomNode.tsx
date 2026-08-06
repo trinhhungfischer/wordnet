@@ -1,9 +1,14 @@
-import { Handle, Position } from '@xyflow/react';
+import { useState } from 'react';
+import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { Magnet, Link, Snowflake, Lock, Key, Bomb, Eye, Wrench, PenTool, ArrowLeftRight, RefreshCw, CircleDashed, Pin, Timer, Rocket, Radiation, Ghost, Asterisk, Flame, Cloud, Zap, Layers, Maximize } from 'lucide-react';
 
 import { lockKeyColors } from './GraphEditor';
 
-const CustomNode = ({ data, selected }: any) => {
+export default function CustomNode({ data, selected, id }: any) {
+  const { setNodes } = useReactFlow();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(String(data.label));
+
   const isChunk = data.isChunk === true;
   const isChained = data.isChained === true;
   const isLinkedMain = data.isLinkedMain === true;
@@ -172,11 +177,58 @@ const CustomNode = ({ data, selected }: any) => {
       />
       
       <div style={{ fontWeight: 600, color: isChunk ? '#a5b4fc' : 'var(--text-main)', fontSize: isChunk ? '13px' : '16px', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-        {data.icon && !isChunk && (
+        {data.icon && !isChunk && !isEditing && (
           <img src={`/word_icon/${data.icon.endsWith('.png') ? data.icon : data.icon + '.png'}`} alt={String(data.label)} title={`Missing File: ${data.icon}`} style={{ width: '24px', height: '24px', objectFit: 'contain' }} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI4LjUiIGN5PSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48bGluZSB4MT0iMyIgeTE9IjMiIHgyPSIyMSIgeTI9IjIxIj48L2xpbmU+PC9zdmc+'; }} />
         )}
-        <span>{String(data.label)}</span>
-        {keyIndex !== -1 && <Key size={14} style={{ color: keyColor, marginLeft: '4px' }} />}
+        
+        {isEditing ? (
+          <input
+            className="nodrag"
+            autoFocus
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={() => {
+              if (editValue.trim()) {
+                setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, label: editValue.trim() } } : n));
+              }
+              setIsEditing(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                if (editValue.trim()) {
+                  setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, label: editValue.trim() } } : n));
+                }
+                setIsEditing(false);
+              }
+            }}
+            style={{
+              background: 'rgba(0,0,0,0.5)',
+              color: 'white',
+              border: '1px solid var(--accent)',
+              borderRadius: '4px',
+              padding: '2px 6px',
+              outline: 'none',
+              width: '100px',
+              textAlign: 'center',
+              fontFamily: 'inherit',
+              fontSize: 'inherit',
+              fontWeight: 'inherit'
+            }}
+          />
+        ) : (
+          <span 
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              setEditValue(String(data.label));
+              setIsEditing(true);
+            }}
+            style={{ cursor: 'text' }}
+          >
+            {String(data.label)}
+          </span>
+        )}
+        
+        {keyIndex !== -1 && !isEditing && <Key size={14} style={{ color: keyColor, marginLeft: '4px' }} />}
         {lockIndex !== -1 && <Lock size={14} style={{ color: lockColor, marginLeft: '4px' }} />}
         {screwDriverIndex !== -1 && <PenTool size={14} style={{ color: screwDriverColor, marginLeft: '4px' }} />}
         {screwLockIndex !== -1 && (
@@ -289,4 +341,3 @@ const CustomNode = ({ data, selected }: any) => {
   );
 };
 
-export default CustomNode;
