@@ -709,7 +709,8 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                           <button
                             key={lvl}
                             onClick={() => {
-                              onSelectLevel(`Level ${lvlNumber}.json`, targetVersion);
+                              const customPath = targetVersion ? `/level_versions/${targetVersion}/Level ${lvlNumber}.json` : undefined;
+                              onSelectLevel(`Level ${lvlNumber}.json`, customPath);
                               onClose();
                             }}
                             style={{
@@ -863,7 +864,7 @@ const ChangelogModal: React.FC<ChangelogModalProps> = ({ isOpen, onClose, onSele
                           <button
                             key={i}
                             onClick={() => {
-                              const path = selectedLog ? `/${selectedLog.version}/Level ${lvlNumber}.json` : undefined;
+                              const path = selectedLog ? `/level_versions/${selectedLog.version}/Level ${lvlNumber}.json` : undefined;
                               onSelectLevel(exactLvl, path);
                               onClose();
                             }}

@@ -172,7 +172,7 @@ const dictionaryApiPlugin = () => ({
             fs.writeFileSync(changelogPathPublic, JSON.stringify(changelogData, null, 2), 'utf-8')
 
             // 2. Write each level to public/real_levels/ AND public/[version]/
-            const versionDirPath = path.resolve(__dirname, 'public', versionToReport)
+            const versionDirPath = path.resolve(__dirname, 'public/level_versions', versionToReport)
             if (!fs.existsSync(versionDirPath)) {
               fs.mkdirSync(versionDirPath, { recursive: true })
             }
@@ -209,8 +209,8 @@ const dictionaryApiPlugin = () => ({
               return
             }
 
-            const baseDirPath = path.resolve(__dirname, 'public', baseVersion)
-            const newDirPath = path.resolve(__dirname, 'public', newVersion)
+            const baseDirPath = path.resolve(__dirname, 'public/level_versions', baseVersion)
+            const newDirPath = path.resolve(__dirname, 'public/level_versions', newVersion)
 
             if (fs.existsSync(baseDirPath)) {
               if (!fs.existsSync(newDirPath)) {
