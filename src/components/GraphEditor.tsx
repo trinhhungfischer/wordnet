@@ -796,14 +796,34 @@ export default function GraphEditor() {
   const fetchLevelsList = async () => {
     if (dirHandle) return;
     try {
+      let data = null;
       const res = await fetch(`/api/list-levels?dir=${levelDir}`);
       if (res.ok) {
-        let data = await res.json();
+        data = await res.json();
+      } else {
+        // Fallback for static builds (like Vercel)
+        const fallbackRes = await fetch(`/${levelDir}/index.json`);
+        if (fallbackRes.ok) {
+          data = await fallbackRes.json();
+        }
+      }
+      
+      if (data) {
         data = data.filter((name: string) => name.startsWith('Level '));
         setLevels(data);
       }
     } catch (err) {
-      console.error('Failed to fetch levels list:', err);
+      console.error('Failed to fetch levels list, attempting fallback:', err);
+      try {
+        const fallbackRes = await fetch(`/${levelDir}/index.json`);
+        if (fallbackRes.ok) {
+          let data = await fallbackRes.json();
+          data = data.filter((name: string) => name.startsWith('Level '));
+          setLevels(data);
+        }
+      } catch (fallbackErr) {
+        console.error('Fallback fetch also failed:', fallbackErr);
+      }
     }
   };
 
@@ -1008,7 +1028,6 @@ export default function GraphEditor() {
 
   const loadDataIntoGraph = (data: any, levelName: string) => {
     setSelectedLevelName(levelName);
-    setRawLevelData(data);
     
     const newNodes: Node[] = [];
     const newEdges: Edge[] = [];
@@ -1218,7 +1237,17 @@ export default function GraphEditor() {
         });
       }
       
-      setNodes(newNodes);
+      let finalNodes = newNodes;
+      let finalData = data;
+      
+      if (lang !== 'en') {
+          const { newNodes: translatedNodes, newLevelData: translatedData } = translateLevelData(newNodes, data, lang);
+          finalNodes = translatedNodes;
+          finalData = translatedData;
+      }
+      
+      setRawLevelData(finalData);
+      setNodes(finalNodes);
       setEdges(newEdges);
       setSelectedNodeId(null);
       setTimeout(() => fitView({ duration: 800, padding: 0.2 }), 100);
