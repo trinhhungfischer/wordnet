@@ -124,7 +124,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                                 onMouseOver={(e) => e.currentTarget.style.background = 'rgba(99,102,241,0.4)'}
                                 onMouseOut={(e) => e.currentTarget.style.background = 'rgba(99,102,241,0.25)'}
                               >
-                                {}
+                                {word}
                               </span>
                               <button 
                                 onClick={(e) => {
@@ -240,7 +240,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                                 onClick={() => { if (onFocusWord) onFocusWord(word); }}
                                 style={{ fontSize: '12px', fontWeight: 500, background: 'rgba(74, 222, 128, 0.2)', color: 'white', padding: '4px 8px', borderRadius: '4px 0 0 4px', cursor: 'pointer', border: '1px solid rgba(74, 222, 128, 0.4)', borderRight: 'none' }}
                               >
-                                {wordIndex + 1}. {}
+                                {wordIndex + 1}. {word}
                               </span>
                               <button
                                 onClick={(e) => {
@@ -322,7 +322,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                               cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
                             }}
                           >
-                            {}
+                            {frozenItem.word}
                           </span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                             <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Merges:</span>
@@ -611,7 +611,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                           cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
                         }}
                       >
-                        {}
+                        {iceBombItem.word}
                       </span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Merges:</span>
@@ -716,7 +716,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                               cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
                             }}
                           >
-                            {}
+                            {burstItem.word}
                           </span>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                             <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Moves:</span>
@@ -810,7 +810,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                               cursor: 'pointer', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'
                             }}
                           >
-                            {}
+                            {bwItem.word}
                           </span>
                           <button 
                             onClick={(e) => {
@@ -2420,7 +2420,7 @@ export default function LevelSettings({ isOpen, onClose, levelData, onSave, onFo
                               }}
                               title={word}
                             >
-                              {}
+                              {word}
                             </span>
                             <button 
                               onClick={(e) => {
